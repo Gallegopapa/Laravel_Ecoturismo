@@ -5,18 +5,18 @@
 }
 
 .containerFooter{
-    /* background: var(--footer-bg); */
     color: var(--footer-text);
     width: 100%;
-    padding: 28px 16px; /* vertical spacing like the screenshot */
+    padding: 28px 16px;
     box-sizing: border-box;
     text-align: center;
-    /* sube el footer para que se superponga con la franja blanca debajo de la imagen */
-    margin-top: -98px; /* ajusta este valor según el resultado visual */
-    position: relative;
-    z-index: 10;
-    background: rgba(255,255,255,0.98); /* mantener ligeramente opaco para que se vea limpio */
-    box-shadow: 0 -6px 18px rgba(15,23,42,0.04); /* separación sutil sobre la franja */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(255,255,255,0.98);
+    box-shadow: 0 -6px 18px rgba(15,23,42,0.04);
 
 }
 footer {

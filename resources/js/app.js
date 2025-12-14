@@ -17,6 +17,10 @@ import PagLogueados from './react/pagLogueados.jsx';
 import Comments2Page from './react/comments2/page.jsx';
 import PerfilPage from './react/perfil/page.jsx';
 // import SettingsPage from './react/settings/Page.jsx';
+// Páginas legales
+import CookiesPage from './react/legal/Cookies.jsx';
+import TerminosDeUsoPage from './react/legal/TerminosDeUso.jsx';
+import PoliticaDePrivacidadPage from './react/legal/PoliticaDePrivacidad.jsx';
 
 // Páginas de lugares
 import ParaisosAcuaticos from './react/places2/paraisosAcuaticos/page.jsx';
@@ -29,6 +33,18 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+  },
+  {
+    path: '/cookies',
+    element: <CookiesPage />,
+  },
+  {
+    path: '/terminos-de-uso',
+    element: <TerminosDeUsoPage />,
+  },
+  {
+    path: '/politica-de-privacidad',
+    element: <PoliticaDePrivacidadPage />,
   },
   {
     path: '/contacto',

@@ -6,13 +6,13 @@ const Slider = () => {
         <div className="slider-container">
           <div className="slider">
             <div className="slide">
-              <img src="/components/imagenes/slideone.jpg" alt="imagen 1" />
+              <img src="/imagenes/slideone.jpg" alt="imagen 1" />
             </div>
             <div className="slide">
-              <img src="/components/imagenes/slidetwo.jpg" alt="imagen 2" />
+              <img src="/imagenes/slidetwo.jpg" alt="imagen 2" />
             </div>
             <div className="slide">
-              <img src="/components/imagenes/nudo4.jpg" alt="imagen 3" />
+              <img src="/imagenes/nudo4.jpg" alt="imagen 3" />
             </div>
           </div>
 

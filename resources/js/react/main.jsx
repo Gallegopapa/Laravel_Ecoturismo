@@ -8,6 +8,9 @@ import CommentsPage from "./comments/page.jsx";
 import Loginpage from "./login/page.jsx";
 import PagLogueados from "./pagLogueados.jsx";
 import Comments2Page from "./comments2/page.jsx";
+import CookiesPage from "./legal/Cookies.jsx";
+import TerminosDeUsoPage from "./legal/TerminosDeUso.jsx";
+import PoliticaDePrivacidadPage from "./legal/PoliticaDePrivacidad.jsx";
 
 // NUEVAS PÁGINAS
 import ParaisosAcuaticos from "./places2/paraisosAcuaticos/page.jsx";
@@ -74,6 +77,18 @@ const router = createBrowserRouter([
   {
     path: "/territoriosDelCafe",
     element: <TerritoriosDelCafe />,
+  },
+  {
+    path: "/cookies",
+    element: <CookiesPage />,
+  },
+  {
+    path: "/terminos-de-uso",
+    element: <TerminosDeUsoPage />,
+  },
+  {
+    path: "/politica-de-privacidad",
+    element: <PoliticaDePrivacidadPage />,
   },
 ]);
 

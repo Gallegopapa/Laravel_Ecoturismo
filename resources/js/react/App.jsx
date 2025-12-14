@@ -16,8 +16,8 @@ function App() {
   useEffect(() => {
     if (!loading && isAuthenticated && user) {
       const currentPath = window.location.pathname;
-      // No redirigir si está en login o registro (dejar que esos componentes manejen la redirección)
-      if (currentPath !== '/login' && currentPath !== '/registro') {
+      // Redirige únicamente si está en la página de inicio
+      if (currentPath === '/') {
         navigate('/pagLogueados', { replace: true });
       }
     }

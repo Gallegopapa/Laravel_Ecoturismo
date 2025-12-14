@@ -229,7 +229,6 @@ export default function Contact() {
               color: '#555',
               textDecoration: 'none'
             }}>
-              Volver
             </Link>
           </form>
 

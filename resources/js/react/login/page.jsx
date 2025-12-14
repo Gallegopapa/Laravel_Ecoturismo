@@ -74,15 +74,17 @@ export default function Login() {
 
   return (
     <>
-      <video id="bg-video" autoPlay loop muted>
-        <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
-      </video>
 
       <div className="container">
+        <video id="bg-video" autoPlay loop muted>
+          <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
+        </video>
+
         <header className="header">
           <h1>Risaralda EcoTurismo</h1>
         </header>
 
+      
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>{isRegister ? "Registro" : "Iniciar Sesión"}</h2>
           
@@ -144,6 +146,7 @@ export default function Login() {
               ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
             </p>
           )}
+  
 
           {msg && (
             <p className={`message ${
