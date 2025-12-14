@@ -30,7 +30,7 @@ class PlaceController extends Controller
                   ->orWhere('description', 'like', '%' . $request->search . '%');
         }
         
-        $places = $query->with(['categories', 'reviews'])
+        $places = $query->with(['categories', 'reviews.usuario:id,name,foto_perfil'])
             ->orderBy('name', 'asc')
             ->get();
         
@@ -82,7 +82,7 @@ class PlaceController extends Controller
      */
     public function show(Place $place): JsonResponse
     {
-        $place->load(['reservations', 'reviews.usuario', 'categories']);
+        $place->load(['reservations', 'reviews.usuario:id,name,foto_perfil', 'categories']);
         
         // Calcular rating promedio
         $averageRating = $place->reviews->avg('rating') ?? 0;

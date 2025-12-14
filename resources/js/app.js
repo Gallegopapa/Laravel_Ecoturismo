@@ -18,6 +18,8 @@ import Comments2Page from './react/comments2/page.jsx';
 import PerfilPage from './react/perfil/page.jsx';
 import ReservationsPage from './react/reservations/page.jsx';
 import FavoritesPage from './react/favorites/page.jsx';
+import MapPage from './react/map/page.jsx';
+import PlaceDetailPage from './react/places/detail/page.jsx';
 // import SettingsPage from './react/settings/Page.jsx';
 // Páginas legales
 import CookiesPage from './react/legal/Cookies.jsx';
@@ -66,6 +68,14 @@ const router = createBrowserRouter([
   {
     path: '/lugares',
     element: <PlacesPage />,
+  },
+  {
+    path: '/lugares/:id',
+    element: <PlaceDetailPage />,
+  },
+  {
+    path: '/mapa',
+    element: <MapPage />,
   },
   {
     path: '/comentarios',

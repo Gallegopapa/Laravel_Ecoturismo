@@ -1,0 +1,142 @@
+.map-view-container {
+  position: relative;
+  height: calc(100vh - 160px);
+  width: 100%;
+  margin-top: 100px;
+}
+
+.map-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.map-search-input {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 300px;
+  transition: border-color 0.3s;
+}
+
+.map-search-input:focus {
+  outline: none;
+  border-color: #2ecc71;
+}
+
+.map-category-select {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.map-category-select:focus {
+  outline: none;
+  border-color: #2ecc71;
+}
+
+.map-popup-content {
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.map-popup-content h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.map-popup-location {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.map-popup-description {
+  margin: 10px 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.map-popup-image {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 10px 0;
+  object-fit: cover;
+}
+
+.map-popup-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.map-category-badge {
+  background: #2ecc71;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.map-popup-actions {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.map-popup-link {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #2ecc71;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.map-popup-link:hover {
+  background: #27ae60;
+}
+
+@media (max-width: 768px) {
+  .map-view-container {
+    height: calc(100vh - 140px);
+  }
+
+  .map-controls {
+    flex-direction: column;
+    width: calc(100% - 40px);
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+
+  .map-search-input {
+    width: 100%;
+  }
+
+  .map-popup-content {
+    min-width: 200px;
+    max-width: 250px;
+  }
+}
+

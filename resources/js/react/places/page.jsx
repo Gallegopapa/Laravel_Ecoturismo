@@ -210,28 +210,63 @@ const PlacesPage = () => {
 
         {/* Filtro de categorías */}
         <div style={{ marginBottom: "30px", textAlign: "center" }}>
-          <label htmlFor="categoria-filtro" style={{ marginRight: "10px", fontWeight: "bold" }}>
-            Filtrar por categoría:
-          </label>
-          <select
-            id="categoria-filtro"
-            value={categoriaFiltro}
-            onChange={(e) => setCategoriaFiltro(e.target.value)}
-            style={{
-              padding: "8px 15px",
-              borderRadius: "5px",
-              border: "1px solid #ddd",
-              fontSize: "16px",
-              cursor: "pointer"
-            }}
-          >
-            <option value="todas">Todas las categorías</option>
-            {categorias.map(cat => (
-              <option key={cat.id} value={cat.slug}>
-                {cat.icon} {cat.name}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: "flex", justifyContent: "center", gap: "15px", flexWrap: "wrap", alignItems: "center" }}>
+            <div>
+              <label htmlFor="categoria-filtro" style={{ marginRight: "10px", fontWeight: "bold" }}>
+                Filtrar por categoría:
+              </label>
+              <select
+                id="categoria-filtro"
+                value={categoriaFiltro}
+                onChange={(e) => setCategoriaFiltro(e.target.value)}
+                style={{
+                  padding: "8px 15px",
+                  borderRadius: "5px",
+                  border: "1px solid #ddd",
+                  fontSize: "16px",
+                  cursor: "pointer"
+                }}
+              >
+                <option value="todas">Todas las categorías</option>
+                {categorias.map(cat => (
+                  <option key={cat.id} value={cat.slug}>
+                    {cat.icon} {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <Link 
+              to="/mapa"
+              style={{
+                padding: "10px 20px",
+                background: "#2ecc71",
+                color: "white",
+                textDecoration: "none",
+                borderRadius: "8px",
+                fontSize: "16px",
+                fontWeight: "600",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                transition: "all 0.3s ease",
+                boxShadow: "0 2px 8px rgba(46, 204, 113, 0.3)"
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = "#27ae60";
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 4px 12px rgba(46, 204, 113, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = "#2ecc71";
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 2px 8px rgba(46, 204, 113, 0.3)";
+              }}
+            >
+              <span>🗺️</span>
+              <span>Ver en Mapa</span>
+            </Link>
+          </div>
         </div>
 
         {isAuthenticated && (
@@ -374,9 +409,13 @@ const PlacesPage = () => {
                             </svg>
                             <span>Mapa</span>
                           </a>
-                          <button className="info-button">
-                            Más Info
-                          </button>
+                          <Link 
+                            to={`/lugares/${lugar.id}`}
+                            className="info-button"
+                            style={{ textDecoration: 'none', display: 'inline-block' }}
+                          >
+                            Ver Detalles
+                          </Link>
                         </div>
                         {isAuthenticated && (
                           <button 
