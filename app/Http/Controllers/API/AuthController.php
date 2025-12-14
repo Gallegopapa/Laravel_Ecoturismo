@@ -44,19 +44,20 @@ class AuthController extends Controller
         // Crear token de autenticación
         $token = $user->createToken('api-token', ['*'], now()->addDays(30))->plainTextToken;
 
-        return response()->json([
-            'message' => 'Usuario registrado exitosamente',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'fecha_registro' => $user->fecha_registro,
-                'is_admin' => $user->is_admin,
-            ],
-            'token' => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => 30 * 24 * 60 * 60, // 30 días en segundos
-        ], 201);
+            return response()->json([
+                'message' => 'Usuario registrado exitosamente',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'telefono' => $user->telefono,
+                    'fecha_registro' => $user->fecha_registro,
+                    'is_admin' => $user->is_admin,
+                ],
+                'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_in' => 30 * 24 * 60 * 60, // 30 días en segundos
+            ], 201);
     }
 
     /**
@@ -139,6 +140,7 @@ class AuthController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'telefono' => $user->telefono,
                     'fecha_registro' => $user->fecha_registro,
                     'is_admin' => $user->is_admin,
                 ],
@@ -200,6 +202,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'telefono' => $user->telefono,
                 'fecha_registro' => $user->fecha_registro,
                 'is_admin' => $user->is_admin,
                 'reservations_count' => $user->reservations->count(),
@@ -222,6 +225,7 @@ class AuthController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'telefono' => $user->telefono,
                     'is_admin' => $user->is_admin,
                 ],
                 'message' => 'Token válido'

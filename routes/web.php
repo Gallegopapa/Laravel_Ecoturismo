@@ -20,6 +20,11 @@ use App\Http\Controllers\MessageController;
 // AUTENTICACIÓN (Estas rutas deben ir primero)
 // ============================================
 // Las rutas GET /login y /registro son manejadas por React Router
+// Agregamos la ruta GET con nombre para que el middleware de autenticación funcione
+Route::get('/login', function() {
+    return view('app');
+})->name('login');
+
 // Solo manejamos los POST aquí (autenticación actual)
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -70,7 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-    // Rutas de admin
+    // Rutas de admin (requieren autenticación web)
     Route::prefix('admin')->middleware('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
@@ -89,6 +94,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/categories/{category}', [CategoryAdminController::class, 'update'])->name('categories.update');
         Route::delete('/categories/{category}', [CategoryAdminController::class, 'destroy'])->name('categories.destroy');
     });
+});
+
+// ============================================
+// RUTA DE ADMIN PANEL (React - sin middleware web)
+// ============================================
+// Esta ruta es manejada completamente por React Router
+// La autenticación se maneja con tokens (Sanctum) en el frontend
+Route::get('/admin/panel', function() {
+    return view('app');
 });
 
 // ============================================

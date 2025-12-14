@@ -18,6 +18,7 @@ class Usuarios extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'telefono',
         'password',
         'fecha_registro',
         'is_admin',

@@ -174,7 +174,12 @@ export const reviewsService = {
 export const favoritesService = {
   getAll: async () => {
     const response = await api.get('/favorites');
-    return response.data;
+    return response.data.favorites || response.data || [];
+  },
+
+  check: async (placeId) => {
+    const response = await api.get(`/favorites/check/${placeId}`);
+    return response.data.is_favorite || false;
   },
 
   add: async (placeId) => {
@@ -224,6 +229,77 @@ export const messagesService = {
   send: async (messageData) => {
     const response = await api.post('/messages', messageData);
     return response.data;
+  },
+};
+
+// Servicios de admin
+export const adminService = {
+  // Lugares
+  places: {
+    getAll: async () => {
+      const response = await api.get('/admin/places');
+      return response.data;
+    },
+    getById: async (id) => {
+      const response = await api.get(`/admin/places/${id}`);
+      return response.data;
+    },
+    create: async (placeData) => {
+      const formData = new FormData();
+      formData.append('name', placeData.name);
+      if (placeData.location) formData.append('location', placeData.location);
+      if (placeData.description) formData.append('description', placeData.description);
+      if (placeData.image) formData.append('image', placeData.image);
+      
+      const response = await api.post('/admin/places', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    update: async (id, placeData) => {
+      const formData = new FormData();
+      if (placeData.name) formData.append('name', placeData.name);
+      if (placeData.location) formData.append('location', placeData.location);
+      if (placeData.description) formData.append('description', placeData.description);
+      if (placeData.image) formData.append('image', placeData.image);
+      
+      const response = await api.put(`/admin/places/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    delete: async (id) => {
+      const response = await api.delete(`/admin/places/${id}`);
+      return response.data;
+    },
+  },
+  
+  // Usuarios
+  users: {
+    getAll: async () => {
+      const response = await api.get('/admin/users');
+      return response.data;
+    },
+    getById: async (id) => {
+      const response = await api.get(`/admin/users/${id}`);
+      return response.data;
+    },
+    create: async (userData) => {
+      const response = await api.post('/admin/users', userData);
+      return response.data;
+    },
+    update: async (id, userData) => {
+      const response = await api.put(`/admin/users/${id}`, userData);
+      return response.data;
+    },
+    delete: async (id) => {
+      const response = await api.delete(`/admin/users/${id}`);
+      return response.data;
+    },
   },
 };
 

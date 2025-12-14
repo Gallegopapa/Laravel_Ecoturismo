@@ -22,6 +22,7 @@ class ProfileController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'telefono' => $user->telefono,
                 'fecha_registro' => $user->fecha_registro,
                 'is_admin' => $user->is_admin,
             ]
@@ -38,6 +39,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/'],
             'email' => ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
+            'telefono' => ['nullable', 'string', 'max:20'],
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
@@ -45,6 +47,7 @@ class ProfileController extends Controller
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.email' => 'El correo electrónico debe ser válido.',
             'email.unique' => 'Este correo electrónico ya está en uso.',
+            'telefono.max' => 'El teléfono no puede exceder 20 caracteres.',
         ]);
 
         $user->update($validated);
@@ -55,6 +58,7 @@ class ProfileController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'telefono' => $user->telefono,
                 'fecha_registro' => $user->fecha_registro,
                 'is_admin' => $user->is_admin,
             ]

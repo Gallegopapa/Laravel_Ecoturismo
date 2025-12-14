@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/react/context/AuthContext";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
-import axios from "axios";
+import { profileService } from "@/react/services/api";
 import "./page.css";
 
 const PerfilPage = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, logout, updateUser } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,21 +17,39 @@ const PerfilPage = () => {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Validar que el usuario esté autenticado
+  // Validar que el usuario esté autenticado y cargar datos del perfil
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       navigate("/login", { replace: true });
       return;
     }
 
-    // Cargar datos del usuario
-    if (user) {
-      setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        telefono: user.telefono || "",
-      });
-    }
+    // Cargar datos del usuario desde el contexto o desde la API
+    const loadProfileData = async () => {
+      if (user) {
+        setFormData({
+          name: user.name || "",
+          email: user.email || "",
+          telefono: user.telefono || "",
+        });
+      } else if (isAuthenticated) {
+        // Si hay token pero no hay usuario en el contexto, cargar desde la API
+        try {
+          const response = await profileService.get();
+          if (response.user) {
+            setFormData({
+              name: response.user.name || "",
+              email: response.user.email || "",
+              telefono: response.user.telefono || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error al cargar perfil:", error);
+        }
+      }
+    };
+
+    loadProfileData();
   }, [user, isAuthenticated, loading, navigate]);
 
   // Mostrar loading
@@ -67,8 +85,14 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
-      const response = await axios.put("/perfil", formData);
-      setMessage("Perfil actualizado exitosamente");
+      const response = await profileService.update(formData);
+      setMessage(response.message || "Perfil actualizado exitosamente");
+      
+      // Actualizar el usuario en el contexto
+      if (response.user) {
+        updateUser(response.user);
+      }
+      
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       setMessage(
@@ -81,7 +105,7 @@ const PerfilPage = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("/logout");
+      await logout();
       window.location.href = "/";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);

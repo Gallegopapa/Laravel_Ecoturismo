@@ -28,6 +28,9 @@ import LugaresMontanosos from './react/places2/lugaresMontanosos/page.jsx';
 import ParquesYMas from './react/places2/parquesYMas/page.jsx';
 import TerritoriosDelCafe from './react/places2/territoriosDelCafe/page.jsx';
 
+// Panel de administración
+import AdminPanel from './react/admin/AdminPanel.jsx';
+
 // Crear router
 const router = createBrowserRouter([
   {
@@ -118,6 +121,14 @@ const router = createBrowserRouter([
   {
     path: '/territoriosDelCafe',
     element: <TerritoriosDelCafe />,
+  },
+  {
+    path: '/admin/panel',
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <AdminPanel />
+      </ProtectedRoute>
+    ),
   },
 
   // Fallback para rutas no definidas

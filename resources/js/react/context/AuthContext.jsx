@@ -153,6 +153,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   const value = {
     user,
     loading,
@@ -161,6 +166,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     loadUser,
+    updateUser,
     isAdmin: user?.is_admin || false,
   };
 

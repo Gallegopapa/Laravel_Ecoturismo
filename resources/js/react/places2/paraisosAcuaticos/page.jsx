@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { useAuth } from "@/react/context/AuthContext";
+import { favoritesService, placesService } from "@/react/services/api";
 import "./lugares.css";
 
 export default function ParaisosAcuaticosPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [lugares, setLugares] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [updatingFavorites, setUpdatingFavorites] = useState({});
   
-  const lugares = [
+  // Lugares hardcodeados como fallback (si no hay en BD)
+  const lugaresFallback = [
     {
       id: 1,
       nombre: "Lago De La Pradera",
@@ -74,17 +84,140 @@ export default function ParaisosAcuaticosPage() {
     },
   ];
 
-  const toggleFavorito = (lugar) => {
-    if (favoritos.some(f => f.id === lugar.id)) {
-      setFavoritos(favoritos.filter(f => f.id !== lugar.id));
+  // Cargar lugares y favoritos al iniciar
+  useEffect(() => {
+    loadPlaces();
+    if (isAuthenticated) {
+      loadFavorites();
     } else {
-      setFavoritos([...favoritos, lugar]);
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const loadPlaces = async () => {
+    try {
+      // Intentar cargar lugares desde la API (filtrar por categoría "acuáticos" si existe)
+      const data = await placesService.getAll();
+      if (data && data.length > 0) {
+        setLugares(data);
+      } else {
+        // Si no hay lugares en BD, usar los hardcodeados
+        setLugares(lugaresFallback);
+      }
+    } catch (error) {
+      console.error("Error al cargar lugares:", error);
+      // Si hay error, usar lugares hardcodeados
+      setLugares(lugaresFallback);
     }
   };
 
-  const eliminarFavorito = (id) => {
-    setFavoritos(favoritos.filter(f => f.id !== id));
+  const loadFavorites = async () => {
+    try {
+      setLoading(true);
+      const data = await favoritesService.getAll();
+      setFavoritos(data);
+    } catch (error) {
+      console.error("Error al cargar favoritos:", error);
+      setMessage("Error al cargar favoritos");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const toggleFavorito = async (lugar) => {
+    if (!isAuthenticated) {
+      setMessage("Debes iniciar sesión para agregar favoritos");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      return;
+    }
+
+    const placeId = lugar.id;
+    const isFavorite = favoritos.some(f => f.place_id === placeId || f.place?.id === placeId);
+    
+    // Actualización optimista (cambiar UI inmediatamente)
+    setUpdatingFavorites({ ...updatingFavorites, [placeId]: true });
+    
+    // Crear una copia del estado actual para revertir si falla
+    const previousFavorites = [...favoritos];
+    
+    try {
+      if (isFavorite) {
+        // Eliminar de favoritos - Actualizar estado INMEDIATAMENTE
+        const favorite = favoritos.find(f => f.place_id === placeId || f.place?.id === placeId);
+        const favoritePlaceId = favorite?.place_id || favorite?.place?.id || placeId;
+        
+        // Actualizar estado inmediatamente (optimistic update)
+        setFavoritos(prev => prev.filter(f => (f.place_id !== favoritePlaceId && f.place?.id !== favoritePlaceId)));
+        setMessage("✅ Eliminado de favoritos");
+        
+        // Luego hacer la petición al servidor
+        await favoritesService.remove(favoritePlaceId);
+      } else {
+        // Agregar a favoritos - Actualizar estado INMEDIATAMENTE
+        const newFavorite = {
+          id: Date.now(), // ID temporal
+          place_id: placeId,
+          place: {
+            id: placeId,
+            name: lugar.name || lugar.nombre,
+          }
+        };
+        
+        // Actualizar estado inmediatamente (optimistic update)
+        setFavoritos(prev => [...prev, newFavorite]);
+        setMessage("❤️ Agregado a favoritos");
+        
+        // Luego hacer la petición al servidor
+        await favoritesService.add(placeId);
+        
+        // Recargar favoritos para obtener el objeto completo del servidor
+        const updatedFavorites = await favoritesService.getAll();
+        setFavoritos(updatedFavorites);
+      }
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error al actualizar favorito:", error);
+      
+      // Revertir cambio si falla
+      setFavoritos(previousFavorites);
+      
+      setMessage(error.response?.data?.message || "❌ Error al actualizar favorito");
+      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setUpdatingFavorites({ ...updatingFavorites, [placeId]: false });
+    }
+  };
+
+  const eliminarFavorito = async (favoriteId, placeId) => {
+    try {
+      await favoritesService.remove(placeId);
+      setFavoritos(favoritos.filter(f => f.id !== favoriteId));
+      setMessage("Eliminado de favoritos");
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error al eliminar favorito:", error);
+      setMessage("Error al eliminar favorito");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
+  const isFavorite = (lugarId) => {
+    return favoritos.some(f => f.place_id === lugarId || f.place?.id === lugarId);
+  };
+
+  if (loading && isAuthenticated) {
+    return (
+      <>
+        <Header2 />
+        <div style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
+          <p>Cargando favoritos...</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -92,26 +225,44 @@ export default function ParaisosAcuaticosPage() {
       <div className="contenedorTodo" style={{ marginTop: "100px" }}>
         <h1>Lugares Acuáticos</h1>
 
-        <button 
-          className="mostrar-favoritos" 
-          onClick={() => setPopupVisible(true)}
-        >
-          Favoritos (<span>{favoritos.length}</span>)
-        </button>
+        {message && (
+          <div style={{
+            padding: "12px 20px",
+            margin: "10px 0",
+            backgroundColor: message.includes("❌") || message.includes("Error") ? "#fee" : "#efe",
+            color: message.includes("❌") || message.includes("Error") ? "#c00" : "#0a0",
+            borderRadius: "8px",
+            textAlign: "center",
+            fontWeight: "500",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            animation: "slideDown 0.3s ease"
+          }}>
+            {message}
+          </div>
+        )}
+
+        {isAuthenticated && (
+          <button 
+            className="mostrar-favoritos" 
+            onClick={() => setPopupVisible(true)}
+          >
+            Favoritos (<span>{favoritos.length}</span>)
+          </button>
+        )}
 
         <div className="contenedor">
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id}>
-                <img src={lugar.imagen} alt={lugar.nombre} />
-                <h4>{lugar.nombre}</h4>
-                <p className="ubicacion-text">{lugar.ubicacion}</p>
-                <p className="descripcion">{lugar.descripcion}</p>
+                <img src={lugar.image || lugar.imagen || "https://picsum.photos/400/300"} alt={lugar.name || lugar.nombre} />
+                <h4>{lugar.name || lugar.nombre}</h4>
+                <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
+                <p className="descripcion">{lugar.description || lugar.descripcion}</p>
 
                 <div className="card-actions">
                   <div className="action-buttons">
                     <a 
-                      href={lugar.mapa} 
+                      href={lugar.map || lugar.mapa || "#"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="map-button"
@@ -129,9 +280,16 @@ export default function ParaisosAcuaticosPage() {
                   <button 
                     className="favorito" 
                     onClick={() => toggleFavorito(lugar)}
-                    title={favoritos.some(f => f.id === lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                    disabled={updatingFavorites[lugar.id]}
+                    title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                    style={{
+                      opacity: updatingFavorites[lugar.id] ? 0.6 : 1,
+                      cursor: updatingFavorites[lugar.id] ? "wait" : "pointer",
+                      transition: "all 0.3s ease",
+                      transform: updatingFavorites[lugar.id] ? "scale(0.9)" : "scale(1)"
+                    }}
                   >
-                    {favoritos.some(f => f.id === lugar.id) ? "❤️" : "🤍"}
+                    {updatingFavorites[lugar.id] ? "⏳" : (isFavorite(lugar.id) ? "❤️" : "🤍")}
                   </button>
                 </div>
               </div>
@@ -154,17 +312,21 @@ export default function ParaisosAcuaticosPage() {
                 <p className="mensaje-vacio">No has agregado ningún lugar aún.</p>
               ) : (
                 <ul className="favoritos-list">
-                  {favoritos.map(f => (
-                    <li key={f.id}>
-                      {f.nombre}
-                      <button 
-                        className="eliminar-favorito" 
-                        onClick={() => eliminarFavorito(f.id)}
-                      >
-                        ❌
-                      </button>
-                    </li>
-                  ))}
+                  {favoritos.map(f => {
+                    const placeId = f.place_id || f.place?.id;
+                    const placeName = f.place?.name || f.nombre || "Lugar sin nombre";
+                    return (
+                      <li key={f.id}>
+                        {placeName}
+                        <button 
+                          className="eliminar-favorito" 
+                          onClick={() => eliminarFavorito(f.id, placeId)}
+                        >
+                          ❌
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

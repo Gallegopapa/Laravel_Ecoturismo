@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, loading, isAdmin } = useAuth();
+  const { isAuthenticated, loading, isAdmin, user } = useAuth();
 
   if (loading) {
     return (
@@ -22,7 +22,8 @@ export const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/" replace />;
+    console.log('Usuario no es admin:', { user, isAdmin, requireAdmin });
+    return <Navigate to="/pagLogueados" replace />;
   }
 
   return children;

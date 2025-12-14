@@ -11,6 +11,8 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\MessageController;
+use App\Http\Controllers\API\AdminPlaceController;
+use App\Http\Controllers\API\AdminUserController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
@@ -67,10 +69,30 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Rutas de favoritos
     Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::get('/favorites/check/{placeId}', [FavoriteController::class, 'check']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{placeId}', [FavoriteController::class, 'destroy']);
     
     // Rutas de pagos (BOCETO)
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::post('/payments', [PaymentController::class, 'store']);
+    
+    // ============================================
+    // RUTAS DE ADMIN API (requieren autenticación + admin)
+    // ============================================
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        // Rutas de lugares para admin
+        Route::get('/places', [AdminPlaceController::class, 'index']);
+        Route::get('/places/{place}', [AdminPlaceController::class, 'show']);
+        Route::post('/places', [AdminPlaceController::class, 'store']);
+        Route::put('/places/{place}', [AdminPlaceController::class, 'update']);
+        Route::delete('/places/{place}', [AdminPlaceController::class, 'destroy']);
+        
+        // Rutas de usuarios para admin
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::post('/users', [AdminUserController::class, 'store']);
+        Route::put('/users/{user}', [AdminUserController::class, 'update']);
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+    });
 });

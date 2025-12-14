@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { useAuth } from "@/react/context/AuthContext";
+import { favoritesService } from "@/react/services/api";
 import "./lugares.css";
 
 export default function ParquesYMasPage() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [favoritos, setFavoritos] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   const lugares = [
     {
@@ -58,17 +65,89 @@ export default function ParquesYMasPage() {
     },
   ];
 
-  const toggleFavorito = (lugar) => {
-    if (favoritos.some(f => f.id === lugar.id)) {
-      setFavoritos(favoritos.filter(f => f.id !== lugar.id));
+  // Cargar favoritos al iniciar
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadFavorites();
     } else {
-      setFavoritos([...favoritos, lugar]);
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  const loadFavorites = async () => {
+    try {
+      setLoading(true);
+      const data = await favoritesService.getAll();
+      setFavoritos(data);
+    } catch (error) {
+      console.error("Error al cargar favoritos:", error);
+      setMessage("Error al cargar favoritos");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const eliminarFavorito = (id) => {
-    setFavoritos(favoritos.filter(f => f.id !== id));
+  const toggleFavorito = async (lugar) => {
+    if (!isAuthenticated) {
+      setMessage("Debes iniciar sesión para agregar favoritos");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      return;
+    }
+
+    const isFavorite = favoritos.some(f => f.place_id === lugar.id || f.place?.id === lugar.id);
+    
+    try {
+      if (isFavorite) {
+        // Eliminar de favoritos
+        const favorite = favoritos.find(f => f.place_id === lugar.id || f.place?.id === lugar.id);
+        const placeId = favorite?.place_id || favorite?.place?.id || lugar.id;
+        await favoritesService.remove(placeId);
+        setFavoritos(favoritos.filter(f => (f.place_id !== placeId && f.place?.id !== placeId)));
+        setMessage("Eliminado de favoritos");
+      } else {
+        // Agregar a favoritos
+        await favoritesService.add(lugar.id);
+        await loadFavorites(); // Recargar para obtener el favorito completo
+        setMessage("Agregado a favoritos");
+      }
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error al actualizar favorito:", error);
+      setMessage(error.response?.data?.message || "Error al actualizar favorito");
+      setTimeout(() => setMessage(""), 3000);
+    }
   };
+
+  const eliminarFavorito = async (favoriteId, placeId) => {
+    try {
+      await favoritesService.remove(placeId);
+      setFavoritos(favoritos.filter(f => f.id !== favoriteId));
+      setMessage("Eliminado de favoritos");
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error al eliminar favorito:", error);
+      setMessage("Error al eliminar favorito");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
+  const isFavorite = (lugarId) => {
+    return favoritos.some(f => f.place_id === lugarId || f.place?.id === lugarId);
+  };
+
+  if (loading && isAuthenticated) {
+    return (
+      <>
+        <Header2 />
+        <div style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
+          <p>Cargando favoritos...</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -76,12 +155,27 @@ export default function ParquesYMasPage() {
       <div className="contenedorTodo" style={{ marginTop: "100px" }}>
         <h1>Parques y Más</h1>
 
-        <button 
-          className="mostrar-favoritos" 
-          onClick={() => setPopupVisible(true)}
-        >
-          Favoritos (<span>{favoritos.length}</span>)
-        </button>
+        {message && (
+          <div style={{
+            padding: "10px",
+            margin: "10px 0",
+            backgroundColor: message.includes("Error") ? "#fee" : "#efe",
+            color: message.includes("Error") ? "#c00" : "#0a0",
+            borderRadius: "5px",
+            textAlign: "center"
+          }}>
+            {message}
+          </div>
+        )}
+
+        {isAuthenticated && (
+          <button 
+            className="mostrar-favoritos" 
+            onClick={() => setPopupVisible(true)}
+          >
+            Favoritos (<span>{favoritos.length}</span>)
+          </button>
+        )}
 
         <div className="contenedor">
           <div className="cards">
@@ -113,9 +207,9 @@ export default function ParquesYMasPage() {
                   <button 
                     className="favorito" 
                     onClick={() => toggleFavorito(lugar)}
-                    title={favoritos.some(f => f.id === lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                    title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                   >
-                    {favoritos.some(f => f.id === lugar.id) ? "❤️" : "🤍"}
+                    {isFavorite(lugar.id) ? "❤️" : "🤍"}
                   </button>
                 </div>
               </div>
@@ -138,17 +232,21 @@ export default function ParquesYMasPage() {
                 <p className="mensaje-vacio">No has agregado ningún lugar aún.</p>
               ) : (
                 <ul className="favoritos-list">
-                  {favoritos.map(f => (
-                    <li key={f.id}>
-                      {f.titulo}
-                      <button 
-                        className="eliminar-favorito" 
-                        onClick={() => eliminarFavorito(f.id)}
-                      >
-                        ❌
-                      </button>
-                    </li>
-                  ))}
+                  {favoritos.map(f => {
+                    const placeId = f.place_id || f.place?.id;
+                    const placeName = f.place?.name || f.titulo || "Lugar sin nombre";
+                    return (
+                      <li key={f.id}>
+                        {placeName}
+                        <button 
+                          className="eliminar-favorito" 
+                          onClick={() => eliminarFavorito(f.id, placeId)}
+                        >
+                          ❌
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

@@ -9,6 +9,23 @@ use Illuminate\Http\JsonResponse;
 
 class FavoriteController extends Controller
 {
+    /**
+     * Verificar si un lugar está en favoritos
+     */
+    public function check(Request $request, $placeId): JsonResponse
+    {
+        $user = $request->user();
+        
+        $favorite = Favorite::where('user_id', $user->id)
+            ->where('place_id', $placeId)
+            ->first();
+
+        return response()->json([
+            'is_favorite' => $favorite !== null,
+            'favorite_id' => $favorite ? $favorite->id : null,
+        ]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -16,7 +33,23 @@ class FavoriteController extends Controller
             ->with('place')
             ->get();
 
-        return response()->json($favorites);
+        return response()->json([
+            'favorites' => $favorites->map(function ($favorite) {
+                return [
+                    'id' => $favorite->id,
+                    'place_id' => $favorite->place_id,
+                    'place' => $favorite->place ? [
+                        'id' => $favorite->place->id,
+                        'name' => $favorite->place->name,
+                        'description' => $favorite->place->description,
+                        'location' => $favorite->place->location,
+                        'image' => $favorite->place->image,
+                    ] : null,
+                    'created_at' => $favorite->created_at,
+                ];
+            }),
+            'count' => $favorites->count(),
+        ]);
     }
 
     public function store(Request $request): JsonResponse
@@ -43,7 +76,17 @@ class FavoriteController extends Controller
 
         $favorite->load('place');
 
-        return response()->json($favorite, 201);
+        return response()->json([
+            'message' => 'Lugar agregado a favoritos exitosamente',
+            'favorite' => [
+                'id' => $favorite->id,
+                'place_id' => $favorite->place_id,
+                'place' => $favorite->place ? [
+                    'id' => $favorite->place->id,
+                    'name' => $favorite->place->name,
+                ] : null,
+            ],
+        ], 201);
     }
 
     public function destroy(Request $request, $placeId): JsonResponse
@@ -60,6 +103,9 @@ class FavoriteController extends Controller
 
         $favorite->delete();
 
-        return response()->json(['message' => 'Eliminado de favoritos']);
+        return response()->json([
+            'message' => 'Lugar eliminado de favoritos exitosamente',
+            'place_id' => (int) $placeId,
+        ]);
     }
 }
