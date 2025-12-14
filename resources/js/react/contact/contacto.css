@@ -116,6 +116,102 @@ form {
   transition: 0.3s;
 }
 
+/* ===== INPUTS TRANSPARENTES CON BORDE BLANCO ===== */
+
+.input,
+textarea.input {
+  background-color: transparent !important;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+/* Focus */
+.input:focus,
+textarea.input:focus {
+  outline: none;
+  border-color: #ffffff;
+  background-color: transparent;
+}
+
+/* Placeholder */
+.input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Autofill (Chrome, Edge) */
+input:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Hover opcional */
+.input:hover,
+textarea.input:hover {
+  border-color: #ffffff;
+}
+
+/* ============================= */
+/* INPUTS TAMAÑO EXACTO IMAGEN */
+/* ============================= */
+
+.contact-form .input {
+  height: 42px;                 /* ← más pequeño */
+  padding: 0 1.2rem;            /* ← menos alto */
+  border: 2px solid #ffffff;
+  background-color: transparent !important;
+  color: #ffffff;
+  font-size: 0.9rem;
+  border-radius: 30px;
+}
+
+/* Textarea proporcional */
+.contact-form textarea.input {
+  min-height: 120px;            /* ← más bajo */
+  padding: 0.8rem 1.2rem;
+  border-radius: 22px;
+}
+
+/* Focus limpio */
+.contact-form .input:focus,
+.contact-form textarea.input:focus {
+  outline: none;
+  border-color: #ffffff;
+  background-color: transparent;
+}
+
+/* Label ajustado al nuevo tamaño */
+.contact-form .input-container label {
+  font-size: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #27ae60;
+  padding: 0 6px;
+}
+
+/* Label flotante */
+.contact-form .input-container.focus label {
+  top: 0;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+}
+
+/* Elimina cortes del borde */
+.contact-form .input-container span {
+  display: none;
+}
+
+/* Autofill */
+input:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+
+
 textarea.input {
   padding: 0.8rem 1.2rem;
   min-height: 150px;
