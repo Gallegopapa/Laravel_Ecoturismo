@@ -276,6 +276,8 @@ export const adminService = {
       formData.append('name', placeData.name);
       if (placeData.location) formData.append('location', placeData.location);
       if (placeData.description) formData.append('description', placeData.description);
+      if (placeData.latitude) formData.append('latitude', placeData.latitude);
+      if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
       const response = await api.post('/admin/places', formData, {
@@ -291,6 +293,8 @@ export const adminService = {
       if (placeData.name) formData.append('name', placeData.name);
       if (placeData.location) formData.append('location', placeData.location);
       if (placeData.description) formData.append('description', placeData.description);
+      if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
+      if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
       // Usar POST con _method=PUT para FormData (más compatible)

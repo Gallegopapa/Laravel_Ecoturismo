@@ -12,6 +12,8 @@ const PlacesAdmin = () => {
     location: '',
     description: '',
     image: null,
+    latitude: '',
+    longitude: '',
   });
 
   useEffect(() => {
@@ -75,6 +77,8 @@ const PlacesAdmin = () => {
         name: placeData.name || '',
         location: placeData.location || '',
         description: placeData.description || '',
+        latitude: placeData.latitude || '',
+        longitude: placeData.longitude || '',
         image: null,
       });
       // Scroll al formulario
@@ -107,6 +111,8 @@ const PlacesAdmin = () => {
       location: '',
       description: '',
       image: null,
+      latitude: '',
+      longitude: '',
     });
     // Reset file input
     const fileInput = document.getElementById('place-image');
@@ -147,13 +153,52 @@ const PlacesAdmin = () => {
 
           <div className="form-group">
             <label>
-              Ubicación
+              Ubicación (dirección o descripción)
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
+                placeholder="Ej: Pereira, Risaralda"
               />
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Coordenadas (para el mapa)
+              <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                <input
+                  type="number"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleInputChange}
+                  placeholder="Latitud (ej: 4.814)"
+                  step="any"
+                  style={{ flex: 1 }}
+                />
+                <input
+                  type="number"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleInputChange}
+                  placeholder="Longitud (ej: -75.694)"
+                  step="any"
+                  style={{ flex: 1 }}
+                />
+              </div>
+              <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                💡 Puedes obtener las coordenadas desde{' '}
+                <a 
+                  href="https://www.google.com/maps" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ color: '#2ecc71' }}
+                >
+                  Google Maps
+                </a>
+                {' '}haciendo clic derecho en el lugar → "¿Qué hay aquí?"
+              </small>
             </label>
           </div>
 
@@ -223,6 +268,15 @@ const PlacesAdmin = () => {
                   </td>
                   <td>{place.name}</td>
                   <td>{place.location || '-'}</td>
+                  <td>
+                    {place.latitude && place.longitude ? (
+                      <span style={{ fontSize: '0.85rem', fontFamily: 'monospace' }}>
+                        {parseFloat(place.latitude).toFixed(6)}, {parseFloat(place.longitude).toFixed(6)}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#999', fontSize: '0.85rem' }}>Sin coordenadas</span>
+                    )}
+                  </td>
                   <td>
                     <button
                       onClick={() => handleEdit(place)}

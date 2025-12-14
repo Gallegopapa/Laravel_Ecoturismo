@@ -37,10 +37,16 @@ class AdminPlaceController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB máximo
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
             'image.max' => 'La imagen no puede exceder 5MB.',
+            'latitude.numeric' => 'La latitud debe ser un número.',
+            'latitude.between' => 'La latitud debe estar entre -90 y 90.',
+            'longitude.numeric' => 'La longitud debe ser un número.',
+            'longitude.between' => 'La longitud debe estar entre -180 y 180.',
         ]);
 
         // Manejar subida de imagen
@@ -69,10 +75,16 @@ class AdminPlaceController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
             'image.max' => 'La imagen no puede exceder 5MB.',
+            'latitude.numeric' => 'La latitud debe ser un número.',
+            'latitude.between' => 'La latitud debe estar entre -90 y 90.',
+            'longitude.numeric' => 'La longitud debe ser un número.',
+            'longitude.between' => 'La longitud debe estar entre -180 y 180.',
         ]);
 
         // Manejar subida de nueva imagen
