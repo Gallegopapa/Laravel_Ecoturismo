@@ -24,7 +24,7 @@ export default function ParquesYMasPage() {
       titulo: "Parque Nacional Natural Tatamá",
       ubicacion: "Pueblo Rico, Risaralda",
       descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      imagen: "https://picsum.photos/id/1015/400/300",
+      imagen: "/imagenes/tatama.jpg",
       mapa: "https://maps.app.goo.gl/hPSphPUBmXGBqeGJ6",
     },
     {
@@ -32,7 +32,7 @@ export default function ParquesYMasPage() {
       titulo: "Parque Las Araucarias",
       ubicacion: "Santa Rosa de Cabal, Risaralda",
       descripcion: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      imagen: "https://picsum.photos/id/1018/400/300",
+      imagen: "/imagenes/araucarias.jpg",
       mapa: "https://maps.app.goo.gl/SDZUo3UZpzU3YWq28",
     },
     {
@@ -40,7 +40,7 @@ export default function ParquesYMasPage() {
       titulo: "Parque Regional Natural Cuchilla de San Juan",
       ubicacion: "Belén de Umbría, Risaralda",
       descripcion: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      imagen: "https://picsum.photos/id/1020/400/300",
+      imagen: "/imagenes/cuchilla.jpg",
       mapa: "https://maps.app.goo.gl/2uWtBq8BNCCHuCft9",
     },
     {
@@ -48,7 +48,7 @@ export default function ParquesYMasPage() {
       titulo: "Parque Natural Regional Santa Emilia",
       ubicacion: "Belén de Umbría, Risaralda",
       descripcion: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      imagen: "https://picsum.photos/id/1021/400/300",
+      imagen: "/imagenes/santaemilia2.jpg",
       mapa: "https://maps.app.goo.gl/5G6AXY18b8hAwdfW6",
     },
     {
@@ -56,7 +56,7 @@ export default function ParquesYMasPage() {
       titulo: "Jardín Botánico UTP",
       ubicacion: "Pereira, Risaralda",
       descripcion: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-      imagen: "https://picsum.photos/id/1022/400/300",
+      imagen: "/imagenes/jardin.jpeg",
       mapa: "https://maps.app.goo.gl/hhkmfB9owU9PcB6Z7",
     },
     {
@@ -64,7 +64,7 @@ export default function ParquesYMasPage() {
       titulo: "Jardín Botánico De Marsella",
       ubicacion: "Marsella, Risaralda",
       descripcion: "Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt.",
-      imagen: "https://picsum.photos/id/1023/400/300",
+      imagen: "/imagenes/jardinmarsella2.jpg",
       mapa: "https://maps.app.goo.gl/L2ysAcHE6EvuNq3U7",
     },
   ];

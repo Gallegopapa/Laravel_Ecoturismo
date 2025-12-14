@@ -25,7 +25,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Lago De La Pradera",
       ubicacion: "La Pradera - Dosquebradas, Risaralda",
       descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      imagen: "https://picsum.photos/id/1001/400/300",
+      imagen: "/imagenes/Lago.jpeg",
       mapa: "https://maps.app.goo.gl/M6RgB1GUYqJwGdGfA",
     },
     {
@@ -33,7 +33,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "La Laguna Del Otún",
       ubicacion: "Pereira, Santa Rosa, Risaralda",
       descripcion: "Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      imagen: "https://picsum.photos/id/1002/400/300",
+      imagen: "/imagenes/laguna.jpg",
       mapa: "https://maps.app.goo.gl/ndHDFrHHQYfNt8n19",
     },
     {
@@ -41,7 +41,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Chorros De Don Lolo",
       ubicacion: "Santa Rosa, Risaralda",
       descripcion: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error.",
-      imagen: "https://picsum.photos/id/1003/400/300",
+      imagen: "/imagenes/lolo-2.jpg",
       mapa: "https://maps.app.goo.gl/iraGYyGvchLDCFaj8",
     },
     {
@@ -49,7 +49,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Termales de Santa Rosa",
       ubicacion: "Santa Rosa, Risaralda",
       descripcion: "Sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt.",
-      imagen: "https://picsum.photos/id/1004/400/300",
+      imagen: "/imagenes/termaales.jpg",
       mapa: "https://maps.app.goo.gl/zTkAVYrmFBmFvJCv7",
     },
     {
@@ -57,7 +57,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Parque Acuático Consota",
       ubicacion: "Pereira - Cerritos, Risaralda",
       descripcion: "Explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-      imagen: "https://picsum.photos/id/1005/400/300",
+      imagen: "/imagenes/consota.jpg",
       mapa: "https://maps.app.goo.gl/Xe4dhpqnBSzML98b8",
     },
     {
@@ -65,7 +65,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Balneario Los Farallones",
       ubicacion: "La Virginia, Risaralda",
       descripcion: "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore.",
-      imagen: "https://picsum.photos/id/1006/400/300",
+      imagen: "/imagenes/farallones.jpeg",
       mapa: "https://maps.app.goo.gl/XbZoEF6SsNpzKCL88",
     },
     {
@@ -73,7 +73,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Cascada Los Frailes",
       ubicacion: "La Florida - Pereira, Risaralda",
       descripcion: "Et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi.",
-      imagen: "https://picsum.photos/id/1007/400/300",
+      imagen: "/imagenes/frailes3.jpg",
       mapa: "https://maps.app.goo.gl/PhcdF9sCzFxKAx3p7",
     },
     {
@@ -81,7 +81,7 @@ export default function ParaisosAcuaticosPage() {
       nombre: "Río San José",
       ubicacion: "Cordillera Central - Pereira, Risaralda",
       descripcion: "Consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas.",
-      imagen: "https://picsum.photos/id/1008/400/300",
+      imagen: "/imagenes/sanjose3.jpg",
       mapa: "https://maps.app.goo.gl/LmncErfzPCRCvGvUA",
     },
   ];
@@ -179,7 +179,7 @@ export default function ParaisosAcuaticosPage() {
         
         // Actualizar estado inmediatamente (optimistic update)
         setFavoritos(prev => [...prev, newFavorite]);
-        setMessage("❤️ Agregado a favoritos");
+        setMessage("Agregado a favoritos");
         
         // Luego hacer la petición al servidor
         await favoritesService.add(placeId);
