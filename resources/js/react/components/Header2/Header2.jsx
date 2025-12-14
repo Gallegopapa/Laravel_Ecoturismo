@@ -82,7 +82,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">🏖️</span> Lugares Acuáticos
+                    <span className="icono">🌊</span> Lugares Acuáticos
                   </Link>
                 </li>
                 <li>
@@ -100,7 +100,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">🏞️</span> Parques y Más
+                    <span className="icono">🌱</span> Parques y Más
                   </Link>
                 </li>
                 <li>
