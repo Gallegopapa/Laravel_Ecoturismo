@@ -1,0 +1,23 @@
+.favorites-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.favorites-container h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .favorites-container {
+    padding: 20px 15px;
+  }
+
+  .favorites-container h1 {
+    font-size: 2rem;
+  }
+}
+

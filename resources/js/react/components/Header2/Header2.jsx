@@ -7,18 +7,29 @@ import "./Header2.css";
 const Header2 = () => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [openMenu, setOpenMenu] = useState(false);
-  const dropdownRef = useRef(null);
+  const [openPlacesMenu, setOpenPlacesMenu] = useState(false);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
+  const placesDropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
 
-  const toggleMenu = () => {
-    setOpenMenu((prev) => !prev);
+  const togglePlacesMenu = () => {
+    setOpenPlacesMenu((prev) => !prev);
+    setOpenUserMenu(false); // Cerrar el otro menú
   };
 
-  // Cierra el menú si se hace clic fuera
+  const toggleUserMenu = () => {
+    setOpenUserMenu((prev) => !prev);
+    setOpenPlacesMenu(false); // Cerrar el otro menú
+  };
+
+  // Cierra los menús si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenMenu(false);
+      if (placesDropdownRef.current && !placesDropdownRef.current.contains(event.target)) {
+        setOpenPlacesMenu(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setOpenUserMenu(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -27,9 +38,10 @@ const Header2 = () => {
     };
   }, []);
 
-  // Cierra el menú al hacer clic en un enlace
+  // Cierra los menús al hacer clic en un enlace
   const handleLinkClick = () => {
-    setOpenMenu(false);
+    setOpenPlacesMenu(false);
+    setOpenUserMenu(false);
   };
 
   const handleLogout = async () => {
@@ -51,17 +63,17 @@ const Header2 = () => {
           <Link to="/comentarios2" className="nav-link">Reseñas</Link>
 
           {/* Menú desplegable de Lugares */}
-          <div className="dropdown" ref={dropdownRef}>
+          <div className="dropdown" ref={placesDropdownRef}>
             <button
               className="dropdown-btn"
-              onClick={toggleMenu}
-              aria-expanded={openMenu}
+              onClick={togglePlacesMenu}
+              aria-expanded={openPlacesMenu}
               aria-haspopup="true"
             >
-              Lugares <span className="arrow">{openMenu ? "▲" : "▼"}</span>
+              Lugares <span className="arrow">{openPlacesMenu ? "▲" : "▼"}</span>
             </button>
 
-            {openMenu && (
+            {openPlacesMenu && (
               <ul className="dropdown-menu" role="menu">
                 <li>
                   <Link 
@@ -90,15 +102,91 @@ const Header2 = () => {
                     <span className="icono">🏞️</span> Parques y Más
                   </Link>
                 </li>
+                <li>
+                  <Link 
+                    to="/lugares" 
+                    role="menuitem"
+                    onClick={handleLinkClick}
+                  >
+                    <span className="icono">📍</span> Todos los Lugares
+                  </Link>
+                </li>
               </ul>
             )}
           </div>
 
           <Link to="/contacto" className="nav-link">Contacto</Link>
-          <Link to="/perfil" className="nav-link">👤 {user?.name || "Perfil"}</Link>
-          <button onClick={handleLogout} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>
-            Cerrar Sesión
-          </button>
+
+          {/* Menú desplegable de Usuario */}
+          <div className="dropdown user-dropdown" ref={userDropdownRef}>
+            <button
+              className="dropdown-btn user-menu-btn"
+              onClick={toggleUserMenu}
+              aria-expanded={openUserMenu}
+              aria-haspopup="true"
+            >
+              <span className="user-icon">👤</span>
+              <span className="user-name">{user?.name || "Usuario"}</span>
+              <span className="arrow">{openUserMenu ? "▲" : "▼"}</span>
+            </button>
+
+            {openUserMenu && (
+              <ul className="dropdown-menu user-menu" role="menu">
+                <li>
+                  <Link 
+                    to="/perfil" 
+                    role="menuitem"
+                    onClick={handleLinkClick}
+                  >
+                    <span className="icono">⚙️</span> Mi Perfil
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/reservas" 
+                    role="menuitem"
+                    onClick={handleLinkClick}
+                  >
+                    <span className="icono">📅</span> Mis Reservas
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    to="/favoritos" 
+                    role="menuitem"
+                    onClick={handleLinkClick}
+                  >
+                    <span className="icono">❤️</span> Mis Favoritos
+                  </Link>
+                </li>
+                {isAdmin && (
+                  <>
+                    <li className="menu-divider"></li>
+                    <li>
+                      <Link 
+                        to="/admin/panel" 
+                        role="menuitem"
+                        onClick={handleLinkClick}
+                        className="admin-link"
+                      >
+                        <span className="icono">🛡️</span> Panel de Admin
+                      </Link>
+                    </li>
+                  </>
+                )}
+                <li className="menu-divider"></li>
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="menu-button logout-btn"
+                    role="menuitem"
+                  >
+                    <span className="icono">🚪</span> Cerrar Sesión
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
         </nav>
       </div>
     </header>
