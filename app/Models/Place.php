@@ -16,6 +16,8 @@ class Place extends Model
         'description',
         'location',
         'image',
+        'latitude',
+        'longitude',
     ];
 
     /**

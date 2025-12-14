@@ -46,27 +46,30 @@ const PlacesAdmin = () => {
 
     try {
       if (editingPlace) {
-        await adminService.places.update(editingPlace.id, formData);
-        showMessage('Lugar actualizado correctamente');
+        const result = await adminService.places.update(editingPlace.id, formData);
+        showMessage(result.message || 'Lugar actualizado correctamente');
       } else {
-        await adminService.places.create(formData);
-        showMessage('Lugar creado correctamente');
+        const result = await adminService.places.create(formData);
+        showMessage(result.message || 'Lugar creado correctamente');
       }
       
       resetForm();
-      loadPlaces();
+      await loadPlaces();
     } catch (error) {
       console.error('Error al guardar lugar:', error);
-      showMessage(
-        error.response?.data?.message || 'Error al guardar lugar',
-        'error'
-      );
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data?.errors?.name?.[0]
+        || error.message 
+        || 'Error al guardar lugar';
+      showMessage(errorMessage, 'error');
     }
   };
 
   const handleEdit = async (place) => {
     try {
-      const placeData = await adminService.places.getById(place.id);
+      const response = await adminService.places.getById(place.id);
+      // El controlador devuelve el lugar directamente, pero verificar si está anidado
+      const placeData = response.place || response;
       setEditingPlace(placeData);
       setFormData({
         name: placeData.name || '',
@@ -74,9 +77,11 @@ const PlacesAdmin = () => {
         description: placeData.description || '',
         image: null,
       });
+      // Scroll al formulario
+      document.querySelector('.admin-form-section')?.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
       console.error('Error al cargar lugar:', error);
-      showMessage('Error al cargar lugar', 'error');
+      showMessage('Error al cargar lugar: ' + (error.response?.data?.message || error.message), 'error');
     }
   };
 

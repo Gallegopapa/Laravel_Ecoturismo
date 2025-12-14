@@ -3,18 +3,22 @@ import { useNavigate } from "react-router-dom";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
-import { favoritesService } from "@/react/services/api";
+import { favoritesService, placesService } from "@/react/services/api";
+import ReservationModal from "@/react/components/ReservationModal";
 import "./lugares.css";
 
 export default function LugaresMontanososPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [lugares, setLugares] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
 
-  const lugares = [
+  // Lugares hardcodeados como fallback
+  const lugaresFallback = [
     {
       id: 1,
       titulo: "Alto Del Nudo",
@@ -81,14 +85,42 @@ export default function LugaresMontanososPage() {
     },
   ];
 
-  // Cargar favoritos al iniciar
+  // Cargar lugares y favoritos al iniciar
   useEffect(() => {
+    loadPlaces();
     if (isAuthenticated) {
       loadFavorites();
     } else {
       setLoading(false);
     }
   }, [isAuthenticated]);
+
+  const loadPlaces = async () => {
+    try {
+      setLoading(true);
+      // Obtener categoría "lugares-montanosos" primero
+      const categoriesResponse = await fetch('/api/categories');
+      const categories = await categoriesResponse.json();
+      const montanososCategory = categories.find(cat => cat.slug === 'lugares-montanosos');
+      
+      if (montanososCategory) {
+        const data = await placesService.getAll({ category_id: montanososCategory.id });
+        if (data && data.length > 0) {
+          setLugares(data);
+        } else {
+          setLugares(lugaresFallback);
+        }
+      } else {
+        // Si no encuentra la categoría, usar fallback
+        setLugares(lugaresFallback);
+      }
+    } catch (error) {
+      console.error("Error al cargar lugares:", error);
+      setLugares(lugaresFallback);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadFavorites = async () => {
     try {
@@ -195,15 +227,15 @@ export default function LugaresMontanososPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id}>
-                <img src={lugar.imagen} alt={lugar.titulo} />
-                <h4>{lugar.titulo}</h4>
-                <p className="ubicacion-text">{lugar.ubicacion}</p>
-                <p className="descripcion">{lugar.descripcion}</p>
+                <img src={lugar.image || lugar.imagen || "https://picsum.photos/400/300"} alt={lugar.name || lugar.titulo} />
+                <h4>{lugar.name || lugar.titulo}</h4>
+                <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
+                <p className="descripcion">{lugar.description || lugar.descripcion}</p>
 
                 <div className="card-actions">
                   <div className="action-buttons">
                     <a 
-                      href={lugar.mapa} 
+                      href={lugar.map || lugar.mapa || (lugar.latitude && lugar.longitude ? `https://www.google.com/maps?q=${lugar.latitude},${lugar.longitude}` : "#")} 
                       target="_blank" 
                       rel="noreferrer"
                       className="map-button"
@@ -214,8 +246,20 @@ export default function LugaresMontanososPage() {
                       </svg>
                       <span>Mapa</span>
                     </a>
-                    <button className="info-button">
-                      Más Info
+                    <button 
+                      className="info-button"
+                      onClick={() => {
+                        if (isAuthenticated) {
+                          setReservationModal({ isOpen: true, place: lugar });
+                        } else {
+                          setMessage("Debes iniciar sesión para reservar");
+                          setTimeout(() => {
+                            navigate("/login");
+                          }, 1500);
+                        }
+                      }}
+                    >
+                      Reservar Visita
                     </button>
                   </div>
                   <button 
@@ -230,6 +274,19 @@ export default function LugaresMontanososPage() {
             ))}
           </div>
         </div>
+
+        {/* Modal de reserva */}
+        {reservationModal.isOpen && reservationModal.place && (
+          <ReservationModal
+            place={reservationModal.place}
+            isOpen={reservationModal.isOpen}
+            onClose={() => setReservationModal({ isOpen: false, place: null })}
+            onSuccess={(reservation) => {
+              setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+              setTimeout(() => setMessage(""), 3000);
+            }}
+          />
+        )}
 
         {/* Popup de favoritos */}
         {popupVisible && (

@@ -85,7 +85,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/places', [AdminPlaceController::class, 'index']);
         Route::get('/places/{place}', [AdminPlaceController::class, 'show']);
         Route::post('/places', [AdminPlaceController::class, 'store']);
-        Route::put('/places/{place}', [AdminPlaceController::class, 'update']);
+        Route::post('/places/{place}', [AdminPlaceController::class, 'update']); // POST para FormData con _method=PUT
+        Route::put('/places/{place}', [AdminPlaceController::class, 'update']); // Mantener PUT también por compatibilidad
         Route::delete('/places/{place}', [AdminPlaceController::class, 'destroy']);
         
         // Rutas de usuarios para admin

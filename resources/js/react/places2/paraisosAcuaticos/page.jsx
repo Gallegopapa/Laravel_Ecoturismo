@@ -4,6 +4,7 @@ import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
 import { favoritesService, placesService } from "@/react/services/api";
+import ReservationModal from "@/react/components/ReservationModal";
 import "./lugares.css";
 
 export default function ParaisosAcuaticosPage() {
@@ -15,6 +16,7 @@ export default function ParaisosAcuaticosPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [updatingFavorites, setUpdatingFavorites] = useState({});
+  const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
   
   // Lugares hardcodeados como fallback (si no hay en BD)
   const lugaresFallback = [
@@ -96,18 +98,28 @@ export default function ParaisosAcuaticosPage() {
 
   const loadPlaces = async () => {
     try {
-      // Intentar cargar lugares desde la API (filtrar por categoría "acuáticos" si existe)
-      const data = await placesService.getAll();
-      if (data && data.length > 0) {
-        setLugares(data);
+      setLoading(true);
+      // Obtener categoría "paraisos-acuaticos" primero
+      const categoriesResponse = await fetch('/api/categories');
+      const categories = await categoriesResponse.json();
+      const acuaticosCategory = categories.find(cat => cat.slug === 'paraisos-acuaticos');
+      
+      if (acuaticosCategory) {
+        const data = await placesService.getAll({ category_id: acuaticosCategory.id });
+        if (data && data.length > 0) {
+          setLugares(data);
+        } else {
+          setLugares(lugaresFallback);
+        }
       } else {
-        // Si no hay lugares en BD, usar los hardcodeados
+        // Si no encuentra la categoría, usar fallback
         setLugares(lugaresFallback);
       }
     } catch (error) {
       console.error("Error al cargar lugares:", error);
-      // Si hay error, usar lugares hardcodeados
       setLugares(lugaresFallback);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -273,8 +285,20 @@ export default function ParaisosAcuaticosPage() {
                       </svg>
                       <span>Mapa</span>
                     </a>
-                    <button className="info-button">
-                      Más Info
+                    <button 
+                      className="info-button"
+                      onClick={() => {
+                        if (isAuthenticated) {
+                          setReservationModal({ isOpen: true, place: lugar });
+                        } else {
+                          setMessage("Debes iniciar sesión para reservar");
+                          setTimeout(() => {
+                            navigate("/login");
+                          }, 1500);
+                        }
+                      }}
+                    >
+                      Reservar Visita
                     </button>
                   </div>
                   <button 
@@ -296,6 +320,19 @@ export default function ParaisosAcuaticosPage() {
             ))}
           </div>
         </div>
+
+        {/* Modal de reserva */}
+        {reservationModal.isOpen && reservationModal.place && (
+          <ReservationModal
+            place={reservationModal.place}
+            isOpen={reservationModal.isOpen}
+            onClose={() => setReservationModal({ isOpen: false, place: null })}
+            onSuccess={(reservation) => {
+              setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+              setTimeout(() => setMessage(""), 3000);
+            }}
+          />
+        )}
 
         {/* Popup de favoritos */}
         {popupVisible && (

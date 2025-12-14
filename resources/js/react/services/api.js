@@ -260,12 +260,14 @@ export const adminService = {
     },
     update: async (id, placeData) => {
       const formData = new FormData();
+      formData.append('_method', 'PUT'); // Laravel necesita esto para PUT con FormData
       if (placeData.name) formData.append('name', placeData.name);
       if (placeData.location) formData.append('location', placeData.location);
       if (placeData.description) formData.append('description', placeData.description);
       if (placeData.image) formData.append('image', placeData.image);
       
-      const response = await api.put(`/admin/places/${id}`, formData, {
+      // Usar POST con _method=PUT para FormData (más compatible)
+      const response = await api.post(`/admin/places/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

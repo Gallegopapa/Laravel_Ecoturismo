@@ -65,7 +65,7 @@ class AdminPlaceController extends Controller
     public function update(Request $request, Place $place): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
