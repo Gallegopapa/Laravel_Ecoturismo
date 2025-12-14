@@ -28,7 +28,8 @@ Route::get('/places/{place}', [PlaceController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
 
-// Rutas públicas de reseñas por lugar
+// Rutas públicas de reseñas
+Route::get('/reviews/all', [ReviewController::class, 'all']);
 Route::get('/places/{placeId}/reviews', [ReviewController::class, 'index']);
 
 // Envío de mensajes (público, pero puede incluir user_id si está autenticado)

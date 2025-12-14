@@ -154,6 +154,11 @@ export const reservationsService = {
 
 // Servicios de reseñas
 export const reviewsService = {
+  getAll: async () => {
+    const response = await api.get('/reviews/all');
+    return response.data;
+  },
+
   getByPlace: async (placeId) => {
     const response = await api.get(`/places/${placeId}/reviews`);
     return response.data;

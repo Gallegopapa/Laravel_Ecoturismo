@@ -262,3 +262,14 @@ body {
   box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

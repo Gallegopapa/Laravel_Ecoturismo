@@ -9,6 +9,18 @@ use Illuminate\Http\JsonResponse;
 
 class ReviewController extends Controller
 {
+    /**
+     * Obtener todas las reseñas (público)
+     */
+    public function all(): JsonResponse
+    {
+        $reviews = Review::with(['usuario:id,name', 'place:id,name,location'])
+            ->orderBy('fecha_comentario', 'desc')
+            ->get();
+
+        return response()->json($reviews);
+    }
+
     public function index(Request $request, $placeId): JsonResponse
     {
         $reviews = Review::where('place_id', $placeId)
