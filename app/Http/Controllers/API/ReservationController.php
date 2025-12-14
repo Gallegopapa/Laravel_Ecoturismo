@@ -17,7 +17,7 @@ class ReservationController extends Controller
     {
         $user = $request->user();
         $reservations = Reservation::where('user_id', $user->id)
-            ->with(['place', 'usuario'])
+            ->with(['place', 'usuario:id,name,email,foto_perfil'])
             ->orderBy('fecha_visita', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -186,7 +186,7 @@ class ReservationController extends Controller
     {
         $user = $request->user();
         $reservations = Reservation::where('user_id', $user->id)
-            ->with(['place', 'usuario'])
+            ->with(['place', 'usuario:id,name,email,foto_perfil'])
             ->orderBy('fecha_visita', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();

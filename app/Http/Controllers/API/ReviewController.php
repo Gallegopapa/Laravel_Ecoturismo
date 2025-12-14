@@ -14,7 +14,7 @@ class ReviewController extends Controller
      */
     public function all(): JsonResponse
     {
-        $reviews = Review::with(['usuario:id,name', 'place:id,name,location'])
+        $reviews = Review::with(['usuario:id,name,foto_perfil', 'place:id,name,location'])
             ->orderBy('fecha_comentario', 'desc')
             ->get();
 
@@ -24,7 +24,7 @@ class ReviewController extends Controller
     public function index(Request $request, $placeId): JsonResponse
     {
         $reviews = Review::where('place_id', $placeId)
-            ->with('usuario:id,name')
+            ->with('usuario:id,name,foto_perfil')
             ->orderBy('fecha_comentario', 'desc')
             ->get();
 
@@ -60,7 +60,7 @@ class ReviewController extends Controller
             'fecha_comentario' => now(),
         ]);
 
-        $review->load('usuario:id,name');
+        $review->load('usuario:id,name,foto_perfil');
 
         return response()->json($review, 201);
     }

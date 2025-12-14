@@ -174,7 +174,13 @@ const CommentsPage = () => {
                 )}
                 <div className="in-box">
                   <div className="bx-img">
-                    <img src={usuarioImg} alt={review.usuario?.name || "Usuario"} />
+                    <img 
+                      src={review.usuario?.foto_perfil || usuarioImg} 
+                      alt={review.usuario?.name || "Usuario"}
+                      onError={(e) => {
+                        e.target.src = usuarioImg;
+                      }}
+                    />
                   </div>
                   <div className="bxx-text">
                     <h4>{review.usuario?.name || "Usuario"}</h4>

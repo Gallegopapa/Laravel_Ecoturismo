@@ -192,6 +192,15 @@ header {
   font-size: 18px;
 }
 
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2ecc71;
+  margin-right: 8px;
+}
+
 .user-name {
   max-width: 120px;
   overflow: hidden;

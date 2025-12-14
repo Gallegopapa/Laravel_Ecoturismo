@@ -21,6 +21,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Si es FormData, eliminar Content-Type para que el navegador lo establezca con boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => {
@@ -219,8 +225,24 @@ export const profileService = {
   },
 
   update: async (profileData) => {
-    const response = await api.put('/profile', profileData);
-    return response.data;
+    // Si hay una imagen, usar FormData
+    if (profileData.foto_perfil instanceof File) {
+      const formData = new FormData();
+      formData.append('name', profileData.name);
+      if (profileData.email) formData.append('email', profileData.email);
+      if (profileData.telefono) formData.append('telefono', profileData.telefono);
+      formData.append('foto_perfil', profileData.foto_perfil);
+      
+      // Para FormData, NO establecer Content-Type manualmente
+      // El navegador lo establecerá automáticamente con el boundary correcto
+      // El interceptor ya maneja esto, así que no necesitamos especificar headers aquí
+      const response = await api.post('/profile', formData);
+      return response.data;
+    } else {
+      // Si no hay imagen, enviar JSON normal
+      const response = await api.put('/profile', profileData);
+      return response.data;
+    }
   },
 
   changePassword: async (passwordData) => {

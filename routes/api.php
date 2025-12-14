@@ -47,7 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Perfil de usuario
     Route::get('/profile', [ProfileController::class, 'show']);
-    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile', [ProfileController::class, 'update']); // POST para FormData con imagen
+    Route::put('/profile', [ProfileController::class, 'update']); // PUT para JSON sin imagen
     Route::put('/profile/password', [ProfileController::class, 'changePassword']);
     
     // Rutas de lugares (CRUD completo - solo admin)

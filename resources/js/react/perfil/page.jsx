@@ -4,6 +4,7 @@ import { useAuth } from "@/react/context/AuthContext";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import { profileService } from "@/react/services/api";
+import usuarioImg from "@/react/components/imagenes/usuario.jpg";
 import "./page.css";
 
 const PerfilPage = () => {
@@ -13,7 +14,9 @@ const PerfilPage = () => {
     name: "",
     email: "",
     telefono: "",
+    foto_perfil: null,
   });
+  const [previewImage, setPreviewImage] = useState(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +34,9 @@ const PerfilPage = () => {
           name: user.name || "",
           email: user.email || "",
           telefono: user.telefono || "",
+          foto_perfil: null,
         });
+        setPreviewImage(user.foto_perfil || usuarioImg);
       } else if (isAuthenticated) {
         // Si hay token pero no hay usuario en el contexto, cargar desde la API
         try {
@@ -41,7 +46,9 @@ const PerfilPage = () => {
               name: response.user.name || "",
               email: response.user.email || "",
               telefono: response.user.telefono || "",
+              foto_perfil: null,
             });
+            setPreviewImage(response.user.foto_perfil || usuarioImg);
           }
         } catch (error) {
           console.error("Error al cargar perfil:", error);
@@ -72,11 +79,27 @@ const PerfilPage = () => {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+    
+    if (name === 'foto_perfil' && files && files[0]) {
+      const file = files[0];
+      setFormData((prev) => ({
+        ...prev,
+        foto_perfil: file,
+      }));
+      
+      // Crear preview de la imagen
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -85,18 +108,39 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
+      // Log para debugging
+      console.log('Enviando datos:', {
+        name: formData.name,
+        email: formData.email,
+        telefono: formData.telefono,
+        hasFoto: formData.foto_perfil instanceof File,
+        fotoName: formData.foto_perfil instanceof File ? formData.foto_perfil.name : null,
+      });
+
       const response = await profileService.update(formData);
       setMessage(response.message || "Perfil actualizado exitosamente");
       
       // Actualizar el usuario en el contexto
       if (response.user) {
         updateUser(response.user);
+        // Actualizar preview si se subió nueva imagen
+        if (response.user.foto_perfil) {
+          setPreviewImage(response.user.foto_perfil);
+        }
       }
+      
+      // Limpiar el input de archivo si se guardó correctamente
+      setFormData(prev => ({
+        ...prev,
+        foto_perfil: null,
+      }));
       
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      console.error('Error response:', error.response?.data);
       setMessage(
-        error.response?.data?.message || "Error al actualizar el perfil"
+        error.response?.data?.message || error.message || "Error al actualizar el perfil"
       );
     } finally {
       setIsSubmitting(false);
@@ -126,7 +170,35 @@ const PerfilPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="perfil-form">
+          {/* Sección de foto de perfil */}
+          <div className="profile-photo-section">
+            <div className="photo-preview">
+              <img 
+                src={previewImage || usuarioImg} 
+                alt="Foto de perfil" 
+                className="profile-photo"
+              />
+            </div>
+            <label htmlFor="foto_perfil" className="photo-upload-btn">
+              <input
+                id="foto_perfil"
+                type="file"
+                name="foto_perfil"
+                accept="image/*"
+                onChange={handleChange}
+                style={{ display: 'none' }}
+                disabled={isSubmitting}
+              />
+              {formData.foto_perfil ? 'Cambiar Foto' : 'Subir Foto'}
+            </label>
+            {formData.foto_perfil && (
+              <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '5px' }}>
+                Nueva foto seleccionada: {formData.foto_perfil.name}
+              </p>
+            )}
+          </div>
+
+          <form onSubmit={handleSubmit} className="perfil-form" encType="multipart/form-data">
             <div className="form-group">
               <label htmlFor="name">Nombre:</label>
               <input
@@ -136,6 +208,7 @@ const PerfilPage = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -148,6 +221,7 @@ const PerfilPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -159,6 +233,7 @@ const PerfilPage = () => {
                 name="telefono"
                 value={formData.telefono}
                 onChange={handleChange}
+                disabled={isSubmitting}
               />
             </div>
 

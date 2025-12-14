@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { reservationsService } from '../services/api';
 import Header2 from '../components/Header2/Header2';
 import Footer from '../components/Footer/Footer';
+import usuarioImg from '../components/imagenes/usuario.jpg';
 import './page.css';
 
 const ReservationsPage = () => {
@@ -148,7 +149,28 @@ const ReservationsPage = () => {
             {reservations.map((reservation) => (
               <div key={reservation.id} className="reservation-card">
                 <div className="reservation-header">
-                  <h3>{reservation.place?.name || 'Lugar no disponible'}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <img 
+                      src={reservation.usuario?.foto_perfil || usuarioImg} 
+                      alt={reservation.usuario?.name || 'Usuario'}
+                      style={{
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '2px solid #2ecc71'
+                      }}
+                      onError={(e) => {
+                        e.target.src = usuarioImg;
+                      }}
+                    />
+                    <div>
+                      <h3 style={{ margin: 0 }}>{reservation.place?.name || 'Lugar no disponible'}</h3>
+                      <p style={{ margin: '5px 0 0 0', fontSize: '0.9rem', color: '#666' }}>
+                        Reservado por: {reservation.usuario?.name || 'Usuario'}
+                      </p>
+                    </div>
+                  </div>
                   <span className={`status-badge status-${reservation.estado || 'pendiente'}`}>
                     {reservation.estado || 'Pendiente'}
                   </span>

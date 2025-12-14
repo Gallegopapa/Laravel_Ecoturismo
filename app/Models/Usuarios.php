@@ -22,6 +22,7 @@ class Usuarios extends Authenticatable
         'password',
         'fecha_registro',
         'is_admin',
+        'foto_perfil',
     ];
 
     protected $hidden = [

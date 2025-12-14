@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import icono from "../imagenes/iconoecoturismo.jpg";
+import usuarioImg from "../imagenes/usuario.jpg";
 import "./Header2.css";
 
 const Header2 = () => {
@@ -125,7 +126,14 @@ const Header2 = () => {
               aria-expanded={openUserMenu}
               aria-haspopup="true"
             >
-              <span className="user-icon">👤</span>
+              <img 
+                src={user?.foto_perfil || usuarioImg} 
+                alt={user?.name || "Usuario"}
+                className="user-avatar"
+                onError={(e) => {
+                  e.target.src = usuarioImg;
+                }}
+              />
               <span className="user-name">{user?.name || "Usuario"}</span>
               <span className="arrow">{openUserMenu ? "▲" : "▼"}</span>
             </button>
