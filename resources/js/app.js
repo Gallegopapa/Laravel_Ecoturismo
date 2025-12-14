@@ -6,6 +6,7 @@ import './react/index.css';
 // Importar AuthProvider
 import { AuthProvider } from './react/context/AuthContext';
 import { ProtectedRoute } from './react/components/ProtectedRoute';
+import ErrorBoundary from './react/components/ErrorBoundary';
 
 // Importar componentes
 import App from './react/App.jsx';
@@ -170,8 +171,12 @@ const router = createBrowserRouter([
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ErrorBoundary>
   );
+} else {
+  console.error('No se encontró el elemento #root');
 }
