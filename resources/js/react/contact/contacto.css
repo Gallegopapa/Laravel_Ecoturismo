@@ -121,8 +121,7 @@ form {
 .input,
 textarea.input {
   background-color: transparent !important;
-  border: 2px solid #ffffff;
-  color: #ffffff;
+  border: 2px solid 
 }
 
 /* Focus */

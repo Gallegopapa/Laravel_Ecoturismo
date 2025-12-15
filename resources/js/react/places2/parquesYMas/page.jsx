@@ -253,7 +253,7 @@ export default function ParquesYMasPage() {
                     onClick={() => toggleFavorito(lugar)}
                     title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                   >
-                    {isFavorite(lugar.id) ? "❤️" : "🤍"}
+                    {isFavorite(lugar.id) ? "♥" : "♡"}
                   </button>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export default function ParquesYMasPage() {
             isOpen={reservationModal.isOpen}
             onClose={() => setReservationModal({ isOpen: false, place: null })}
             onSuccess={(reservation) => {
-              setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+              setMessage(`Reserva creada para ${reservationModal.place.name}`);
               setTimeout(() => setMessage(""), 3000);
             }}
           />
@@ -299,7 +299,7 @@ export default function ParquesYMasPage() {
                           className="eliminar-favorito" 
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
-                          ❌
+                          ✕
                         </button>
                       </li>
                     );

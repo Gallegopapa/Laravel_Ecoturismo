@@ -44,12 +44,12 @@ const FavoritesPage = () => {
   const handleRemove = async (favoriteId, placeId) => {
     try {
       await favoritesService.remove(placeId);
-      setMessage('✅ Eliminado de favoritos');
+      setMessage('Eliminado de favoritos');
       await loadFavorites();
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error al eliminar favorito:', error);
-      setMessage('❌ Error al eliminar favorito');
+      setMessage('Error al eliminar favorito');
       setTimeout(() => setMessage(''), 3000);
     }
   };
@@ -179,7 +179,7 @@ const FavoritesPage = () => {
                         onClick={() => handleRemove(favorite.id, place.id || favorite.place_id)}
                         title="Quitar de favoritos"
                       >
-                        ❤️
+                        ♥
                       </button>
                     </div>
                   </div>
@@ -203,7 +203,7 @@ const FavoritesPage = () => {
           isOpen={reservationModal.isOpen}
           onClose={() => setReservationModal({ isOpen: false, place: null })}
           onSuccess={(reservation) => {
-            setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+            setMessage(`Reserva creada para ${reservationModal.place.name}`);
             setTimeout(() => setMessage(""), 3000);
           }}
         />

@@ -82,7 +82,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">🌊</span> Lugares Acuáticos
+                    Lugares Acuáticos
                   </Link>
                 </li>
                 <li>
@@ -91,7 +91,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">⛰️</span> Lugares Montañosos
+                    Lugares Montañosos
                   </Link>
                 </li>
                 <li>
@@ -100,7 +100,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">🌱</span> Parques y Más
+                    Parques y Más
                   </Link>
                 </li>
                 <li>
@@ -109,7 +109,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">📍</span> Todos los Lugares
+                    Todos los Lugares
                   </Link>
                 </li>
               </ul>
@@ -146,7 +146,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">⚙️</span> Mi Perfil
+                    Mi Perfil
                   </Link>
                 </li>
                 <li>
@@ -155,7 +155,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">📅</span> Mis Reservas
+                    Mis Reservas
                   </Link>
                 </li>
                 <li>
@@ -164,7 +164,7 @@ const Header2 = () => {
                     role="menuitem"
                     onClick={handleLinkClick}
                   >
-                    <span className="icono">❤️</span> Mis Favoritos
+                    Mis Favoritos
                   </Link>
                 </li>
                 {isAdmin && (
@@ -177,7 +177,7 @@ const Header2 = () => {
                         onClick={handleLinkClick}
                         className="admin-link"
                       >
-                        <span className="icono">🛡️</span> Panel de Admin
+                        Panel de Admin
                       </Link>
                     </li>
                   </>
@@ -189,7 +189,7 @@ const Header2 = () => {
                     className="menu-button logout-btn"
                     role="menuitem"
                   >
-                    <span className="icono">🚪</span> Cerrar Sesión
+                    Cerrar Sesión
                   </button>
                 </li>
               </ul>

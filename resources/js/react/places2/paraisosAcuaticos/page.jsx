@@ -162,7 +162,7 @@ export default function ParaisosAcuaticosPage() {
         
         // Actualizar estado inmediatamente (optimistic update)
         setFavoritos(prev => prev.filter(f => (f.place_id !== favoritePlaceId && f.place?.id !== favoritePlaceId)));
-        setMessage("✅ Eliminado de favoritos");
+        setMessage("Eliminado de favoritos");
         
         // Luego hacer la petición al servidor
         await favoritesService.remove(favoritePlaceId);
@@ -195,7 +195,7 @@ export default function ParaisosAcuaticosPage() {
       // Revertir cambio si falla
       setFavoritos(previousFavorites);
       
-      setMessage(error.response?.data?.message || "❌ Error al actualizar favorito");
+      setMessage(error.response?.data?.message || "Error al actualizar favorito");
       setTimeout(() => setMessage(""), 3000);
     } finally {
       setUpdatingFavorites({ ...updatingFavorites, [placeId]: false });
@@ -241,8 +241,8 @@ export default function ParaisosAcuaticosPage() {
           <div style={{
             padding: "12px 20px",
             margin: "10px 0",
-            backgroundColor: message.includes("❌") || message.includes("Error") ? "#fee" : "#efe",
-            color: message.includes("❌") || message.includes("Error") ? "#c00" : "#0a0",
+            backgroundColor: message.includes("Error") ? "#fee" : "#efe",
+            color: message.includes("Error") ? "#c00" : "#0a0",
             borderRadius: "8px",
             textAlign: "center",
             fontWeight: "500",
@@ -328,7 +328,7 @@ export default function ParaisosAcuaticosPage() {
             isOpen={reservationModal.isOpen}
             onClose={() => setReservationModal({ isOpen: false, place: null })}
             onSuccess={(reservation) => {
-              setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+              setMessage(`Reserva creada para ${reservationModal.place.name}`);
               setTimeout(() => setMessage(""), 3000);
             }}
           />
@@ -359,7 +359,7 @@ export default function ParaisosAcuaticosPage() {
                           className="eliminar-favorito" 
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
-                          ❌
+                          ✕
                         </button>
                       </li>
                     );

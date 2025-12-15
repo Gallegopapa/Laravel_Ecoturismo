@@ -19,7 +19,7 @@ class PlacesSeeder extends Seeder
             [
                 'name' => 'Parques y Más',
                 'description' => 'Parques naturales, regionales y jardines botánicos',
-                'icon' => '🌳'
+                'icon' => ''
             ]
         );
 
@@ -28,7 +28,7 @@ class PlacesSeeder extends Seeder
             [
                 'name' => 'Paraísos Acuáticos',
                 'description' => 'Lagos, lagunas, ríos, cascadas y balnearios',
-                'icon' => '💧'
+                'icon' => ''
             ]
         );
 
@@ -37,7 +37,7 @@ class PlacesSeeder extends Seeder
             [
                 'name' => 'Lugares Montañosos',
                 'description' => 'Cerros, altos, reservas naturales y miradores',
-                'icon' => '⛰️'
+                'icon' => ''
             ]
         );
 

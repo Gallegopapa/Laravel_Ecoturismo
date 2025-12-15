@@ -121,7 +121,7 @@ const PlacesPage = () => {
         };
         
         setFavoritos(prev => [...prev, newFavorite]);
-        setMessage("❤️ Agregado a favoritos");
+        setMessage("Agregado a favoritos");
         
         await favoritesService.add(placeId);
         
@@ -196,8 +196,8 @@ const PlacesPage = () => {
           <div style={{
             padding: "12px 20px",
             margin: "10px 0",
-            backgroundColor: message.includes("❌") || message.includes("Error") ? "#fee" : "#efe",
-            color: message.includes("❌") || message.includes("Error") ? "#c00" : "#0a0",
+            backgroundColor: message.includes("Error") ? "#fee" : "#efe",
+            color: message.includes("Error") ? "#c00" : "#0a0",
             borderRadius: "8px",
             textAlign: "center",
             fontWeight: "500",
@@ -263,7 +263,6 @@ const PlacesPage = () => {
                 e.target.style.boxShadow = "0 2px 8px rgba(46, 204, 113, 0.3)";
               }}
             >
-              <span>🗺️</span>
               <span>Ver en Mapa</span>
             </Link>
           </div>
@@ -361,7 +360,7 @@ const PlacesPage = () => {
                                 transform: updatingFavorites[lugar.id] ? "scale(0.9)" : "scale(1)"
                               }}
                             >
-                              {updatingFavorites[lugar.id] ? "⏳" : (isFavorite(lugar.id) ? "❤️" : "🤍")}
+                              {updatingFavorites[lugar.id] ? "..." : (isFavorite(lugar.id) ? "♥" : "♡")}
                             </button>
                           )}
                         </div>
@@ -430,7 +429,7 @@ const PlacesPage = () => {
                               transform: updatingFavorites[lugar.id] ? "scale(0.9)" : "scale(1)"
                             }}
                           >
-                            {updatingFavorites[lugar.id] ? "⏳" : (isFavorite(lugar.id) ? "❤️" : "🤍")}
+                            {updatingFavorites[lugar.id] ? "..." : (isFavorite(lugar.id) ? "♥" : "♡")}
                           </button>
                         )}
                       </div>
@@ -457,7 +456,7 @@ const PlacesPage = () => {
             </p>
           ) : (
             <p>
-              Explora más lugares y agrégalos a tus favoritos ❤️
+              Explora más lugares y agrégalos a tus favoritos
             </p>
           )}
         </div>
@@ -469,7 +468,7 @@ const PlacesPage = () => {
             isOpen={reservationModal.isOpen}
             onClose={() => setReservationModal({ isOpen: false, place: null })}
             onSuccess={(reservation) => {
-              setMessage(`✅ Reserva creada para ${reservationModal.place.name}`);
+              setMessage(`Reserva creada para ${reservationModal.place.name}`);
               setTimeout(() => setMessage(""), 3000);
             }}
           />
@@ -500,7 +499,7 @@ const PlacesPage = () => {
                           className="eliminar-favorito" 
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
-                          ❌
+                          ✕
                         </button>
                       </li>
                     );
