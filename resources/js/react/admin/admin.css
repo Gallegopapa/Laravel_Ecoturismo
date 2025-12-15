@@ -3,6 +3,8 @@
   margin: 20px auto;
   padding: 20px;
   background: #fff;
+  margin-top: 100px !important;
+  margin-bottom: 100px !important;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
@@ -78,6 +80,7 @@
 
 .admin-form-section,
 .admin-list-section {
+  margin-bottom: 100px !important;
   background: #f9f9f9;
   padding: 20px;
   border-radius: 8px;

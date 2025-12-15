@@ -10,6 +10,7 @@ const Header2 = () => {
   const navigate = useNavigate();
   const [openPlacesMenu, setOpenPlacesMenu] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const placesDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
 
@@ -43,6 +44,15 @@ const Header2 = () => {
   const handleLinkClick = () => {
     setOpenPlacesMenu(false);
     setOpenUserMenu(false);
+    setMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+    if (!mobileMenuOpen) {
+      setOpenPlacesMenu(false);
+      setOpenUserMenu(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -60,7 +70,21 @@ const Header2 = () => {
           </div>
         </Link>
 
-        <nav className="navbar">
+        {/* Botón hamburguesa */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          <span className={mobileMenuOpen ? "hamburger open" : "hamburger"}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
           <Link to="/comentarios2" className="nav-link">Reseñas</Link>
 
           {/* Menú desplegable de Lugares */}

@@ -350,6 +350,7 @@
 @media (max-width: 768px) {
   .place-detail-container {
     padding: 20px 15px;
+    margin-top: 80px !important;
   }
 
   .place-detail-main {
@@ -364,16 +365,43 @@
   .place-detail-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 15px;
   }
 
   .place-header-actions {
     width: 100%;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .favorite-button,
-  .map-link-button {
-    flex: 1;
+  .map-link-button,
+  .reserve-button,
+  .back-button {
+    width: 100%;
     justify-content: center;
+  }
+
+  .place-main-image {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .place-detail-container {
+    padding: 15px 10px;
+  }
+
+  .place-title {
+    font-size: 1.5rem;
+  }
+
+  .place-main-image {
+    height: 250px;
+  }
+
+  .place-description h2 {
+    font-size: 1.2rem;
   }
 }
 

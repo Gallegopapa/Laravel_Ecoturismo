@@ -10,23 +10,22 @@
     padding: 28px 16px;
     box-sizing: border-box;
     text-align: center;
-    position: fixed;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 50;
     background: rgba(255,255,255,0.98);
     box-shadow: 0 -6px 18px rgba(15,23,42,0.04);
-
 }
+
 footer {
     background-color: rgba(255, 255, 255, 0.9);
     color: rgb(44, 62, 80);
-    height: 10vh;
     width: 100%;
-    line-height: 0.5;
+    line-height: 1.5;
     font-size: 14px;
-    position: static;
+    position: relative;
     bottom: 0px;
     text-align: center;
     padding: 20px 0px;
@@ -38,7 +37,8 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    padding: 0 10px;
 }
 
 .footer-copy{
@@ -46,31 +46,111 @@ footer {
     font-size: 14px;
     color: var(--footer-text);
     letter-spacing: 0.2px;
+    line-height: 1.4;
 }
 
 .footer-links{
     margin: 0;
     font-size: 14px;
     color: var(--footer-text);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
 .footer-links a{
     color: var(--footer-text);
     text-decoration: none;
-    margin: 0 6px;
+    padding: 4px 8px;
+    transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 .footer-links .sep{
     color: var(--footer-muted);
-    margin: 0 6px;
+    display: inline-block;
 }
 
 .footer-links a:hover{
     text-decoration: underline;
+    color: #2ecc71;
 }
 
-@media (max-width: 420px){
-    .containerFooter{ padding: 20px 12px; margin-top: -36px; }
-    .footer-inner{ gap: 6px; }
+/* Responsive para tablets */
+@media (max-width: 768px) {
+    .containerFooter {
+        padding: 24px 16px;
+    }
+
+    .footer-inner {
+        gap: 10px;
+    }
+
+    .footer-copy {
+        font-size: 13px;
+    }
+
+    .footer-links {
+        font-size: 13px;
+        gap: 6px;
+    }
+
+    .footer-links a {
+        padding: 4px 6px;
+    }
+
+    .footer-links .sep {
+        margin: 0 4px;
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+    .containerFooter {
+        padding: 20px 12px;
+    }
+
+    .footer-inner {
+        gap: 8px;
+    }
+
+    .footer-copy {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .footer-links {
+        font-size: 12px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .footer-links .sep {
+        display: none; /* Ocultar separadores en móvil cuando está en columna */
+    }
+
+    .footer-links a {
+        padding: 6px 0;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 360px) {
+    .containerFooter {
+        padding: 16px 10px;
+    }
+
+    .footer-copy {
+        font-size: 11px;
+    }
+
+    .footer-links {
+        font-size: 11px;
+    }
 }
 

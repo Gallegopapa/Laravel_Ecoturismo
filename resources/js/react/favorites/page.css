@@ -38,10 +38,21 @@
 @media (max-width: 768px) {
   .favorites-container {
     padding: 20px 15px;
+    margin-top: 80px !important;
   }
 
   .favorites-container h1 {
     font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .favorites-container {
+    padding: 15px 10px;
+  }
+
+  .favorites-container h1 {
+    font-size: 1.5rem;
   }
 }
 

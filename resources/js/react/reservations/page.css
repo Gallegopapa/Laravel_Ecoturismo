@@ -122,6 +122,7 @@
 @media (max-width: 768px) {
   .reservations-container {
     padding: 20px 15px;
+    margin-top: 80px !important;
   }
 
   .reservations-container h1 {
@@ -134,8 +135,25 @@
     gap: 10px;
   }
 
+  .reservation-header h3 {
+    font-size: 1.2rem;
+  }
+
   .reservation-info {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .info-item {
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 0.85rem;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
   }
 
   .reservation-actions {
@@ -144,6 +162,29 @@
 
   .btn-cancel {
     width: 100%;
+    padding: 12px 20px;
+  }
+
+  .reservation-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reservations-container {
+    padding: 15px 10px;
+  }
+
+  .reservations-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .reservation-card {
+    padding: 15px;
+  }
+
+  .reservation-header h3 {
+    font-size: 1.1rem;
   }
 }
 

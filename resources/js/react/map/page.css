@@ -54,6 +54,7 @@
 
 @media (max-width: 768px) {
   .map-page-header {
+    margin-top: 70px;
     padding: 20px 15px;
   }
 
@@ -63,6 +64,24 @@
 
   .map-page-header p {
     font-size: 1rem;
+  }
+
+  .map-page-container {
+    min-height: calc(100vh - 140px);
+  }
+}
+
+@media (max-width: 480px) {
+  .map-page-header {
+    padding: 15px 10px;
+  }
+
+  .map-page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .map-page-header p {
+    font-size: 0.9rem;
   }
 }
 

@@ -172,9 +172,10 @@
   box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .perfil-container {
-    padding: 1rem;
+    padding: 20px 15px;
+    margin-top: 80px !important;
   }
 
   .perfil-card {
@@ -182,10 +183,30 @@
   }
 
   .perfil-card h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 
   .form-buttons {
     flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-guardar,
+  .btn-logout {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .perfil-container {
+    padding: 15px 10px;
+  }
+
+  .perfil-card {
+    padding: 1rem;
+  }
+
+  .perfil-card h1 {
+    font-size: 1.5rem;
   }
 }

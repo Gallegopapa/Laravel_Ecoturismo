@@ -19,6 +19,7 @@ body {
   margin: 0 auto;
   padding: 2rem;
   position: relative;
+  margin-top: 100px;
 }
 
 /* Estilos del encabezado */
@@ -181,6 +182,7 @@ body {
 @media (max-width: 768px) {
   .contenedorTodo {
     padding: 1rem;
+    margin-top: 80px;
   }
 
   .middle-text h2 {
