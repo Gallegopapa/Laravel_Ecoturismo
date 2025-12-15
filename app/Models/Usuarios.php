@@ -36,6 +36,34 @@ class Usuarios extends Authenticatable
     ];
 
     /**
+     * Accessor para foto_perfil - Asegura que siempre devuelva una URL completa
+     */
+    public function getFotoPerfilAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+        
+        // Si ya es una URL completa (http/https), devolverla tal cual
+        if (preg_match('/^https?:\/\//', $value)) {
+            return $value;
+        }
+        
+        // Si comienza con /storage/, devolver URL completa
+        if (strpos($value, '/storage/') === 0) {
+            return url($value);
+        }
+        
+        // Si es solo el nombre del archivo, construir la ruta completa
+        if (strpos($value, 'storage/') === 0) {
+            return url('/' . $value);
+        }
+        
+        // Por defecto, asumir que está en storage/profiles/
+        return url('/storage/profiles/' . $value);
+    }
+
+    /**
      * Relación: Un usuario tiene muchas reservas
      */
     public function reservations()

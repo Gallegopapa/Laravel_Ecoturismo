@@ -82,7 +82,7 @@ class ProfileController extends Controller
             $image = $request->file('foto_perfil');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('profiles', $filename, 'public');
-            $validated['foto_perfil'] = asset('storage/' . $path);
+            $validated['foto_perfil'] = '/storage/' . $path;
         } else {
             // Si no se envía nueva foto, mantener la existente
             unset($validated['foto_perfil']);
