@@ -18,7 +18,7 @@ const AdminPanel = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1>Panel ADMIN</h1>
             <Link to="/lugares" className="btn-back-home">
-              ← Volver a Inicio
+              Volver a Inicio
             </Link>
           </div>
         </div>
