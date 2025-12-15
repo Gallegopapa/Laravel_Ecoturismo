@@ -125,19 +125,19 @@ class ReservationController extends Controller
     {
         $user = $request->user();
 
-        // Verificar que la reserva pertenece al usuario autenticado
-        if ($reservation->user_id !== $user->id) {
+        // Verificar que la reserva pertenece al usuario autenticado O que el usuario es admin
+        if ($reservation->user_id !== $user->id && !$user->is_admin) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
         $data = $request->validate([
-            'fecha_visita' => 'sometimes|date|after_or_equal:today',
+            'fecha_visita' => 'sometimes|date',
             'hora_visita' => 'nullable|date_format:H:i',
             'personas' => 'sometimes|integer|min:1|max:50',
             'telefono_contacto' => 'nullable|string|max:20',
             'comentarios' => 'nullable|string|max:1000',
             'precio_total' => 'nullable|numeric|min:0',
-            'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada',
+            'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada,completada',
         ], [
             'fecha_visita.date' => 'La fecha de visita debe ser una fecha válida.',
             'fecha_visita.after_or_equal' => 'La fecha de visita debe ser hoy o una fecha futura.',
@@ -169,8 +169,8 @@ class ReservationController extends Controller
     {
         $user = $request->user();
 
-        // Verificar que la reserva pertenece al usuario autenticado
-        if ($reservation->user_id !== $user->id) {
+        // Verificar que la reserva pertenece al usuario autenticado O que el usuario es admin
+        if ($reservation->user_id !== $user->id && !$user->is_admin) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 

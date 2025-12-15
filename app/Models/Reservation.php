@@ -29,7 +29,7 @@ class Reservation extends Model
         'fecha' => 'date',
         'fecha_reserva' => 'datetime',
         'fecha_visita' => 'date',
-        'hora_visita' => 'datetime',
+        'hora_visita' => 'string', // Mantener como string para formato HH:mm
         'precio_total' => 'decimal:2',
     ];
 

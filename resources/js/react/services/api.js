@@ -142,6 +142,16 @@ export const reservationsService = {
     return response.data;
   },
 
+  getAll: async () => {
+    const response = await api.get('/reservations');
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/reservations/${id}`);
+    return response.data;
+  },
+
   create: async (reservationData) => {
     const response = await api.post('/reservations', reservationData);
     return response.data;

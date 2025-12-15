@@ -58,7 +58,28 @@ const ReservationsPage = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'No especificada';
-    const date = new Date(dateString);
+    
+    // Si es una fecha en formato ISO (ej: "2025-01-17" o "2025-01-17T00:00:00")
+    // Extraer solo la parte de la fecha para evitar problemas de zona horaria
+    let dateStr = dateString;
+    if (dateString.includes('T')) {
+      dateStr = dateString.split('T')[0];
+    }
+    
+    // Crear fecha usando componentes locales para evitar conversión UTC
+    const [year, month, day] = dateStr.split('-').map(Number);
+    if (!year || !month || !day) {
+      // Fallback si el formato no es el esperado
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Fecha inválida';
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    
+    const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -68,11 +89,34 @@ const ReservationsPage = () => {
 
   const formatTime = (timeString) => {
     if (!timeString) return '';
-    const time = new Date(timeString);
-    return time.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    
+    // Si es un string en formato "HH:mm" o "HH:mm:ss"
+    if (typeof timeString === 'string' && timeString.includes(':')) {
+      const parts = timeString.split(':');
+      if (parts.length >= 2) {
+        const hours = parts[0].padStart(2, '0');
+        const minutes = parts[1].padStart(2, '0');
+        return `${hours}:${minutes}`;
+      }
+    }
+    
+    // Si es un datetime completo, intentar extraer la hora
+    if (timeString.includes('T') || timeString.includes(' ')) {
+      try {
+        const date = new Date(timeString);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+        }
+      } catch (e) {
+        console.error('Error al formatear hora:', e);
+      }
+    }
+    
+    return '';
   };
 
   if (authLoading || loading) {
