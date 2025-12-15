@@ -62,7 +62,15 @@ const PlacesPage = () => {
       }
       
       if (data && data.length > 0) {
-        setLugares(data);
+        // Priorizar imágenes locales (imagen) sobre imágenes de API (image)
+        const lugaresConImagenesPriorizadas = data.map((lugar) => ({
+          ...lugar,
+          // Si tiene imagen local, usarla; si no, usar image de la API
+          imagen: lugar.imagen || lugar.image || null,
+          // Limpiar image para evitar confusión
+          image: null,
+        }));
+        setLugares(lugaresConImagenesPriorizadas);
       } else {
         setLugares([]);
       }
@@ -299,10 +307,10 @@ const PlacesPage = () => {
                     {data.lugares.map((lugar) => (
                       <div className="card" key={lugar.id}>
                         <img 
-                          src={lugar.image || "https://picsum.photos/400/300"} 
+                          src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
                           alt={lugar.name}
                           onError={(e) => {
-                            e.target.src = "https://picsum.photos/400/300";
+                            e.target.src = "/imagenes/placeholder.jpg";
                           }}
                         />
                         <h4>{lugar.name}</h4>

@@ -107,13 +107,19 @@ export default function ParaisosAcuaticosPage() {
       if (acuaticosCategory) {
         const data = await placesService.getAll({ category_id: acuaticosCategory.id });
         if (data && data.length > 0) {
-          // Forzar que la imagen prioritaria sea la hardcodeada si existe
-          const withImages = data.map((item, idx) => {
-            const fallback = lugaresFallback[idx];
+          // Priorizar imágenes locales del fallback sobre las de la API
+          const withImages = data.map((item) => {
+            // Buscar el fallback por nombre (más robusto que por índice)
+            const fallback = lugaresFallback.find(
+              fb => fb.nombre?.toLowerCase() === item.name?.toLowerCase() || 
+                    fb.id === item.id
+            );
             return {
               ...item,
-              // Prioridad: fallback local -> imagen que ya tenga el item -> la del API
-              imagen: fallback?.imagen || item.imagen || item.image || null,
+              // PRIORIDAD: imagen local del fallback -> imagen local del item -> imagen de la API
+              imagen: fallback?.imagen || item.imagen || null,
+              // Eliminar image de la API para evitar confusión
+              image: null,
             };
           });
           setLugares(withImages);
@@ -275,7 +281,7 @@ export default function ParaisosAcuaticosPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id}>
-                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.nombre} />
+                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.nombre} onError={(e) => { e.target.src = "/imagenes/placeholder.jpg"; }} />
                 <h4>{lugar.name || lugar.nombre}</h4>
                 <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
                 <p className="descripcion">{lugar.description || lugar.descripcion}</p>
