@@ -22,6 +22,110 @@ const PlacesPage = () => {
   const [updatingFavorites, setUpdatingFavorites] = useState({});
   const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
 
+  // Mapeo determinístico: nombre exacto -> imagen local
+  // Este mapeo garantiza que siempre se asigne la misma imagen al mismo lugar
+  const mapeoImagenesDeterministico = {
+    // Paraísos Acuáticos - nombres exactos como vienen de la BD
+    'Lago De La Pradera': '/imagenes/Lago.jpeg',
+    'La Laguna Del Otún': '/imagenes/laguna.jpg',
+    'Laguna Del Otún': '/imagenes/laguna.jpg',
+    'Chorros De Don Lolo': '/imagenes/lolo-2.jpg',
+    'Termales de Santa Rosa': '/imagenes/termaales.jpg',
+    'Parque Acuático Consota': '/imagenes/consota.jpg',
+    'Balneario Los Farallones': '/imagenes/farallones.jpeg',
+    'Cascada Los Frailes': '/imagenes/frailes3.jpg',
+    'Río San José': '/imagenes/sanjose3.jpg',
+    'Rio San Jose': '/imagenes/sanjose3.jpg',
+    // Lugares Montañosos
+    'Alto Del Nudo': '/imagenes/nudo.jpg',
+    'Alto Del Toro': '/imagenes/toro.jpg',
+    'La Divisa De Don Juan': '/imagenes/divisa3.jpeg',
+    'Cerro Batero': '/imagenes/batero.jpg',
+    'Reserva Forestal La Nona': '/imagenes/lanona5.jpg',
+    'Reserva Natural Cerro Gobia': '/imagenes/gobia.jpg',
+    'Kaukitá Bosque Reserva': '/imagenes/kaukita3.jpg',
+    'Kaukita Bosque Reserva': '/imagenes/kaukita3.jpg',
+    'Reserva Natural DMI Agualinda': '/imagenes/dmi2.jpg',
+    // Parques y Más
+    'Parque Nacional Natural Tatamá': '/imagenes/tatama.jpg',
+    'Parque Nacional Natural Tatama': '/imagenes/tatama.jpg',
+    'Parque Las Araucarias': '/imagenes/araucarias.jpg',
+    'Parque Regional Natural Cuchilla de San Juan': '/imagenes/cuchilla.jpg',
+    'Parque Natural Regional Santa Emilia': '/imagenes/santaemilia2.jpg',
+    'Jardín Botánico UTP': '/imagenes/jardin.jpeg',
+    'Jardin Botanico UTP': '/imagenes/jardin.jpeg',
+    'Jardín Botánico De Marsella': '/imagenes/jardinmarsella2.jpg',
+    'Jardin Botanico De Marsella': '/imagenes/jardinmarsella2.jpg',
+  };
+
+  // Fallbacks locales por categoría (imágenes locales)
+  // Mapeo directo por nombre para búsqueda más rápida y precisa
+  const mapeoImagenesLocales = {
+    // Paraísos Acuáticos
+    'lago de la pradera': '/imagenes/Lago.jpeg',
+    'la laguna del otún': '/imagenes/laguna.jpg',
+    'laguna del otún': '/imagenes/laguna.jpg',
+    'chorros de don lolo': '/imagenes/lolo-2.jpg',
+    'termales de santa rosa': '/imagenes/termaales.jpg',
+    'parque acuático consota': '/imagenes/consota.jpg',
+    'balneario los farallones': '/imagenes/farallones.jpeg',
+    'cascada los frailes': '/imagenes/frailes3.jpg',
+    'río san josé': '/imagenes/sanjose3.jpg',
+    'rio san jose': '/imagenes/sanjose3.jpg',
+    // Lugares Montañosos
+    'alto del nudo': '/imagenes/nudo.jpg',
+    'alto del toro': '/imagenes/toro.jpg',
+    'la divisa de don juan': '/imagenes/divisa3.jpeg',
+    'cerro batero': '/imagenes/batero.jpg',
+    'reserva forestal la nona': '/imagenes/lanona5.jpg',
+    'reserva natural cerro gobia': '/imagenes/gobia.jpg',
+    'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
+    'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
+    'reserva natural dmi agualinda': '/imagenes/dmi2.jpg',
+    // Parques y Más
+    'parque nacional natural tatamá': '/imagenes/tatama.jpg',
+    'parque nacional natural tatama': '/imagenes/tatama.jpg',
+    'parque las araucarias': '/imagenes/araucarias.jpg',
+    'parque regional natural cuchilla de san juan': '/imagenes/cuchilla.jpg',
+    'parque natural regional santa emilia': '/imagenes/santaemilia2.jpg',
+    'jardín botánico utp': '/imagenes/jardin.jpeg',
+    'jardin botanico utp': '/imagenes/jardin.jpeg',
+    'jardín botánico de marsella': '/imagenes/jardinmarsella2.jpg',
+    'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
+  };
+
+  // Fallbacks por categoría para búsqueda alternativa
+  const fallbacksPorCategoria = {
+    'paraisos-acuaticos': [
+      { nombre: "Lago De La Pradera", imagen: "/imagenes/Lago.jpeg" },
+      { nombre: "La Laguna Del Otún", imagen: "/imagenes/laguna.jpg" },
+      { nombre: "Chorros De Don Lolo", imagen: "/imagenes/lolo-2.jpg" },
+      { nombre: "Termales de Santa Rosa", imagen: "/imagenes/termaales.jpg" },
+      { nombre: "Parque Acuático Consota", imagen: "/imagenes/consota.jpg" },
+      { nombre: "Balneario Los Farallones", imagen: "/imagenes/farallones.jpeg" },
+      { nombre: "Cascada Los Frailes", imagen: "/imagenes/frailes3.jpg" },
+      { nombre: "Río San José", imagen: "/imagenes/sanjose3.jpg" },
+    ],
+    'lugares-montanosos': [
+      { titulo: "Alto Del Nudo", imagen: "/imagenes/nudo.jpg" },
+      { titulo: "Alto Del Toro", imagen: "/imagenes/toro.jpg" },
+      { titulo: "La Divisa De Don Juan", imagen: "/imagenes/divisa3.jpeg" },
+      { titulo: "Cerro Batero", imagen: "/imagenes/batero.jpg" },
+      { titulo: "Reserva Forestal La Nona", imagen: "/imagenes/lanona5.jpg" },
+      { titulo: "Reserva Natural Cerro Gobia", imagen: "/imagenes/gobia.jpg" },
+      { titulo: "Kaukitá Bosque Reserva", imagen: "/imagenes/kaukita3.jpg" },
+      { titulo: "Reserva Natural DMI Agualinda", imagen: "/imagenes/dmi2.jpg" },
+    ],
+    'parques-y-mas': [
+      { titulo: "Parque Nacional Natural Tatamá", imagen: "/imagenes/tatama.jpg" },
+      { titulo: "Parque Las Araucarias", imagen: "/imagenes/araucarias.jpg" },
+      { titulo: "Parque Regional Natural Cuchilla de San Juan", imagen: "/imagenes/cuchilla.jpg" },
+      { titulo: "Parque Natural Regional Santa Emilia", imagen: "/imagenes/santaemilia2.jpg" },
+      { titulo: "Jardín Botánico UTP", imagen: "/imagenes/jardin.jpeg" },
+      { titulo: "Jardín Botánico De Marsella", imagen: "/imagenes/jardinmarsella2.jpg" },
+    ],
+  };
+
   // Cargar lugares y categorías al iniciar
   useEffect(() => {
     loadCategories();
@@ -62,14 +166,123 @@ const PlacesPage = () => {
       }
       
       if (data && data.length > 0) {
-        // Priorizar imágenes locales (imagen) sobre imágenes de API (image)
-        const lugaresConImagenesPriorizadas = data.map((lugar) => ({
-          ...lugar,
-          // Si tiene imagen local, usarla; si no, usar image de la API
-          imagen: lugar.imagen || lugar.image || null,
-          // Limpiar image para evitar confusión
-          image: null,
-        }));
+        // Función para normalizar nombres (quitar acentos, espacios extra, etc.)
+        const normalizarNombre = (str) => {
+          if (!str) return '';
+          return str
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Quitar acentos
+            .replace(/\s+/g, ' ') // Normalizar espacios
+            .trim();
+        };
+
+        // Priorizar imágenes locales del fallback sobre imágenes de API
+        // Orden determinístico: siempre procesar en el mismo orden
+        const lugaresOrdenados = [...data].sort((a, b) => {
+          // Ordenar por ID para garantizar orden consistente
+          return (a.id || 0) - (b.id || 0);
+        });
+
+        const lugaresConImagenesPriorizadas = lugaresOrdenados.map((lugar, index) => {
+          let imagenLocal = null;
+          const nombreOriginal = lugar.name || '';
+          const nombreLugar = normalizarNombre(nombreOriginal);
+          
+          // PRIMERO: Buscar en mapeo determinístico por nombre original (exacto)
+          imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+          
+          // SEGUNDO: Si no se encontró, buscar en mapeo normalizado
+          if (!imagenLocal) {
+            imagenLocal = mapeoImagenesLocales[nombreLugar];
+          }
+          
+          // TERCERO: Si hay categoría filtrada, buscar en los fallbacks de esa categoría
+          if (!imagenLocal && categoriaFiltro !== "todas") {
+            const fallbacks = fallbacksPorCategoria[categoriaFiltro];
+            if (fallbacks && fallbacks.length > 0) {
+              // Buscar por coincidencia exacta primero (nombre original)
+              let fallback = fallbacks.find(
+                fb => (fb.nombre || fb.titulo) === nombreOriginal
+              );
+              
+              // Si no encuentra exacta, buscar por nombre normalizado
+              if (!fallback) {
+                fallback = fallbacks.find(
+                  fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
+                );
+              }
+              
+              // Si aún no encuentra, buscar parcial (solo palabras clave importantes)
+              if (!fallback) {
+                const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
+                fallback = fallbacks.find(
+                  fb => {
+                    const nombreFallback = normalizarNombre(fb.nombre || fb.titulo);
+                    return palabrasClave.some(palabra => nombreFallback.includes(palabra));
+                  }
+                );
+              }
+              
+              // Si aún no encuentra, usar imagen del fallback por índice (último recurso)
+              if (!fallback && index < fallbacks.length) {
+                fallback = fallbacks[index];
+              }
+              
+              imagenLocal = fallback?.imagen || null;
+            }
+          }
+          
+          // CUARTO: Si no se encontró, buscar en las categorías del lugar
+          if (!imagenLocal) {
+            const lugarCategorias = lugar.categories || [];
+            
+            for (const cat of lugarCategorias) {
+              const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
+              const fallbacks = fallbacksPorCategoria[slug];
+              
+              if (fallbacks && fallbacks.length > 0) {
+                // Buscar por coincidencia exacta primero
+                let fallback = fallbacks.find(
+                  fb => (fb.nombre || fb.titulo) === nombreOriginal
+                );
+                
+                // Si no encuentra exacta, buscar por nombre normalizado
+                if (!fallback) {
+                  fallback = fallbacks.find(
+                    fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
+                  );
+                }
+                
+                // Si aún no encuentra, buscar parcial
+                if (!fallback) {
+                  const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
+                  fallback = fallbacks.find(
+                    fb => {
+                      const nombreFallback = normalizarNombre(fb.nombre || fb.titulo);
+                      return palabrasClave.some(palabra => nombreFallback.includes(palabra));
+                    }
+                  );
+                }
+                
+                if (fallback?.imagen) {
+                  imagenLocal = fallback.imagen;
+                  break;
+                }
+              }
+            }
+          }
+          
+          // IMPORTANTE: SIEMPRE usar imagen local si existe, NUNCA usar image de la API
+          // Si no hay imagen local, usar placeholder local
+          return {
+            ...lugar,
+            // PRIORIDAD ABSOLUTA: imagen local -> placeholder local (NUNCA imagen de API)
+            imagen: imagenLocal || lugar.imagen || "/imagenes/placeholder.jpg",
+            // ELIMINAR completamente image de la API para evitar que se use
+            image: null,
+          };
+        });
         setLugares(lugaresConImagenesPriorizadas);
       } else {
         setLugares([]);
@@ -384,10 +597,10 @@ const PlacesPage = () => {
                   {lugares.map((lugar) => (
                     <div className="card" key={lugar.id}>
                       <img 
-                        src={lugar.image || "https://picsum.photos/400/300"} 
+                        src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
                         alt={lugar.name}
                         onError={(e) => {
-                          e.target.src = "https://picsum.photos/400/300";
+                          e.target.src = "/imagenes/placeholder.jpg";
                         }}
                       />
                       <h4>{lugar.name}</h4>

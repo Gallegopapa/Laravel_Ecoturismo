@@ -186,12 +186,18 @@
   font-size: 1.5rem;
   color: #2c3e50;
   margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .place-description p {
   font-size: 1.1rem;
   line-height: 1.8;
   color: #555;
+  text-align: justify;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  margin: 0;
 }
 
 .place-actions {

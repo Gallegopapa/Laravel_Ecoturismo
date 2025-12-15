@@ -1,9 +1,97 @@
-import React, { useMemo, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useMemo, useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapView.css';
+
+// Componente interno para ajustar el tamaño del popup según el zoom
+// Debe estar dentro de MapContainer para usar useMap()
+function ZoomAwarePopup({ children, location, ...props }) {
+  const map = useMap();
+  const [zoom, setZoom] = useState(map.getZoom());
+
+  useEffect(() => {
+    const updateZoom = () => {
+      setZoom(map.getZoom());
+    };
+    
+    map.on('zoomend', updateZoom);
+    map.on('zoom', updateZoom);
+    return () => {
+      map.off('zoomend', updateZoom);
+      map.off('zoom', updateZoom);
+    };
+  }, [map]);
+
+  const zoomClass = zoom > 12 ? 'popup-zoom-high' : zoom > 10 ? 'popup-zoom-medium' : 'popup-zoom-low';
+
+  return (
+    <Popup 
+      {...props}
+      className={zoomClass}
+      maxWidth={zoom > 12 ? 220 : zoom > 10 ? 250 : 280}
+      maxHeight={zoom > 12 ? 300 : zoom > 10 ? 350 : 400}
+    >
+      {children}
+    </Popup>
+  );
+}
+
+// Componente que renderiza los marcadores (debe estar dentro de MapContainer)
+function MapContent({ locations }) {
+  return (
+    <>
+      {locations.map(loc => (
+        <Marker 
+          key={loc.id} 
+          position={[parseFloat(loc.latitude), parseFloat(loc.longitude)]}
+        >
+          <ZoomAwarePopup location={loc}>
+            <div className="map-popup-content">
+              <h3>{loc.name}</h3>
+              {loc.location && (
+                <p className="map-popup-location">📍 {loc.location}</p>
+              )}
+              {loc.description && (
+                <p className="map-popup-description">
+                  {loc.description}
+                </p>
+              )}
+              {(loc.imagen || loc.image) && (
+                <img 
+                  src={loc.imagen || loc.image || '/imagenes/placeholder.jpg'} 
+                  alt={loc.name} 
+                  className="map-popup-image"
+                  onError={(e) => {
+                    e.target.src = '/imagenes/placeholder.jpg';
+                  }}
+                />
+              )}
+              {loc.categories && loc.categories.length > 0 && (
+                <div className="map-popup-categories">
+                  {loc.categories.map(cat => (
+                    <span key={cat.id} className="map-category-badge">
+                      {cat.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="map-popup-actions">
+                <Link 
+                  to={`/lugares/${loc.id}`} 
+                  className="map-popup-link"
+                >
+                  Ver detalles
+                </Link>
+              </div>
+            </div>
+          </ZoomAwarePopup>
+        </Marker>
+      ))}
+    </>
+  );
+}
 
 // Fix para los iconos de Leaflet en React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -77,56 +165,7 @@ export default function MapView({ locations }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
         />
-
-        {filtered.map(loc => (
-          <Marker 
-            key={loc.id} 
-            position={[parseFloat(loc.latitude), parseFloat(loc.longitude)]}
-          >
-            <Popup>
-              <div className="map-popup-content">
-                <h3>{loc.name}</h3>
-                {loc.location && (
-                  <p className="map-popup-location">📍 {loc.location}</p>
-                )}
-                {loc.description && (
-                  <p className="map-popup-description">
-                    {loc.description.length > 150 
-                      ? loc.description.substring(0, 150) + '...' 
-                      : loc.description}
-                  </p>
-                )}
-                {loc.image && (
-                  <img 
-                    src={loc.image} 
-                    alt={loc.name} 
-                    className="map-popup-image"
-                    onError={(e) => {
-                      e.target.src = 'https://picsum.photos/200/150';
-                    }}
-                  />
-                )}
-                {loc.categories && loc.categories.length > 0 && (
-                  <div className="map-popup-categories">
-                    {loc.categories.map(cat => (
-                      <span key={cat.id} className="map-category-badge">
-                        {cat.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="map-popup-actions">
-                  <Link 
-                    to={`/lugares/${loc.id}`} 
-                    className="map-popup-link"
-                  >
-                    Ver detalles
-                  </Link>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        <MapContent locations={filtered} />
       </MapContainer>
     </div>
   );
