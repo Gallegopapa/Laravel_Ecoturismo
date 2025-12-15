@@ -21,6 +21,34 @@ class Place extends Model
     ];
 
     /**
+     * Accessor para image - devuelve siempre una URL accesible
+     */
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        // Si ya es una URL completa, devolverla
+        if (preg_match('/^https?:\/\//', $value)) {
+            return $value;
+        }
+
+        // Si comienza con /storage/, construir URL completa
+        if (strpos($value, '/storage/') === 0) {
+            return url($value);
+        }
+
+        // Si comienza con storage/ sin la barra inicial
+        if (strpos($value, 'storage/') === 0) {
+            return url('/' . $value);
+        }
+
+        // Por defecto, asumir que es solo el nombre de archivo en storage/places
+        return url('/storage/places/' . ltrim($value, '/'));
+    }
+
+    /**
      * Relación: Un lugar tiene muchas reservas
      */
     public function reservations()

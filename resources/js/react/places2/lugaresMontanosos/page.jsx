@@ -106,7 +106,15 @@ export default function LugaresMontanososPage() {
       if (montanososCategory) {
         const data = await placesService.getAll({ category_id: montanososCategory.id });
         if (data && data.length > 0) {
-          setLugares(data);
+          // Priorizar imagen local del fallback; si no, usar la que venga del item
+          const withImages = data.map((item, idx) => {
+            const fallback = lugaresFallback[idx];
+            return {
+              ...item,
+              imagen: fallback?.imagen || item.imagen || item.image || null,
+            };
+          });
+          setLugares(withImages);
         } else {
           setLugares(lugaresFallback);
         }
@@ -227,7 +235,7 @@ export default function LugaresMontanososPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id}>
-                <img src={lugar.image || lugar.imagen || "https://picsum.photos/400/300"} alt={lugar.name || lugar.titulo} />
+                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.titulo} />
                 <h4>{lugar.name || lugar.titulo}</h4>
                 <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
                 <p className="descripcion">{lugar.description || lugar.descripcion}</p>
@@ -235,9 +243,7 @@ export default function LugaresMontanososPage() {
                 <div className="card-actions">
                   <div className="action-buttons">
                     <a 
-                      href={lugar.map || lugar.mapa || (lugar.latitude && lugar.longitude ? `https://www.google.com/maps?q=${lugar.latitude},${lugar.longitude}` : "#")} 
-                      target="_blank" 
-                      rel="noreferrer"
+                      href="/mapa" 
                       className="map-button"
                       title="Ver en mapa"
                     >

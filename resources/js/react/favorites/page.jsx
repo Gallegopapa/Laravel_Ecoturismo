@@ -150,11 +150,7 @@ const FavoritesPage = () => {
                     <div className="card-actions">
                       <div className="action-buttons">
                         <a 
-                          href={place.latitude && place.longitude 
-                            ? `https://www.google.com/maps?q=${place.latitude},${place.longitude}` 
-                            : "#"} 
-                          target="_blank" 
-                          rel="noreferrer"
+                          href="/mapa" 
                           className="map-button"
                           title="Ver en mapa"
                         >

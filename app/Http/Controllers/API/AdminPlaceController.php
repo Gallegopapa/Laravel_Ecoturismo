@@ -54,7 +54,8 @@ class AdminPlaceController extends Controller
             $image = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('places', $filename, 'public');
-            $data['image'] = asset('storage/' . $path);
+            // Guardar como ruta relativa para evitar dominio hardcodeado
+            $data['image'] = '/storage/' . $path;
         }
 
         $place = Place::create($data);
@@ -90,11 +91,10 @@ class AdminPlaceController extends Controller
         // Manejar subida de nueva imagen
         if ($request->hasFile('image')) {
             // Eliminar imagen anterior si existe
-            if ($place->image && strpos($place->image, 'storage/places/') !== false) {
-                $oldImagePath = str_replace(asset(''), '', $place->image);
-                $oldImagePath = str_replace('storage/', '', $oldImagePath);
-                if (Storage::disk('public')->exists('places/' . basename($oldImagePath))) {
-                    Storage::disk('public')->delete('places/' . basename($oldImagePath));
+            if ($place->image) {
+                $oldFileName = basename(parse_url($place->image, PHP_URL_PATH));
+                if ($oldFileName && Storage::disk('public')->exists('places/' . $oldFileName)) {
+                    Storage::disk('public')->delete('places/' . $oldFileName);
                 }
             }
 
@@ -102,7 +102,7 @@ class AdminPlaceController extends Controller
             $image = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('places', $filename, 'public');
-            $data['image'] = asset('storage/' . $path);
+            $data['image'] = '/storage/' . $path;
         }
 
         $place->update($data);

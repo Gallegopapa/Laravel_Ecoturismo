@@ -107,7 +107,16 @@ export default function ParaisosAcuaticosPage() {
       if (acuaticosCategory) {
         const data = await placesService.getAll({ category_id: acuaticosCategory.id });
         if (data && data.length > 0) {
-          setLugares(data);
+          // Forzar que la imagen prioritaria sea la hardcodeada si existe
+          const withImages = data.map((item, idx) => {
+            const fallback = lugaresFallback[idx];
+            return {
+              ...item,
+              // Prioridad: fallback local -> imagen que ya tenga el item -> la del API
+              imagen: fallback?.imagen || item.imagen || item.image || null,
+            };
+          });
+          setLugares(withImages);
         } else {
           setLugares(lugaresFallback);
         }
@@ -266,7 +275,7 @@ export default function ParaisosAcuaticosPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id}>
-                <img src={lugar.image || lugar.imagen || "https://picsum.photos/400/300"} alt={lugar.name || lugar.nombre} />
+                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.nombre} />
                 <h4>{lugar.name || lugar.nombre}</h4>
                 <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
                 <p className="descripcion">{lugar.description || lugar.descripcion}</p>
@@ -274,9 +283,7 @@ export default function ParaisosAcuaticosPage() {
                 <div className="card-actions">
                   <div className="action-buttons">
                     <a 
-                      href={lugar.map || lugar.mapa || "#"} 
-                      target="_blank" 
-                      rel="noreferrer"
+                      href="/mapa" 
                       className="map-button"
                       title="Ver en mapa"
                     >
