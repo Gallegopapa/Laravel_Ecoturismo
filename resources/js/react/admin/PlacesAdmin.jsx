@@ -188,7 +188,7 @@ const PlacesAdmin = () => {
                 />
               </div>
               <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
-                💡 Puedes obtener las coordenadas desde{' '}
+                Puedes obtener las coordenadas desde{' '}
                 <a 
                   href="https://www.google.com/maps" 
                   target="_blank" 
@@ -278,18 +278,20 @@ const PlacesAdmin = () => {
                     )}
                   </td>
                   <td>
-                    <button
-                      onClick={() => handleEdit(place)}
-                      className="btn-edit"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(place.id)}
-                      className="btn-delete"
-                    >
-                      Borrar
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <button
+                        onClick={() => handleEdit(place)}
+                        className="btn-edit"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(place.id)}
+                        className="btn-delete"
+                      >
+                        Borrar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

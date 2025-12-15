@@ -175,6 +175,7 @@
   color: white;
   padding: 6px 12px;
   font-size: 0.85rem;
+  margin: 0;
 }
 
 .btn-edit:hover {
@@ -186,11 +187,31 @@
   color: white;
   padding: 6px 12px;
   font-size: 0.85rem;
-  margin-left: 8px;
+  margin: 0;
 }
 
 .btn-delete:hover {
   background: #b81e32;
+}
+
+/* Alinear botones de acción en la tabla */
+.admin-table td:last-child {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.admin-table td:last-child button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+
+/* Contenedor para botones de acción */
+.admin-table .action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .admin-table {
