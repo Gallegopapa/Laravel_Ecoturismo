@@ -42,10 +42,11 @@ body, input, textarea {
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  z-index: 1 !important;
   overflow: hidden;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
+  position: relative;
 }
 
 .contact-form {
