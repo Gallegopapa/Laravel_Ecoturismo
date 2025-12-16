@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { reservationsService } from '../services/api';
 import './ReservationModal.css';
@@ -15,6 +15,21 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  // Bloquear scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      // Guardar el valor actual del overflow
+      const originalOverflow = document.body.style.overflow;
+      // Bloquear scroll
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Restaurar el scroll cuando el modal se cierra
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
