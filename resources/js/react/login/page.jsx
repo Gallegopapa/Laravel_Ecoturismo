@@ -75,7 +75,7 @@ export default function Login() {
   return (
     <>
 
-      <div className="container">
+      <div className="login-page-container">
         <video id="bg-video" autoPlay loop muted>
           <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
         </video>

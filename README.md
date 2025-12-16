@@ -1,61 +1,308 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Risaralda EcoTurismo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma web para la promoción y gestión de destinos ecoturísticos en Risaralda, Colombia. Desarrollada con Laravel 12 (Backend) y React 19 (Frontend).
 
-## About Laravel
+## 📋 Tabla de Contenidos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Uso](#uso)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Documentación](#documentación)
+- [API](#api)
+- [Contribuir](#contribuir)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Características
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Autenticación de Usuarios**: Sistema completo de registro, login y gestión de sesiones con Laravel Sanctum
+- **Gestión de Lugares**: CRUD completo para lugares turísticos con categorías, imágenes y coordenadas
+- **Sistema de Reservas**: Los usuarios pueden reservar visitas a lugares turísticos
+- **Reseñas y Calificaciones**: Sistema de comentarios y calificaciones para lugares
+- **Favoritos**: Los usuarios pueden marcar lugares como favoritos
+- **Mapa Interactivo**: Visualización de lugares en un mapa interactivo usando Leaflet
+- **Panel de Administración**: Panel completo para administradores con gestión de lugares, usuarios y reservas
+- **Formulario de Contacto**: Sistema de contacto con almacenamiento en base de datos
+- **Perfil de Usuario**: Gestión completa de perfil con foto de perfil
+- **Responsive Design**: Diseño adaptable a diferentes dispositivos
 
-## Learning Laravel
+## 🛠 Tecnologías
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- **Laravel 12**: Framework PHP
+- **Laravel Sanctum**: Autenticación API con tokens
+- **SQLite**: Base de datos (configurable para MySQL/PostgreSQL)
+- **PHP 8.2+**: Lenguaje de programación
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend
+- **React 19**: Biblioteca de JavaScript
+- **React Router DOM 7**: Enrutamiento
+- **Axios**: Cliente HTTP
+- **Leaflet & React-Leaflet**: Mapas interactivos
+- **Vite**: Build tool y dev server
+- **CSS3**: Estilos personalizados
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📦 Requisitos
 
-## Laravel Sponsors
+- PHP 8.2 o superior
+- Composer
+- Node.js 18+ y npm
+- SQLite (o MySQL/PostgreSQL)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Instalación
 
-### Premium Partners
+### 1. Clonar el repositorio
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+git clone <url-del-repositorio>
+cd Laravel_Ecoturismo
+```
 
-## Contributing
+### 2. Instalar dependencias de PHP
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer install
+```
 
-## Code of Conduct
+### 3. Instalar dependencias de Node.js
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+npm install
+```
 
-## Security Vulnerabilities
+### 4. Configurar el entorno
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+### 5. Configurar la base de datos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Edita el archivo `.env` y configura tu base de datos:
+
+```env
+DB_CONNECTION=sqlite
+# O para MySQL/PostgreSQL:
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=ecoturismo
+# DB_USERNAME=root
+# DB_PASSWORD=
+```
+
+Si usas SQLite, crea el archivo de base de datos:
+
+```bash
+touch database/database.sqlite
+```
+
+### 6. Ejecutar migraciones
+
+```bash
+php artisan migrate
+```
+
+### 7. (Opcional) Poblar la base de datos
+
+```bash
+php artisan db:seed
+```
+
+## ⚙️ Configuración
+
+### Variables de Entorno Importantes
+
+```env
+APP_NAME="Risaralda EcoTurismo"
+APP_URL=http://localhost:8000
+
+# Sanctum
+SANCTUM_STATEFUL_DOMAINS=localhost:5173,127.0.0.1:5173
+
+# Base de datos
+DB_CONNECTION=sqlite
+```
+
+### Configurar Vite
+
+El archivo `vite.config.js` ya está configurado para trabajar con Laravel. Asegúrate de que la URL del servidor de desarrollo coincida con `APP_URL`.
+
+## 🎯 Uso
+
+### Desarrollo
+
+Para ejecutar el proyecto en modo desarrollo, necesitas dos terminales:
+
+**Terminal 1 - Servidor Laravel:**
+```bash
+php artisan serve
+```
+
+**Terminal 2 - Servidor Vite (React):**
+```bash
+npm run dev
+```
+
+O usar el comando combinado:
+```bash
+npm run serve
+```
+
+Luego accede a: `http://localhost:8000`
+
+### Producción
+
+1. Compilar los assets:
+```bash
+npm run build
+```
+
+2. Optimizar Laravel:
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+3. Configurar el servidor web (Apache/Nginx) para apuntar a la carpeta `public/`
+
+## 📁 Estructura del Proyecto
+
+```
+Laravel_Ecoturismo/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── API/          # Controladores de API
+│   │   │   ├── Admin/        # Controladores de administración
+│   │   │   └── Auth/         # Controladores de autenticación
+│   │   └── Middleware/       # Middleware personalizado
+│   └── Models/               # Modelos Eloquent
+├── database/
+│   ├── migrations/            # Migraciones de base de datos
+│   └── seeders/               # Seeders
+├── resources/
+│   ├── js/
+│   │   └── react/             # Aplicación React
+│   │       ├── components/    # Componentes reutilizables
+│   │       ├── context/       # Context API (AuthContext)
+│   │       ├── services/      # Servicios API
+│   │       ├── admin/         # Panel de administración
+│   │       ├── places/        # Páginas de lugares
+│   │       ├── login/         # Página de login
+│   │       ├── contact/       # Página de contacto
+│   │       └── map/           # Mapa interactivo
+│   └── views/                 # Vistas Blade (solo app.blade.php)
+├── routes/
+│   ├── api.php                # Rutas de API
+│   └── web.php                # Rutas web
+├── public/                     # Archivos públicos
+└── vite.config.js             # Configuración de Vite
+```
+
+## 📚 Documentación
+
+La documentación completa del proyecto está disponible en los siguientes archivos:
+
+### Documentación Principal
+
+- **[README.md](./README.md)**: Este archivo - Visión general del proyecto
+- **[SETUP.md](./SETUP.md)**: Guía detallada de instalación y configuración paso a paso
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Arquitectura del sistema, estructura y flujo de datos
+- **[FLOW.md](./FLOW.md)**: Flujos principales de la aplicación desde la perspectiva del usuario
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)**: Documentación completa de la API REST con ejemplos
+- **[DATABASE.md](./DATABASE.md)**: Estructura completa de la base de datos, tablas y relaciones
+
+### Documentación Técnica Adicional
+
+- **[GUIA_INTEGRACION_REACT.md](./GUIA_INTEGRACION_REACT.md)**: Guía de integración de React con el backend
+- **[REACT_LARAVEL_SETUP.md](./REACT_LARAVEL_SETUP.md)**: Configuración de React con Laravel
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)**: Endpoints de la API
+
+### Guías de Desarrollo
+
+- **[INICIO_RAPIDO.md](./INICIO_RAPIDO.md)**: Inicio rápido para desarrolladores
+- **[INSTRUCCIONES_USO.md](./INSTRUCCIONES_USO.md)**: Instrucciones de uso para usuarios finales
+
+## 🔌 API
+
+La API REST está disponible en `/api`. Ver [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) para la documentación completa.
+
+### Endpoints Principales
+
+- `POST /api/register` - Registro de usuario
+- `POST /api/login` - Inicio de sesión
+- `GET /api/places` - Listar lugares
+- `GET /api/places/{id}` - Detalle de lugar
+- `POST /api/reservations` - Crear reserva
+- `POST /api/contacts` - Enviar mensaje de contacto
+
+## 👥 Usuarios y Roles
+
+### Usuario Regular
+- Ver lugares y detalles
+- Crear reservas
+- Agregar reseñas
+- Marcar favoritos
+- Gestionar perfil
+
+### Administrador
+- Todas las funciones de usuario regular
+- CRUD completo de lugares
+- CRUD completo de categorías
+- Gestión de usuarios
+- Ver todas las reservas
+- Ver mensajes de contacto
+
+## 🔐 Autenticación
+
+El sistema utiliza **Laravel Sanctum** para autenticación basada en tokens. Los tokens se envían en el header:
+
+```
+Authorization: Bearer {token}
+```
+
+Los tokens expiran después de 30 días.
+
+## 🗺 Mapa Interactivo
+
+El mapa interactivo utiliza Leaflet y muestra todos los lugares con coordenadas. Los usuarios pueden:
+- Ver todos los lugares en el mapa
+- Hacer clic en los marcadores para ver detalles
+- Navegar desde el mapa a la página de detalles
+
+## 📝 Notas Importantes
+
+1. **Base de Datos**: Por defecto usa SQLite, pero puede configurarse para MySQL o PostgreSQL
+2. **Imágenes**: Las imágenes se almacenan en `storage/app/public/places/` y `storage/app/public/profiles/`
+3. **Tokens**: Los tokens de Sanctum se almacenan en la tabla `personal_access_tokens`
+4. **CORS**: Configurado para desarrollo local, ajustar para producción
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+## 👨‍💻 Autor
+
+Desarrollado para Risaralda EcoTurismo
+
+## 📞 Contacto
+
+Para más información, contacta a través del formulario de contacto en la aplicación o envía un email a: proyectoecoturismo2@gmail.com
+
+---
+
+**Versión**: 1.0.0  
+**Última actualización**: Diciembre 2025

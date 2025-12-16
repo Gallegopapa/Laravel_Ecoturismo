@@ -136,6 +136,35 @@ O con email:
 }
 ```
 
+### 9. Enviar Formulario de Contacto
+**POST** `/api/contacts`
+
+**Body:**
+```json
+{
+  "name": "Juan Pérez",
+  "email": "juan@example.com",
+  "phone": "3001234567",
+  "message": "Mensaje de contacto completo"
+}
+```
+
+**Respuesta exitosa (201):**
+```json
+{
+  "message": "Mensaje enviado correctamente. Nos pondremos en contacto contigo pronto.",
+  "data": {
+    "id": 1,
+    "name": "Juan Pérez",
+    "email": "juan@example.com",
+    "phone": "3001234567",
+    "created_at": "2025-12-16T04:17:11.000000Z"
+  }
+}
+```
+
+**Nota**: Si el usuario está autenticado, se guardará su `user_id` automáticamente.
+
 ---
 
 ## Endpoints Protegidos (requieren token)
@@ -249,6 +278,30 @@ O con email:
 
 #### Eliminar de Favoritos
 **DELETE** `/api/favorites/{placeId}`
+
+### Contactos (Admin)
+
+#### Obtener Todos los Contactos
+**GET** `/api/contacts` (Requiere admin)
+
+**Respuesta:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Juan Pérez",
+    "email": "juan@example.com",
+    "phone": "3001234567",
+    "message": "Mensaje completo...",
+    "user_id": null,
+    "created_at": "2025-12-16T04:17:11.000000Z",
+    "usuario": null
+  }
+]
+```
+
+#### Obtener un Contacto Específico
+**GET** `/api/contacts/{id}` (Requiere admin)
 
 ### Lugares (Admin)
 

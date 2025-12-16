@@ -127,7 +127,7 @@ export default function Contact() {
     <>
       {isAuthenticated ? <Header2 /> : <Header />}
 
-      <div className="container">
+      <div className="contact-page-container">
         <div className="form">
 
           {/* ------- COLUMNA IZQUIERDA ------- */}

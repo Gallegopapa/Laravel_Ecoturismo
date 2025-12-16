@@ -1,24 +1,32 @@
-/* RESET & CONTENEDOR PRINCIPAL */
-html, body, #root {
+/* RESET & CONTENEDOR PRINCIPAL - Específico para login/registro */
+.login-page-container,
+.login-page-container html,
+.login-page-container body {
   height: 100%;
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  box-sizing: border-box;
 }
 
-.container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
+.login-page-container {
+  width: 100% !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
   z-index: 0;
-  
+  padding: 0 !important;
+  margin: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
 }
 
 /* VIDEO DE FONDO DESDE CSS */
-#bg-video {
+.login-page-container #bg-video {
   position: fixed;
   top: 0;
   left: 0;
@@ -33,7 +41,7 @@ html, body, #root {
 
 
 /* HEADER */
-.header {
+.login-page-container .header {
   position: absolute;
   top: 0;
   left: 0;
@@ -56,17 +64,27 @@ html, body, #root {
 }
 
 /* TARJETA DE LOGIN */
-.login-card {
+.login-page-container .login-card {
   background: rgba(255, 255, 255, 0.95);
   padding: 30px;
   width: 300px;
+  max-width: 90%;
   border-radius: 8px;
   text-align: center;
   box-shadow: 0px 15px 50px rgba(0, 0, 0, 0.3);
-  margin-top: 60px;
-  margin-bottom: 60px;
+  margin: 60px auto !important;
   z-index: 10;
   position: relative;
+  left: auto !important;
+  right: auto !important;
+}
+
+.login-card h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  margin-top: 0;
+  color: #333;
+  font-weight: 700;
 }
 
 .login-card .title {
@@ -97,6 +115,7 @@ html, body, #root {
   font-size: 14px;
   box-sizing: border-box;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
+  text-align: left;
 }
 
 .login-card input:focus {
@@ -160,6 +179,16 @@ html, body, #root {
   font-weight: 600;
   min-height: 18px;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-card .error {
+  color: #c33;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: left;
 }
 
 .message.error {
@@ -175,7 +204,7 @@ html, body, #root {
 }
 
 /* FOOTER */
-.footer {
+.login-page-container .footer {
   position: absolute;
   bottom: 0; /* pegado al borde inferior */
   left: 0;
