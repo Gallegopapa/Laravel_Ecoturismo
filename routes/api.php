@@ -11,6 +11,7 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\MessageController;
+use App\Http\Controllers\API\ContactController;
 use App\Http\Controllers\API\AdminPlaceController;
 use App\Http\Controllers\API\AdminUserController;
 
@@ -34,6 +35,9 @@ Route::get('/places/{placeId}/reviews', [ReviewController::class, 'index']);
 
 // Envío de mensajes (público, pero puede incluir user_id si está autenticado)
 Route::post('/messages', [MessageController::class, 'store']);
+
+// Envío de contactos (público, pero puede incluir user_id si está autenticado)
+Route::post('/contacts', [ContactController::class, 'store']);
 
 // ============================================
 // RUTAS PROTEGIDAS (requieren autenticación con Sanctum)
@@ -78,6 +82,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas de pagos (BOCETO)
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::post('/payments', [PaymentController::class, 'store']);
+    
+    // Rutas de contactos (solo lectura para admin)
+    Route::get('/contacts', [ContactController::class, 'index'])->middleware('admin');
+    Route::get('/contacts/{contact}', [ContactController::class, 'show'])->middleware('admin');
     
     // ============================================
     // RUTAS DE ADMIN API (requieren autenticación + admin)

@@ -4,6 +4,7 @@ import { useAuth } from "@/react/context/AuthContext";
 import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { contactsService } from "@/react/services/api";
 import "./contacto.css";
 
 // 🔹 Importación correcta de imágenes
@@ -26,6 +27,7 @@ export default function Contact() {
 
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,29 +71,56 @@ export default function Contact() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     setSuccessMsg("");
+    setLoading(true);
 
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setLoading(false);
       return;
     }
 
-    // ✔ Simulación de envío correcto
-    setSuccessMsg("¡Mensaje enviado exitosamente!");
+    try {
+      // Enviar el mensaje al backend
+      const response = await contactsService.send({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      });
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
+      // Mensaje enviado exitosamente
+      setSuccessMsg(response.message || "¡Mensaje enviado exitosamente!");
 
-    setTimeout(() => setSuccessMsg(""), 3000);
+      // Limpiar el formulario
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+
+      // Ocultar el mensaje después de 5 segundos
+      setTimeout(() => setSuccessMsg(""), 5000);
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error);
+      
+      // Manejar errores de validación del servidor
+      if (error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      } else {
+        setErrors({
+          general: error.response?.data?.message || "Error al enviar el mensaje. Por favor, intenta nuevamente."
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -208,11 +237,22 @@ export default function Contact() {
                 <span>Mensaje</span>
               </div>
 
-              <input type="submit" value="Enviar" className="btn" />
+              <input 
+                type="submit" 
+                value={loading ? "Enviando..." : "Enviar"} 
+                className="btn" 
+                disabled={loading}
+              />
 
               {successMsg && (
-                <p style={{ color: "#fff", marginTop: "10px" }}>
+                <p style={{ color: "#4ade80", marginTop: "10px", fontWeight: "bold" }}>
                   {successMsg}
+                </p>
+              )}
+
+              {errors.general && (
+                <p style={{ color: "#ef4444", marginTop: "10px" }}>
+                  {errors.general}
                 </p>
               )}
             </form>

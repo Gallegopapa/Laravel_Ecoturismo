@@ -269,6 +269,24 @@ export const messagesService = {
   },
 };
 
+// Servicios de contactos
+export const contactsService = {
+  send: async (contactData) => {
+    const response = await api.post('/contacts', contactData);
+    return response.data;
+  },
+  
+  getAll: async () => {
+    const response = await api.get('/contacts');
+    return response.data;
+  },
+  
+  getById: async (id) => {
+    const response = await api.get(`/contacts/${id}`);
+    return response.data;
+  },
+};
+
 // Servicios de admin
 export const adminService = {
   // Lugares
