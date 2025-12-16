@@ -250,9 +250,7 @@ export default function ParquesYMasPage() {
                 <div className="card-actions">
                   <div className="action-buttons">
                     <a 
-                      href={lugar.map || lugar.mapa || (lugar.latitude && lugar.longitude ? `https://www.google.com/maps?q=${lugar.latitude},${lugar.longitude}` : "#")} 
-                      target="_blank" 
-                      rel="noreferrer"
+                      href="/mapa" 
                       className="map-button"
                       title="Ver en mapa"
                     >

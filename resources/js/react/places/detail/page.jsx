@@ -279,12 +279,10 @@ const PlaceDetailPage = () => {
             )}
             {place.latitude && place.longitude && (
               <a 
-                href={`https://www.google.com/maps?q=${place.latitude},${place.longitude}`}
-                target="_blank"
-                rel="noreferrer"
+                href="/mapa"
                 className="map-link-button"
               >
-                🗺️ Ver en Google Maps
+                🗺️ Ver en Mapa Interactivo
               </a>
             )}
           </div>

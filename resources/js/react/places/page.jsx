@@ -548,11 +548,7 @@ const PlacesPage = () => {
                         <div className="card-actions">
                           <div className="action-buttons">
                             <a 
-                              href={lugar.latitude && lugar.longitude 
-                                ? `https://www.google.com/maps?q=${lugar.latitude},${lugar.longitude}` 
-                                : "#"} 
-                              target="_blank" 
-                              rel="noreferrer"
+                              href="/mapa" 
                               className="map-button"
                               title="Ver en mapa"
                             >
@@ -625,11 +621,7 @@ const PlacesPage = () => {
                       <div className="card-actions">
                         <div className="action-buttons">
                           <a 
-                            href={lugar.latitude && lugar.longitude 
-                              ? `https://www.google.com/maps?q=${lugar.latitude},${lugar.longitude}` 
-                              : "#"} 
-                            target="_blank" 
-                            rel="noreferrer"
+                            href="/mapa" 
                             className="map-button"
                             title="Ver en mapa"
                           >
