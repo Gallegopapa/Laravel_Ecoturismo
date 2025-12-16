@@ -378,40 +378,23 @@ const PlacesAdmin = () => {
           <div className="form-group">
             <label>
               Categorías
-              <div className="categories-checkboxes" style={{ 
-                marginTop: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-                maxHeight: '200px',
-                overflowY: 'auto',
-                padding: '10px',
-                border: '1px solid #e0e0e0',
-                borderRadius: '6px',
-                backgroundColor: '#f9f9f9'
-              }}>
+              <div className="categories-checkboxes">
                 {categories.length === 0 ? (
-                  <p style={{ color: '#666', fontSize: '0.9rem', margin: 0 }}>
+                  <p className="categories-empty-message">
                     No hay categorías disponibles. Crea categorías primero.
                   </p>
                 ) : (
                   categories.map((category) => (
-                    <label key={category.id} style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '8px',
-                      cursor: 'pointer',
-                      padding: '4px 0'
-                    }}>
+                    <label key={category.id} className="category-checkbox-label">
                       <input
                         type="checkbox"
                         name="categories"
                         value={category.id}
                         checked={formData.categories?.includes(category.id) || false}
                         onChange={handleInputChange}
-                        style={{ cursor: 'pointer' }}
+                        className="category-checkbox"
                       />
-                      <span style={{ fontSize: '0.95rem' }}>{category.name}</span>
+                      <span className="category-checkbox-text">{category.name}</span>
                     </label>
                   ))
                 )}

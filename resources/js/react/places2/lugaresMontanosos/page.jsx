@@ -106,19 +106,32 @@ export default function LugaresMontanososPage() {
       if (montanososCategory) {
         const data = await placesService.getAll({ category_id: montanososCategory.id });
         if (data && data.length > 0) {
-          // Priorizar imágenes locales del fallback sobre las de la API
+          // PRIORIDAD: Imágenes subidas -> Imágenes locales del fallback -> Placeholder
           const withImages = data.map((item) => {
-            // Buscar el fallback por nombre o ID (más robusto que por índice)
-            const fallback = lugaresFallback.find(
-              fb => fb.titulo?.toLowerCase() === item.name?.toLowerCase() || 
-                    fb.id === item.id
-            );
+            // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+            const imagenSubida = item.image && (
+              item.image.includes('/storage/places/') || 
+              item.image.startsWith('/storage/') ||
+              item.image.includes('storage/places') ||
+              (item.image.startsWith('http') && item.image.includes('/storage/places/'))
+            ) ? item.image : null;
+            
+            // SEGUNDO: Si no hay imagen subida, buscar en fallback local
+            let imagenLocal = null;
+            if (!imagenSubida) {
+              const fallback = lugaresFallback.find(
+                fb => fb.titulo?.toLowerCase() === item.name?.toLowerCase() || 
+                      fb.id === item.id
+              );
+              imagenLocal = fallback?.imagen || null;
+            }
+            
             return {
               ...item,
-              // PRIORIDAD: imagen local del fallback -> imagen local del item -> imagen de la API
-              imagen: fallback?.imagen || item.imagen || null,
-              // Eliminar image de la API para evitar confusión
-              image: null,
+              // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
+              imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.jpg',
+              // Mantener image solo si es una imagen subida válida
+              image: imagenSubida || null,
             };
           });
           setLugares(withImages);

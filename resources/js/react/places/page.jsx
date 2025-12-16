@@ -185,64 +185,33 @@ const PlacesPage = () => {
         });
 
         const lugaresConImagenesPriorizadas = lugaresOrdenados.map((lugar, index) => {
-          let imagenLocal = null;
           const nombreOriginal = lugar.name || '';
           const nombreLugar = normalizarNombre(nombreOriginal);
           
-          // PRIMERO: Buscar en mapeo determinístico por nombre original (exacto)
-          imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+          // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+          const imagenSubida = lugar.image && (
+            lugar.image.includes('/storage/places/') || 
+            lugar.image.startsWith('/storage/') ||
+            lugar.image.includes('storage/places') ||
+            (lugar.image.startsWith('http') && lugar.image.includes('/storage/places/'))
+          ) ? lugar.image : null;
           
-          // SEGUNDO: Si no se encontró, buscar en mapeo normalizado
-          if (!imagenLocal) {
-            imagenLocal = mapeoImagenesLocales[nombreLugar];
-          }
-          
-          // TERCERO: Si hay categoría filtrada, buscar en los fallbacks de esa categoría
-          if (!imagenLocal && categoriaFiltro !== "todas") {
-            const fallbacks = fallbacksPorCategoria[categoriaFiltro];
-            if (fallbacks && fallbacks.length > 0) {
-              // Buscar por coincidencia exacta primero (nombre original)
-              let fallback = fallbacks.find(
-                fb => (fb.nombre || fb.titulo) === nombreOriginal
-              );
-              
-              // Si no encuentra exacta, buscar por nombre normalizado
-              if (!fallback) {
-                fallback = fallbacks.find(
-                  fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
-                );
-              }
-              
-              // Si aún no encuentra, buscar parcial (solo palabras clave importantes)
-              if (!fallback) {
-                const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
-                fallback = fallbacks.find(
-                  fb => {
-                    const nombreFallback = normalizarNombre(fb.nombre || fb.titulo);
-                    return palabrasClave.some(palabra => nombreFallback.includes(palabra));
-                  }
-                );
-              }
-              
-              // Si aún no encuentra, usar imagen del fallback por índice (último recurso)
-              if (!fallback && index < fallbacks.length) {
-                fallback = fallbacks[index];
-              }
-              
-              imagenLocal = fallback?.imagen || null;
-            }
-          }
-          
-          // CUARTO: Si no se encontró, buscar en las categorías del lugar
-          if (!imagenLocal) {
-            const lugarCategorias = lugar.categories || [];
+          // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
+          let imagenLocal = null;
+          if (!imagenSubida) {
+            // Buscar en mapeo determinístico por nombre original
+            imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
             
-            for (const cat of lugarCategorias) {
-              const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
-              const fallbacks = fallbacksPorCategoria[slug];
-              
+            // Si no se encontró, buscar en mapeo normalizado
+            if (!imagenLocal) {
+              imagenLocal = mapeoImagenesLocales[nombreLugar];
+            }
+            
+            // TERCERO: Si hay categoría filtrada, buscar en los fallbacks de esa categoría
+            if (!imagenLocal && categoriaFiltro !== "todas") {
+              const fallbacks = fallbacksPorCategoria[categoriaFiltro];
               if (fallbacks && fallbacks.length > 0) {
-                // Buscar por coincidencia exacta primero
+                // Buscar por coincidencia exacta primero (nombre original)
                 let fallback = fallbacks.find(
                   fb => (fb.nombre || fb.titulo) === nombreOriginal
                 );
@@ -254,7 +223,7 @@ const PlacesPage = () => {
                   );
                 }
                 
-                // Si aún no encuentra, buscar parcial
+                // Si aún no encuentra, buscar parcial (solo palabras clave importantes)
                 if (!fallback) {
                   const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
                   fallback = fallbacks.find(
@@ -265,22 +234,62 @@ const PlacesPage = () => {
                   );
                 }
                 
-                if (fallback?.imagen) {
-                  imagenLocal = fallback.imagen;
-                  break;
+                // Si aún no encuentra, usar imagen del fallback por índice (último recurso)
+                if (!fallback && index < fallbacks.length) {
+                  fallback = fallbacks[index];
+                }
+                
+                imagenLocal = fallback?.imagen || null;
+              }
+            }
+            
+            // CUARTO: Si no se encontró, buscar en las categorías del lugar
+            if (!imagenLocal) {
+              const lugarCategorias = lugar.categories || [];
+              
+              for (const cat of lugarCategorias) {
+                const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
+                const fallbacks = fallbacksPorCategoria[slug];
+                
+                if (fallbacks && fallbacks.length > 0) {
+                  // Buscar por coincidencia exacta primero
+                  let fallback = fallbacks.find(
+                    fb => (fb.nombre || fb.titulo) === nombreOriginal
+                  );
+                  
+                  // Si no encuentra exacta, buscar por nombre normalizado
+                  if (!fallback) {
+                    fallback = fallbacks.find(
+                      fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
+                    );
+                  }
+                  
+                  // Si aún no encuentra, buscar parcial
+                  if (!fallback) {
+                    const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
+                    fallback = fallbacks.find(
+                      fb => {
+                        const nombreFallback = normalizarNombre(fb.nombre || fb.titulo);
+                        return palabrasClave.some(palabra => nombreFallback.includes(palabra));
+                      }
+                    );
+                  }
+                  
+                  if (fallback?.imagen) {
+                    imagenLocal = fallback.imagen;
+                    break;
+                  }
                 }
               }
             }
           }
           
-          // IMPORTANTE: SIEMPRE usar imagen local si existe, NUNCA usar image de la API
-          // Si no hay imagen local, usar placeholder local
+          // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
           return {
             ...lugar,
-            // PRIORIDAD ABSOLUTA: imagen local -> placeholder local (NUNCA imagen de API)
-            imagen: imagenLocal || lugar.imagen || "/imagenes/placeholder.jpg",
-            // ELIMINAR completamente image de la API para evitar que se use
-            image: null,
+            imagen: imagenSubida || imagenLocal || lugar.imagen || "/imagenes/placeholder.jpg",
+            // Mantener image solo si es una imagen subida válida
+            image: imagenSubida || null,
           };
         });
         setLugares(lugaresConImagenesPriorizadas);

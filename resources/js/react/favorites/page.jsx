@@ -107,29 +107,40 @@ const FavoritesPage = () => {
       const data = await favoritesService.getAll();
       let favoritesData = Array.isArray(data) ? data : [];
       
-      // Priorizar imágenes locales sobre imágenes de API
+      // PRIORIDAD: Imágenes subidas -> Imágenes locales del mapeo -> Placeholder
       favoritesData = favoritesData.map((favorite) => {
         const place = favorite.place || {};
         const nombreOriginal = place.name || '';
         const nombreLugar = normalizarNombre(nombreOriginal);
         
-        let imagenLocal = null;
-        // Buscar en mapeo determinístico por nombre original
-        imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+        // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+        const imagenSubida = place.image && (
+          place.image.includes('/storage/places/') || 
+          place.image.startsWith('/storage/') ||
+          place.image.includes('storage/places') ||
+          (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+        ) ? place.image : null;
         
-        // Si no se encontró, buscar en mapeo normalizado
-        if (!imagenLocal) {
-          imagenLocal = mapeoImagenesLocales[nombreLugar];
+        // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
+        let imagenLocal = null;
+        if (!imagenSubida) {
+          // Buscar en mapeo determinístico por nombre original
+          imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+          
+          // Si no se encontró, buscar en mapeo normalizado
+          if (!imagenLocal) {
+            imagenLocal = mapeoImagenesLocales[nombreLugar];
+          }
         }
         
         return {
           ...favorite,
           place: {
             ...place,
-            // PRIORIDAD: imagen local -> imagen local del item -> placeholder local (NUNCA imagen de API)
-            imagen: imagenLocal || place.imagen || '/imagenes/placeholder.jpg',
-            // Eliminar image de la API
-            image: null,
+            // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
+            imagen: imagenSubida || imagenLocal || place.imagen || '/imagenes/placeholder.jpg',
+            // Mantener image solo si es una imagen subida válida
+            image: imagenSubida || null,
           }
         };
       });

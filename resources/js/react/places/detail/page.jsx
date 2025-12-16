@@ -115,20 +115,32 @@ const PlaceDetailPage = () => {
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
       
-      let imagenLocal = null;
-      // Buscar en mapeo determinístico por nombre original
-      imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+      // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+      const imagenSubida = placeData.image && (
+        placeData.image.includes('/storage/places/') || 
+        placeData.image.startsWith('/storage/') ||
+        placeData.image.includes('storage/places') ||
+        (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
+      ) ? placeData.image : null;
       
-      // Si no se encontró, buscar en mapeo normalizado
-      if (!imagenLocal) {
-        imagenLocal = mapeoImagenesLocales[nombreLugar];
+      // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
+      let imagenLocal = null;
+      if (!imagenSubida) {
+        // Buscar en mapeo determinístico por nombre original
+        imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+        
+        // Si no se encontró, buscar en mapeo normalizado
+        if (!imagenLocal) {
+          imagenLocal = mapeoImagenesLocales[nombreLugar];
+        }
       }
       
-      // Asignar imagen local prioritaria
+      // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder
       placeData = {
         ...placeData,
-        imagen: imagenLocal || placeData.imagen || '/imagenes/placeholder.jpg',
-        image: null, // Eliminar imagen de API
+        imagen: imagenSubida || imagenLocal || placeData.imagen || '/imagenes/placeholder.jpg',
+        // Mantener image solo si es una imagen subida válida
+        image: imagenSubida || null,
       };
       
       setPlace(placeData);
