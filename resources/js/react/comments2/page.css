@@ -167,7 +167,7 @@ body {
 .btn:hover,
 .boton-volver:hover {
   background: #27ae60;
-  transform: translateY(-2px);
+  transform: translateY(2px);
   box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
 }
 
@@ -238,19 +238,20 @@ body {
 }
 
 .volver {
-    position: relative;
     display: flex;
+    line-height: 0%;
     justify-content: center;
     align-items: center;
-    left: 950%;
-    bottom: 1px;
+    left: 890%;
+    height: 40px;
+    top: 13px;
     background: #2ecc71;
     color: #fff;
     padding: 0.8rem 2rem;
     border-radius: 25px;
     text-align: center;
     display: inline-block;
-    font-size: 1rem;
+    /* font-size: 1rem;  */
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;

@@ -258,7 +258,7 @@
 /* Botón para volver a inicio */
 .btn-back-home {
   padding: 10px 20px;
-  background: #6c6c68;
+  background: #2ecc71;
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -269,7 +269,7 @@
 }
 
 .btn-back-home:hover {
-  background: #5a5a56;
+  background: #2ecc71;
   transform: translateY(-1px);
 }
 
