@@ -80,7 +80,7 @@ export default function LugaresMontanososPage() {
       titulo: "Reserva Natural DMI Agualinda",
       ubicacion: "Apía, Risaralda",
       descripcion: "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.",
-      imagen: "/imagenes/dmi2.jpg",
+      imagen: "/imagenes/distritomanejo8.jpg",
       mapa: "https://maps.app.goo.gl/UNc9cTccV6LuGySU7",
     },
   ];

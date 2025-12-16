@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { adminService } from '../services/api';
+import { adminService, categoriesService } from '../services/api';
 import './admin.css';
 
 const PlacesAdmin = () => {
   const [places, setPlaces] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingPlace, setEditingPlace] = useState(null);
@@ -14,6 +15,7 @@ const PlacesAdmin = () => {
     image: null,
     latitude: '',
     longitude: '',
+    categories: [],
   });
 
   // Mapeo determinístico: nombre exacto -> imagen local
@@ -36,7 +38,7 @@ const PlacesAdmin = () => {
     'Reserva Natural Cerro Gobia': '/imagenes/gobia.jpg',
     'Kaukitá Bosque Reserva': '/imagenes/kaukita3.jpg',
     'Kaukita Bosque Reserva': '/imagenes/kaukita3.jpg',
-    'Reserva Natural DMI Agualinda': '/imagenes/dmi2.jpg',
+    'Reserva Natural DMI Agualinda': '/imagenes/distritomanejo8.jpg',
     'Parque Nacional Natural Tatamá': '/imagenes/tatama.jpg',
     'Parque Nacional Natural Tatama': '/imagenes/tatama.jpg',
     'Parque Las Araucarias': '/imagenes/araucarias.jpg',
@@ -77,7 +79,7 @@ const PlacesAdmin = () => {
     'reserva natural cerro gobia': '/imagenes/gobia.jpg',
     'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
     'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
-    'reserva natural dmi agualinda': '/imagenes/dmi2.jpg',
+    'reserva natural dmi agualinda': '/imagenes/distritomanejo8.jpg',
     'parque nacional natural tatamá': '/imagenes/tatama.jpg',
     'parque nacional natural tatama': '/imagenes/tatama.jpg',
     'parque las araucarias': '/imagenes/araucarias.jpg',
@@ -91,7 +93,17 @@ const PlacesAdmin = () => {
 
   useEffect(() => {
     loadPlaces();
+    loadCategories();
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoriesService.getAll();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar categorías:', error);
+    }
+  };
 
   const loadPlaces = async () => {
     try {
@@ -99,26 +111,38 @@ const PlacesAdmin = () => {
       const data = await adminService.places.getAll();
       let placesData = Array.isArray(data) ? data : [];
       
-      // Priorizar imágenes locales sobre imágenes de API
+      // PRIORIDAD: Imágenes subidas -> Imágenes locales del mapeo -> Placeholder
       placesData = placesData.map((place) => {
         const nombreOriginal = place.name || '';
         const nombreLugar = normalizarNombre(nombreOriginal);
         
-        let imagenLocal = null;
-        // Buscar en mapeo determinístico por nombre original
-        imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+        // PRIMERO: Verificar si hay imagen subida (desde storage)
+        // El accessor del modelo convierte /storage/... a URL completa, así que verificamos ambas opciones
+        const imagenSubida = place.image && (
+          place.image.includes('/storage/places/') || 
+          place.image.startsWith('/storage/') ||
+          place.image.includes('storage/places') ||
+          (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+        ) ? place.image : null;
         
-        // Si no se encontró, buscar en mapeo normalizado
-        if (!imagenLocal) {
-          imagenLocal = mapeoImagenesLocales[nombreLugar];
+        // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
+        let imagenLocal = null;
+        if (!imagenSubida) {
+          // Buscar en mapeo determinístico por nombre original
+          imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+          
+          // Si no se encontró, buscar en mapeo normalizado
+          if (!imagenLocal) {
+            imagenLocal = mapeoImagenesLocales[nombreLugar];
+          }
         }
         
         return {
           ...place,
-          // PRIORIDAD: imagen local -> imagen local del item -> placeholder local (NUNCA imagen de API)
-          imagen: imagenLocal || place.imagen || '/imagenes/placeholder.jpg',
-          // Eliminar image de la API
-          image: null,
+          // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
+          imagen: imagenSubida || imagenLocal || '/imagenes/placeholder.jpg',
+          // Mantener image solo si es una imagen subida válida
+          image: imagenSubida || null,
         };
       });
       
@@ -178,6 +202,7 @@ const PlacesAdmin = () => {
         latitude: placeData.latitude || '',
         longitude: placeData.longitude || '',
         image: null,
+        categories: placeData.categories ? placeData.categories.map(cat => cat.id) : [],
       });
       // Scroll al formulario
       document.querySelector('.admin-form-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -211,18 +236,43 @@ const PlacesAdmin = () => {
       image: null,
       latitude: '',
       longitude: '',
+      categories: [],
     });
     // Reset file input
     const fileInput = document.getElementById('place-image');
     if (fileInput) fileInput.value = '';
+    // Reset category checkboxes
+    document.querySelectorAll('input[type="checkbox"][name="categories"]').forEach(cb => {
+      cb.checked = false;
+    });
   };
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
+    const { name, value, files, type, checked } = e.target;
+    
+    if (type === 'checkbox' && name === 'categories') {
+      // Manejar checkboxes de categorías
+      const categoryId = parseInt(value);
+      setFormData((prev) => {
+        const currentCategories = prev.categories || [];
+        if (checked) {
+          return {
+            ...prev,
+            categories: [...currentCategories, categoryId],
+          };
+        } else {
+          return {
+            ...prev,
+            categories: currentCategories.filter(id => id !== categoryId),
+          };
+        }
+      });
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: files ? files[0] : value,
+      }));
+    }
   };
 
   return (
@@ -325,6 +375,50 @@ const PlacesAdmin = () => {
             </label>
           </div>
 
+          <div className="form-group">
+            <label>
+              Categorías
+              <div className="categories-checkboxes" style={{ 
+                marginTop: '10px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                padding: '10px',
+                border: '1px solid #e0e0e0',
+                borderRadius: '6px',
+                backgroundColor: '#f9f9f9'
+              }}>
+                {categories.length === 0 ? (
+                  <p style={{ color: '#666', fontSize: '0.9rem', margin: 0 }}>
+                    No hay categorías disponibles. Crea categorías primero.
+                  </p>
+                ) : (
+                  categories.map((category) => (
+                    <label key={category.id} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px',
+                      cursor: 'pointer',
+                      padding: '4px 0'
+                    }}>
+                      <input
+                        type="checkbox"
+                        name="categories"
+                        value={category.id}
+                        checked={formData.categories?.includes(category.id) || false}
+                        onChange={handleInputChange}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: '0.95rem' }}>{category.name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+            </label>
+          </div>
+
           <div className="form-actions">
             <button type="submit" className="btn-primary">
               {editingPlace ? 'Actualizar' : 'Guardar'}
@@ -358,8 +452,16 @@ const PlacesAdmin = () => {
               {places.map((place) => (
                 <tr key={place.id}>
                   <td>
-                    {place.imagen || place.image ? (
-                      <img src={place.imagen || place.image || '/imagenes/placeholder.jpg'} alt={place.name} className="thumb" />
+                    {place.imagen && place.imagen !== '/imagenes/placeholder.jpg' ? (
+                      <img 
+                        src={place.imagen} 
+                        alt={place.name} 
+                        className="thumb"
+                        onError={(e) => {
+                          console.error('Error al cargar imagen:', place.imagen, 'para lugar:', place.name);
+                          e.target.src = '/imagenes/placeholder.jpg';
+                        }}
+                      />
                     ) : (
                       <span className="no-image">Sin imagen</span>
                     )}

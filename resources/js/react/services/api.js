@@ -290,6 +290,13 @@ export const adminService = {
       if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
+      // Agregar categorías como array
+      if (placeData.categories && Array.isArray(placeData.categories) && placeData.categories.length > 0) {
+        placeData.categories.forEach((categoryId) => {
+          formData.append('categories[]', categoryId);
+        });
+      }
+      
       const response = await api.post('/admin/places', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -306,6 +313,18 @@ export const adminService = {
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
+      
+      // Agregar categorías como array (incluso si está vacío para sincronizar)
+      if (placeData.categories !== undefined) {
+        if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
+          placeData.categories.forEach((categoryId) => {
+            formData.append('categories[]', categoryId);
+          });
+        } else {
+          // Si está vacío, enviar array vacío para desasociar todas las categorías
+          formData.append('categories[]', '');
+        }
+      }
       
       // Usar POST con _method=PUT para FormData (más compatible)
       const response = await api.post(`/admin/places/${id}`, formData, {

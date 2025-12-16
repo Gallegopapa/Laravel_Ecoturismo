@@ -15,7 +15,7 @@ class AdminPlaceController extends Controller
      */
     public function index(): JsonResponse
     {
-        $places = Place::orderBy('id', 'desc')->get();
+        $places = Place::with('categories')->orderBy('id', 'desc')->get();
         return response()->json($places);
     }
 
@@ -24,6 +24,7 @@ class AdminPlaceController extends Controller
      */
     public function show(Place $place): JsonResponse
     {
+        $place->load('categories');
         return response()->json($place);
     }
 
@@ -39,6 +40,8 @@ class AdminPlaceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB máximo
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
@@ -47,6 +50,8 @@ class AdminPlaceController extends Controller
             'latitude.between' => 'La latitud debe estar entre -90 y 90.',
             'longitude.numeric' => 'La longitud debe ser un número.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
+            'categories.array' => 'Las categorías deben ser un array.',
+            'categories.*.exists' => 'Una o más categorías no existen.',
         ]);
 
         // Manejar subida de imagen
@@ -58,7 +63,18 @@ class AdminPlaceController extends Controller
             $data['image'] = '/storage/' . $path;
         }
 
+        // Extraer categorías antes de crear el lugar
+        $categories = $data['categories'] ?? [];
+        unset($data['categories']);
+
         $place = Place::create($data);
+
+        // Asociar categorías si se proporcionan
+        if (!empty($categories)) {
+            $place->categories()->sync($categories);
+        }
+
+        $place->load('categories');
 
         return response()->json([
             'message' => 'Lugar creado correctamente.',
@@ -78,6 +94,8 @@ class AdminPlaceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
@@ -86,6 +104,8 @@ class AdminPlaceController extends Controller
             'latitude.between' => 'La latitud debe estar entre -90 y 90.',
             'longitude.numeric' => 'La longitud debe ser un número.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
+            'categories.array' => 'Las categorías deben ser un array.',
+            'categories.*.exists' => 'Una o más categorías no existen.',
         ]);
 
         // Manejar subida de nueva imagen
@@ -105,7 +125,19 @@ class AdminPlaceController extends Controller
             $data['image'] = '/storage/' . $path;
         }
 
+        // Extraer categorías antes de actualizar el lugar
+        $categories = $data['categories'] ?? null;
+        unset($data['categories']);
+
         $place->update($data);
+
+        // Actualizar categorías si se proporcionan (incluso si es array vacío)
+        if ($categories !== null) {
+            // Si es array vacío, desasociar todas las categorías
+            $place->categories()->sync($categories ?: []);
+        }
+
+        $place->load('categories');
 
         return response()->json([
             'message' => 'Lugar actualizado correctamente.',
