@@ -40,17 +40,21 @@
                 @endif
             </div>
 
-            <h1 style="margin-bottom:20px;">Crear Reserva</h1>
+            <h1 style="margin-bottom:20px;">Crear Reserva - {{ $place->name }}</h1>
 
             <form method="POST" action="{{ route('reservations.store') }}">
                 @csrf
                 <input type="hidden" name="place_id" value="{{ $place->id }}">
 
                 <label>Fecha de visita *</label>
-                <input type="date" name="fecha_visita" required min="{{ date('Y-m-d') }}" value="{{ old('fecha_visita') }}">
+                <input type="date" id="fecha_visita" name="fecha_visita" required min="{{ date('Y-m-d') }}" value="{{ old('fecha_visita') }}">
 
-                <label>Hora de visita</label>
-                <input type="time" name="hora_visita" value="{{ old('hora_visita') }}">
+                <label>Hora de visita *</label>
+                <select id="hora_visita" name="hora_visita" required style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #dcdcdc; font-size:0.95rem; box-sizing:border-box;">
+                    <option value="">Selecciona primero una fecha</option>
+                </select>
+                <div id="loading-horarios" style="display:none; color:#6c6c68; margin-top:5px; font-size:0.9em;">Cargando horarios disponibles...</div>
+                <div id="error-horarios" style="display:none; color:#d7263d; margin-top:5px; font-size:0.9em;"></div>
 
                 <label>Número de personas *</label>
                 <input type="number" name="personas" required min="1" max="50" value="{{ old('personas', 1) }}">
@@ -83,6 +87,71 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const placeId = {{ $place->id }};
+        const fechaInput = document.getElementById('fecha_visita');
+        const horaSelect = document.getElementById('hora_visita');
+        const loadingDiv = document.getElementById('loading-horarios');
+        const errorDiv = document.getElementById('error-horarios');
+
+        fechaInput.addEventListener('change', function() {
+            const fecha = this.value;
+            
+            if (!fecha) {
+                horaSelect.innerHTML = '<option value="">Selecciona primero una fecha</option>';
+                errorDiv.style.display = 'none';
+                return;
+            }
+
+            // Limpiar select y mostrar loading
+            horaSelect.innerHTML = '<option value="">Cargando...</option>';
+            horaSelect.disabled = true;
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+
+            // Hacer petición a la API
+            fetch(`/api/places/${placeId}/available-schedules?fecha=${fecha}`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingDiv.style.display = 'none';
+                    horaSelect.disabled = false;
+                    
+                    if (data.horarios_disponibles && data.horarios_disponibles.length > 0) {
+                        horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                        data.horarios_disponibles.forEach(horario => {
+                            const option = document.createElement('option');
+                            option.value = horario.hora;
+                            option.textContent = horario.hora_display;
+                            horaSelect.appendChild(option);
+                        });
+                    } else {
+                        horaSelect.innerHTML = '<option value="">No hay horarios disponibles para esta fecha</option>';
+                        errorDiv.textContent = 'No hay horarios disponibles para la fecha seleccionada. Por favor, selecciona otra fecha.';
+                        errorDiv.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    loadingDiv.style.display = 'none';
+                    horaSelect.disabled = false;
+                    horaSelect.innerHTML = '<option value="">Error al cargar horarios</option>';
+                    errorDiv.textContent = 'Error al cargar los horarios disponibles. Por favor, intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                    console.error('Error:', error);
+                });
+        });
+
+        // Si hay una fecha previamente seleccionada (por ejemplo, después de un error de validación), cargar horarios
+        @if(old('fecha_visita'))
+            fechaInput.dispatchEvent(new Event('change'));
+            // Restaurar hora seleccionada si existe
+            @if(old('hora_visita'))
+                setTimeout(() => {
+                    horaSelect.value = '{{ old("hora_visita") }}';
+                }, 500);
+            @endif
+        @endif
+    </script>
 </body>
 </html>
 

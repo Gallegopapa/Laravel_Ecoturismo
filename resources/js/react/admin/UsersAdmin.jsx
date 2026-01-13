@@ -10,6 +10,7 @@ const UsersAdmin = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
     is_admin: false,
   });
 
@@ -50,12 +51,27 @@ const UsersAdmin = () => {
         is_admin: formData.is_admin,
       };
 
+      // Solo incluir contraseña si se proporciona (y no está vacía)
+      if (formData.password.trim()) {
+        userData.password = formData.password;
+      }
+
       if (editingUser) {
         await adminService.users.update(editingUser.id, userData);
         showMessage('Usuario actualizado correctamente');
       } else {
-        await adminService.users.create(userData);
-        showMessage('Usuario creado correctamente');
+        const response = await adminService.users.create(userData);
+        
+        // Si se generó una contraseña, mostrarla al admin
+        if (response.generated_password) {
+          const passwordMsg = `Usuario creado correctamente.\n\n` +
+            `CONTRASEÑA GENERADA:\n${response.generated_password}\n\n` +
+            `IMPORTANTE: Guarda esta contraseña y compártela con el usuario. No se mostrará nuevamente.`;
+          alert(passwordMsg);
+          showMessage('Usuario creado correctamente. Revisa la contraseña generada.');
+        } else {
+          showMessage('Usuario creado correctamente');
+        }
       }
       
       resetForm();
@@ -76,6 +92,7 @@ const UsersAdmin = () => {
       setFormData({
         name: userData.name || '',
         email: userData.email || '',
+        password: '', // No mostrar contraseña al editar
         is_admin: userData.is_admin || false,
       });
     } catch (error) {
@@ -107,6 +124,7 @@ const UsersAdmin = () => {
     setFormData({
       name: '',
       email: '',
+      password: '',
       is_admin: false,
     });
   };
@@ -153,6 +171,25 @@ const UsersAdmin = () => {
                 onChange={handleInputChange}
                 required
               />
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Contraseña {!editingUser && <span style={{fontSize: '0.85em', color: '#666', fontWeight: 'normal'}}>(opcional)</span>}
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                minLength={6}
+                placeholder={editingUser ? "Dejar vacío para mantener la contraseña actual" : "Dejar vacío para generar una contraseña aleatoria segura"}
+              />
+              {!editingUser && (
+                <small style={{display: 'block', color: '#666', marginTop: '4px'}}>
+                  Si no proporcionas una contraseña, se generará una automáticamente y se mostrará después de crear el usuario.
+                </small>
+              )}
             </label>
           </div>
 

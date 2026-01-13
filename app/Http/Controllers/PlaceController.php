@@ -36,8 +36,29 @@ class PlaceController extends Controller
                 ->where('place_id', $place->id)
                 ->first();
         }
+
+        // Cargar horarios activos del lugar
+        $schedules = $place->activeSchedules()->orderByRaw("
+            CASE dia_semana
+                WHEN 'lunes' THEN 1
+                WHEN 'martes' THEN 2
+                WHEN 'miercoles' THEN 3
+                WHEN 'jueves' THEN 4
+                WHEN 'viernes' THEN 5
+                WHEN 'sabado' THEN 6
+                WHEN 'domingo' THEN 7
+            END
+        ")->orderBy('hora_inicio')->get();
+
+        // Cargar reservas futuras del lugar (para mostrar horarios ocupados)
+        $reservations = \App\Models\Reservation::where('place_id', $place->id)
+            ->where('fecha_visita', '>=', now()->toDateString())
+            ->where('estado', '!=', 'cancelada')
+            ->orderBy('fecha_visita')
+            ->orderBy('hora_visita')
+            ->get();
         
-        return view('place.show', compact('place', 'reviews', 'averageRating', 'userReview'));
+        return view('place.show', compact('place', 'reviews', 'averageRating', 'userReview', 'schedules', 'reservations'));
     }
 }
 

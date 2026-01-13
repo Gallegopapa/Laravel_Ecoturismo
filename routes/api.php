@@ -14,6 +14,7 @@ use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\ContactController;
 use App\Http\Controllers\API\AdminPlaceController;
 use App\Http\Controllers\API\AdminUserController;
+use App\Http\Controllers\API\PlaceScheduleController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
@@ -24,6 +25,8 @@ Route::post('/register', [AuthController::class, 'register']);
 // Rutas públicas de lugares
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{place}', [PlaceController::class, 'show']);
+Route::get('/places/{place}/available-schedules', [PlaceController::class, 'getAvailableSchedules']);
+Route::get('/places/{place}/schedules', [PlaceScheduleController::class, 'index']);
 
 // Rutas públicas de categorías
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -105,5 +108,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users', [AdminUserController::class, 'store']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+        // Rutas de horarios para lugares
+        Route::get('/places/{place}/schedules', [PlaceScheduleController::class, 'index']);
+        Route::post('/places/{place}/schedules', [PlaceScheduleController::class, 'store']);
+        Route::put('/places/{place}/schedules/{schedule}', [PlaceScheduleController::class, 'update']);
+        Route::delete('/places/{place}/schedules/{schedule}', [PlaceScheduleController::class, 'destroy']);
     });
 });

@@ -48,6 +48,144 @@
                     <p>{{ $place->location }}</p>
                 </div>
             @endif
+
+            <!-- Información de Contacto -->
+            @if($place->telefono || $place->email || $place->sitio_web)
+                <div class="contacto" style="margin-top:30px;">
+                    <h2>Información de Contacto</h2>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        @if($place->telefono)
+                            <p style="margin:5px 0;">
+                                <strong>📞 Teléfono:</strong> 
+                                <a href="tel:{{ $place->telefono }}" style="color:#24a148; text-decoration:none;">{{ $place->telefono }}</a>
+                            </p>
+                        @endif
+                        @if($place->email)
+                            <p style="margin:5px 0;">
+                                <strong>✉️ Email:</strong> 
+                                <a href="mailto:{{ $place->email }}" style="color:#24a148; text-decoration:none;">{{ $place->email }}</a>
+                            </p>
+                        @endif
+                        @if($place->sitio_web)
+                            <p style="margin:5px 0;">
+                                <strong>🌐 Sitio Web:</strong> 
+                                <a href="{{ $place->sitio_web }}" target="_blank" rel="noopener noreferrer" style="color:#24a148; text-decoration:none;">{{ $place->sitio_web }}</a>
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            <!-- Horarios Disponibles y Ocupados -->
+            <div class="horarios" style="margin-top:30px; padding:25px; background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+                <h2 style="margin-top:0; color:#1c1c1a; border-bottom:2px solid #24a148; padding-bottom:10px;">📅 Horarios y Disponibilidad</h2>
+                
+                @if($schedules && $schedules->count() > 0)
+                    <div style="margin-bottom:30px;">
+                        <h3 style="color:#24a148; margin-bottom:15px;">Horarios de Atención</h3>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
+                            @php
+                                $horariosPorDia = [];
+                                foreach($schedules as $schedule) {
+                                    $horariosPorDia[$schedule->dia_semana][] = $schedule;
+                                }
+                            @endphp
+                            @foreach(['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as $dia)
+                                @if(isset($horariosPorDia[$dia]))
+                                    <div style="padding:15px; background:#f0f9f4; border-radius:8px; border-left:4px solid #24a148;">
+                                        <strong style="text-transform:capitalize; color:#1c1c1a; display:block; margin-bottom:8px;">{{ ucfirst($dia) }}</strong>
+                                        @foreach($horariosPorDia[$dia] as $schedule)
+                                            @php
+                                                $horaInicio = \Carbon\Carbon::createFromFormat('H:i', $schedule->hora_inicio);
+                                                $horaFin = \Carbon\Carbon::createFromFormat('H:i', $schedule->hora_fin);
+                                            @endphp
+                                            <div style="color:#2d5016; font-size:0.95em; margin:5px 0; font-weight:500;">
+                                                🕐 {{ $horaInicio->format('g:i A') }} - {{ $horaFin->format('g:i A') }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div style="padding:15px; background:#f9f9f9; border-radius:8px; border-left:4px solid #ccc;">
+                                        <strong style="text-transform:capitalize; color:#999; display:block; margin-bottom:8px;">{{ ucfirst($dia) }}</strong>
+                                        <div style="color:#999; font-size:0.9em;">Cerrado</div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                    @if($reservations && $reservations->count() > 0)
+                        <div style="margin-top:30px; padding-top:25px; border-top:2px solid #ececec;">
+                            <h3 style="color:#d7263d; margin-bottom:15px;">⚠️ Horarios Ocupados (Próximas Reservas)</h3>
+                            <div style="display:grid; gap:12px;">
+                                @php
+                                    $reservasPorFecha = [];
+                                    foreach($reservations as $reservation) {
+                                        $fecha = $reservation->fecha_visita->format('Y-m-d');
+                                        if (!isset($reservasPorFecha[$fecha])) {
+                                            $reservasPorFecha[$fecha] = [];
+                                        }
+                                        $reservasPorFecha[$fecha][] = $reservation;
+                                    }
+                                @endphp
+                                @foreach($reservasPorFecha as $fecha => $reservasDelDia)
+                                    @php
+                                        // Usar directamente la fecha de la reserva (ya es un objeto Carbon)
+                                        // Esto evita problemas de zona horaria al hacer parse
+                                        $fechaObj = $reservasDelDia[0]->fecha_visita->copy()->startOfDay();
+                                        $diaSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'][$fechaObj->dayOfWeek];
+                                    @endphp
+                                    <div style="padding:15px; background:#fff5f5; border-radius:8px; border-left:4px solid #d7263d;">
+                                        <strong style="color:#1c1c1a; display:block; margin-bottom:10px;">
+                                            📅 {{ ucfirst($diaSemana) }}, {{ $fechaObj->format('d/m/Y') }}
+                                        </strong>
+                                        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                                            @foreach($reservasDelDia as $reservation)
+                                                <div style="padding:8px 12px; background:#fff; border:1px solid #d7263d; border-radius:6px; font-size:0.9em;">
+                                                    <span style="color:#d7263d; font-weight:600;">
+                                                        🕐 {{ $reservation->hora_visita ? \Carbon\Carbon::createFromFormat('H:i', $reservation->hora_visita)->format('g:i A') : 'Sin hora' }}
+                                                    </span>
+                                                    @if($reservation->personas)
+                                                        <span style="color:#6c6c68; margin-left:8px;">
+                                                            ({{ $reservation->personas }} {{ $reservation->personas == 1 ? 'persona' : 'personas' }})
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <p style="margin-top:15px; color:#6c6c68; font-size:0.9em; font-style:italic;">
+                                💡 Estos horarios ya están reservados. Selecciona otro horario disponible al hacer tu reserva.
+                            </p>
+                        </div>
+                    @else
+                        <div style="margin-top:30px; padding:15px; background:#e8f5e9; border-radius:8px; border-left:4px solid #24a148;">
+                            <p style="margin:0; color:#2d5016; font-weight:500;">
+                                ✅ No hay reservas programadas. Todos los horarios están disponibles.
+                            </p>
+                        </div>
+                    @endif
+                @else
+                    <div style="padding:20px; background:#fff3cd; border-radius:8px; border-left:4px solid #ffc107;">
+                        <p style="margin:0; color:#856404; font-weight:500;">
+                            ⚠️ No hay horarios configurados para este lugar.
+                        </p>
+                        <p style="margin:10px 0 0 0; color:#856404; font-size:0.9em;">
+                            Los administradores pueden configurar los horarios desde el panel de administración. 
+                            Por favor, contacta al administrador o intenta más tarde.
+                        </p>
+                        @auth
+                            @if(auth()->user()->is_admin)
+                                <p style="margin:15px 0 0 0; color:#856404; font-size:0.9em; font-weight:600;">
+                                    💡 Como administrador, puedes agregar horarios desde el panel de administración.
+                                </p>
+                            @endif
+                        @endauth
+                    </div>
+                @endif
+            </div>
         </section>
 
         @auth

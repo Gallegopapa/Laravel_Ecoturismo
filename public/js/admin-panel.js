@@ -37,6 +37,11 @@ tabUsers.addEventListener('click', () => {
     usersPanel.style.display = 'block'
     placesPanel.style.display = 'none'
     loadUsers()
+    // Mostrar campo de contraseña al abrir el panel de usuarios
+    const passwordLabel = document.getElementById('user-password-label')
+    if (passwordLabel && !$('user-id').value) {
+        passwordLabel.style.display = 'block'
+    }
 })
 
 // Places
@@ -264,10 +269,17 @@ function renderUsers(list) {
 userForm.addEventListener('submit', async (e) => {
     e.preventDefault()
     const id = $('user-id').value
+    const password = $('user-password').value.trim()
+    
     const payload = {
         name: $('user-name').value.trim(),
         email: $('user-email').value.trim(),
         is_admin: $('user-role').value === 'admin'
+    }
+    
+    // Solo incluir contraseña si se proporciona (y no está vacía)
+    if (password) {
+        payload.password = password
     }
     
     if (!payload.name || !payload.email) {
@@ -295,7 +307,19 @@ userForm.addEventListener('submit', async (e) => {
             throw new Error(error.message || 'Error al guardar usuario')
         }
 
-        showMessage(id ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente')
+        const response = await res.json()
+        
+        // Si se creó un nuevo usuario y se generó una contraseña, mostrarla
+        if (!id && response.generated_password) {
+            const passwordMsg = `Usuario creado correctamente.\n\n` +
+                `CONTRASEÑA GENERADA:\n${response.generated_password}\n\n` +
+                `IMPORTANTE: Guarda esta contraseña y compártela con el usuario. No se mostrará nuevamente.`
+            alert(passwordMsg)
+            showMessage('Usuario creado correctamente. Revisa la contraseña generada.', 'success')
+        } else {
+            showMessage(id ? 'Usuario actualizado correctamente' : 'Usuario creado correctamente')
+        }
+        
         resetUserForm()
         loadUsers()
     } catch (error) {
@@ -354,7 +378,14 @@ usersTbody.addEventListener('click', async (e) => {
             $('user-id').value = u.id
             $('user-name').value = u.name || ''
             $('user-email').value = u.email || ''
+            $('user-password').value = ''
             $('user-role').value = u.is_admin ? 'admin' : 'user'
+            
+            // Ocultar campo de contraseña al editar (solo se puede cambiar si se proporciona)
+            const passwordLabel = document.getElementById('user-password-label')
+            if (passwordLabel) {
+                passwordLabel.style.display = 'block'
+            }
         } catch (error) {
             console.error('Error:', error)
             showMessage('Error al cargar usuario', 'error')
@@ -366,7 +397,13 @@ function resetUserForm() {
     $('user-id').value = ''
     $('user-name').value = ''
     $('user-email').value = ''
+    $('user-password').value = ''
     $('user-role').value = 'user'
+    // Mostrar campo de contraseña solo al crear (no al editar)
+    const passwordLabel = document.getElementById('user-password-label')
+    if (passwordLabel) {
+        passwordLabel.style.display = 'block'
+    }
 }
 
 // Init

@@ -24,7 +24,7 @@ class AdminPlaceController extends Controller
      */
     public function show(Place $place): JsonResponse
     {
-        $place->load('categories');
+        $place->load(['categories', 'schedules']);
         return response()->json($place);
     }
 
@@ -40,6 +40,9 @@ class AdminPlaceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB máximo
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'telefono' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
         ], [
@@ -94,6 +97,9 @@ class AdminPlaceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
+            'telefono' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
         ], [

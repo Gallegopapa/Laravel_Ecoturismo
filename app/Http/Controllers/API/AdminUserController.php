@@ -63,17 +63,23 @@ class AdminUserController extends Controller
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
+        // Generar contraseña aleatoria segura si no se proporciona
+        $plainPassword = $data['password'] ?? null;
+        if (!$plainPassword) {
+            $plainPassword = $this->generateSecurePassword();
+        }
+
         $userData = [
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
-            'password' => Hash::make($data['password'] ?? 'password123'), // Contraseña por defecto
+            'password' => Hash::make($plainPassword),
             'is_admin' => $data['is_admin'] ?? false,
             'fecha_registro' => now(),
         ];
 
         $user = Usuarios::create($userData);
 
-        return response()->json([
+        $response = [
             'message' => 'Usuario creado correctamente.',
             'user' => [
                 'id' => $user->id,
@@ -81,7 +87,31 @@ class AdminUserController extends Controller
                 'email' => $user->email,
                 'is_admin' => $user->is_admin,
             ]
-        ], 201);
+        ];
+
+        // Solo devolver la contraseña si fue generada automáticamente (no si el admin la proporcionó)
+        if (!isset($data['password'])) {
+            $response['generated_password'] = $plainPassword;
+            $response['message'] = 'Usuario creado correctamente. La contraseña generada se muestra a continuación.';
+        }
+
+        return response()->json($response, 201);
+    }
+
+    /**
+     * Generar una contraseña aleatoria segura
+     */
+    private function generateSecurePassword(int $length = 12): string
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        $password = '';
+        $max = strlen($characters) - 1;
+        
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $characters[random_int(0, $max)];
+        }
+        
+        return $password;
     }
 
     /**

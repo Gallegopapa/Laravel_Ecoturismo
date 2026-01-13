@@ -18,6 +18,9 @@ class Place extends Model
         'image',
         'latitude',
         'longitude',
+        'telefono',
+        'email',
+        'sitio_web',
     ];
 
     /**
@@ -81,10 +84,67 @@ class Place extends Model
     }
 
     /**
+     * Relación: Un lugar tiene muchos horarios
+     */
+    public function schedules()
+    {
+        return $this->hasMany(PlaceSchedule::class, 'place_id');
+    }
+
+    /**
+     * Obtener horarios activos
+     */
+    public function activeSchedules()
+    {
+        return $this->hasMany(PlaceSchedule::class, 'place_id')->where('activo', true);
+    }
+
+    /**
      * Calcular rating promedio
      */
     public function getAverageRatingAttribute()
     {
         return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    /**
+     * Obtener horarios disponibles para un día específico
+     */
+    public function getSchedulesForDay($diaSemana)
+    {
+        return $this->activeSchedules()
+            ->where('dia_semana', $diaSemana)
+            ->get();
+    }
+
+    /**
+     * Verificar si hay un horario disponible para una fecha y hora específica
+     */
+    public function hasAvailableSchedule($fecha, $hora)
+    {
+        $diaNumero = date('w', strtotime($fecha));
+        $diasSemana = [
+            0 => 'domingo',
+            1 => 'lunes',
+            2 => 'martes',
+            3 => 'miercoles',
+            4 => 'jueves',
+            5 => 'viernes',
+            6 => 'sabado',
+        ];
+
+        $diaFecha = $diasSemana[$diaNumero];
+
+        $schedules = $this->activeSchedules()
+            ->where('dia_semana', $diaFecha)
+            ->get();
+
+        foreach ($schedules as $schedule) {
+            if ($schedule->isAvailableFor($fecha, $hora)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

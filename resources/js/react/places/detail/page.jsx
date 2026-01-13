@@ -15,6 +15,8 @@ const PlaceDetailPage = () => {
   const { isAuthenticated, user } = useAuth();
   const [place, setPlace] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -103,13 +105,18 @@ const PlaceDetailPage = () => {
     }
   }, [id, isAuthenticated]);
 
-  const loadPlace = async () => {
+  const loadPlace = async (skipSchedules = false) => {
     try {
       setLoading(true);
       setError('');
       const response = await placesService.getById(id);
       // El API puede devolver { place: {...} } o directamente el lugar
       let placeData = response.place || response;
+      
+      // Si hay reservas futuras en la respuesta, cargarlas
+      if (response.future_reservations) {
+        setReservations(response.future_reservations);
+      }
       
       // Priorizar imágenes locales sobre imágenes de API
       const nombreOriginal = placeData.name || '';
@@ -145,11 +152,80 @@ const PlaceDetailPage = () => {
       
       setPlace(placeData);
       await loadReviews(placeData.id);
+      
+      if (!skipSchedules) {
+        // Cargar horarios (pueden venir en placeData.schedules o en response.place.schedules)
+        const schedulesData = placeData.schedules || (response.place && response.place.schedules) || [];
+        console.log('Schedules data:', schedulesData);
+        
+        if (Array.isArray(schedulesData) && schedulesData.length > 0) {
+          const activeSchedules = schedulesData.filter(s => s.activo !== false && s.activo !== 0);
+          console.log('Active schedules found:', activeSchedules);
+          setSchedules(activeSchedules);
+        } else {
+          console.log('No schedules in response, trying to load from API');
+          // Si no vienen en la respuesta, intentar cargarlos desde la API de admin
+          await loadSchedules(placeData.id);
+        }
+      }
+      
+      // Cargar reservas futuras si vienen en la respuesta (siempre vienen ahora)
+      if (response.future_reservations) {
+        console.log('Future reservations from API:', response.future_reservations);
+        setReservations(response.future_reservations);
+      } else {
+        // Fallback: intentar cargar desde otro endpoint
+        await loadReservations(placeData.id);
+      }
     } catch (err) {
       console.error('Error al cargar lugar:', err);
       setError('No se pudo cargar la información del lugar.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadSchedules = async (placeId) => {
+    try {
+      // Usar endpoint público para obtener horarios
+      const response = await fetch(`/api/places/${placeId}/schedules`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const activeSchedules = Array.isArray(data) ? data : [];
+        console.log('Schedules loaded from API:', activeSchedules);
+        setSchedules(activeSchedules);
+      } else {
+        console.error('Error loading schedules:', response.status);
+      }
+    } catch (err) {
+      console.error('Error al cargar horarios:', err);
+      // Si falla, no es crítico, simplemente no se mostrarán horarios
+    }
+  };
+
+  const loadReservations = async (placeId) => {
+    try {
+      // Intentar cargar todas las reservas futuras del lugar desde un endpoint público
+      // Por ahora, las reservas vienen en la respuesta del lugar, así que este es un fallback
+      const response = await fetch(`/api/places/${placeId}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.future_reservations) {
+          setReservations(data.future_reservations);
+        }
+      }
+    } catch (err) {
+      console.error('Error al cargar reservas:', err);
     }
   };
 
@@ -337,6 +413,167 @@ const PlaceDetailPage = () => {
                 </div>
               )}
 
+              {/* Información de Contacto */}
+              {(place.telefono || place.email || place.sitio_web) && (
+                <div className="place-contact" style={{ marginTop: '25px', padding: '20px', background: '#f9f9f9', borderRadius: '10px' }}>
+                  <h2 style={{ marginTop: 0, marginBottom: '15px', color: '#1c1c1a' }}>📞 Información de Contacto</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {place.telefono && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong>Teléfono:</strong>
+                        <a href={`tel:${place.telefono}`} style={{ color: '#24a148', textDecoration: 'none' }}>
+                          {place.telefono}
+                        </a>
+                      </div>
+                    )}
+                    {place.email && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong>Email:</strong>
+                        <a href={`mailto:${place.email}`} style={{ color: '#24a148', textDecoration: 'none' }}>
+                          {place.email}
+                        </a>
+                      </div>
+                    )}
+                    {place.sitio_web && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong>Sitio Web:</strong>
+                        <a href={place.sitio_web} target="_blank" rel="noopener noreferrer" style={{ color: '#24a148', textDecoration: 'none' }}>
+                          {place.sitio_web}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Horarios y Disponibilidad - SIEMPRE VISIBLE */}
+              <div className="place-schedules" style={{ marginTop: '25px', padding: '25px', background: '#fff', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+                <h2 style={{ marginTop: 0, color: '#1c1c1a', borderBottom: '2px solid #24a148', paddingBottom: '10px' }}>
+                  📅 Horarios y Disponibilidad
+                </h2>
+                
+                {schedules && schedules.length > 0 ? (
+                  <>
+                    <div style={{ marginBottom: '30px' }}>
+                      <h3 style={{ color: '#24a148', marginBottom: '15px' }}>Horarios de Atención</h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+                        {['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].map(dia => {
+                          const horariosDelDia = schedules.filter(s => s.dia_semana === dia);
+                          return (
+                            <div 
+                              key={dia}
+                              style={{
+                                padding: '15px',
+                                background: horariosDelDia.length > 0 ? '#f0f9f4' : '#f9f9f9',
+                                borderRadius: '8px',
+                                borderLeft: `4px solid ${horariosDelDia.length > 0 ? '#24a148' : '#ccc'}`
+                              }}
+                            >
+                              <strong style={{ textTransform: 'capitalize', color: horariosDelDia.length > 0 ? '#1c1c1a' : '#999', display: 'block', marginBottom: '8px' }}>
+                                {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                              </strong>
+                              {horariosDelDia.length > 0 ? (
+                                horariosDelDia.map((schedule, idx) => {
+                                  const horaInicio = schedule.hora_inicio ? schedule.hora_inicio.substring(0, 5) : '';
+                                  const horaFin = schedule.hora_fin ? schedule.hora_fin.substring(0, 5) : '';
+                                  const formatTime = (time) => {
+                                    if (!time) return '';
+                                    const [hours, minutes] = time.split(':');
+                                    const hour = parseInt(hours);
+                                    const period = hour >= 12 ? 'PM' : 'AM';
+                                    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+                                    return `${displayHour}:${minutes} ${period}`;
+                                  };
+                                  return (
+                                    <div key={idx} style={{ color: '#2d5016', fontSize: '0.95em', margin: '5px 0', fontWeight: '500' }}>
+                                      🕐 {formatTime(horaInicio)} - {formatTime(horaFin)}
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <div style={{ color: '#999', fontSize: '0.9em' }}>Cerrado</div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {reservations && reservations.length > 0 ? (
+                      <div style={{ marginTop: '30px', paddingTop: '25px', borderTop: '2px solid #ececec' }}>
+                        <h3 style={{ color: '#d7263d', marginBottom: '15px' }}>⚠️ Horarios Ocupados (Próximas Reservas)</h3>
+                        <div style={{ display: 'grid', gap: '12px' }}>
+                          {Object.entries(
+                            reservations.reduce((acc, res) => {
+                              const fecha = res.fecha_visita;
+                              if (!acc[fecha]) acc[fecha] = [];
+                              acc[fecha].push(res);
+                              return acc;
+                            }, {})
+                          ).map(([fecha, reservasDelDia]) => {
+                            // Crear fecha en hora local para evitar problemas de zona horaria
+                            // Formato: "YYYY-MM-DD" -> new Date(year, month-1, day) usa hora local
+                            const [year, month, day] = fecha.split('-').map(Number);
+                            const fechaObj = new Date(year, month - 1, day);
+                            const diasSemana = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+                            const diaSemana = diasSemana[fechaObj.getDay()];
+                            return (
+                              <div key={fecha} style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', borderLeft: '4px solid #d7263d' }}>
+                                <strong style={{ color: '#1c1c1a', display: 'block', marginBottom: '10px' }}>
+                                  📅 {diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)}, {fechaObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                </strong>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                  {reservasDelDia.map((reservation, idx) => {
+                                    const formatTime = (time) => {
+                                      if (!time) return 'Sin hora';
+                                      const [hours, minutes] = time.split(':');
+                                      const hour = parseInt(hours);
+                                      const period = hour >= 12 ? 'PM' : 'AM';
+                                      const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+                                      return `${displayHour}:${minutes} ${period}`;
+                                    };
+                                    return (
+                                      <div key={idx} style={{ padding: '8px 12px', background: '#fff', border: '1px solid #d7263d', borderRadius: '6px', fontSize: '0.9em' }}>
+                                        <span style={{ color: '#d7263d', fontWeight: '600' }}>
+                                          🕐 {formatTime(reservation.hora_visita)}
+                                        </span>
+                                        {reservation.personas && (
+                                          <span style={{ color: '#6c6c68', marginLeft: '8px' }}>
+                                            ({reservation.personas} {reservation.personas === 1 ? 'persona' : 'personas'})
+                                          </span>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <p style={{ marginTop: '15px', color: '#6c6c68', fontSize: '0.9em', fontStyle: 'italic' }}>
+                          💡 Estos horarios ya están reservados. Selecciona otro horario disponible al hacer tu reserva.
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: '30px', padding: '15px', background: '#e8f5e9', borderRadius: '8px', borderLeft: '4px solid #24a148' }}>
+                        <p style={{ margin: 0, color: '#2d5016', fontWeight: '500' }}>
+                          ✅ No hay reservas programadas. Todos los horarios están disponibles.
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div style={{ padding: '20px', background: '#fff3cd', borderRadius: '8px', borderLeft: '4px solid #ffc107' }}>
+                    <p style={{ margin: 0, color: '#856404', fontWeight: '500' }}>
+                      ⚠️ No hay horarios configurados para este lugar.
+                    </p>
+                    <p style={{ margin: '10px 0 0 0', color: '#856404', fontSize: '0.9em' }}>
+                      Los administradores pueden configurar los horarios desde el panel de administración.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div className="place-actions">
                 <button 
                   onClick={() => {
@@ -416,6 +653,13 @@ const PlaceDetailPage = () => {
           place={reservationModal.place}
           isOpen={reservationModal.isOpen}
           onClose={() => setReservationModal({ isOpen: false, place: null })}
+          onSuccess={async () => {
+            // Recargar las reservas después de crear una nueva
+            if (place && place.id) {
+              // Recargar el lugar completo para obtener las reservas actualizadas
+              await loadPlace(true); // skipSchedules = true para no recargar horarios
+            }
+          }}
         />
       )}
 

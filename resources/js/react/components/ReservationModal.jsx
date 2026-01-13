@@ -15,6 +15,7 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
 
   // Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
@@ -100,8 +101,16 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
       
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
+        
+        // Si hay sugerencias, mostrarlas
+        if (error.response?.data?.suggestions && error.response.data.suggestions.length > 0) {
+          setSuggestions(error.response.data.suggestions);
+        } else {
+          setSuggestions([]);
+        }
       } else {
         setMessage(error.response?.data?.message || '❌ Error al crear la reserva');
+        setSuggestions([]);
       }
     } finally {
       setLoading(false);
@@ -119,6 +128,7 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
       });
       setErrors({});
       setMessage('');
+      setSuggestions([]);
       onClose();
     }
   };
@@ -179,7 +189,54 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
               disabled={loading}
             />
             {errors.hora_visita && (
-              <span className="reservation-error">{Array.isArray(errors.hora_visita) ? errors.hora_visita[0] : errors.hora_visita}</span>
+              <>
+                <span className="reservation-error">{Array.isArray(errors.hora_visita) ? errors.hora_visita[0] : errors.hora_visita}</span>
+                {suggestions && suggestions.length > 0 && (
+                  <div style={{ 
+                    marginTop: '10px', 
+                    padding: '12px', 
+                    background: '#e8f5e9', 
+                    borderRadius: '8px', 
+                    borderLeft: '4px solid #24a148' 
+                  }}>
+                    <strong style={{ display: 'block', marginBottom: '8px', color: '#2d5016' }}>
+                      💡 Horarios sugeridos:
+                    </strong>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {suggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, hora_visita: suggestion.hora }));
+                            setSuggestions([]);
+                            setErrors(prev => {
+                              const newErrors = { ...prev };
+                              delete newErrors.hora_visita;
+                              return newErrors;
+                            });
+                          }}
+                          style={{
+                            padding: '8px 16px',
+                            background: '#24a148',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.9em',
+                            fontWeight: '500',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseOver={(e) => e.target.style.background = '#1e7e34'}
+                          onMouseOut={(e) => e.target.style.background = '#24a148'}
+                        >
+                          {suggestion.hora} - {suggestion.descripcion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
