@@ -11,7 +11,25 @@ Cuando tu compañero haga `git pull`, recibirá:
 
 ## 🚀 Pasos para tu Compañero
 
-### Opción 1: Migración + Seeders (Recomendado)
+### ⚠️ Si hay Error con las Migraciones
+
+**Si `php artisan migrate` da error o dice "no hay nada para migrar"**, usa esta solución:
+
+```bash
+# 1. Hacer pull de los cambios
+git pull
+
+# 2. Usar el comando personalizado (maneja todos los casos)
+php artisan schedules:fix
+```
+
+Este comando:
+- ✅ Verifica si la tabla existe realmente
+- ✅ Crea la tabla si falta (incluso si la migración ya está "ejecutada")
+- ✅ Agrega horarios a todos los lugares sin horarios
+- ✅ Funciona en todos los casos
+
+### Opción 1: Migración + Seeders (Si NO hay errores)
 
 ```bash
 # 1. Hacer pull de los cambios

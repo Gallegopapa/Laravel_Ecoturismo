@@ -38,19 +38,56 @@ class FixPlaceSchedules extends Command
 
         if (!$tableExists) {
             $this->error('   ❌ La tabla no existe.');
-            $this->info('   Ejecutando migración...');
+            $this->info('   Intentando ejecutar migración...');
             
             try {
-                $this->call('migrate', [
-                    '--path' => 'database/migrations/2026_01_12_162646_create_place_schedules_table.php'
+                // Intentar ejecutar la migración específica
+                $exitCode = $this->call('migrate', [
+                    '--path' => 'database/migrations/2026_01_12_162646_create_place_schedules_table.php',
+                    '--force' => true
                 ]);
-                $this->info('   ✅ Migración ejecutada correctamente.');
-                $this->newLine();
-                $tableExists = true;
+                
+                // Verificar nuevamente si la tabla existe
+                $tableExists = Schema::hasTable('place_schedules');
+                
+                if ($tableExists) {
+                    $this->info('   ✅ Migración ejecutada correctamente.');
+                    $this->newLine();
+                } else {
+                    throw new \Exception('La migración se ejecutó pero la tabla no se creó.');
+                }
             } catch (\Exception $e) {
-                $this->error('   ❌ Error al ejecutar migración: ' . $e->getMessage());
-                $this->info('   💡 Intenta ejecutar manualmente: php artisan migrate');
-                return 1;
+                $this->warn('   ⚠️  Error al ejecutar migración: ' . $e->getMessage());
+                $this->info('   Intentando crear la tabla directamente...');
+                
+                // Crear la tabla directamente si la migración falla
+                try {
+                    Schema::create('place_schedules', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->id();
+                        $table->unsignedBigInteger('place_id');
+                        $table->enum('dia_semana', ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']);
+                        $table->time('hora_inicio');
+                        $table->time('hora_fin');
+                        $table->boolean('activo')->default(true);
+                        $table->timestamps();
+
+                        $table->foreign('place_id')->references('id')->on('places')->onDelete('cascade');
+                        $table->index(['place_id', 'dia_semana']);
+                    });
+                    
+                    $this->info('   ✅ Tabla creada directamente.');
+                    $this->newLine();
+                    $tableExists = true;
+                } catch (\Exception $e2) {
+                    $this->error('   ❌ Error al crear la tabla: ' . $e2->getMessage());
+                    $this->newLine();
+                    $this->error('   💡 Por favor, verifica:');
+                    $this->line('      1. Que la tabla "places" existe');
+                    $this->line('      2. Que tienes permisos para crear tablas');
+                    $this->line('      3. Que la base de datos está configurada correctamente');
+                    $this->newLine();
+                    return 1;
+                }
             }
         } else {
             $this->info('   ✅ La tabla existe.');
