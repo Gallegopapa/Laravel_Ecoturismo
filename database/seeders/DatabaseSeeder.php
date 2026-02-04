@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Crear usuario de prueba
         Usuarios::create([
             'name' => 'TestUser',
             'email' => 'test@example.com',
@@ -21,5 +22,9 @@ class DatabaseSeeder extends Seeder
             'fecha_registro' => now(),
             'is_admin' => true,
         ]);
+
+        // Agregar horarios a lugares que no los tienen
+        // Esto asegura que todos los lugares tengan horarios configurados
+        $this->call(PlaceScheduleSeeder::class);
     }
 }
