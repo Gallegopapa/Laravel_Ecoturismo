@@ -303,16 +303,16 @@ const CommentsPage = () => {
               onChange={handleInputChange}
               required={isAuthenticated}
               disabled={submitting || !isAuthenticated}
-              maxLength={1000}
+              maxLength={500}
             ></textarea>
             {isAuthenticated && (
               <div style={{ 
                 textAlign: "right", 
                 fontSize: "0.85rem", 
-                color: "#999",
+                color: formData.comment.length > 500 ? '#d7263c' : '#999',
                 marginTop: "5px"
               }}>
-                {formData.comment.length}/1000 caracteres
+                {formData.comment.length}/500 caracteres
               </div>
             )}
           </div>

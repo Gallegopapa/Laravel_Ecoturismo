@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
     
     // Rutas de comentarios/reseñas
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     // Rutas de admin (requieren autenticación web)

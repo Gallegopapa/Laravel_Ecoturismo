@@ -245,7 +245,10 @@
                             </div>
                             
                             <label style="display:block; margin-top:15px; font-weight:600;">Comentario</label>
-                            <textarea name="comment" rows="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid #dcdcdc; margin-top:5px;" placeholder="Escribe tu experiencia..."></textarea>
+                            <textarea name="comment" rows="4" maxlength="500" style="width:100%; padding:10px; border-radius:8px; border:1px solid #dcdcdc; margin-top:5px;" placeholder="Escribe tu experiencia... (Máx. 500 caracteres)"></textarea>
+                            @error('comment')
+                                <div style="color:#d7263d; margin-top:8px;">{{ $message }}</div>
+                            @enderror
                             
                             @if($errors->has('review'))
                                 <div style="color:#d7263d; margin-top:10px;">{{ $errors->first('review') }}</div>
@@ -297,11 +300,43 @@
                                 <span style="color:#6c6c68; font-size:0.9em;">{{ $review->fecha_comentario->format('d/m/Y') }}</span>
                             </div>
                             @if($review->comment)
-                                <p style="color:#1c1c1a; margin:10px 0;">{{ $review->comment }}</p>
+                                <p style="color:#1c1c1a; margin:10px 0;" id="comment-text-{{ $review->id }}">{{ $review->comment }}</p>
                             @endif
                             @auth
                                 @if($review->user_id == auth()->id())
-                                    <form method="POST" action="{{ route('reviews.destroy', $review) }}" style="margin-top:10px;" onsubmit="return confirm('¿Eliminar tu reseña?');">
+                                    <div style="display:flex; gap:8px; margin-top:10px;">
+                                        <button type="button" class="btn-edit" data-id="{{ $review->id }}" style="background:#0275d8; color:#fff; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-size:0.9em;">Editar</button>
+                                        <form method="POST" action="{{ route('reviews.destroy', $review) }}" onsubmit="return confirm('¿Eliminar tu reseña?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="background:#d7263d; color:#fff; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-size:0.9em;">Eliminar</button>
+                                        </form>
+                                    </div>
+
+                                    <form method="POST" action="{{ route('reviews.update', $review) }}" class="edit-form" id="edit-form-{{ $review->id }}" style="display:none; margin-top:12px;">
+                                        @csrf
+                                        @method('PUT')
+                                        <label style="display:block; font-weight:600; margin-bottom:6px;">Calificación *</label>
+                                        <div style="display:flex; gap:5px; margin:6px 0;">
+                                            @for($i = 5; $i >= 1; $i--)
+                                                <label style="cursor:pointer; font-size:1.6em; color:#ddd;">
+                                                    <input type="radio" name="rating" value="{{ $i }}" style="display:none;" {{ $review->rating == $i ? 'checked' : '' }}>
+                                                    <span class="edit-star" data-rating="{{ $i }}" data-review="{{ $review->id }}">{{ $review->rating >= $i ? '★' : '☆' }}</span>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                        <label style="display:block; font-weight:600; margin-top:8px;">Comentario</label>
+                                        <textarea name="comment" rows="3" maxlength="500" style="width:100%; padding:8px; border-radius:6px; border:1px solid #dcdcdc; margin-top:6px;">{{ $review->comment }}</textarea>
+                                        @error('comment')
+                                            <div style="color:#d7263d; margin-top:8px;">{{ $message }}</div>
+                                        @enderror
+                                        <div style="margin-top:8px; display:flex; gap:8px;">
+                                            <button type="submit" style="background:#24a148; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer;">Guardar</button>
+                                            <button type="button" class="btn-cancel-edit" data-id="{{ $review->id }}" style="background:#6c757d; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer;">Cancelar</button>
+                                        </div>
+                                    </form>
+                                @elseif(auth()->user()->is_admin)
+                                    <form method="POST" action="{{ route('reviews.destroy', $review) }}" style="margin-top:10px;" onsubmit="return confirm('¿Eliminar esta reseña?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" style="background:#d7263d; color:#fff; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-size:0.9em;">Eliminar</button>
@@ -375,6 +410,62 @@
                 const rating = parseInt(this.getAttribute('data-rating'));
                 document.querySelector(`input[value="${rating}"]`).checked = true;
                 updateStars(document.querySelector(`input[value="${rating}"]`));
+            });
+        });
+
+        // Edit buttons: toggle edit form
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const form = document.getElementById('edit-form-' + id);
+                if (form.style.display === 'none' || !form.style.display) {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
+
+        // Cancel edit
+        document.querySelectorAll('.btn-cancel-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const form = document.getElementById('edit-form-' + id);
+                if (form) form.style.display = 'none';
+            });
+        });
+
+        // Edit stars interactions
+        document.querySelectorAll('.edit-star').forEach(star => {
+            const reviewId = star.getAttribute('data-review');
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                document.querySelectorAll(`#edit-form-${reviewId} .edit-star`).forEach(s => {
+                    const r = parseInt(s.getAttribute('data-rating'));
+                    s.style.color = r <= rating ? '#ffc107' : '#ddd';
+                    s.textContent = r <= rating ? '★' : '☆';
+                });
+            });
+            star.addEventListener('mouseleave', function() {
+                const selected = document.querySelector(`#edit-form-${reviewId} input[name="rating"]:checked`);
+                if (selected) {
+                    const sel = parseInt(selected.value);
+                    document.querySelectorAll(`#edit-form-${reviewId} .edit-star`).forEach(s => {
+                        const r = parseInt(s.getAttribute('data-rating'));
+                        s.style.color = r <= sel ? '#ffc107' : '#ddd';
+                        s.textContent = r <= sel ? '★' : '☆';
+                    });
+                }
+            });
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                const input = document.querySelector(`#edit-form-${reviewId} input[value="${rating}"]`);
+                if (input) input.checked = true;
+                document.querySelectorAll(`#edit-form-${reviewId} .edit-star`).forEach(s => {
+                    const r = parseInt(s.getAttribute('data-rating'));
+                    s.style.color = r <= rating ? '#ffc107' : '#ddd';
+                    s.textContent = r <= rating ? '★' : '☆';
+                });
             });
         });
     </script>

@@ -185,6 +185,11 @@ export const reviewsService = {
     return response.data;
   },
 
+  update: async (id, reviewData) => {
+    const response = await api.put(`/reviews/${id}`, reviewData);
+    return response.data;
+  },
+
   delete: async (id) => {
     const response = await api.delete(`/reviews/${id}`);
     return response.data;

@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Rutas de comentarios/reseñas
     Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
     
     // Rutas de favoritos

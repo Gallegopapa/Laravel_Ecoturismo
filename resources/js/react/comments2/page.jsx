@@ -20,6 +20,11 @@ const Comments2Page = () => {
     comment: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editForm, setEditForm] = useState({
+    rating: 5,
+    comment: "",
+  });
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -98,6 +103,56 @@ const Comments2Page = () => {
     }
   };
 
+  const startEdit = (review) => {
+    setEditingReviewId(review.id);
+    setEditForm({
+      rating: review.rating || 5,
+      comment: review.comment || "",
+    });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({
+      ...prev,
+      [name]: name === 'rating' ? parseInt(value) : value,
+    }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingReviewId) return;
+
+    if (!editForm.comment.trim()) {
+      setMessage("Por favor escribe un comentario");
+      return;
+    }
+
+    setSubmitting(true);
+    setMessage("");
+
+    try {
+      await reviewsService.update(editingReviewId, {
+        rating: editForm.rating,
+        comment: editForm.comment,
+      });
+      setMessage("✅ Reseña actualizada correctamente");
+      setEditingReviewId(null);
+      await loadData();
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      console.error("Error al actualizar reseña:", error);
+      const errorMessage = error.response?.data?.message 
+        || error.response?.data?.errors?.rating?.[0]
+        || error.response?.data?.errors?.comment?.[0]
+        || "Error al actualizar la reseña";
+      setMessage(`❌ ${errorMessage}`);
+      setTimeout(() => setMessage(""), 5000);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleDelete = async (reviewId) => {
     if (!window.confirm("¿Estás seguro de eliminar esta reseña?")) {
       return;
@@ -110,7 +165,8 @@ const Comments2Page = () => {
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       console.error("Error al eliminar reseña:", error);
-      setMessage("❌ Error al eliminar la reseña");
+      const errorMessage = error.response?.data?.message || "Error al eliminar la reseña";
+      setMessage(`❌ ${errorMessage}`);
       setTimeout(() => setMessage(""), 3000);
     }
   };
@@ -231,23 +287,46 @@ const Comments2Page = () => {
                         })}
                       </p>
                     )}
-                    {user && review.usuario && user.id === review.usuario.id && (
-                      <button
-                        onClick={() => handleDelete(review.id)}
-                        style={{
-                          marginTop: "10px",
-                          padding: "5px 15px",
-                          background: "#e74c3c",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "0.85rem"
-                        }}
-                      >
-                        Eliminar
-                      </button>
-                    )}
+                    <div style={{ marginTop: "10px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {/* Botón de editar solo para el autor */}
+                      {user && review.usuario && user.id === review.usuario.id && (
+                        <button
+                          type="button"
+                          onClick={() => startEdit(review)}
+                          style={{
+                            padding: "5px 12px",
+                            background: "#3498db",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "0.85rem"
+                          }}
+                        >
+                          Editar
+                        </button>
+                      )}
+                      {/* Botón de eliminar para autor o admin */}
+                      {user && (
+                        (review.usuario && user.id === review.usuario.id) || user.is_admin
+                      ) && (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(review.id)}
+                          style={{
+                            padding: "5px 15px",
+                            background: "#e74c3c",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "0.85rem"
+                          }}
+                        >
+                          Eliminar
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -256,7 +335,7 @@ const Comments2Page = () => {
         </section>
 
         {/* Formulario de comentarios */}
-        <form className="comentaarios" onSubmit={handleSubmit}>
+        <form className="comentaarios" onSubmit={editingReviewId ? handleEditSubmit : handleSubmit}>
           <h3 style={{ marginBottom: "20px", color: "#2c3e50" }}>Deja tu reseña</h3>
           
           <div style={{ marginBottom: "15px" }}>
@@ -309,8 +388,8 @@ const Comments2Page = () => {
                     type="radio"
                     name="rating"
                     value={n}
-                    checked={formData.rating === n}
-                    onChange={handleInputChange}
+                    checked={(editingReviewId ? editForm.rating : formData.rating) === n}
+                    onChange={editingReviewId ? handleEditChange : handleInputChange}
                     disabled={submitting}
                     style={{ display: "none" }}
                   />
@@ -324,7 +403,7 @@ const Comments2Page = () => {
                 </label>
               ))}
               <span style={{ marginLeft: "10px", color: "#666" }}>
-                {formData.rating} estrella{formData.rating !== 1 ? 's' : ''}
+                {(editingReviewId ? editForm.rating : formData.rating)} estrella{(editingReviewId ? editForm.rating : formData.rating) !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
@@ -333,20 +412,20 @@ const Comments2Page = () => {
             <textarea
               name="comment"
               className="input"
-              placeholder="Déjanos tu comentario:"
-              value={formData.comment}
-              onChange={handleInputChange}
+              placeholder={editingReviewId ? "Edita tu comentario:" : "Déjanos tu comentario:"}
+              value={editingReviewId ? editForm.comment : formData.comment}
+              onChange={editingReviewId ? handleEditChange : handleInputChange}
               required
               disabled={submitting}
-              maxLength={1000}
+              maxLength={500}
             ></textarea>
             <div style={{ 
               textAlign: "right", 
               fontSize: "0.85rem", 
-              color: "#999",
+              color: (editingReviewId ? editForm.comment.length : formData.comment.length) > 500 ? '#d7263c' : '#999',
               marginTop: "5px"
             }}>
-              {formData.comment.length}/1000 caracteres
+              {(editingReviewId ? editForm.comment.length : formData.comment.length)}/500 caracteres
             </div>
           </div>
           
@@ -358,7 +437,7 @@ const Comments2Page = () => {
             </Link>
             <input 
               type="submit" 
-              value={submitting ? "Enviando..." : "Enviar"} 
+              value={submitting ? "Guardando..." : (editingReviewId ? "Guardar cambios" : "Enviar")} 
               className="btn"
               disabled={submitting}
             />

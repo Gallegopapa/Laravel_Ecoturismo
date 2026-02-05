@@ -46,11 +46,19 @@ class ReviewController extends Controller
             ], 422);
         }
 
+        $messages = [
+            'comment.max' => 'El comentario no puede exceder los 500 caracteres.',
+            'rating.required' => 'La calificación es obligatoria.',
+            'rating.integer' => 'La calificación debe ser un número.',
+            'rating.min' => 'La calificación mínima es 1.',
+            'rating.max' => 'La calificación máxima es 5.',
+        ];
+
         $data = $request->validate([
             'place_id' => 'required|exists:places,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
-        ]);
+            'comment' => 'nullable|string|max:500',
+        ], $messages);
 
         $review = Review::create([
             'user_id' => $user->id,
@@ -65,11 +73,57 @@ class ReviewController extends Controller
         return response()->json($review, 201);
     }
 
+    /**
+     * Actualizar una reseña existente
+     * - Solo el autor puede editar su reseña
+     * - El administrador no edita aquí; puede eliminar cualquier reseña
+     */
+    public function update(Request $request, Review $review): JsonResponse
+    {
+        $user = $request->user();
+
+        // Solo el autor puede editar
+        if ($review->user_id !== $user->id) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $messages = [
+            'comment.max' => 'El comentario no puede exceder los 500 caracteres.',
+            'rating.integer' => 'La calificación debe ser un número.',
+            'rating.min' => 'La calificación mínima es 1.',
+            'rating.max' => 'La calificación máxima es 5.',
+        ];
+
+        $data = $request->validate([
+            'rating' => 'sometimes|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:500',
+        ], $messages);
+
+        // No se permite cambiar el place_id ni el user_id aquí
+        if (array_key_exists('rating', $data)) {
+            $review->rating = $data['rating'];
+        }
+
+        if (array_key_exists('comment', $data)) {
+            $review->comment = $data['comment'];
+        }
+
+        // Opcional: actualizar fecha de comentario al momento de la edición
+        $review->fecha_comentario = now();
+        $review->save();
+
+        $review->load('usuario:id,name,foto_perfil', 'place:id,name,location');
+
+        return response()->json($review);
+    }
+
     public function destroy(Request $request, Review $review): JsonResponse
     {
         $user = $request->user();
 
-        if ($review->user_id !== $user->id) {
+        // El autor puede eliminar su reseña.
+        // El administrador puede eliminar cualquier reseña.
+        if ($review->user_id !== $user->id && !$user->is_admin) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
