@@ -20,7 +20,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|min:3|unique:usuarios,name|regex:/^[a-zA-Z0-9_]+$/',
             'email' => 'nullable|email|max:255|unique:usuarios,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|max:20|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
@@ -31,6 +31,7 @@ class AuthController extends Controller
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 20 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 

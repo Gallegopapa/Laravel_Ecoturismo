@@ -25,12 +25,12 @@
                 <input type="email" id="email" name="email" value="{{ old('email') }}" required>
                 @error('email')<div class="error">{{ $message }}</div>@enderror
 
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
+                <label for="password">Contraseña (6-20 caracteres):</label>
+                <input type="password" id="password" name="password" required minlength="6" maxlength="20">
                 @error('password')<div class="error">{{ $message }}</div>@enderror
 
                 <label for="password_confirmation">Repita Contraseña:</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required>
+                <input type="password" id="password_confirmation" name="password_confirmation" required minlength="6" maxlength="20">
 
                 @if(session('status'))
                     <div class="status">{{ session('status') }}</div>

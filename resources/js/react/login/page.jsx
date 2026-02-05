@@ -117,7 +117,9 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Ingresa tu contraseña"
+            minLength={6}
+            maxLength={20}
+            placeholder="Ingresa tu contraseña (6-20 caracteres)"
           />
           {errors.password && <p className="error">{Array.isArray(errors.password) ? errors.password[0] : errors.password}</p>}
 
@@ -129,7 +131,9 @@ export default function Login() {
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 required
-                placeholder="Confirma tu contraseña"
+                minLength={6}
+                maxLength={20}
+                placeholder="Confirma tu contraseña (6-20 caracteres)"
               />
               {errors.password_confirmation && <p className="error">{Array.isArray(errors.password_confirmation) ? errors.password_confirmation[0] : errors.password_confirmation}</p>}
             </>

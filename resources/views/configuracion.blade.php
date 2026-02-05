@@ -94,12 +94,12 @@ $mensaje = '';
                         <input type="password" id="current-password" required>
                     </div>
                     <div class="form-group">
-                        <label for="new-password">Nueva Contraseña</label>
-                        <input type="password" id="new-password" required>
+                        <label for="new-password">Nueva Contraseña (6-20 caracteres)</label>
+                        <input type="password" id="new-password" required minlength="6" maxlength="20">
                     </div>
                     <div class="form-group">
                         <label for="confirm-password">Confirmar Nueva Contraseña</label>
-                        <input type="password" id="confirm-password" required>
+                        <input type="password" id="confirm-password" required minlength="6" maxlength="20">
                     </div>
                     <button type="submit" class="btn-cambiar">Cambiar Contraseña</button>
                 </form>

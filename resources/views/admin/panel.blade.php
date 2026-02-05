@@ -74,8 +74,8 @@
                 </label>
                 <label id="user-password-label">
                     Contraseña (opcional - si no se proporciona, se generará una automáticamente)<br/>
-                    <input id="user-password" type="password" minlength="6" />
-                    <small style="display:block;color:#666;margin-top:4px;">Dejar vacío para generar una contraseña aleatoria segura</small>
+                    <input id="user-password" type="password" minlength="6" maxlength="20" />
+                    <small style="display:block;color:#666;margin-top:4px;">Dejar vacío para generar una contraseña aleatoria segura (6-20 caracteres)</small>
                 </label>
                 <label>
                     Rol<br/>

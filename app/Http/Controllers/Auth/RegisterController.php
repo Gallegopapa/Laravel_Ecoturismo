@@ -19,7 +19,7 @@ class RegisterController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:usuarios,name',
             'email' => 'required|email|max:255|unique:usuarios,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|max:20|confirmed',
         ], [
             // Mensajes para el campo name
             'name.required' => 'El nombre de usuario es obligatorio.',
@@ -37,6 +37,7 @@ class RegisterController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
             'password.string' => 'La contraseña debe ser texto.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 20 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden. Por favor verifica.',
         ]);
 

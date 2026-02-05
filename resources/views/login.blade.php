@@ -29,7 +29,7 @@
                 @enderror
 
                 <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required minlength="6" maxlength="20">
                 <button type="button" id="mostrarContraseña"></button>
 
                 @if(session('status'))
