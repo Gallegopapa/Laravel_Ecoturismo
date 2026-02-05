@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/react/context/AuthContext";
 import { reviewsService, placesService } from "@/react/services/api";
@@ -14,6 +14,7 @@ const Comments2Page = () => {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [formError, setFormError] = useState("");
   const [formData, setFormData] = useState({
     place_id: "",
     rating: 5,
@@ -22,9 +23,11 @@ const Comments2Page = () => {
   const [submitting, setSubmitting] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editForm, setEditForm] = useState({
+    place_id: "",
     rating: 5,
     comment: "",
   });
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -57,6 +60,7 @@ const Comments2Page = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setFormError("");
     setFormData(prev => ({
       ...prev,
       [name]: name === 'rating' ? parseInt(value) : value
@@ -67,21 +71,23 @@ const Comments2Page = () => {
     e.preventDefault();
     
     if (!formData.place_id) {
-      setMessage("Por favor selecciona un lugar");
+      setFormError("Por favor selecciona un lugar");
       return;
     }
 
     if (!formData.comment.trim()) {
-      setMessage("Por favor escribe un comentario");
+      setFormError("Por favor escribe un comentario");
       return;
     }
 
     setSubmitting(true);
     setMessage("");
+    setFormError("");
 
     try {
       await reviewsService.create(formData);
       setMessage("✅ Reseña creada correctamente");
+      setFormError("");
       setFormData({
         place_id: "",
         rating: 5,
@@ -96,8 +102,7 @@ const Comments2Page = () => {
         || error.response?.data?.errors?.rating?.[0]
         || error.response?.data?.errors?.comment?.[0]
         || "Error al crear la reseña";
-      setMessage(`❌ ${errorMessage}`);
-      setTimeout(() => setMessage(""), 5000);
+      setFormError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -106,13 +111,23 @@ const Comments2Page = () => {
   const startEdit = (review) => {
     setEditingReviewId(review.id);
     setEditForm({
+      place_id: review.place_id || review.place?.id || "",
       rating: review.rating || 5,
       comment: review.comment || "",
     });
+    setFormError("");
+    setMessage("");
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        textareaRef.current.focus();
+      }
+    }, 0);
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
+    setFormError("");
     setEditForm(prev => ({
       ...prev,
       [name]: name === 'rating' ? parseInt(value) : value,
@@ -123,31 +138,39 @@ const Comments2Page = () => {
     e.preventDefault();
     if (!editingReviewId) return;
 
+    if (!editForm.place_id) {
+      setFormError("Por favor selecciona un lugar");
+      return;
+    }
+
     if (!editForm.comment.trim()) {
-      setMessage("Por favor escribe un comentario");
+      setFormError("Por favor escribe un comentario");
       return;
     }
 
     setSubmitting(true);
     setMessage("");
+    setFormError("");
 
     try {
       await reviewsService.update(editingReviewId, {
+        place_id: editForm.place_id,
         rating: editForm.rating,
         comment: editForm.comment,
       });
       setMessage("✅ Reseña actualizada correctamente");
+      setFormError("");
       setEditingReviewId(null);
       await loadData();
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       console.error("Error al actualizar reseña:", error);
       const errorMessage = error.response?.data?.message 
+        || error.response?.data?.errors?.place_id?.[0]
         || error.response?.data?.errors?.rating?.[0]
         || error.response?.data?.errors?.comment?.[0]
         || "Error al actualizar la reseña";
-      setMessage(`❌ ${errorMessage}`);
-      setTimeout(() => setMessage(""), 5000);
+      setFormError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -195,6 +218,9 @@ const Comments2Page = () => {
   if (!isAuthenticated || !user) {
     return null;
   }
+
+  const activeForm = editingReviewId ? editForm : formData;
+  const activeRating = editingReviewId ? editForm.rating : formData.rating;
 
   return (
     <>
@@ -350,8 +376,8 @@ const Comments2Page = () => {
             <select
               id="place_id"
               name="place_id"
-              value={formData.place_id}
-              onChange={handleInputChange}
+              value={editingReviewId ? editForm.place_id : formData.place_id}
+              onChange={editingReviewId ? handleEditChange : handleInputChange}
               required
               disabled={submitting}
               style={{
@@ -388,14 +414,14 @@ const Comments2Page = () => {
                     type="radio"
                     name="rating"
                     value={n}
-                    checked={(editingReviewId ? editForm.rating : formData.rating) === n}
+                    checked={activeRating === n}
                     onChange={editingReviewId ? handleEditChange : handleInputChange}
                     disabled={submitting}
                     style={{ display: "none" }}
                   />
                   <i style={{ 
                     fontSize: "2rem", 
-                    color: formData.rating >= n ? "#ffc107" : "#ddd",
+                    color: activeRating >= n ? "#ffc107" : "#ddd",
                     transition: "color 0.2s"
                   }}>
                     ★
@@ -403,13 +429,14 @@ const Comments2Page = () => {
                 </label>
               ))}
               <span style={{ marginLeft: "10px", color: "#666" }}>
-                {(editingReviewId ? editForm.rating : formData.rating)} estrella{(editingReviewId ? editForm.rating : formData.rating) !== 1 ? 's' : ''}
+                {activeRating} estrella{activeRating !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
 
           <div className="input-container textarea focus">
             <textarea
+              ref={textareaRef}
               name="comment"
               className="input"
               placeholder={editingReviewId ? "Edita tu comentario:" : "Déjanos tu comentario:"}
@@ -422,11 +449,20 @@ const Comments2Page = () => {
             <div style={{ 
               textAlign: "right", 
               fontSize: "0.85rem", 
-              color: (editingReviewId ? editForm.comment.length : formData.comment.length) > 500 ? '#d7263c' : '#999',
+              color: activeForm.comment.length > 500 ? '#d7263c' : '#999',
               marginTop: "5px"
             }}>
-              {(editingReviewId ? editForm.comment.length : formData.comment.length)}/500 caracteres
+              {activeForm.comment.length}/500 caracteres
             </div>
+            {formError && (
+              <div style={{
+                marginTop: "8px",
+                color: "#d7263c",
+                fontWeight: "600"
+              }}>
+                {formError}
+              </div>
+            )}
           </div>
           
           <div className="buttons-container">

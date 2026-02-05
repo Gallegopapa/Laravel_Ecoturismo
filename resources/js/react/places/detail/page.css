@@ -108,7 +108,9 @@
 }
 
 .place-image-section {
-  position: relative;
+  position: sticky;
+  top: 110px;
+  align-self: start;
 }
 
 .place-main-image {
@@ -384,6 +386,11 @@
 
   .place-main-image {
     height: 300px;
+  }
+
+  .place-image-section {
+    position: static;
+    top: auto;
   }
 }
 

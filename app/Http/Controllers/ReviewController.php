@@ -71,12 +71,29 @@ class ReviewController extends Controller
             'rating.integer' => 'La calificación debe ser un número.',
             'rating.min' => 'La calificación mínima es 1.',
             'rating.max' => 'La calificación máxima es 5.',
+            'place_id.exists' => 'El lugar seleccionado no existe.',
         ];
 
         $data = $request->validate([
+            'place_id' => 'sometimes|exists:places,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
+
+        if (array_key_exists('place_id', $data) && $data['place_id'] !== $review->place_id) {
+            $alreadyReviewed = Review::where('user_id', Auth::id())
+                ->where('place_id', $data['place_id'])
+                ->where('id', '!=', $review->id)
+                ->exists();
+
+            if ($alreadyReviewed) {
+                return back()->withErrors([
+                    'review' => 'Ya has comentado este lugar. Solo puedes comentar una vez por lugar.'
+                ]);
+            }
+
+            $review->place_id = $data['place_id'];
+        }
 
         $review->update([
             'rating' => $data['rating'],
