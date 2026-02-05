@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
@@ -272,21 +272,13 @@ export default function LugaresMontanososPage() {
                       </svg>
                       <span>Mapa</span>
                     </a>
-                    <button 
+                    <Link 
+                      to={`/lugares/${lugar.id}`}
                       className="info-button"
-                      onClick={() => {
-                        if (isAuthenticated) {
-                          setReservationModal({ isOpen: true, place: lugar });
-                        } else {
-                          setMessage("Debes iniciar sesión para reservar");
-                          setTimeout(() => {
-                            navigate("/login");
-                          }, 1500);
-                        }
-                      }}
+                      style={{ textDecoration: 'none', display: 'inline-block' }}
                     >
-                      Reservar Visita
-                    </button>
+                      Ver Detalles
+                    </Link>
                   </div>
                   <button 
                     className="favorito" 

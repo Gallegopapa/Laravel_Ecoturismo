@@ -272,16 +272,13 @@ const FavoritesPage = () => {
                           </svg>
                           <span>Mapa</span>
                         </a>
-                        <button 
+                        <Link 
+                          to={`/lugares/${place.id}`}
                           className="info-button"
-                          onClick={() => {
-                            if (place.id) {
-                              setReservationModal({ isOpen: true, place: place });
-                            }
-                          }}
+                          style={{ textDecoration: 'none', display: 'inline-block' }}
                         >
-                          Reservar Visita
-                        </button>
+                          Ver Detalles
+                        </Link>
                       </div>
                       <button 
                         className="favorito favorito-active" 
