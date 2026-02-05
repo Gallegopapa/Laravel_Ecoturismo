@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -57,7 +58,7 @@ class ReviewController extends Controller
         $data = $request->validate([
             'place_id' => 'required|exists:places,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:500',
+            'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
 
         $review = Review::create([
@@ -96,7 +97,7 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'rating' => 'sometimes|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:500',
+            'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
 
         // No se permite cambiar el place_id ni el user_id aquí

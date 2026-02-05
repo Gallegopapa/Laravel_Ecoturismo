@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use App\Models\Place;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +23,7 @@ class ReviewController extends Controller
         $data = $request->validate([
             'place_id' => 'required|exists:places,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:500',
+            'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
 
         // Verificar que el usuario no haya comentado antes este lugar
@@ -74,7 +75,7 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:500',
+            'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
 
         $review->update([
