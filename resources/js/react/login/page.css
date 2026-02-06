@@ -16,17 +16,16 @@
   min-height: 100vh !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
   align-items: center !important;
   position: relative !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   z-index: 0;
-  padding: 0 !important;
+  padding: 80px 0 80px 0 !important;
   margin: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  padding-bottom: 80px !important;
 }
 
 /* VIDEO DE FONDO DESDE CSS */
@@ -70,27 +69,33 @@
 /* TARJETA DE LOGIN */
 .login-page-container .login-card {
   background: rgba(255, 255, 255, 0.95);
-  padding: 30px;
-  width: 300px;
-  max-width: 90%;
-  border-radius: 8px;
-  text-align: center;
+  padding: 40px 50px;
+  width: 100%;
+  max-width: 450px;
+  min-width: 320px;
+  border-radius: 12px;
+  text-align: left;
   box-shadow: 0px 15px 50px rgba(0, 0, 0, 0.3);
-  margin: 100px auto 140px auto !important;
+  margin: 0 auto !important;
   z-index: 10;
   position: relative;
   left: auto !important;
   right: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
 }
 
 .login-card h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
+  font-size: 24px;
+  margin-bottom: 25px;
   margin-top: 0;
   color: #333;
   font-weight: 700;
+  text-align: center;
 }
 
 .login-card .title {
@@ -102,7 +107,7 @@
 
 /* CAMPOS */
 .login-card label {
-  text-align: center;
+  text-align: left;
   display: block;
   font-size: 15px;
   margin-bottom: 8px;
@@ -114,19 +119,21 @@
 
 .login-card input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 45px 12px 12px;
   margin-bottom: 18px;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #d0d0d0;
   font-size: 14px;
   box-sizing: border-box;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   text-align: left;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .login-card input:focus {
   outline: none;
   border-color: #26cc70;
+  box-shadow: 0 0 0 3px rgba(38, 204, 112, 0.1);
 }
 
 /* CONTENEDOR DE CONTRASEÑA CON OJO */
@@ -134,31 +141,75 @@
   position: relative;
   display: block;
   margin-bottom: 18px;
+  width: 100%;
+}
+
+.password-container input {
+  padding-right: 45px;
+  margin-bottom: 0;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.3s;
+  z-index: 1;
+}
+
+.password-toggle:hover {
+  color: #26cc70;
+}
+
+.password-toggle:focus {
+  outline: none;
+  color: #26cc70;
 }
 
 /* BOTÓN */
-.login-card button {
+.login-card button[type="submit"] {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: #26cc70;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 15px;
-  transition: background 0.3s;
+  margin-top: 20px;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
-.login-card button:hover {
+.login-card button[type="submit"]:hover:not(:disabled) {
   background: #1daa5e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(38, 204, 112, 0.3);
+}
+
+.login-card button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-card button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* TEXTO DE REGISTRO */
 .register-text {
-  margin-top: 15px;
+  margin-top: 20px;
   margin-bottom: 0;
   font-size: 14px;
   color: #555;
@@ -192,9 +243,10 @@
 .login-card .error {
   color: #c33;
   font-size: 13px;
-  margin-top: -10px;
+  margin-top: -12px;
   margin-bottom: 10px;
   text-align: left;
+  padding-left: 2px;
 }
 
 .message.error {
@@ -226,4 +278,85 @@
   z-index: 20;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .login-page-container {
+    padding: 70px 0 70px 0 !important;
+  }
+
+  .login-page-container .login-card {
+    padding: 30px 25px;
+    max-width: 95%;
+    min-width: 280px;
+    margin: 0 auto !important;
+    max-height: calc(100vh - 140px);
+  }
+
+  .login-card h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .login-card label {
+    font-size: 14px;
+  }
+
+  .login-card input {
+    padding: 11px 40px 11px 11px;
+    font-size: 14px;
+  }
+
+  .password-toggle {
+    right: 10px;
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page-container {
+    padding: 60px 0 60px 0 !important;
+  }
+
+  .login-page-container .login-card {
+    padding: 25px 20px;
+    max-width: 95%;
+    min-width: 260px;
+    margin: 0 auto !important;
+    max-height: calc(100vh - 120px);
+  }
+
+  .login-card h2 {
+    font-size: 20px;
+  }
+
+  .login-card input {
+    padding: 10px 38px 10px 10px;
+    font-size: 13px;
+  }
+
+  .password-toggle {
+    font-size: 15px;
+  }
+}
+
+/* Scrollbar personalizado para el formulario cuando tiene scroll */
+.login-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.login-card::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.login-card::-webkit-scrollbar-thumb {
+  background: rgba(38, 204, 112, 0.3);
+  border-radius: 4px;
+}
+
+.login-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(38, 204, 112, 0.5);
 }

@@ -322,12 +322,16 @@ footer {
     height: 380px;
   }
 
+  /* Botón de favoritos en móvil:
+     - Deja de ser fijo para no tapar las tarjetas
+     - Se coloca dentro del flujo del contenido, alineado a la derecha */
   .mostrar-favoritos {
-    top: auto;
-    bottom: 80px;
-    right: 15px;
+    position: static;
+    align-self: flex-end;
+    margin: 10px 0 20px 0;
     padding: 8px 15px;
     font-size: 0.85rem;
+    border-radius: 999px;
   }
 
   .volver2 {

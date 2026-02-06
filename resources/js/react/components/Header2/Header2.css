@@ -48,6 +48,9 @@ header {
   font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* ======= NAVBAR GENERAL ======= */
@@ -304,7 +307,50 @@ header {
   transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* Responsive */
+/* Responsive - Tablet */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .header-container {
+    padding: 0 20px;
+  }
+
+  .logo-principal {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .logo-principal img {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+  }
+
+  .titulos h2 {
+    font-size: 16px;
+    max-width: 200px;
+  }
+
+  .nav-link,
+  .dropdown-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .navbar {
+    gap: 4px;
+  }
+
+  .user-name {
+    max-width: 80px;
+    font-size: 14px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Responsive - Mobile */
 @media (max-width: 768px) {
   header {
     min-height: 70px;

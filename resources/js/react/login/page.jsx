@@ -14,6 +14,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
   const [errors, setErrors] = useState({});
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -147,29 +149,49 @@ export default function Login() {
           )}
 
           <label>Contraseña:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            maxLength={20}
-            placeholder="Ingresa tu contraseña (6-20 caracteres)"
-          />
+          <div className="password-container">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              maxLength={20}
+              placeholder="Ingresa tu contraseña (6-20 caracteres)"
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? "👁️" : "👁️‍🗨️"}
+            </button>
+          </div>
           {errors.password && <p className="error">{Array.isArray(errors.password) ? errors.password[0] : errors.password}</p>}
 
           {isRegister && (
             <>
               <label>Confirmar contraseña:</label>
-              <input
-                type="password"
-                value={passwordConfirmation}
-                onChange={(e) => setPasswordConfirmation(e.target.value)}
-                required
-                minLength={6}
-                maxLength={20}
-                placeholder="Confirma tu contraseña (6-20 caracteres)"
-              />
+              <div className="password-container">
+                <input
+                  type={showPasswordConfirmation ? "text" : "password"}
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  required
+                  minLength={6}
+                  maxLength={20}
+                  placeholder="Confirma tu contraseña (6-20 caracteres)"
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
+                  aria-label={showPasswordConfirmation ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPasswordConfirmation ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
               {errors.password_confirmation && <p className="error">{Array.isArray(errors.password_confirmation) ? errors.password_confirmation[0] : errors.password_confirmation}</p>}
             </>
           )}

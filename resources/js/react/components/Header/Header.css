@@ -42,6 +42,9 @@ header {
   font-size: 18px;
   font-weight: 600;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .navbar {
@@ -109,7 +112,39 @@ header {
   transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* Responsive */
+/* Responsive - Tablet */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .header-container {
+    padding: 10px 15px;
+  }
+
+  .logo-principal {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .logo-principal img {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+  }
+
+  .titulos h2 {
+    font-size: 16px;
+    max-width: 200px;
+  }
+
+  .navbar {
+    gap: 6px;
+  }
+
+  .navbar a {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Responsive - Mobile */
 @media (max-width: 768px) {
   header {
     min-height: 70px;
