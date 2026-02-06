@@ -63,20 +63,17 @@ class AuthController extends Controller
     }
 
     /**
-     * Iniciar sesión - Permite login con name o email
+     * Iniciar sesión - Login por correo electrónico y contraseña
      */
     public function login(Request $request): JsonResponse
     {
-        // Validar que se proporcione al menos un campo de identificación
         try {
             $request->validate([
-                'name' => 'required_without:email|string|max:255',
-                'email' => 'required_without:name|email|max:255',
+                'email' => 'required|email|max:255',
                 'password' => 'required|string|min:1',
             ], [
-                'name.required_without' => 'Debe proporcionar un nombre de usuario o email.',
-                'email.required_without' => 'Debe proporcionar un nombre de usuario o email.',
-                'email.email' => 'El email debe ser una dirección válida.',
+                'email.required' => 'El correo electrónico es requerido.',
+                'email.email' => 'El correo electrónico debe ser una dirección válida.',
                 'password.required' => 'La contraseña es requerida.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -87,19 +84,12 @@ class AuthController extends Controller
         }
 
         try {
-            // Buscar usuario por name o email
-            $user = null;
-            
-            if ($request->filled('name')) {
-                $user = Usuarios::where('name', $request->name)->first();
-            } elseif ($request->filled('email')) {
-                $user = Usuarios::where('email', $request->email)->first();
-            }
+            // Buscar usuario por correo electrónico
+            $user = Usuarios::where('email', $request->email)->first();
 
             // Validar que el usuario exista
             if (!$user) {
                 Log::warning('Intento de login fallido - Usuario no encontrado', [
-                    'name' => $request->name,
                     'email' => $request->email,
                 ]);
                 return response()->json([

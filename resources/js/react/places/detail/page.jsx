@@ -274,14 +274,13 @@ const PlaceDetailPage = () => {
 
   if (loading) {
     return (
-      <>
+      <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div style={{ 
+        <div className="page-content" style={{ 
           marginTop: '100px',
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          height: 'calc(100vh - 200px)',
           flexDirection: 'column',
           gap: '20px'
         }}>
@@ -289,20 +288,19 @@ const PlaceDetailPage = () => {
           <p>Cargando información del lugar...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (error || !place) {
     return (
-      <>
+      <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div style={{ 
+        <div className="page-content" style={{ 
           marginTop: '100px',
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          height: 'calc(100vh - 200px)',
           flexDirection: 'column',
           gap: '20px',
           padding: '20px'
@@ -325,14 +323,14 @@ const PlaceDetailPage = () => {
           </Link>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
-      <div className="place-detail-container" style={{ marginTop: '100px' }}>
+      <div className="page-content place-detail-container" style={{ marginTop: '100px' }}>
         {message && (
           <div className={`detail-message ${message.includes('Error') ? 'error' : 'success'}`}>
             {message}
@@ -664,7 +662,7 @@ const PlaceDetailPage = () => {
       )}
 
       <Footer />
-    </>
+    </div>
   );
 };
 

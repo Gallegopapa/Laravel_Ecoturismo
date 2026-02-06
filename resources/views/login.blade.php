@@ -19,9 +19,9 @@
             <form id="formulario" action="{{ url('/login') }}" method="POST">
                 @csrf
 
-                <label for="name">Nombre de usuario o Email:</label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus>
-                @error('name')
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus>
+                @error('email')
                     <div style="color:red; margin-top: 5px;">{{ $message }}</div>
                 @enderror
                 @error('credentials')

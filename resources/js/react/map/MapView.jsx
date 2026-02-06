@@ -128,10 +128,24 @@ export default function MapView({ locations }) {
     return matchQuery && matchCat && l.latitude && l.longitude;
   });
 
-  // Centro por defecto: Risaralda, Colombia
-  const center = filtered.length > 0 
-    ? [filtered[0].latitude, filtered[0].longitude] 
-    : [4.814, -75.694];
+  // Usar bounds para ajustar exactamente a Pereira y Dosquebradas en la carga inicial
+  // Coordenadas aproximadas:
+  // Pereira  ~ (4.814, -75.6946)
+  // Dosquebradas ~ (4.8242, -75.6731)
+  // Bounds: [southWest, northEast]
+  // Ajuste: bounds ligeramente más cerca que la versión muy lejana
+  const initialBounds = [
+    [4.79, -75.71], // SW (ligeramente más cerca)
+    [4.842, -75.65], // NE (ligeramente más cerca)
+  ];
+
+  const initialZoom = 11; // fallback un poco más cercano
+
+  // Si no hay búsqueda ni filtro activo, mostramos los bounds iniciales.
+  const showInitialBounds = !query && category === 'all';
+
+  // Si el usuario está filtrando/buscando, centramos en el primer resultado (comportamiento previo)
+  const center = filtered.length > 0 ? [filtered[0].latitude, filtered[0].longitude] : [4.814, -75.694];
 
   return (
     <div className="map-view-container">
@@ -156,8 +170,7 @@ export default function MapView({ locations }) {
       </div>
 
       <MapContainer 
-        center={center} 
-        zoom={11} 
+        {...(showInitialBounds ? { bounds: initialBounds, boundsOptions: { padding: [80, 80] } } : { center: center, zoom: filtered.length > 0 ? 11 : initialZoom })}
         style={{ height: '100%', width: '100%' }}
         scrollWheelZoom={true}
       >

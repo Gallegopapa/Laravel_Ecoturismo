@@ -169,19 +169,13 @@ const FavoritesPage = () => {
 
   if (authLoading || loading) {
     return (
-      <>
+      <div className="page-layout">
         <Header2 />
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '80vh',
-          marginTop: '100px'
-        }}>
+        <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }}>
           <p>Cargando favoritos...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
@@ -190,9 +184,9 @@ const FavoritesPage = () => {
   }
 
   return (
-    <>
+    <div className="page-layout">
       <Header2 />
-      <div className="favorites-container" style={{ marginTop: '100px' }}>
+      <div className="page-content favorites-container" style={{ marginTop: '100px' }}>
         <h1>Mis Favoritos</h1>
 
         {message && (
@@ -316,7 +310,7 @@ const FavoritesPage = () => {
       )}
 
       <Footer />
-    </>
+    </div>
   );
 };
 

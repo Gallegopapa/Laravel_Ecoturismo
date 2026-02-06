@@ -25,13 +25,12 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <p>Cargando...</p>
+      <div className="page-layout">
+        <Header />
+        <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <p>Cargando...</p>
+        </div>
+        <Footer />
       </div>
     );
   }

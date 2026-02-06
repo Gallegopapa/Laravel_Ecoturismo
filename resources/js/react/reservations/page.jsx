@@ -121,19 +121,13 @@ const ReservationsPage = () => {
 
   if (authLoading || loading) {
     return (
-      <>
+      <div className="page-layout">
         <Header2 />
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '80vh',
-          marginTop: '100px'
-        }}>
+        <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }}>
           <p>Cargando reservas...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
@@ -142,9 +136,9 @@ const ReservationsPage = () => {
   }
 
   return (
-    <>
+    <div className="page-layout">
       <Header2 />
-      <div className="reservations-container" style={{ marginTop: '100px' }}>
+      <div className="page-content reservations-container" style={{ marginTop: '100px' }}>
         <h1>Mis Reservas</h1>
 
         {message && (
@@ -300,7 +294,7 @@ const ReservationsPage = () => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

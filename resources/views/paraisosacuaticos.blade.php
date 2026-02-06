@@ -8,10 +8,11 @@
     <link rel="icon" href="imagenes/iconoecoturismo.jpg">
 </head>
 <body>
-<div class="contenedorTodo">
-    <h1>Paraísos Acuáticos</h1>
+    <main class="contenido">
+        <div class="contenedorTodo">
+            <h1>Paraísos Acuáticos</h1>
 
-    <div class="cards">
+            <div class="cards">
         <!-- <div class="card"><a href="https://maps.app.goo.gl/L6jLqvJGhZqbC7Am6?g_st=iw">
             <img src="{{ asset('imagenes/divisa.jpg') }}" alt=""></a>
             <h4>La divisa de Don Juan</h4>
@@ -48,8 +49,12 @@
     </div>        
 
     <a href="{{ route('pagcentral') }}"><button class="volver">Volver</button></a>
-</div> 
-</div>
-<footer>© 2025 Risaralda EcoTurismo</footer>
+            </div>
+
+            <a href="{{ route('pagcentral') }}"><button class="volver">Volver</button></a>
+        </div>
+    </main>
+
+    <footer>© 2025 Risaralda EcoTurismo</footer>
 </body>
 </html>

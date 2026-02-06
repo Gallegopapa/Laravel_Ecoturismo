@@ -204,13 +204,12 @@ const Comments2Page = () => {
 
   if (authLoading || loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <p>Cargando...</p>
+      <div className="page-layout">
+        <Header2 />
+        <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <p>Cargando...</p>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -223,10 +222,10 @@ const Comments2Page = () => {
   const activeRating = editingReviewId ? editForm.rating : formData.rating;
 
   return (
-    <>
+    <div className="page-layout">
       <Header2 />
 
-      <div className="contenedorTodo">
+      <div className="page-content contenedorTodo">
         {/* Sección de título */}
         <section className="review" id="review">
           <div className="middle-text">
@@ -482,7 +481,7 @@ const Comments2Page = () => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

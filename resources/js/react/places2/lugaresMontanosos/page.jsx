@@ -213,20 +213,20 @@ export default function LugaresMontanososPage() {
 
   if (loading && isAuthenticated) {
     return (
-      <>
+      <div className="page-layout">
         <Header2 />
-        <div style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
+        <div className="page-content" style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
           <p>Cargando favoritos...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="page-layout">
       <Header2 />
-      <div className="contenedorTodo" style={{ marginTop: "100px" }}>
+      <div className="page-content contenedorTodo" style={{ marginTop: "100px" }}>
         <h1>Lugares Montañosos</h1>
 
         {message && (
@@ -344,6 +344,6 @@ export default function LugaresMontanososPage() {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 }

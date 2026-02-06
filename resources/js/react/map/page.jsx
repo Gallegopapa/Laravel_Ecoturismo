@@ -148,39 +148,22 @@ const MapPage = () => {
 
   if (loading) {
     return (
-      <>
+      <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div style={{ 
-          marginTop: '100px',
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: 'calc(100vh - 200px)',
-          flexDirection: 'column',
-          gap: '20px'
-        }}>
+        <div className="page-content" style={{ marginTop: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
           <div className="loading-spinner"></div>
           <p>Cargando mapa...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
+      <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div style={{ 
-          marginTop: '100px',
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: 'calc(100vh - 200px)',
-          flexDirection: 'column',
-          gap: '20px',
-          padding: '20px'
-        }}>
+        <div className="page-content" style={{ marginTop: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px', padding: '20px' }}>
           <p style={{ color: '#e74c3c', fontSize: '18px' }}>{error}</p>
           <button 
             onClick={loadPlaces}
@@ -198,14 +181,14 @@ const MapPage = () => {
           </button>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
-      <div className="map-page-container">
+      <div className="page-content map-page-container">
         <div className="map-page-header">
           <h1>Mapa Interactivo de Lugares</h1>
           <p>Explora los lugares ecoturísticos de Risaralda en el mapa</p>
@@ -219,7 +202,7 @@ const MapPage = () => {
         <MapView locations={locations} />
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

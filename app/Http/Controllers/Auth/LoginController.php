@@ -23,35 +23,33 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validar campos requeridos
+        // Validar campos requeridos (usamos email para login)
         $request->validate([
-            'name' => ['required', 'string'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ], [
-            'name.required' => 'El nombre de usuario o email es requerido.',
+            'email.required' => 'El correo es requerido.',
+            'email.email' => 'Introduce un correo válido.',
             'password.required' => 'La contraseña es requerida.',
         ]);
 
-        $login = $request->input('name');
+        $email = $request->input('email');
         $password = $request->input('password');
 
-        // Buscar usuario por email o por name
-        $user = null;
-        $user = filter_var($login, FILTER_VALIDATE_EMAIL)
-            ? Usuarios::where('email', $login)->first()
-            : Usuarios::where('name', $login)->first();
+        // Buscar usuario por email
+        $user = Usuarios::where('email', $email)->first();
 
         // Validar credenciales
         if (!$user) {
             return back()->withErrors([
                 'credentials' => 'Las credenciales proporcionadas son incorrectas.',
-            ])->onlyInput('name');
+            ])->onlyInput('email');
         }
 
         if (!Hash::check($password, $user->password)) {
             return back()->withErrors([
                 'credentials' => 'Las credenciales proporcionadas son incorrectas.',
-            ])->onlyInput('name');
+            ])->onlyInput('email');
         }
 
         // Autenticar usuario

@@ -6,7 +6,7 @@ import Slider from "./components/slider/Slider";
 
 function App() {
   return (
-    <>
+    <div className="app-root">
       <Header />
 
       <main>
@@ -18,7 +18,7 @@ function App() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

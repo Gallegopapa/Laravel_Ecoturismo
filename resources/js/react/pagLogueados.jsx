@@ -21,13 +21,12 @@ function PagLogueados() {
   // Mostrar loading mientras se verifica
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
-        <p>Cargando...</p>
+      <div className="page-layout">
+        <Header2 />
+        <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <p>Cargando...</p>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -38,10 +37,10 @@ function PagLogueados() {
   }
 
   return (
-    <>
+    <div className="page-layout">
       <Header2 />
       {/* MAIN */}
-      <main>
+      <main className="page-content">
         <Slider />
 
         {/* CARDS */}
@@ -66,7 +65,7 @@ function PagLogueados() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

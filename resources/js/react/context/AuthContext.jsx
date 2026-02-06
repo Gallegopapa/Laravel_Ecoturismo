@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      // Validar que se envíen los datos necesarios
-      if (!credentials.name && !credentials.email) {
+      // Validar que se envíen los datos necesarios (login por correo electrónico)
+      if (!credentials.email) {
         return { 
           success: false, 
-          error: 'Debe proporcionar un nombre de usuario o email.' 
+          error: 'Debe proporcionar tu correo electrónico.' 
         };
       }
       

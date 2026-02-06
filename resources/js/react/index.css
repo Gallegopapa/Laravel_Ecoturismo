@@ -17,6 +17,29 @@ body {
   overflow-x: hidden;
 }
 
+/* App layout: make footer stick to bottom reliably */
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 1 auto;
+  padding-top: 100px; /* espacio para el header fijo */
+}
+
+/* Layout para páginas con Header + contenido + Footer: footer siempre abajo */
+.page-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.page-content {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 /* HEADER */
 header {
   width: 100vw;
@@ -66,23 +89,27 @@ header {
   color: #fff;
 }
 
-/* MAIN */
-main {
-  margin-bottom: 100px; /* deja espacio para el footer fijo */
+/* MAIN (old - overridden by .app-root > main) */
+.contenedorcards {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 90%;
 }
 
 /* SLIDER */
 .slider-container {
-  width: 95%;
-  height: 80vh; /* más pequeño */
+  /* Full-bleed hero image across viewport while keeping intro text position */
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  height: 80vh;
   position: relative;
   overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .slider {
@@ -98,10 +125,10 @@ main {
 }
 
 .slide img {
-  width: 100%;
+  width: 100vw;
   height: 100%;
   object-fit: cover;
-  border-radius: 15px;
+  display: block;
 }
 
 @keyframes slide {
@@ -111,18 +138,16 @@ main {
 }
 
 .intro-text {
-    position: absolute;
-    top: 85%;
-    left: 42%;
-    text-align: left;
-    transform: translate(-50%, -50%);
-    /* text-align: center; */
-    color: #ffffff; /* Texto blanco */
-    z-index: 10; /* Asegura que el texto esté encima del slider */
-    /* background-color: rgba(0, 0, 0, 0.5); Fondo semitransparente */
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%; /* Ajusta el ancho del texto */
+  position: absolute;
+  top: 85%;
+  left: 42%;
+  transform: translate(-50%, -50%);
+  text-align: left;
+  color: #ffffff;
+  z-index: 10;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
 }
 
 .intro-text h1 {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./page.css";
@@ -8,7 +8,8 @@ export default function Login() {
   const navigate = useNavigate();
   const { login, register, isAuthenticated } = useAuth();
   const isRegister = location.pathname === "/registro";
-  
+  const emailInputRef = useRef(null);
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +17,23 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Sincronizar valor de autocompletado del navegador con el estado (evita que se vea en blanco)
+  const syncEmailFromAutofill = () => {
+    if (emailInputRef.current && emailInputRef.current.value && !email) {
+      setEmail(emailInputRef.current.value);
+    }
+  };
+  useEffect(() => {
+    const t = setTimeout(syncEmailFromAutofill, 100);
+    return () => clearTimeout(t);
+  }, []);
+  useEffect(() => {
+    if (!isRegister) {
+      const t = setTimeout(syncEmailFromAutofill, 300);
+      return () => clearTimeout(t);
+    }
+  }, [isRegister]);
 
   // Si ya está autenticado, redirigir a la página de usuarios logueados
   useEffect(() => {
@@ -42,9 +60,10 @@ export default function Login() {
           password_confirmation: passwordConfirmation,
         });
       } else {
-        // Login
+        // Login por correo electrónico y contraseña (usar ref si el estado está vacío por autocompletado)
+        const emailValue = email || (emailInputRef.current?.value ?? "");
         result = await login({
-          name: username,
+          email: emailValue,
           password,
         });
       }
@@ -88,18 +107,17 @@ export default function Login() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>{isRegister ? "Registro" : "Iniciar Sesión"}</h2>
           
-          <label>Nombre de usuario:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            placeholder="Ingresa tu nombre de usuario"
-          />
-          {errors.name && <p className="error">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
-
-          {isRegister && (
+          {isRegister ? (
             <>
+              <label>Nombre de usuario:</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                placeholder="Ingresa tu nombre de usuario"
+              />
+              {errors.name && <p className="error">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
               <label>Email (opcional):</label>
               <input
                 type="email"
@@ -108,6 +126,23 @@ export default function Login() {
                 placeholder="tu@email.com"
               />
               {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
+            </>
+          ) : (
+            <>
+              <label>Correo electrónico:</label>
+              <input
+                ref={emailInputRef}
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={syncEmailFromAutofill}
+                required
+                placeholder="tu@email.com"
+              />
+              {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
+              {errors.credentials && <p className="error">{Array.isArray(errors.credentials) ? errors.credentials[0] : errors.credentials}</p>}
             </>
           )}
 

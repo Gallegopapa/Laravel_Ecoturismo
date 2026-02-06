@@ -404,23 +404,26 @@ main{
 }
 /*contenedor del slider*/
 .slider-container {
-    width: 95%; /* Ocupa todo el ancho del main */
-    height: 100%; /* Ocupa todo el alto del main */
+    /* Full-bleed hero for Blade page */
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
     position: relative;
     overflow: hidden;
-    border-radius: 15px; /* Elimina bordes redondeados si no son necesarios */
-    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 80vh;
+    border-radius: 0;
+    box-shadow: none;
 }
 .slider-container::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Oscurece las imágenes (ajusta la opacidad según sea necesario) */
-    z-index: 5; /* Asegura que el overlay esté encima de las imágenes */
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 2;
 }
 .intro-text {
     position: absolute;
@@ -428,19 +431,14 @@ main{
     left: 42%;
     transform: translate(-50%, -50%);
     text-align: left;
-    color: #ffffff; /* Texto blanco */
-    z-index: 10; /* Asegura que el texto esté encima del slider */
-    /* background-color: rgba(0, 0, 0, 0.5); Fondo semitransparente */
+    color: #ffffff;
+    z-index: 10;
     padding: 20px;
     border-radius: 10px;
-    width: 80%; /* Ajusta el ancho del texto */
+    width: 80%;
 }
 .intro-text h1 {
-    font-size: 5px;
-}
-
-.intro-text h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
     margin: 0;
 }
 
@@ -454,7 +452,6 @@ main{
     width: 300%;
     height: 100%;
     animation: slide 25s infinite alternate ease-in-out;
-    
 }
 /*cada slider*/
 .slide{
@@ -466,6 +463,7 @@ main{
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 @keyframes slide{
     0% {
@@ -494,9 +492,9 @@ main{
     color: #fff;
 }
 main img{
-    width: 100%;
-    height: 500px;
-    border-radius: 10px;
+    width: 100vw;
+    height: auto;
+    display: block;
 }
 #bgimg{
     float: right;

@@ -406,20 +406,20 @@ const PlacesPage = () => {
 
   if (loading) {
     return (
-      <>
+      <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div className="contenedorTodo" style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
+        <div className="page-content contenedorTodo" style={{ marginTop: "100px", textAlign: "center", padding: "50px" }}>
           <p>Cargando lugares...</p>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
-      <div className="contenedorTodo" style={{ marginTop: "100px" }}>
+      <div className="page-content contenedorTodo" style={{ marginTop: "100px" }}>
         <h1>Lugares de Ecoturismo en Risaralda</h1>
 
         {message && (
@@ -726,7 +726,7 @@ const PlacesPage = () => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
