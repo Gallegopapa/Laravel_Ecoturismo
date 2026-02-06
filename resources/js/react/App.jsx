@@ -36,10 +36,10 @@ function App() {
   }
 
   return (
-    <>
+    <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
 
-      <main>
+      <main className="page-content">
         <Slider />
 
         <div className="contenedorcards">
@@ -48,7 +48,7 @@ function App() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
 

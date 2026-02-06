@@ -108,10 +108,10 @@ const CommentsPage = () => {
   };
 
   return (
-    <>
+    <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
 
-      <div className="contenedorTodo">
+      <div className="page-content contenedorTodo">
         {/* Sección de título */}
         <section className="review" id="review">
           <div className="middle-text">
@@ -334,7 +334,7 @@ const CommentsPage = () => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

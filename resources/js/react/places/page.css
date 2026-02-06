@@ -176,7 +176,7 @@ body {
 }
 
 /* Botón mostrar favoritos */
-.mostrar-favoritos {
+ .mostrar-favoritos {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -323,10 +323,18 @@ footer {
   }
 
   .mostrar-favoritos {
-    top: 10px;
-    right: 10px;
+    top: auto;
+    bottom: 80px;
+    right: 15px;
     padding: 8px 15px;
     font-size: 0.85rem;
+  }
+
+  .volver2 {
+    bottom: 20px;
+    left: 15px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
   }
 
   .popup-content {

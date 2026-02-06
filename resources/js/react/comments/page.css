@@ -19,7 +19,6 @@ body {
   margin: 0 auto;
   padding: 2rem;
   position: relative;
-  margin-top: 100px;
 }
 
 /* Estilos del encabezado */
@@ -182,7 +181,6 @@ body {
 @media (max-width: 768px) {
   .contenedorTodo {
     padding: 1rem;
-    margin-top: 80px;
   }
 
   .middle-text h2 {
@@ -227,41 +225,53 @@ body {
   }
 }
 .buttons-container {
-    display: flex;
-    gap: 2rem;
-    justify-content:center;
-    position: relative;
-    align-items: center;
-    margin-top: 1rem;
-    z-index: 98;
-    right:50%;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  z-index: 98;
 }
 
 .volver {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    left: 950%;
-    bottom: 1px;
-    background: #2ecc71;
-    color: #fff;
-    padding: 0.8rem 2rem;
-    border-radius: 25px;
-    text-align: center;
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: #2ecc71;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
 }
 
 .volver:hover {
   background: #27ae60;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+@media (max-width: 768px) {
+  .contenedorTodo {
+    margin-top: 100px; /* baja un poco más todo bajo el header fijo */
+  }
+
+  .buttons-container {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .volver,
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @keyframes slideDown {

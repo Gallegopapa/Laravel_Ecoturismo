@@ -40,6 +40,10 @@ main {
   min-height: 0;
 }
 
+.page-layout > .page-content {
+  padding-top: 100px; /* separa el contenido del header fijo por defecto */
+}
+
 /* HEADER */
 header {
   width: 100vw;
@@ -195,16 +199,15 @@ header {
 
 /* FOOTER */
 footer {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: rgb(44, 62, 80);
-    height: 10vh;
-    width: 100%;
-    line-height: 0.5;
-    font-size: 14px;
-    position: static;
-    bottom: 0px;
-    text-align: center;
-    padding: 20px 0px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgb(44, 62, 80);
+  width: 100%;
+  line-height: 1.2;
+  font-size: 14px;
+  position: static;
+  bottom: 0;
+  text-align: center;
+  padding: 16px 0;
 }
 footer a{
     text-decoration: none;
@@ -218,8 +221,24 @@ footer a:hover{
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+  main {
+    padding-top: 80px; /* un poco menos de espacio en móviles */
+  }
+
+  .page-layout > .page-content {
+    padding-top: 90px; /* menos espacio en móviles pero siempre por debajo del header */
+  }
+
   .slider-container {
-    height: 45vh;
+    height: 70vh; /* ocupa más alto en móvil para evitar tanto espacio vacío */
+  }
+
+  .intro-text {
+    top: 78%;
+    left: 50%;
+    width: 90%;
+    padding: 12px;
+    text-align: center;
   }
 
   .intro-text h1 {
@@ -232,5 +251,22 @@ footer a:hover{
 
   .card {
     width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-text {
+    top: 75%;
+    left: 50%;
+    width: 92%;
+    padding: 10px;
+  }
+
+  .intro-text h1 {
+    font-size: 1.25rem;
+  }
+
+  .intro-text p {
+    font-size: 0.8rem;
   }
 }
