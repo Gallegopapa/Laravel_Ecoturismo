@@ -15,12 +15,15 @@ use App\Http\Controllers\API\ContactController;
 use App\Http\Controllers\API\AdminPlaceController;
 use App\Http\Controllers\API\AdminUserController;
 use App\Http\Controllers\API\PlaceScheduleController;
+use App\Http\Controllers\API\PasswordResetController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
 // ============================================
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
 // Rutas públicas de lugares
 Route::get('/places', [PlaceController::class, 'index']);

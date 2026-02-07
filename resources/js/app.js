@@ -14,6 +14,9 @@ import ContactPage from './react/contact/Contacto.jsx';
 import PlacesPage from './react/places/page.jsx';
 import CommentsPage from './react/comments/page.jsx';
 import Loginpage from './react/login/page.jsx';
+import ForgotPasswordPage from './react/forgot-password/page.jsx';
+import ForgotPasswordSentPage from './react/forgot-password/sent.jsx';
+import ResetPasswordPage from './react/reset-password/page.jsx';
 import PagLogueados from './react/pagLogueados.jsx';
 import Comments2Page from './react/comments2/page.jsx';
 import PerfilPage from './react/perfil/page.jsx';
@@ -93,6 +96,18 @@ const router = createBrowserRouter([
   {
     path: '/registro',
     element: <Loginpage />, // Usar el mismo componente o crear uno separado
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/forgot-password/sent',
+    element: <ForgotPasswordSentPage />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     path: '/pagLogueados',

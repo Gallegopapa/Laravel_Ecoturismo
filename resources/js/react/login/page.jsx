@@ -57,15 +57,15 @@ export default function Login() {
         // Registro
         result = await register({
           name: username,
-          email: email || null,
+          email,
           password,
           password_confirmation: passwordConfirmation,
         });
       } else {
-        // Login por correo electrónico y contraseña (usar ref si el estado está vacío por autocompletado)
-        const emailValue = email || (emailInputRef.current?.value ?? "");
+        // Login por correo o usuario (usar ref si el estado está vacío por autocompletado)
+        const loginValue = email || (emailInputRef.current?.value ?? "");
         result = await login({
-          email: emailValue,
+          login: loginValue,
           password,
         });
       }
@@ -120,29 +120,31 @@ export default function Login() {
                 placeholder="Ingresa tu nombre de usuario"
               />
               {errors.name && <p className="error">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
-              <label>Email (opcional):</label>
+              <label>Email:</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="tu@email.com"
               />
               {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
             </>
           ) : (
             <>
-              <label>Correo electrónico:</label>
+              <label>Correo o usuario:</label>
               <input
                 ref={emailInputRef}
-                type="email"
-                name="email"
-                autoComplete="email"
+                type="text"
+                name="login"
+                autoComplete="username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={syncEmailFromAutofill}
                 required
-                placeholder="tu@email.com"
+                placeholder="tu@email.com o tu_usuario"
               />
+              {errors.login && <p className="error">{Array.isArray(errors.login) ? errors.login[0] : errors.login}</p>}
               {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
               {errors.credentials && <p className="error">{Array.isArray(errors.credentials) ? errors.credentials[0] : errors.credentials}</p>}
             </>
@@ -169,6 +171,7 @@ export default function Login() {
             </button>
           </div>
           {errors.password && <p className="error">{Array.isArray(errors.password) ? errors.password[0] : errors.password}</p>}
+
 
           {isRegister && (
             <>
@@ -208,6 +211,11 @@ export default function Login() {
             </p>
           )}
   
+          {!isRegister && (
+            <p className="register-text">
+              ¿Has olvidado tu contraseña? <Link to="/forgot-password">Recupérala</Link>
+            </p>
+          )}
 
           {msg && (
             <p className={`message ${

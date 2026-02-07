@@ -19,7 +19,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|min:3|unique:usuarios,name|regex:/^[a-zA-Z0-9_]+$/',
-            'email' => 'nullable|email|max:255|unique:usuarios,email',
+            'email' => 'required|email|max:255|unique:usuarios,email',
             'password' => 'required|string|min:6|max:20|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
@@ -27,6 +27,7 @@ class AuthController extends Controller
             'name.max' => 'El nombre de usuario no puede exceder 255 caracteres.',
             'name.unique' => 'Este nombre de usuario ya está en uso.',
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
+            'email.required' => 'El email es requerido.',
             'email.email' => 'El email debe ser una dirección válida.',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
@@ -37,7 +38,7 @@ class AuthController extends Controller
 
         $user = Usuarios::create([
             'name' => $data['name'],
-            'email' => $data['email'] ?? null,
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'fecha_registro' => now(),
         ]);
@@ -67,36 +68,46 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
+        $forgotPasswordUrl = rtrim(env('FRONTEND_URL', config('app.url')), '/') . '/forgot-password';
+        $request->merge([
+            'login' => $request->input('login', $request->input('email')),
+        ]);
+
         try {
             $request->validate([
-                'email' => 'required|email|max:255',
+                'login' => 'required|string|max:255',
                 'password' => 'required|string|min:1',
             ], [
-                'email.required' => 'El correo electrónico es requerido.',
-                'email.email' => 'El correo electrónico debe ser una dirección válida.',
+                'login.required' => 'El correo o usuario es requerido.',
                 'password.required' => 'La contraseña es requerida.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'message' => 'Error de validación',
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
+                'forgot_password_url' => $forgotPasswordUrl,
             ], 422);
         }
 
         try {
-            // Buscar usuario por correo electrónico
-            $user = Usuarios::where('email', $request->email)->first();
+            $loginValue = $request->input('login');
+
+            // Buscar usuario por correo o nombre de usuario
+            $user = Usuarios::where('email', $loginValue)
+                ->orWhere('name', $loginValue)
+                ->first();
 
             // Validar que el usuario exista
             if (!$user) {
                 Log::warning('Intento de login fallido - Usuario no encontrado', [
-                    'email' => $request->email,
+                    'login' => $loginValue,
                 ]);
                 return response()->json([
                     'message' => 'Las credenciales proporcionadas son incorrectas.',
                     'errors' => [
                         'credentials' => ['No se encontró un usuario con esas credenciales.']
-                    ]
+                    ],
+                    'forgot_password_url' => $forgotPasswordUrl,
                 ], 422);
             }
 
@@ -110,7 +121,8 @@ class AuthController extends Controller
                     'message' => 'Las credenciales proporcionadas son incorrectas.',
                     'errors' => [
                         'credentials' => ['La contraseña es incorrecta.']
-                    ]
+                    ],
+                    'forgot_password_url' => $forgotPasswordUrl,
                 ], 422);
             }
 

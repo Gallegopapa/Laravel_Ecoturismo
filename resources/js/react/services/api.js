@@ -100,6 +100,18 @@ export const authService = {
     return response.data;
   },
 
+  // Enviar enlace de recuperacion
+  forgotPassword: async (payload) => {
+    const response = await api.post('/password/forgot', payload);
+    return response.data;
+  },
+
+  // Restablecer contrasena
+  resetPassword: async (payload) => {
+    const response = await api.post('/password/reset', payload);
+    return response.data;
+  },
+
   // Obtener usuario actual
   getCurrentUser: async () => {
     const response = await api.get('/user');

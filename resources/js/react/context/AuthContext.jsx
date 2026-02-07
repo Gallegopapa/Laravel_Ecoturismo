@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      // Validar que se envíen los datos necesarios (login por correo electrónico)
-      if (!credentials.email) {
+      // Validar que se envíen los datos necesarios (login por correo o usuario)
+      if (!credentials.login) {
         return { 
           success: false, 
-          error: 'Debe proporcionar tu correo electrónico.' 
+          error: 'Debe proporcionar tu correo o usuario.' 
         };
       }
       
@@ -120,6 +120,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
+      if (!userData.email) {
+        return {
+          success: false,
+          error: 'El email es requerido.',
+        };
+      }
+
       const response = await authService.register(userData);
       
       // Guardar token y usuario
