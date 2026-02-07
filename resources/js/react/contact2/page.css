@@ -248,25 +248,42 @@ textarea.input::-webkit-scrollbar-thumb:hover {
 
 /* Contador de caracteres y mensaje de error */
 .char-counter {
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #555;
+  margin-top: 12px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #27ae60;
   text-align: right;
+  padding: 0 1.3rem;
 }
 
 .char-counter.error {
   color: #e74c3c;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .error-message {
-  margin-top: 6px;
-  color: #e74c3c;
-  font-size: 0.9rem;
-  background: rgba(231, 76, 60, 0.05);
-  padding: 8px 12px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #e74c3c;
+  padding: 12px 15px;
   border-radius: 8px;
-  border: 1px solid rgba(231, 76, 60, 0.12);
+  border-left: 4px solid #c0392b;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .input-container span {

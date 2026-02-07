@@ -28,9 +28,19 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [messageError, setMessageError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Validación de mensaje con limite de 500 caracteres
+    if (name === "message") {
+      if (value.length > 500) {
+        setMessageError("El mensaje no debe tener más de 500 caracteres.");
+      } else {
+        setMessageError("");
+      }
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -66,6 +76,8 @@ export default function Contact() {
 
     if (!formData.message.trim()) {
       newErrors.message = "El mensaje es requerido";
+    } else if (formData.message.length > 500) {
+      newErrors.message = "El mensaje no debe tener más de 500 caracteres";
     }
 
     return newErrors;
@@ -177,10 +189,6 @@ export default function Contact() {
                 <a href="https://www.instagram.com" target="_blank" rel="noreferrer">
                   <img src={igIcon} width="30" alt="Instagram" />
                 </a>
-
-                <button id="volver">
-                  <Link to="/">Volver</Link>
-                </button>
               </div>
             </div>
           </div>
@@ -237,12 +245,20 @@ export default function Contact() {
                 <span>Mensaje</span>
               </div>
 
-              <input 
-                type="submit" 
-                value={loading ? "Enviando..." : "Enviar"} 
-                className="btn" 
-                disabled={loading}
-              />
+              <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
+                {formData.message.length}/500
+              </div>
+
+              {messageError && <p className="error-message">{messageError}</p>}
+
+              <div className="button-container">
+                <input 
+                  type="submit" 
+                  value={loading ? "Enviando..." : "Enviar"} 
+                  className="btn" 
+                  disabled={loading}
+                />
+              </div>
 
               {successMsg && (
                 <p style={{ color: "#4ade80", marginTop: "10px", fontWeight: "bold" }}>

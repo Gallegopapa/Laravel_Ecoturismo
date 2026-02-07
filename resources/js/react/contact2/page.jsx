@@ -154,11 +154,11 @@ export default function Contact2() {
                 ></textarea>
                 <label>Mensaje</label>
                 <span>Mensaje</span>
-                <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
-                  {formData.message.length}/500
-                </div>
-                {messageError && <p className="error-message">{messageError}</p>}
               </div>
+              <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
+                {formData.message.length}/500
+              </div>
+              {messageError && <p className="error-message">{messageError}</p>}
 
               <input type="submit" value="Enviar" className="btn" />
             </form>
