@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import "./page.css";
 
@@ -10,9 +11,18 @@ export default function Contact2() {
     phone: "",
     message: "",
   });
+  const [messageError, setMessageError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "message") {
+      // mostrar error si excede 500, pero permitir escribir
+      if (value.length > 500) {
+        setMessageError("El mensaje no debe tener más de 500 caracteres.");
+      } else {
+        setMessageError("");
+      }
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -21,10 +31,16 @@ export default function Contact2() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Validación final antes de enviar
+    if ((formData.message || "").length > 500) {
+      setMessageError("El mensaje no debe tener más de 500 caracteres.");
+      return;
+    }
     console.log("Formulario enviado:", formData);
     // Aquí puedes agregar la lógica para enviar el formulario
     alert("¡Mensaje enviado con éxito!");
     setFormData({ name: "", email: "", phone: "", message: "" });
+    setMessageError("");
   };
 
   return (
@@ -138,6 +154,10 @@ export default function Contact2() {
                 ></textarea>
                 <label>Mensaje</label>
                 <span>Mensaje</span>
+                <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
+                  {formData.message.length}/500
+                </div>
+                {messageError && <p className="error-message">{messageError}</p>}
               </div>
 
               <input type="submit" value="Enviar" className="btn" />

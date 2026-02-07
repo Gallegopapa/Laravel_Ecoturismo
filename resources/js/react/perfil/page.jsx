@@ -36,7 +36,13 @@ const PerfilPage = () => {
           telefono: user.telefono || "",
           foto_perfil: null,
         });
-        setPreviewImage(user.foto_perfil || usuarioImg);
+        // Agregar timestamp a la URL de foto para evitar caché
+        const fotoUrl = user.foto_perfil 
+          ? (user.foto_perfil.includes('?') 
+              ? `${user.foto_perfil}&t=${Date.now()}`
+              : `${user.foto_perfil}?t=${Date.now()}`)
+          : usuarioImg;
+        setPreviewImage(fotoUrl);
       } else if (isAuthenticated) {
         // Si hay token pero no hay usuario en el contexto, cargar desde la API
         try {
@@ -48,7 +54,13 @@ const PerfilPage = () => {
               telefono: response.user.telefono || "",
               foto_perfil: null,
             });
-            setPreviewImage(response.user.foto_perfil || usuarioImg);
+            // Agregar timestamp a la URL de foto para evitar caché
+            const fotoUrl = response.user.foto_perfil 
+              ? (response.user.foto_perfil.includes('?') 
+                  ? `${response.user.foto_perfil}&t=${Date.now()}`
+                  : `${response.user.foto_perfil}?t=${Date.now()}`)
+              : usuarioImg;
+            setPreviewImage(fotoUrl);
           }
         } catch (error) {
           console.error("Error al cargar perfil:", error);
@@ -123,9 +135,13 @@ const PerfilPage = () => {
       // Actualizar el usuario en el contexto
       if (response.user) {
         updateUser(response.user);
-        // Actualizar preview si se subió nueva imagen
+        // Actualizar preview si se subió nueva imagen - usar la URL del servidor
         if (response.user.foto_perfil) {
-          setPreviewImage(response.user.foto_perfil);
+          // Agregar timestamp para asegurar que se recarga la imagen (evitar caché)
+          const fotoUrl = response.user.foto_perfil.includes('?') 
+            ? `${response.user.foto_perfil}&t=${Date.now()}`
+            : `${response.user.foto_perfil}?t=${Date.now()}`;
+          setPreviewImage(fotoUrl);
         }
       }
       
