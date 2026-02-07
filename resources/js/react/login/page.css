@@ -122,18 +122,40 @@
   padding: 12px 45px 12px 12px;
   margin-bottom: 18px;
   border-radius: 6px;
-  border: 1px solid #d0d0d0;
+  border: 2px solid #d0d0d0;
   font-size: 14px;
   box-sizing: border-box;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   text-align: left;
   transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #ffffff;
+  color: #333;
+}
+
+.login-card input::placeholder {
+  color: #888;
+  font-weight: 500;
 }
 
 .login-card input:focus {
   outline: none;
   border-color: #26cc70;
   box-shadow: 0 0 0 3px rgba(38, 204, 112, 0.1);
+  background-color: #fafafa;
+}
+
+/* Estilos para autofill del navegador */
+.login-card input:-webkit-autofill,
+.login-card input:-webkit-autofill:hover,
+.login-card input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #333 !important;
+  border-color: #26cc70 !important;
+}
+
+.login-card input:-webkit-autofill::first-line {
+  font-size: 14px;
+  color: #333;
 }
 
 /* CONTENEDOR DE CONTRASEÑA CON OJO */

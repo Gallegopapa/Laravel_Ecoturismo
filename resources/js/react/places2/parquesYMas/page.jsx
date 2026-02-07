@@ -272,7 +272,7 @@ export default function ParquesYMasPage() {
                     onClick={() => toggleFavorito(lugar)}
                     title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                   >
-                    {isFavorite(lugar.id) ? "♥" : "♡"}
+                    {isFavorite(lugar.id) ? "❤️" : "🤍"}
                   </button>
                 </div>
               </div>
