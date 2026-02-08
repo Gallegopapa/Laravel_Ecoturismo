@@ -16,6 +16,7 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [comentariosError, setComentariosError] = useState('');
 
   // Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
@@ -36,6 +37,16 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Validación de comentarios con limite de 500 caracteres
+    if (name === 'comentarios') {
+      if (value.length > 500) {
+        setComentariosError('Los comentarios no deben tener más de 500 caracteres.');
+      } else {
+        setComentariosError('');
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: name === 'personas' ? parseInt(value) || 1 : value
@@ -59,6 +70,12 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
         onClose();
         window.location.href = '/login';
       }, 2000);
+      return;
+    }
+
+    // Validar que los comentarios no superen 500 caracteres
+    if ((formData.comentarios || '').length > 500) {
+      setComentariosError('Los comentarios no deben tener más de 500 caracteres.');
       return;
     }
 
@@ -129,6 +146,7 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
       setErrors({});
       setMessage('');
       setSuggestions([]);
+      setComentariosError('');
       onClose();
     }
   };
@@ -286,9 +304,14 @@ const ReservationModal = ({ place, isOpen, onClose, onSuccess }) => {
               onChange={handleInputChange}
               rows="4"
               placeholder="Notas especiales, requerimientos, etc."
-              maxLength="1000"
               disabled={loading}
             />
+            <div className={`reservation-char-counter ${formData.comentarios.length > 500 ? 'error' : ''}`}>
+              {formData.comentarios.length}/500
+            </div>
+            {comentariosError && (
+              <span className="reservation-error">{comentariosError}</span>
+            )}
             {errors.comentarios && (
               <span className="reservation-error">{Array.isArray(errors.comentarios) ? errors.comentarios[0] : errors.comentarios}</span>
             )}

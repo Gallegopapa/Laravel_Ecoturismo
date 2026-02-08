@@ -291,3 +291,16 @@
   }
 }
 
+/* Contador de caracteres para comentarios */
+.reservation-char-counter {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #24a148;
+  margin-top: 5px;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+.reservation-char-counter.error {
+  color: #ef4444;
+}
