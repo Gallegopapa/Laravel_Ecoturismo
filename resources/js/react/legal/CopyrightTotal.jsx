@@ -118,9 +118,6 @@ export default function CopyrightTotal() {
             <div className="copyright-grid">
               {items[section.key].map((it) => (
                 <div className="copyright-card" key={it.title}>
-                  <a href={it.url} target="_blank" rel="noopener noreferrer">
-                    <img src={it.url} alt={it.title} onError={(e)=>{e.target.style.display='none';}} />
-                  </a>
                   <div className="copyright-caption">{it.title}</div>
                   <a className="copyright-link" href={it.url} target="_blank" rel="noopener noreferrer">Ver fuente</a>
                 </div>
