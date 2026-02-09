@@ -11,6 +11,7 @@ import Comments2Page from "./comments2/page.jsx";
 import CookiesPage from "./legal/Cookies.jsx";
 import TerminosDeUsoPage from "./legal/TerminosDeUso.jsx";
 import PoliticaDePrivacidadPage from "./legal/PoliticaDePrivacidad.jsx";
+import CopyrightTotal from "./legal/CopyrightTotal.jsx";
 
 // NUEVAS PÁGINAS
 import ParaisosAcuaticos from "./places2/paraisosAcuaticos/page.jsx";
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
   {
     path: "/politica-de-privacidad",
     element: <PoliticaDePrivacidadPage />,
+  },
+  {
+    path: "/CopyrightTotal",
+    element: <CopyrightTotal />,
   },
 ]);
 

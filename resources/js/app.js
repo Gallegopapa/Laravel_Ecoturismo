@@ -29,6 +29,7 @@ import PlaceDetailPage from './react/places/detail/page.jsx';
 import CookiesPage from './react/legal/Cookies.jsx';
 import TerminosDeUsoPage from './react/legal/TerminosDeUso.jsx';
 import PoliticaDePrivacidadPage from './react/legal/PoliticaDePrivacidad.jsx';
+import CopyrightTotal from './react/legal/CopyrightTotal.jsx';
 
 // Páginas de lugares
 import ParaisosAcuaticos from './react/places2/paraisosAcuaticos/page.jsx';
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: '/politica-de-privacidad',
     element: <PoliticaDePrivacidadPage />,
+  },
+  {
+    path: '/CopyrightTotal',
+    element: <CopyrightTotal />,
   },
   {
     path: '/contacto',
