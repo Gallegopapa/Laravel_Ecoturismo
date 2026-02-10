@@ -323,16 +323,10 @@ const CommentsPage = () => {
                 Volver
               </button>
             </Link>
-<<<<<<< Updated upstream
+
             <button
               type="submit"
               className="btn"
-=======
-            <input 
-              type="submit" 
-              value={submitting ? "Enviando..." : (isAuthenticated ? "Enviar" : "Iniciar Sesión")} 
-              className="btn-enviar"
->>>>>>> Stashed changes
               disabled={submitting}
               aria-disabled={submitting}
             >

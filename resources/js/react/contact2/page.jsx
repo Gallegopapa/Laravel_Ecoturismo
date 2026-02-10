@@ -240,15 +240,12 @@ export default function Contact2() {
                 {formData.message.length}/500
               </div>
 
-              <button
-                type="submit"
-                className="btn"
+              <input 
+                type="submit" 
+                value={loading ? "Enviando..." : "Enviar"} 
+                className="btn" 
                 disabled={loading}
-                aria-busy={loading}
-                onClick={(e) => { /* onClick calls submit as fallback */ }}
-              >
-                {loading ? "Enviando..." : "Enviar"}
-              </button>
+              />
 
               {successMsg && (
                 <p style={{ color: "#27ae60", marginTop: "15px", fontWeight: "bold", textAlign: "center" }}>
