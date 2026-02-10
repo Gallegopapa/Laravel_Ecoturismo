@@ -149,7 +149,7 @@ body {
 }
 
 /* Botones */
-.btn,
+.btn-enviar,
 .boton-volver {
   display: inline-block;
   padding: 0.8rem 2rem;
@@ -171,7 +171,8 @@ body {
   box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
 }
 
-.boton-volver {
+.boton-volver,
+.btn-enviar {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
