@@ -69,21 +69,31 @@ const UsersAdmin = () => {
   };
 
   const getPlaceNames = (user) => {
-    if (!user.places_assigned || user.places_assigned.length === 0) {
-      return '-';
+    if (Array.isArray(user.places_assigned) && user.places_assigned.length > 0) {
+      return user.places_assigned.map(p => p.name).join(', ');
     }
-    return user.places_assigned.map(p => p.name).join(', ');
+    if (typeof user.lugares_asignados === 'number') {
+      return `${user.lugares_asignados} lugar(es)`;
+    }
+    return '-';
   };
 
   const filteredUsers = users.filter(user => {
     if (userFilter === 'all') return true;
+    if (userFilter === 'admin') {
+      return user.tipo_usuario === 'admin' || user.is_admin;
+    }
+    if (userFilter === 'normal') {
+      return user.tipo_usuario === 'normal' && !user.is_admin;
+    }
     return user.tipo_usuario === userFilter;
   });
 
-  const getUserTypeColor = (tipo) => {
-    switch(tipo) {
-      case 'admin':
-        return '#dc3545';
+  const getUserTypeColor = (user) => {
+    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
+      return '#dc3545';
+    }
+    switch (user?.tipo_usuario) {
       case 'empresa':
         return '#0d6efd';
       case 'normal':
@@ -93,10 +103,11 @@ const UsersAdmin = () => {
     }
   };
 
-  const getUserTypeLabel = (tipo) => {
-    switch(tipo) {
-      case 'admin':
-        return 'Administrador';
+  const getUserTypeLabel = (user) => {
+    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
+      return 'Administrador';
+    }
+    switch (user?.tipo_usuario) {
       case 'empresa':
         return 'Empresa/Lugar';
       case 'normal':
@@ -105,6 +116,10 @@ const UsersAdmin = () => {
         return 'Usuario';
     }
   };
+
+  const adminCount = users.filter(u => u.tipo_usuario === 'admin' || u.is_admin).length;
+  const clientCount = users.filter(u => u.tipo_usuario === 'normal' && !u.is_admin).length;
+  const companyCount = users.filter(u => u.tipo_usuario === 'empresa' && !u.is_admin).length;
 
   return (
     <div className="admin-panel">
@@ -224,7 +239,9 @@ const UsersAdmin = () => {
                   <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Nombre</th>
                   <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Email</th>
                   <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Tipo</th>
-                  <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Lugares Asignados</th>
+                  {userFilter === 'empresa' && (
+                    <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Lugares Asignados</th>
+                  )}
                   <th style={{padding: '12px', textAlign: 'center', borderBottom: '2px solid #dee2e6'}}>Acciones</th>
                 </tr>
               </thead>
@@ -238,24 +255,22 @@ const UsersAdmin = () => {
                         style={{
                           padding: '4px 12px',
                           borderRadius: '20px',
-                          backgroundColor: getUserTypeColor(user.tipo_usuario),
+                          backgroundColor: getUserTypeColor(user),
                           color: 'white',
                           fontSize: '0.85em',
                           fontWeight: 'bold'
                         }}
                       >
-                        {getUserTypeLabel(user.tipo_usuario || 'normal')}
+                        {getUserTypeLabel(user)}
                       </span>
                     </td>
-                    <td style={{padding: '12px'}}>
-                      {user.tipo_usuario === 'empresa' ? (
+                    {userFilter === 'empresa' && (
+                      <td style={{padding: '12px'}}>
                         <div style={{fontSize: '0.9em', color: '#666'}}>
                           {getPlaceNames(user)}
                         </div>
-                      ) : (
-                        <span style={{color: '#999'}}>-</span>
-                      )}
-                    </td>
+                      </td>
+                    )}
                     <td style={{padding: '12px', textAlign: 'center'}}>
                       <button
                         onClick={() => handleDelete(user.id)}
@@ -288,11 +303,11 @@ const UsersAdmin = () => {
           <strong>Total de usuarios:</strong> {filteredUsers.length} 
           {userFilter !== 'all' && ` (${getUserTypeLabel(userFilter)})`}
           {' | '}
-          <strong>Empresas:</strong> {users.filter(u => u.tipo_usuario === 'empresa').length}
+          <strong>Empresas:</strong> {companyCount}
           {' | '}
-          <strong>Clientes:</strong> {users.filter(u => u.tipo_usuario === 'normal').length}
+          <strong>Clientes:</strong> {clientCount}
           {' | '}
-          <strong>Administradores:</strong> {users.filter(u => u.tipo_usuario === 'admin').length}
+          <strong>Administradores:</strong> {adminCount}
         </div>
       </div>
 
