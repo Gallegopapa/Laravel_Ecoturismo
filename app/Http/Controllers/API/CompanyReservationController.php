@@ -34,6 +34,9 @@ class CompanyReservationController extends Controller
             ], 403);
         }
 
+        // Asegurar que las reservas existentes tengan registro en company_reservations
+        $this->backfillCompanyReservations($placesIds);
+
         // Obtener parámetros de filtro
         $estado = $request->get('estado', 'pendiente');
         $placeId = $request->get('place_id');
@@ -74,6 +77,45 @@ class CompanyReservationController extends Controller
                 'total' => $reservations->total(),
             ]
         ]);
+    }
+
+    private function backfillCompanyReservations(array $placesIds): void
+    {
+        if (empty($placesIds)) {
+            return;
+        }
+
+        $places = \App\Models\Place::with('companyUsers')
+            ->whereIn('id', $placesIds)
+            ->get()
+            ->keyBy('id');
+
+        $missingReservations = Reservation::whereIn('place_id', $placesIds)
+            ->whereDoesntHave('companyReservation')
+            ->get();
+
+        foreach ($missingReservations as $reservation) {
+            $place = $places->get($reservation->place_id);
+            if (!$place) {
+                continue;
+            }
+
+            $principalUser = $place->getPrincipalCompanyUser();
+            if (!$principalUser) {
+                $principalUser = $place->companyUsers()->first();
+            }
+
+            if (!$principalUser) {
+                continue;
+            }
+
+            CompanyReservation::create([
+                'reservation_id' => $reservation->id,
+                'company_user_id' => $principalUser->id,
+                'place_id' => $reservation->place_id,
+                'estado' => 'pendiente',
+            ]);
+        }
     }
 
     /**

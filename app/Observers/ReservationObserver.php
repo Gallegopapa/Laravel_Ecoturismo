@@ -12,10 +12,14 @@ class ReservationObserver
      */
     public function created(Reservation $reservation): void
     {
-        // Obtener el usuario principal (principal) del lugar
+        // Obtener el usuario principal del lugar (o un fallback si no hay principal)
         $principalUser = $reservation->place->getPrincipalCompanyUser();
 
-        // Si el lugar tiene usuario empresa principal, crear el registro en company_reservations
+        if (!$principalUser) {
+            $principalUser = $reservation->place->companyUsers()->first();
+        }
+
+        // Si el lugar tiene usuario empresa asignado, crear el registro en company_reservations
         if ($principalUser) {
             CompanyReservation::create([
                 'reservation_id' => $reservation->id,
