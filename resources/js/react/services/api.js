@@ -155,7 +155,7 @@ export const reservationsService = {
   },
 
   getAll: async () => {
-    const response = await api.get('/reservations');
+    const response = await api.get('/admin/reservations');
     return response.data;
   },
 
@@ -421,6 +421,10 @@ export const companyService = {
     },
     reject: async (id, data) => {
       const response = await api.post(`/company/reservations/${id}/reject`, data);
+      return response.data;
+    },
+    reopen: async (id) => {
+      const response = await api.post(`/company/reservations/${id}/reopen`);
       return response.data;
     },
     getStats: async (placeId) => {

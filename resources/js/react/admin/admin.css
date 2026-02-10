@@ -250,9 +250,108 @@
   color: #084298;
 }
 
+.status-badge.accepted {
+  background: #d4edda;
+  color: #155724;
+}
+
 .status-badge.cancelled {
   background: #f8d7da;
   color: #842029;
+}
+
+.status-badge.rejected {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.btn-contact {
+  background: #6f42c1;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  margin: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-contact:hover {
+  background: #5a2ea6;
+}
+
+.reason-cell {
+  max-width: 220px;
+  white-space: normal;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.contact-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.contact-modal {
+  background: #fff;
+  border-radius: 10px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.contact-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.contact-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #1c1c1a;
+}
+
+.contact-modal-close {
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.contact-modal-body {
+  padding: 16px 20px 20px;
+}
+
+.contact-modal-body p {
+  margin: 0 0 10px;
+  color: #444;
+}
+
+.contact-modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.contact-modal-actions .btn-primary,
+.contact-modal-actions .btn-secondary {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Botón para volver a inicio */

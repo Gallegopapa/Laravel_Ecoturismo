@@ -30,6 +30,23 @@
   font-size: 1rem;
 }
 
+.back-button {
+  margin-top: 12px;
+  padding: 8px 14px;
+  border: 1px solid #2ecc71;
+  background: #fff;
+  color: #2ecc71;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #2ecc71;
+  color: #fff;
+}
+
 /* Stats Container */
 .stats-container {
   display: grid;
@@ -60,8 +77,9 @@
 }
 
 .stat-card.total {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #fff;
+  color: #333;
+  border-color: #2ecc71;
 }
 
 .stat-value {
@@ -72,7 +90,7 @@
 }
 
 .stat-card.total .stat-value {
-  color: white;
+  color: #2ecc71;
 }
 
 .stat-label {
@@ -82,7 +100,7 @@
 }
 
 .stat-card.total .stat-label {
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
 /* Filter Tabs */

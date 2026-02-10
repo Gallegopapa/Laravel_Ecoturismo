@@ -104,4 +104,17 @@ class CompanyReservation extends Model
             'fecha_respuesta' => now(),
         ]);
     }
+
+    /**
+     * Reabrir una reserva rechazada
+     */
+    public function reopen(): void
+    {
+        $this->update([
+            'estado' => 'pendiente',
+            'rejection_reason_id' => null,
+            'comentario_rechazo' => null,
+            'fecha_respuesta' => null,
+        ]);
+    }
 }

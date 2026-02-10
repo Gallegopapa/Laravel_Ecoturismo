@@ -109,6 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/reservations/{companyReservation}', [CompanyReservationController::class, 'show']);
         Route::post('/reservations/{companyReservation}/accept', [CompanyReservationController::class, 'accept']);
         Route::post('/reservations/{companyReservation}/reject', [CompanyReservationController::class, 'reject']);
+        Route::post('/reservations/{companyReservation}/reopen', [CompanyReservationController::class, 'reopen']);
         Route::get('/reservations/place/{placeId}/stats', [CompanyReservationController::class, 'stats']);
     });
     
@@ -130,6 +131,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users', [AdminUserController::class, 'store']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+        // Rutas de reservas para admin
+        Route::get('/reservations', [ReservationController::class, 'all']);
 
         // Rutas de razones de rechazo
         Route::get('/rejection-reasons', [RejectionReasonController::class, 'index']);

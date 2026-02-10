@@ -158,14 +158,6 @@ const Header2 = () => {
               to="/company/dashboard"
               className="nav-link company-dashboard-btn"
               onClick={handleLinkClick}
-              style={{
-                backgroundColor: '#0d6efd',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                textDecoration: 'none'
-              }}
             >
               📊 Ver Mis Reservas
             </Link>

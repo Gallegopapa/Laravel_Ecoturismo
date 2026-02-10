@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use App\Models\CompanyReservation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Place;
@@ -39,12 +40,49 @@ class ReservationController extends Controller
             return response()->json(['message' => 'No autorizado'], 403);
         }
         
-        $reservations = Reservation::with(['place', 'usuario'])
+        $this->backfillCompanyReservations();
+
+        $reservations = Reservation::with(['place', 'usuario', 'companyReservation.rejectionReason'])
             ->orderBy('fecha_visita', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json($reservations);
+    }
+
+    private function backfillCompanyReservations(): void
+    {
+        $missingReservations = Reservation::whereDoesntHave('companyReservation')->get();
+
+        if ($missingReservations->isEmpty()) {
+            return;
+        }
+
+        $placeIds = $missingReservations->pluck('place_id')->unique()->values()->all();
+        $places = Place::with('companyUsers')->whereIn('id', $placeIds)->get()->keyBy('id');
+
+        foreach ($missingReservations as $reservation) {
+            $place = $places->get($reservation->place_id);
+            if (!$place) {
+                continue;
+            }
+
+            $principalUser = $place->getPrincipalCompanyUser();
+            if (!$principalUser) {
+                $principalUser = $place->companyUsers()->first();
+            }
+
+            if (!$principalUser) {
+                continue;
+            }
+
+            CompanyReservation::create([
+                'reservation_id' => $reservation->id,
+                'company_user_id' => $principalUser->id,
+                'place_id' => $reservation->place_id,
+                'estado' => 'pendiente',
+            ]);
+        }
     }
 
     /**
@@ -270,7 +308,7 @@ class ReservationController extends Controller
             'telefono_contacto' => 'nullable|string|max:20',
             'comentarios' => 'nullable|string|max:1000',
             'precio_total' => 'nullable|numeric|min:0',
-            'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada,completada',
+            'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada,completada,rechazada,aceptada',
         ], [
             'fecha_visita.date' => 'La fecha de visita debe ser una fecha válida.',
             'fecha_visita.after_or_equal' => 'La fecha de visita debe ser hoy o una fecha futura.',

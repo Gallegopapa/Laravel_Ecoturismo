@@ -93,6 +93,20 @@ const CompanyDashboard = () => {
     }
   };
 
+  const handleReopen = async (reservation) => {
+    try {
+      setLoading(true);
+      await companyService.reservations.reopen(reservation.id);
+      showMessage('Reserva reabierta correctamente', 'success');
+      loadReservations();
+      loadStats();
+    } catch (error) {
+      showMessage('Error al reabrir reserva', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleViewDetails = (reservation) => {
     setSelectedReservation(reservation);
   };
@@ -118,6 +132,13 @@ const CompanyDashboard = () => {
       <div className="dashboard-header">
         <h1>Mi Panel de Reservas</h1>
         <p>Gestiona las reservas de tus lugares</p>
+        <button
+          type="button"
+          className="back-button"
+          onClick={() => window.history.back()}
+        >
+          Volver
+        </button>
       </div>
 
       {message && (
@@ -233,6 +254,18 @@ const CompanyDashboard = () => {
                       disabled={loading}
                     >
                       ✕ Rechazar
+                    </button>
+                  </div>
+                )}
+
+                {(companyRes.estado === 'rechazada' || companyRes.estado === 'aceptada') && (
+                  <div className="card-actions">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleReopen(companyRes)}
+                      disabled={loading}
+                    >
+                      ↺ Revertir a pendiente
                     </button>
                   </div>
                 )}

@@ -26,5 +26,8 @@ class DatabaseSeeder extends Seeder
         // Agregar horarios a lugares que no los tienen
         // Esto asegura que todos los lugares tengan horarios configurados
         $this->call(PlaceScheduleSeeder::class);
+
+        // Razones de rechazo base para el panel de empresa
+        $this->call(RejectionReasonsSeeder::class);
     }
 }

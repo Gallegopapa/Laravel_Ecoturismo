@@ -9,6 +9,7 @@ const ReservationsAdmin = () => {
   const [message, setMessage] = useState('');
   const [filter, setFilter] = useState('all'); // all, pending, completed, cancelled
   const [editingReservation, setEditingReservation] = useState(null);
+  const [contactReservation, setContactReservation] = useState(null);
   const [editForm, setEditForm] = useState({
     estado: '',
     fecha_visita: '',
@@ -38,6 +39,88 @@ const ReservationsAdmin = () => {
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setTimeout(() => setMessage(''), 3000);
+  };
+
+  const getRejectionReasonText = (reservation) => {
+    const companyReservation = reservation?.companyReservation || reservation?.company_reservation;
+    const reason = companyReservation?.rejectionReason?.descripcion || companyReservation?.rejection_reason?.descripcion;
+    const comment = companyReservation?.comentario_rechazo;
+
+    if (reason && comment) {
+      return `${reason} - ${comment}`;
+    }
+    if (reason || comment) {
+      return reason || comment;
+    }
+
+    if (reservation?.estado === 'rechazada') {
+      return 'Sin motivo registrado';
+    }
+
+    return '-';
+  };
+
+  const shouldShowContactButton = (reservation) => {
+    return (
+      reservation?.estado === 'rechazada' ||
+      reservation?.estado === 'cancelada' ||
+      reservation?.estado === 'aceptada'
+    );
+  };
+
+  const handleContactClient = (reservation) => {
+    setContactReservation(reservation);
+  };
+
+  const buildContactMessage = (reservation) => {
+    const email = reservation?.usuario?.email;
+    const phone = reservation?.telefono_contacto;
+    const placeName = reservation?.place?.name || 'el lugar';
+    const reasonText = getRejectionReasonText(reservation);
+    const statusText = reservation?.estado || 'pendiente';
+    const subject = encodeURIComponent('Estado de su reserva');
+    const body = encodeURIComponent(
+      `Hola, su reserva #${reservation.id} en ${placeName} fue marcada como ${statusText}. ` +
+      (reasonText && reasonText !== '-' ? `Motivo: ${reasonText}. ` : '') +
+      'Si tiene preguntas, puede responder a este correo.'
+    );
+    return { email, phone, subject, body };
+  };
+
+  const handleCopy = async (value, label) => {
+    if (!value) {
+      showMessage(`No hay ${label} para copiar`, 'error');
+      return;
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        showMessage(`${label} copiado: ${value}`);
+        return;
+      }
+    } catch (error) {
+      console.warn(`No se pudo copiar ${label}:`, error);
+    }
+
+    showMessage(`No se pudo copiar ${label}`, 'error');
+  };
+
+  const handleOpenEmail = (reservation) => {
+    const { email, subject, body } = buildContactMessage(reservation);
+    if (!email) {
+      showMessage('No hay email del cliente', 'error');
+      return;
+    }
+
+    const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
+
+    try {
+      window.location.href = mailtoUrl;
+    } catch (error) {
+      console.warn('No se pudo abrir el cliente de correo:', error);
+      showMessage('No se pudo abrir el correo. Copia el email y el mensaje.', 'error');
+    }
   };
 
   const formatTimeForInput = (timeValue) => {
@@ -198,27 +281,38 @@ const ReservationsAdmin = () => {
 
   const getStatusBadge = (reservation) => {
     const estado = reservation.estado;
-    
+
     if (estado === 'confirmada') {
       return <span className="status-badge confirmed">Confirmada</span>;
-    } else if (estado === 'cancelada') {
-      return <span className="status-badge cancelled">Cancelada</span>;
-    } else if (estado === 'completada') {
-      return <span className="status-badge completed">Completada</span>;
-    } else {
-      const fechaVisita = new Date(reservation.fecha_visita);
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      fechaVisita.setHours(0, 0, 0, 0);
-
-      if (fechaVisita < hoy) {
-        return <span className="status-badge completed">Completada</span>;
-      } else if (fechaVisita.getTime() === hoy.getTime()) {
-        return <span className="status-badge pending">Hoy</span>;
-      } else {
-        return <span className="status-badge pending">Pendiente</span>;
-      }
     }
+    if (estado === 'aceptada') {
+      return <span className="status-badge accepted">Aceptada</span>;
+    }
+    if (estado === 'cancelada') {
+      return <span className="status-badge cancelled">Cancelada</span>;
+    }
+    if (estado === 'rechazada') {
+      return <span className="status-badge rejected">Rechazada</span>;
+    }
+    if (estado === 'completada') {
+      return <span className="status-badge completed">Completada</span>;
+    }
+    if (estado === 'pendiente') {
+      return <span className="status-badge pending">Pendiente</span>;
+    }
+
+    const fechaVisita = new Date(reservation.fecha_visita);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    fechaVisita.setHours(0, 0, 0, 0);
+
+    if (fechaVisita < hoy) {
+      return <span className="status-badge completed">Completada</span>;
+    }
+    if (fechaVisita.getTime() === hoy.getTime()) {
+      return <span className="status-badge pending">Hoy</span>;
+    }
+    return <span className="status-badge pending">Pendiente</span>;
   };
 
   const filteredReservations = reservations.filter((reservation) => {
@@ -230,9 +324,13 @@ const ReservationsAdmin = () => {
     fechaVisita.setHours(0, 0, 0, 0);
 
     if (filter === 'pending') {
-      return (estado === 'pendiente' || !estado) && fechaVisita >= hoy;
-    } else if (filter === 'completed') {
-      return estado === 'completada' || estado === 'confirmada' || fechaVisita < hoy;
+      return estado === 'pendiente' || (!estado && fechaVisita >= hoy);
+    }
+    if (filter === 'completed') {
+      return estado === 'completada' || estado === 'confirmada' || estado === 'aceptada';
+    }
+    if (filter === 'rejected') {
+      return estado === 'rechazada' || estado === 'cancelada';
     }
     return true;
   });
@@ -267,6 +365,12 @@ const ReservationsAdmin = () => {
             >
               Completadas
             </button>
+            <button
+              className={filter === 'rejected' ? 'btn-filter active' : 'btn-filter'}
+              onClick={() => setFilter('rejected')}
+            >
+              Rechazadas
+            </button>
           </div>
         </div>
 
@@ -287,6 +391,7 @@ const ReservationsAdmin = () => {
                   <th>Personas</th>
                   <th>Teléfono</th>
                   <th>Estado</th>
+                  <th>Motivo</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -307,9 +412,11 @@ const ReservationsAdmin = () => {
                                   onChange={(e) => setEditForm({ ...editForm, estado: e.target.value })}
                                 >
                                   <option value="pendiente">Pendiente</option>
+                                  <option value="aceptada">Aceptada</option>
                                   <option value="confirmada">Confirmada</option>
                                   <option value="cancelada">Cancelada</option>
                                   <option value="completada">Completada</option>
+                                  <option value="rechazada">Rechazada</option>
                                 </select>
                               </div>
                               <div className="form-group">
@@ -399,6 +506,7 @@ const ReservationsAdmin = () => {
                         <td>{reservation.personas || '-'}</td>
                         <td>{reservation.telefono_contacto || '-'}</td>
                         <td>{getStatusBadge(reservation)}</td>
+                        <td className="reason-cell">{getRejectionReasonText(reservation)}</td>
                         <td>
                           <div className="action-buttons-cell">
                             <button
@@ -408,6 +516,15 @@ const ReservationsAdmin = () => {
                             >
                               Editar
                             </button>
+                            {shouldShowContactButton(reservation) && (
+                              <button
+                                onClick={() => handleContactClient(reservation)}
+                                className="btn-contact"
+                                title="Contactar cliente"
+                              >
+                                Contactar
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDelete(reservation.id)}
                               className="btn-delete"
@@ -426,6 +543,89 @@ const ReservationsAdmin = () => {
           </div>
         )}
       </div>
+
+      {contactReservation && (
+        <div className="contact-modal-overlay" onClick={() => setContactReservation(null)}>
+          <div className="contact-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="contact-modal-header">
+              <h3>Contactar cliente</h3>
+              <button
+                type="button"
+                className="contact-modal-close"
+                onClick={() => setContactReservation(null)}
+                aria-label="Cerrar"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="contact-modal-body">
+              <p>
+                <strong>Reserva:</strong> #{contactReservation.id}
+              </p>
+              <p>
+                <strong>Cliente:</strong> {contactReservation.usuario?.name || 'Usuario'}
+              </p>
+              <p>
+                <strong>Email:</strong> {contactReservation.usuario?.email || 'No disponible'}
+              </p>
+              <p>
+                <strong>Telefono:</strong> {contactReservation.telefono_contacto || 'No disponible'}
+              </p>
+              <p>
+                <strong>Motivo:</strong> {getRejectionReasonText(contactReservation)}
+              </p>
+
+              <div className="contact-modal-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => handleCopy(contactReservation.usuario?.email, 'Email')}
+                >
+                  Copiar email
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => handleCopy(contactReservation.telefono_contacto, 'Telefono')}
+                >
+                  Copiar telefono
+                </button>
+              </div>
+
+              <div className="contact-modal-actions">
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => handleOpenEmail(contactReservation)}
+                >
+                  Abrir correo
+                </button>
+                <a
+                  className="btn-primary"
+                  href={(() => {
+                    const phone = contactReservation.telefono_contacto;
+                    const digits = phone ? String(phone).replace(/\D/g, '') : '';
+                    return digits ? `https://wa.me/${digits}` : '#';
+                  })()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => {
+                    const phone = contactReservation.telefono_contacto;
+                    const digits = phone ? String(phone).replace(/\D/g, '') : '';
+                    if (!digits) {
+                      event.preventDefault();
+                      showMessage('No hay telefono del cliente', 'error');
+                    }
+                  }}
+                >
+                  Abrir WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -220,6 +220,36 @@ class CompanyReservationController extends Controller
     }
 
     /**
+     * Reabrir una reserva rechazada
+     */
+    public function reopen(Request $request, CompanyReservation $companyReservation): JsonResponse
+    {
+        $user = $request->user();
+
+        // Validar permisos
+        if (!in_array($companyReservation->place_id, $user->placesManaged()->pluck('places.id')->toArray())) {
+            return response()->json([
+                'message' => 'No tienes permisos para reabrir esta reserva.'
+            ], 403);
+        }
+
+        // Solo se puede reabrir si esta rechazada o aceptada
+        if (!$companyReservation->isRejected() && !$companyReservation->isAccepted()) {
+            return response()->json([
+                'message' => 'Solo se pueden reabrir reservas rechazadas o aceptadas.'
+            ], 422);
+        }
+
+        $companyReservation->reopen();
+        $companyReservation->reservation->update(['estado' => 'pendiente']);
+
+        return response()->json([
+            'message' => 'Reserva reabierta correctamente.',
+            'data' => $companyReservation->load('reservation.usuario', 'reservation.place', 'rejectionReason')
+        ]);
+    }
+
+    /**
      * Obtener estadísticas de reservas para un lugar
      */
     public function stats(Request $request, int $placeId): JsonResponse
