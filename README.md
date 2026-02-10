@@ -305,4 +305,4 @@ Para más información, contacta a través del formulario de contacto en la apli
 ---
 
 **Versión**: 1.0.0  
-**Última actualización**: Diciembre 2025
+**Última actualización**: Febrero 2026
