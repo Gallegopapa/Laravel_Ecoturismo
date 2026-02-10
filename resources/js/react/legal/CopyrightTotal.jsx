@@ -8,35 +8,35 @@ export default function CopyrightTotal() {
     lugaresMontanosos: [
       {
         title: "Alto del Nudo",
-        url: "https://rutasdelosandes.com"
+        url: "https://i.ytimg.com/vi/bUSFb7xuXS0/maxresdefault.jpg"
       },
       {
         title: "Alto del Toro",
-        url: "https://instagram.com/enriquemillan1185"
+        url: "https://i.ytimg.com/vi/plgzBRBLu2w/maxresdefault.jpg"
       },
       {
         title: "Cerro Batero",
-        url: "https://albicentenario.com"
+        url: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSWV-Q2scLh_7Hxf-j28JidjCnluaCSQO_Q2hDzFfQVr7HJYAN_"
       },
       {
         title: "Kuakita Bosque Reserva",
-        url: "https://tripadvisor.com"
+        url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEcIrbExz9TiGvPQv0TpeYV-Hmd-_9n_n7CS4KFaVgWjcgcDj"
       },
       {
         title: "Divisa de Don Juan",
-        url: "https://instagram.com/organicosbiobio"
+        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCzyxAIfsSSo9J6XuajyCRigraT7JgkQxDzQ&s"
       },
       {
         title: "Reserva Forestal La Nona",
-        url: "https://instagram.com/carderRisaralda"
+        url: "https://i.ytimg.com/vi/1X8WHyx4j8k/maxresdefault.jpg"
       },
       {
         title: "Reserva Natural Cerro Gobia",
-        url: "https://wikiloc.com"
+        url: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTw4k48BibSVtb4gIoNSsQrBC__c78P8KmccZ12dEOkA2EXsgQo"
       },
       {
         title: "Reserva Natural DMI Agualinda",
-        url: "https://fecomarisaralda.org"
+        url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRAWSJVzT-bmo04s-F1ynx33LmqPTsj2Oz2T25cQ8N9LS5UvhZ8"
       }
     ],
     paraisosAcuaticos: [
