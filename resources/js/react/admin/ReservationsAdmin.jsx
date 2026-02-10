@@ -218,33 +218,34 @@ const ReservationsAdmin = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    
-    // Si es una fecha en formato ISO (ej: "2025-01-17" o "2025-01-17T00:00:00")
-    // Extraer solo la parte de la fecha para evitar problemas de zona horaria
-    let dateStr = dateString;
-    if (dateString.includes('T')) {
-      dateStr = dateString.split('T')[0];
+
+    const date = parseLocalDate(dateString);
+    if (!date) {
+      return '-';
     }
-    
-    // Crear fecha usando componentes locales para evitar conversión UTC
-    const [year, month, day] = dateStr.split('-').map(Number);
-    if (!year || !month || !day) {
-      // Fallback si el formato no es el esperado
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '-';
-      return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-    
-    const date = new Date(year, month - 1, day);
+
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+
+    let dateStr = String(dateString);
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+
+    const [year, month, day] = dateStr.split('-').map(Number);
+    if (!year || !month || !day) {
+      const fallback = new Date(dateString);
+      return isNaN(fallback.getTime()) ? null : fallback;
+    }
+
+    return new Date(year, month - 1, day);
   };
 
   const formatTime = (timeString) => {
@@ -301,7 +302,7 @@ const ReservationsAdmin = () => {
       return <span className="status-badge pending">Pendiente</span>;
     }
 
-    const fechaVisita = new Date(reservation.fecha_visita);
+    const fechaVisita = parseLocalDate(reservation.fecha_visita) || new Date(reservation.fecha_visita);
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     fechaVisita.setHours(0, 0, 0, 0);
@@ -318,7 +319,7 @@ const ReservationsAdmin = () => {
   const filteredReservations = reservations.filter((reservation) => {
     if (filter === 'all') return true;
     const estado = reservation.estado;
-    const fechaVisita = new Date(reservation.fecha_visita);
+    const fechaVisita = parseLocalDate(reservation.fecha_visita) || new Date(reservation.fecha_visita);
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     fechaVisita.setHours(0, 0, 0, 0);

@@ -112,11 +112,33 @@ const CompanyDashboard = () => {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('es-CO', {
+    const dateObj = parseLocalDate(date);
+    if (!dateObj) {
+      return 'Fecha invalida';
+    }
+
+    return dateObj.toLocaleDateString('es-CO', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+
+    let dateStr = String(dateString);
+    if (dateStr.includes('T')) {
+      dateStr = dateStr.split('T')[0];
+    }
+
+    const [year, month, day] = dateStr.split('-').map(Number);
+    if (!year || !month || !day) {
+      const fallback = new Date(dateString);
+      return isNaN(fallback.getTime()) ? null : fallback;
+    }
+
+    return new Date(year, month - 1, day);
   };
 
   const formatTime = (time) => {
