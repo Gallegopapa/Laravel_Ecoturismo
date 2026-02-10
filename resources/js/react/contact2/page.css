@@ -145,6 +145,17 @@ form {
   box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
 }
 
+.input-error {
+  border-color: #e74c3c !important;
+  background: #fff5f3 !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.input-error:focus {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
 .input::placeholder {
   color: transparent;
 }
@@ -232,6 +243,14 @@ textarea.input::-webkit-scrollbar-thumb:hover {
   font-weight: 600;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
+}
+
+/* Ensure the button is clickable even if other pseudo-elements/overlays
+   are positioned over the form; give it its own stacking context. */
+.btn {
+  position: relative;
+  z-index: 11;
+  pointer-events: auto !important;
 }
 
 .btn:hover {

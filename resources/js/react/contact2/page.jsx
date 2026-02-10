@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { contactsService } from "@/react/services/api";
 import "./page.css";
 
 export default function Contact2() {
@@ -11,10 +12,14 @@ export default function Contact2() {
     phone: "",
     message: "",
   });
+  const [errors, setErrors] = useState({});
   const [messageError, setMessageError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     if (name === "message") {
       // mostrar error si excede 500, pero permitir escribir
       if (value.length > 500) {
@@ -23,24 +28,100 @@ export default function Contact2() {
         setMessageError("");
       }
     }
+    
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // Limpiar error del campo cuando el usuario empieza a typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Completa este campo";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Completa este campo";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "El correo no es válido";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Completa este campo";
+    } else if (!/^\d{7,}$/.test(formData.phone.replace(/\s|-/g, ""))) {
+      newErrors.phone = "El teléfono debe tener al menos 7 dígitos";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Completa este campo";
+    } else if (formData.message.length > 500) {
+      newErrors.message = "El mensaje no debe exceder 500 caracteres";
+    }
+
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validación final antes de enviar
-    if ((formData.message || "").length > 500) {
-      setMessageError("El mensaje no debe tener más de 500 caracteres.");
+    
+    setErrors({});
+    setSuccessMsg("");
+    setLoading(true);
+    
+    const validationErrors = validateForm();
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setLoading(false);
       return;
     }
-    console.log("Formulario enviado:", formData);
-    // Aquí puedes agregar la lógica para enviar el formulario
-    alert("¡Mensaje enviado con éxito!");
-    setFormData({ name: "", email: "", phone: "", message: "" });
-    setMessageError("");
+
+    try {
+      // Enviar el mensaje al backend
+      const response = await contactsService.send({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      });
+
+      // Mensaje enviado exitosamente
+      setSuccessMsg(response.message || "¡Mensaje enviado exitosamente!");
+
+      // Limpiar el formulario
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+
+      // Ocultar el mensaje después de 5 segundos
+      setTimeout(() => setSuccessMsg(""), 5000);
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error);
+      
+      // Manejar errores de validación del servidor
+      if (error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      } else {
+        setErrors({
+          general: error.response?.data?.message || "Error al enviar el mensaje. Por favor, intenta nuevamente."
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -109,58 +190,77 @@ export default function Contact2() {
                 <input
                   type="text"
                   name="name"
-                  className="input"
+                  className={`input ${errors.name ? "input-error" : ""}`}
                   value={formData.name}
                   onChange={handleChange}
-                  required
                 />
                 <label>Nombre de usuario</label>
                 <span>Nombre de usuario</span>
+                {errors.name && <p className="error-message">{errors.name}</p>}
               </div>
 
               <div className="input-container">
                 <input
                   type="email"
                   name="email"
-                  className="input"
+                  className={`input ${errors.email ? "input-error" : ""}`}
                   value={formData.email}
                   onChange={handleChange}
-                  required
                 />
                 <label>Correo</label>
                 <span>Correo</span>
+                {errors.email && <p className="error-message">{errors.email}</p>}
               </div>
 
               <div className="input-container">
                 <input
                   type="tel"
                   name="phone"
-                  className="input"
+                  className={`input ${errors.phone ? "input-error" : ""}`}
                   value={formData.phone}
                   onChange={handleChange}
-                  required
                 />
                 <label>Teléfono</label>
                 <span>Teléfono</span>
+                {errors.phone && <p className="error-message">{errors.phone}</p>}
               </div>
 
               <div className="input-container textarea">
                 <textarea
                   name="message"
-                  className="input"
+                  className={`input ${errors.message ? "input-error" : ""}`}
                   value={formData.message}
                   onChange={handleChange}
-                  required
                 ></textarea>
                 <label>Mensaje</label>
                 <span>Mensaje</span>
+                {errors.message && <p className="error-message">{errors.message}</p>}
               </div>
               <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
                 {formData.message.length}/500
               </div>
-              {messageError && <p className="error-message">{messageError}</p>}
 
-              <input type="submit" value="Enviar" className="btn" />
+              <button
+                type="submit"
+                className="btn"
+                disabled={loading}
+                aria-busy={loading}
+                onClick={(e) => { /* onClick calls submit as fallback */ }}
+              >
+                {loading ? "Enviando..." : "Enviar"}
+              </button>
+
+              {successMsg && (
+                <p style={{ color: "#27ae60", marginTop: "15px", fontWeight: "bold", textAlign: "center" }}>
+                  ✓ {successMsg}
+                </p>
+              )}
+
+              {errors.general && (
+                <p style={{ color: "#e74c3c", marginTop: "15px", fontWeight: "bold", textAlign: "center" }}>
+                  ✗ {errors.general}
+                </p>
+              )}
             </form>
           </div>
 
