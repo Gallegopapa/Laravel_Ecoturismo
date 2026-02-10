@@ -56,4 +56,12 @@ class Reservation extends Model
     {
         return $this->hasOne(Payment::class, 'reservation_id');
     }
+
+    /**
+     * Relación: Una reserva tiene una respuesta de la empresa
+     */
+    public function companyReservation()
+    {
+        return $this->hasOne(CompanyReservation::class, 'reservation_id');
+    }
 }

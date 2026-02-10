@@ -19,6 +19,7 @@ import LugaresMontanosos from "./places2/lugaresMontanosos/page.jsx";
 import ParquesYMas from "./places2/parquesYMas/page.jsx";
 import TerritoriosDelCafe from "./places2/territoriosDelCafe/page.jsx";
 import PlaceDetailPage from "./places/detail/page.jsx";
+import CompanyDashboard from "./admin/CompanyDashboard.jsx";
 
 
 const router = createBrowserRouter([
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
   {
     path: "/pagLogueados",
     element: <PagLogueados />,
+  },
+  {
+    path: "/company/dashboard",
+    element: <CompanyDashboard />,
   },
 
   // 🌿 RUTAS DEL MENÚ LUGARES

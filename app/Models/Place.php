@@ -92,6 +92,40 @@ class Place extends Model
     }
 
     /**
+     * Relación: Un lugar puede estar asignado a múltiples usuarios empresa
+     */
+    public function companyUsers()
+    {
+        return $this->belongsToMany(Usuarios::class, 'place_company_users', 'place_id', 'company_user_id')
+                    ->withPivot('rol', 'es_principal')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación: Un lugar tiene muchas respuestas de empresa a reservas
+     */
+    public function companyReservations()
+    {
+        return $this->hasMany(CompanyReservation::class, 'place_id');
+    }
+
+    /**
+     * Relación: Un lugar tiene muchas asignaciones a usuarios empresa
+     */
+    public function companyUserAssignments()
+    {
+        return $this->hasMany(PlaceCompanyUser::class, 'place_id');
+    }
+
+    /**
+     * Obtener el usuario empresa principal del lugar
+     */
+    public function getPrincipalCompanyUser()
+    {
+        return $this->companyUsers()->wherePivot('es_principal', true)->first();
+    }
+
+    /**
      * Obtener horarios activos
      */
     public function activeSchedules()

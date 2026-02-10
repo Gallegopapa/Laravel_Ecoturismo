@@ -16,6 +16,8 @@ use App\Http\Controllers\API\AdminPlaceController;
 use App\Http\Controllers\API\AdminUserController;
 use App\Http\Controllers\API\PlaceScheduleController;
 use App\Http\Controllers\API\PasswordResetController;
+use App\Http\Controllers\API\CompanyReservationController;
+use App\Http\Controllers\API\RejectionReasonController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
@@ -38,6 +40,9 @@ Route::get('/categories/{category}', [CategoryController::class, 'show']);
 // Rutas públicas de reseñas
 Route::get('/reviews/all', [ReviewController::class, 'all']);
 Route::get('/places/{placeId}/reviews', [ReviewController::class, 'index']);
+
+// Rutas públicas de razones de rechazo
+Route::get('/rejection-reasons', [RejectionReasonController::class, 'index']);
 
 // Envío de mensajes (público, pero puede incluir user_id si está autenticado)
 Route::post('/messages', [MessageController::class, 'store']);
@@ -95,6 +100,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/contacts/{contact}', [ContactController::class, 'show'])->middleware('admin');
     
     // ============================================
+    // RUTAS DE EMPRESA (para usuarios tipo empresa)
+    // ============================================
+    Route::prefix('company')->group(function () {
+        // Gestión de reservas desde la perspectiva de la empresa
+        Route::get('/reservations', [CompanyReservationController::class, 'index']);
+        Route::get('/reservations/{companyReservation}', [CompanyReservationController::class, 'show']);
+        Route::post('/reservations/{companyReservation}/accept', [CompanyReservationController::class, 'accept']);
+        Route::post('/reservations/{companyReservation}/reject', [CompanyReservationController::class, 'reject']);
+        Route::get('/reservations/place/{placeId}/stats', [CompanyReservationController::class, 'stats']);
+    });
+    
+    // ============================================
     // RUTAS DE ADMIN API (requieren autenticación + admin)
     // ============================================
     Route::prefix('admin')->middleware('admin')->group(function () {
@@ -106,12 +123,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/places/{place}', [AdminPlaceController::class, 'update']); // Mantener PUT también por compatibilidad
         Route::delete('/places/{place}', [AdminPlaceController::class, 'destroy']);
         
-        // Rutas de usuarios para admin
+        // Rutas de usuarios para admin (mejorado con tipo_usuario y lugares)
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
         Route::post('/users', [AdminUserController::class, 'store']);
         Route::put('/users/{user}', [AdminUserController::class, 'update']);
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+        // Rutas de razones de rechazo
+        Route::get('/rejection-reasons', [RejectionReasonController::class, 'index']);
+        Route::post('/rejection-reasons', [RejectionReasonController::class, 'store']);
+        Route::get('/rejection-reasons/{reason}', [RejectionReasonController::class, 'show']);
+        Route::put('/rejection-reasons/{reason}', [RejectionReasonController::class, 'update']);
+        Route::delete('/rejection-reasons/{reason}', [RejectionReasonController::class, 'destroy']);
 
         // Rutas de horarios para lugares
         Route::get('/places/{place}/schedules', [PlaceScheduleController::class, 'index']);

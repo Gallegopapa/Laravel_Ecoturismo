@@ -25,6 +25,7 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
         'password',
         'fecha_registro',
         'is_admin',
+        'tipo_usuario',
         'foto_perfil',
     ];
 
@@ -101,5 +102,47 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
     public function payments()
     {
         return $this->hasMany(Payment::class, 'user_id');
+    }
+
+    /**
+     * Relación: Un usuario empresa puede gestionar múltiples lugares
+     */
+    public function placesManaged()
+    {
+        return $this->belongsToMany(Place::class, 'place_company_users', 'company_user_id', 'place_id')
+                    ->withPivot('rol', 'es_principal')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación: Un usuario empresa tiene muchas respuestas a reservas
+     */
+    public function companyReservations()
+    {
+        return $this->hasMany(CompanyReservation::class, 'company_user_id');
+    }
+
+    /**
+     * Relación: Un usuario empresa tiene muchas asignaciones a lugares
+     */
+    public function placeAssignments()
+    {
+        return $this->hasMany(PlaceCompanyUser::class, 'company_user_id');
+    }
+
+    /**
+     * Verificar si el usuario es de tipo empresa
+     */
+    public function isCompanyUser(): bool
+    {
+        return $this->tipo_usuario === 'empresa';
+    }
+
+    /**
+     * Verificar si el usuario es administrador
+     */
+    public function isAdmin(): bool
+    {
+        return $this->is_admin || $this->tipo_usuario === 'admin';
     }
 }

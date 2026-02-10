@@ -15,6 +15,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\CompanyDashboardController;
 
 // ============================================
 // AUTENTICACIÓN (Estas rutas deben ir primero)
@@ -113,6 +114,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/configuracion', [ProfileController::class, 'show'])->name('configuracion');
     Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/perfil/password', [ProfileController::class, 'changePassword'])->name('profile.password');
+
+    // ============================================
+    // COMPANY/EMPRESA DASHBOARD ROUTES
+    // ============================================
+    Route::get('/empresa/dashboard', [CompanyDashboardController::class, 'index'])->name('company.dashboard');
+    Route::post('/empresa/reservas/{id}/aceptar', [CompanyDashboardController::class, 'accept'])->name('company.accept');
+    Route::post('/empresa/reservas/{id}/rechazar', [CompanyDashboardController::class, 'reject'])->name('company.reject');
 });
 
 // ============================================

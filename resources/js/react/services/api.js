@@ -400,5 +400,61 @@ export const adminService = {
   },
 };
 
+// Servicios para usuario empresa
+export const companyService = {
+  reservations: {
+    getAll: async (filters = {}) => {
+      const response = await api.get('/company/reservations', { params: filters });
+      return response.data;
+    },
+    getById: async (id) => {
+      const response = await api.get(`/company/reservations/${id}`);
+      return response.data;
+    },
+    accept: async (id) => {
+      const response = await api.post(`/company/reservations/${id}/accept`);
+      return response.data;
+    },
+    reject: async (id, data) => {
+      const response = await api.post(`/company/reservations/${id}/reject`, data);
+      return response.data;
+    },
+    getStats: async (placeId) => {
+      const response = await api.get(`/company/reservations/place/${placeId}/stats`);
+      return response.data;
+    },
+  },
+  rejectionReasons: {
+    getAll: async () => {
+      const response = await api.get('/rejection-reasons');
+      return response.data;
+    },
+  },
+};
+
+// Servicios de razones de rechazo (admin)
+export const rejectionReasonService = {
+  getAll: async () => {
+    const response = await api.get('/admin/rejection-reasons');
+    return response.data;
+  },
+  getById: async (id) => {
+    const response = await api.get(`/admin/rejection-reasons/${id}`);
+    return response.data;
+  },
+  create: async (data) => {
+    const response = await api.post('/admin/rejection-reasons', data);
+    return response.data;
+  },
+  update: async (id, data) => {
+    const response = await api.put(`/admin/rejection-reasons/${id}`, data);
+    return response.data;
+  },
+  delete: async (id) => {
+    const response = await api.delete(`/admin/rejection-reasons/${id}`);
+    return response.data;
+  },
+};
+
 export default api;
 

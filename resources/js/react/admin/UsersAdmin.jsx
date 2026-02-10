@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/api';
+import CreateUserModal from './CreateUserModal';
 import './admin.css';
+import './AdminModals.css';
 
 const UsersAdmin = () => {
   const [users, setUsers] = useState([]);
+  const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    is_admin: false,
-  });
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [userFilter, setUserFilter] = useState('all'); // all, normal, empresa, admin
 
   useEffect(() => {
     loadUsers();
+    loadPlaces();
   }, []);
 
   const loadUsers = async () => {
@@ -31,74 +30,18 @@ const UsersAdmin = () => {
     }
   };
 
+  const loadPlaces = async () => {
+    try {
+      const data = await adminService.places.getAll();
+      setPlaces(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar lugares:', error);
+    }
+  };
+
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setTimeout(() => setMessage(''), 3000);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!formData.name.trim() || !formData.email.trim()) {
-      showMessage('Nombre y email son requeridos', 'error');
-      return;
-    }
-
-    try {
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        is_admin: formData.is_admin,
-      };
-
-      // Solo incluir contraseña si se proporciona (y no está vacía)
-      if (formData.password.trim()) {
-        userData.password = formData.password;
-      }
-
-      if (editingUser) {
-        await adminService.users.update(editingUser.id, userData);
-        showMessage('Usuario actualizado correctamente');
-      } else {
-        const response = await adminService.users.create(userData);
-        
-        // Si se generó una contraseña, mostrarla al admin
-        if (response.generated_password) {
-          const passwordMsg = `Usuario creado correctamente.\n\n` +
-            `CONTRASEÑA GENERADA:\n${response.generated_password}\n\n` +
-            `IMPORTANTE: Guarda esta contraseña y compártela con el usuario. No se mostrará nuevamente.`;
-          alert(passwordMsg);
-          showMessage('Usuario creado correctamente. Revisa la contraseña generada.');
-        } else {
-          showMessage('Usuario creado correctamente');
-        }
-      }
-      
-      resetForm();
-      loadUsers();
-    } catch (error) {
-      console.error('Error al guardar usuario:', error);
-      showMessage(
-        error.response?.data?.message || 'Error al guardar usuario',
-        'error'
-      );
-    }
-  };
-
-  const handleEdit = async (user) => {
-    try {
-      const userData = await adminService.users.getById(user.id);
-      setEditingUser(userData);
-      setFormData({
-        name: userData.name || '',
-        email: userData.email || '',
-        password: '', // No mostrar contraseña al editar
-        is_admin: userData.is_admin || false,
-      });
-    } catch (error) {
-      console.error('Error al cargar usuario:', error);
-      showMessage('Error al cargar usuario', 'error');
-    }
   };
 
   const handleDelete = async (id) => {
@@ -119,22 +62,48 @@ const UsersAdmin = () => {
     }
   };
 
-  const resetForm = () => {
-    setEditingUser(null);
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      is_admin: false,
-    });
+  const handleUserCreated = () => {
+    setShowCreateModal(false);
+    loadUsers();
+    showMessage('Usuario empresa creado correctamente');
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  const getPlaceNames = (user) => {
+    if (!user.places_assigned || user.places_assigned.length === 0) {
+      return '-';
+    }
+    return user.places_assigned.map(p => p.name).join(', ');
+  };
+
+  const filteredUsers = users.filter(user => {
+    if (userFilter === 'all') return true;
+    return user.tipo_usuario === userFilter;
+  });
+
+  const getUserTypeColor = (tipo) => {
+    switch(tipo) {
+      case 'admin':
+        return '#dc3545';
+      case 'empresa':
+        return '#0d6efd';
+      case 'normal':
+        return '#198754';
+      default:
+        return '#6c757d';
+    }
+  };
+
+  const getUserTypeLabel = (tipo) => {
+    switch(tipo) {
+      case 'admin':
+        return 'Administrador';
+      case 'empresa':
+        return 'Empresa/Lugar';
+      case 'normal':
+        return 'Cliente';
+      default:
+        return 'Usuario';
+    }
   };
 
   return (
@@ -145,127 +114,215 @@ const UsersAdmin = () => {
         </div>
       )}
 
-      <div className="admin-form-section">
-        <h2>Usuarios</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>
-              Nombre <span className="required">*</span>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
-          </div>
+      {/* Modal para crear usuario empresa */}
+      <CreateUserModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onUserCreated={handleUserCreated}
+        places={places}
+      />
 
-          <div className="form-group">
-            <label>
-              Email <span className="required">*</span>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
-          </div>
+      {/* Sección de controles */}
+      <div className="admin-list-section">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+          flexWrap: 'wrap',
+          gap: '10px'
+        }}>
+          <h2 style={{margin: 0}}>Gestión de Usuarios</h2>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="btn-primary"
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            + Crear Usuario Empresa
+          </button>
+        </div>
 
-          <div className="form-group">
-            <label>
-              Contraseña {!editingUser && <span style={{fontSize: '0.85em', color: '#666', fontWeight: 'normal'}}>(opcional)</span>}
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                minLength={6}
-                placeholder={editingUser ? "Dejar vacío para mantener la contraseña actual" : "Dejar vacío para generar una contraseña aleatoria segura"}
-              />
-              {!editingUser && (
-                <small style={{display: 'block', color: '#666', marginTop: '4px'}}>
-                  Si no proporcionas una contraseña, se generará una automáticamente y se mostrará después de crear el usuario.
-                </small>
-              )}
-            </label>
-          </div>
+        {/* Filtros */}
+        <div style={{
+          display: 'flex',
+          gap: '10px',
+          marginBottom: '20px',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            onClick={() => setUserFilter('all')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: userFilter === 'all' ? '#007bff' : '#e9ecef',
+              color: userFilter === 'all' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: userFilter === 'all' ? 'bold' : 'normal'
+            }}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setUserFilter('empresa')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: userFilter === 'empresa' ? '#0d6efd' : '#e9ecef',
+              color: userFilter === 'empresa' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: userFilter === 'empresa' ? 'bold' : 'normal'
+            }}
+          >
+            Empresas/Lugares
+          </button>
+          <button
+            onClick={() => setUserFilter('normal')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: userFilter === 'normal' ? '#198754' : '#e9ecef',
+              color: userFilter === 'normal' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: userFilter === 'normal' ? 'bold' : 'normal'
+            }}
+          >
+            Clientes
+          </button>
+          <button
+            onClick={() => setUserFilter('admin')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: userFilter === 'admin' ? '#dc3545' : '#e9ecef',
+              color: userFilter === 'admin' ? 'white' : '#333',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: userFilter === 'admin' ? 'bold' : 'normal'
+            }}
+          >
+            Administradores
+          </button>
+        </div>
 
-          <div className="form-group">
-            <label>
-              Rol
-              <select
-                name="is_admin"
-                value={formData.is_admin ? 'admin' : 'user'}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    is_admin: e.target.value === 'admin',
-                  }))
-                }
-              >
-                <option value="user">Usuario</option>
-                <option value="admin">Admin</option>
-              </select>
-            </label>
+        {/* Tabla de usuarios */}
+        {loading ? (
+          <p>Cargando usuarios...</p>
+        ) : filteredUsers.length === 0 ? (
+          <p>No hay usuarios en esta categoría</p>
+        ) : (
+          <div style={{overflowX: 'auto'}}>
+            <table className="admin-table" style={{width: '100%', borderCollapse: 'collapse'}}>
+              <thead>
+                <tr style={{backgroundColor: '#f8f9fa'}}>
+                  <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Nombre</th>
+                  <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Email</th>
+                  <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Tipo</th>
+                  <th style={{padding: '12px', textAlign: 'left', borderBottom: '2px solid #dee2e6'}}>Lugares Asignados</th>
+                  <th style={{padding: '12px', textAlign: 'center', borderBottom: '2px solid #dee2e6'}}>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} style={{borderBottom: '1px solid #dee2e6'}}>
+                    <td style={{padding: '12px'}}>{user.name}</td>
+                    <td style={{padding: '12px'}}>{user.email || '-'}</td>
+                    <td style={{padding: '12px'}}>
+                      <span
+                        style={{
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          backgroundColor: getUserTypeColor(user.tipo_usuario),
+                          color: 'white',
+                          fontSize: '0.85em',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {getUserTypeLabel(user.tipo_usuario || 'normal')}
+                      </span>
+                    </td>
+                    <td style={{padding: '12px'}}>
+                      {user.tipo_usuario === 'empresa' ? (
+                        <div style={{fontSize: '0.9em', color: '#666'}}>
+                          {getPlaceNames(user)}
+                        </div>
+                      ) : (
+                        <span style={{color: '#999'}}>-</span>
+                      )}
+                    </td>
+                    <td style={{padding: '12px', textAlign: 'center'}}>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="btn-delete"
+                        style={{
+                          padding: '6px 12px',
+                          marginLeft: '5px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        )}
 
-          <div className="form-actions">
-            <button type="submit" className="btn-primary">
-              {editingUser ? 'Actualizar usuario' : 'Guardar usuario'}
-            </button>
-            {editingUser && (
-              <button type="button" onClick={resetForm} className="btn-secondary">
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
+        {/* Resumen */}
+        <div style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '4px',
+          fontSize: '0.9em',
+          color: '#666'
+        }}>
+          <strong>Total de usuarios:</strong> {filteredUsers.length} 
+          {userFilter !== 'all' && ` (${getUserTypeLabel(userFilter)})`}
+          {' | '}
+          <strong>Empresas:</strong> {users.filter(u => u.tipo_usuario === 'empresa').length}
+          {' | '}
+          <strong>Clientes:</strong> {users.filter(u => u.tipo_usuario === 'normal').length}
+          {' | '}
+          <strong>Administradores:</strong> {users.filter(u => u.tipo_usuario === 'admin').length}
+        </div>
       </div>
 
-      <div className="admin-list-section">
-        <h2>Lista de usuarios</h2>
-        {loading ? (
-          <p>Cargando...</p>
-        ) : users.length === 0 ? (
-          <p>No hay usuarios registrados</p>
-        ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Rol</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email || '-'}</td>
-                  <td>{user.is_admin ? 'Admin' : 'Usuario'}</td>
-                  <td>
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="btn-edit"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="btn-delete"
-                    >
-                      Borrar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      {/* Instrucciones */}
+      <div style={{
+        marginTop: '30px',
+        padding: '20px',
+        backgroundColor: '#e7f3ff',
+        borderLeft: '4px solid #0d6efd',
+        borderRadius: '4px'
+      }}>
+        <h3 style={{marginTop: 0, color: '#0d6efd'}}>💡 Cómo crear un usuario Empresa</h3>
+        <ol style={{marginBottom: 0, lineHeight: '1.8'}}>
+          <li><strong>Haz clic</strong> en el botón "Crear Usuario Empresa" arriba</li>
+          <li><strong>Rellena el formulario:</strong> Nombre, email, teléfono, etc.</li>
+          <li><strong>Selecciona el LUGAR</strong> para el cual trabajará esta empresa</li>
+          <li><strong>Elige el rol:</strong> Gerente (puede aceptar/rechazar) o Recepcionista</li>
+          <li><strong>Marca como "Principal"</strong> si es el contacto principal del lugar</li>
+          <li><strong>Copia la contraseña generada</strong> y compártela con la empresa</li>
+        </ol>
+        <p style={{
+          marginTop: '15px',
+          padding: '10px',
+          backgroundColor: '#fff',
+          borderRadius: '4px',
+          marginBottom: 0
+        }}>
+          <strong>⚠️ Importante:</strong> Cada usuario empresa verá SOLO las reservas del lugar asignado. 
+          Si un lugar tiene múltiples usuarios, todos verán las mismas reservas.
+        </p>
       </div>
     </div>
   );

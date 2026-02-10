@@ -14,6 +14,16 @@ const Header2 = () => {
   const placesDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
 
+  // Verificar si es usuario empresa
+  const isCompanyUser = user?.tipo_usuario === 'empresa';
+
+  // DEBUG: Mostrar datos del usuario en consola
+  useEffect(() => {
+    console.log('👤 User data:', user);
+    console.log('🏢 isCompanyUser:', isCompanyUser);
+    console.log('🏢 user?.tipo_usuario:', user?.tipo_usuario);
+  }, [user, isCompanyUser]);
+
   const togglePlacesMenu = () => {
     setOpenPlacesMenu((prev) => !prev);
     setOpenUserMenu(false); // Cerrar el otro menú
@@ -141,6 +151,25 @@ const Header2 = () => {
           </div>
 
           <Link to="/contacto" className="nav-link">Contacto</Link>
+
+          {/* Botón especial para usuarios empresa */}
+          {isCompanyUser && (
+            <a 
+              href="/empresa/dashboard" 
+              className="nav-link company-dashboard-btn"
+              onClick={handleLinkClick}
+              style={{
+                backgroundColor: '#0d6efd',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                textDecoration: 'none'
+              }}
+            >
+              📊 Ver Mis Reservas
+            </a>
+          )}
 
           {/* Menú desplegable de Usuario */}
           <div className="dropdown user-dropdown" ref={userDropdownRef}>

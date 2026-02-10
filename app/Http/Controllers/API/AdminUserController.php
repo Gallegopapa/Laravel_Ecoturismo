@@ -24,24 +24,43 @@ class AdminUserController extends Controller
                 'email' => $user->email,
                 'telefono' => $user->telefono,
                 'is_admin' => $user->is_admin,
+                'tipo_usuario' => $user->tipo_usuario,
                 'fecha_registro' => $user->fecha_registro,
+                'lugares_asignados' => $user->tipo_usuario === 'empresa' 
+                    ? $user->placesManaged()->count() 
+                    : null,
             ];
         }));
     }
 
     /**
-     * Obtener un usuario específico
+     * Obtener un usuario específico con sus lugares asignados
      */
     public function show(Usuarios $user): JsonResponse
     {
-        return response()->json([
+        $response = [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'telefono' => $user->telefono,
             'is_admin' => $user->is_admin,
+            'tipo_usuario' => $user->tipo_usuario,
             'fecha_registro' => $user->fecha_registro,
-        ]);
+        ];
+
+        // Si es usuario empresa, incluir lugares asignados
+        if ($user->tipo_usuario === 'empresa') {
+            $response['lugares_asignados'] = $user->placesManaged()->map(function ($place) {
+                return [
+                    'id' => $place->id,
+                    'name' => $place->name,
+                    'rol' => $place->pivot->rol,
+                    'es_principal' => $place->pivot->es_principal,
+                ];
+            });
+        }
+
+        return response()->json($response);
     }
 
     /**
@@ -54,6 +73,11 @@ class AdminUserController extends Controller
             'email' => 'nullable|email|max:255|unique:usuarios,email',
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',
+            'tipo_usuario' => 'required|in:normal,empresa,admin',
+            'lugares' => 'nullable|array',
+            'lugares.*.place_id' => 'required_with:lugares|integer|exists:places,id',
+            'lugares.*.rol' => 'required_with:lugares|in:gerente,recepcionista,admin',
+            'lugares.*.es_principal' => 'nullable|boolean',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.unique' => 'Este nombre de usuario ya está en uso.',
@@ -61,6 +85,9 @@ class AdminUserController extends Controller
             'email.email' => 'El email debe ser válido.',
             'email.unique' => 'Este email ya está registrado.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'tipo_usuario.required' => 'El tipo de usuario es requerido.',
+            'tipo_usuario.in' => 'El tipo de usuario debe ser: normal, empresa o admin.',
+            'lugares.*.place_id.exists' => 'Uno de los lugares seleccionados no existe.',
         ]);
 
         // Generar contraseña aleatoria segura si no se proporciona
@@ -73,11 +100,17 @@ class AdminUserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'password' => Hash::make($plainPassword),
-            'is_admin' => $data['is_admin'] ?? false,
+            'is_admin' => $data['tipo_usuario'] === 'admin' ? true : ($data['is_admin'] ?? false),
+            'tipo_usuario' => $data['tipo_usuario'],
             'fecha_registro' => now(),
         ];
 
         $user = Usuarios::create($userData);
+
+        // Si es usuario empresa y se proporcionan lugares, asignarlos
+        if ($data['tipo_usuario'] === 'empresa' && isset($data['lugares'])) {
+            $this->assignPlacesToUser($user, $data['lugares']);
+        }
 
         $response = [
             'message' => 'Usuario creado correctamente.',
@@ -86,10 +119,11 @@ class AdminUserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_admin' => $user->is_admin,
+                'tipo_usuario' => $user->tipo_usuario,
             ]
         ];
 
-        // Solo devolver la contraseña si fue generada automáticamente (no si el admin la proporcionó)
+        // Solo devolver la contraseña si fue generada automáticamente
         if (!isset($data['password'])) {
             $response['generated_password'] = $plainPassword;
             $response['message'] = 'Usuario creado correctamente. La contraseña generada se muestra a continuación.';
@@ -124,6 +158,11 @@ class AdminUserController extends Controller
             'email' => 'nullable|email|max:255|unique:usuarios,email,' . $user->id,
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',
+            'tipo_usuario' => 'sometimes|required|in:normal,empresa,admin',
+            'lugares' => 'nullable|array',
+            'lugares.*.place_id' => 'required_with:lugares|integer|exists:places,id',
+            'lugares.*.rol' => 'required_with:lugares|in:gerente,recepcionista,admin',
+            'lugares.*.es_principal' => 'nullable|boolean',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.unique' => 'Este nombre de usuario ya está en uso.',
@@ -131,6 +170,8 @@ class AdminUserController extends Controller
             'email.email' => 'El email debe ser válido.',
             'email.unique' => 'Este email ya está registrado.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'tipo_usuario.in' => 'El tipo de usuario debe ser: normal, empresa o admin.',
+            'lugares.*.place_id.exists' => 'Uno de los lugares seleccionados no existe.',
         ]);
 
         $updateData = [];
@@ -151,7 +192,23 @@ class AdminUserController extends Controller
             $updateData['is_admin'] = $data['is_admin'];
         }
 
+        if (isset($data['tipo_usuario'])) {
+            $updateData['tipo_usuario'] = $data['tipo_usuario'];
+            // Si se cambia a admin, marcar como admin también
+            if ($data['tipo_usuario'] === 'admin') {
+                $updateData['is_admin'] = true;
+            }
+        }
+
         $user->update($updateData);
+
+        // Si se proporcionan lugares, actualizar asignaciones
+        if (isset($data['lugares'])) {
+            $user->placesManaged()->detach();
+            if ($data['tipo_usuario'] === 'empresa' || $user->tipo_usuario === 'empresa') {
+                $this->assignPlacesToUser($user, $data['lugares']);
+            }
+        }
 
         return response()->json([
             'message' => 'Usuario actualizado correctamente.',
@@ -160,6 +217,7 @@ class AdminUserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_admin' => $user->is_admin,
+                'tipo_usuario' => $user->tipo_usuario,
             ]
         ]);
     }
@@ -182,5 +240,24 @@ class AdminUserController extends Controller
         return response()->json([
             'message' => 'Usuario eliminado correctamente.'
         ]);
+    }
+
+    /**
+     * Asignar lugares a un usuario empresa
+     */
+    private function assignPlacesToUser(Usuarios $user, array $lugares): void
+    {
+        $placeAssignments = [];
+        
+        foreach ($lugares as $lugar) {
+            $placeAssignments[$lugar['place_id']] = [
+                'rol' => $lugar['rol'] ?? 'gerente',
+                'es_principal' => $lugar['es_principal'] ?? false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        $user->placesManaged()->sync($placeAssignments);
     }
 }

@@ -148,6 +148,7 @@ class AuthController extends Controller
                     'foto_perfil' => $user->foto_perfil,
                     'fecha_registro' => $user->fecha_registro,
                     'is_admin' => $user->is_admin,
+                    'tipo_usuario' => $user->tipo_usuario,
                 ],
                 'token' => $token,
                 'token_type' => 'Bearer',
@@ -211,6 +212,7 @@ class AuthController extends Controller
                 'foto_perfil' => $user->foto_perfil,
                 'fecha_registro' => $user->fecha_registro,
                 'is_admin' => $user->is_admin,
+                'tipo_usuario' => $user->tipo_usuario,
                 'reservations_count' => $user->reservations->count(),
             ],
             'reservations' => $user->reservations,
@@ -234,6 +236,7 @@ class AuthController extends Controller
                     'telefono' => $user->telefono,
                     'foto_perfil' => $user->foto_perfil,
                     'is_admin' => $user->is_admin,
+                    'tipo_usuario' => $user->tipo_usuario,
                 ],
                 'message' => 'Token válido'
             ], 200);
