@@ -64,7 +64,7 @@ export default function CopyrightTotal() {
         title: "Rio San Jose",
         url: "https://territorioexplora.com.co/wp-content/uploads/2017/11/marmol001.jpg"
       },
-      {
+      { 
         title: "Termales de Santa Rosa",
         url: "https://cloudfront-us-east-1.images.arcpublishing.com/elespectador/XERXDCSKHFEEDDJFAKHPGKYRGU.jpg"
       }
@@ -107,12 +107,39 @@ export default function CopyrightTotal() {
     <div className="page-layout">
       <Header2 />
       <div className="page-content contenedorTodo" style={{ marginTop: "100px" }}>
-        <h1>Copyright - Todos los Lugares</h1>
-        <p style={{ marginBottom: "40px" }}>Imágenes y créditos externos de todos nuestros destinos.</p>
+        <h1 style={{
+          fontSize: "40px",
+          fontWeight: "700",
+          color: "#27ae60",
+          marginBottom: "15px",
+          textAlign: "center",
+          borderBottom: "3px solid #2ecc71",
+          paddingBottom: "20px"
+        }}>
+          ©Copyright De Imagenes
+        </h1>
+        <p style={{
+          fontSize: "16px",
+          color: "#555",
+          textAlign: "center",
+          maxWidth: "650px",
+          margin: "0 auto 70px",
+          lineHeight: "1.6"
+        }}>
+          Aquí encontrarás los créditos y enlaces a las fuentes originales de las imágenes de todos nuestros hermosos destinos turísticos.
+        </p>
 
         {sections.map((section) => (
-          <div key={section.key} style={{ marginBottom: "60px" }}>
-            <h2 style={{ marginBottom: "30px", borderBottom: "2px solid #ddd", paddingBottom: "10px" }}>
+          <div key={section.key} style={{ marginBottom: "80px" }}>
+            <h2 style={{
+              marginBottom: "35px",
+              paddingLeft: "0px",
+              fontSize: "24px",
+              fontWeight: "700",
+              color: "#27ae60",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
               {section.title}
             </h2>
             <div className="copyright-grid">
