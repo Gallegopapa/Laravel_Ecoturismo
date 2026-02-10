@@ -228,14 +228,23 @@
 }
 
 .btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 25px;
   cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
+  transition: all 0.3s ease;
+  border: none;
+  background: #2ecc71;
+  color: #fff;
+
+}
+.btn:hover:not(:disabled) {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
 }
 
 .btn:disabled {

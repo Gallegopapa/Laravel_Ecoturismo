@@ -323,12 +323,20 @@ const CommentsPage = () => {
                 Volver
               </button>
             </Link>
-            <input 
-              type="submit" 
-              value={submitting ? "Enviando..." : (isAuthenticated ? "Enviar" : "Iniciar Sesión")} 
+            <button
+              type="submit"
               className="btn"
               disabled={submitting}
-            />
+              aria-disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <span className="spinner" aria-hidden="true" /> Enviando...
+                </>
+              ) : (
+                (isAuthenticated ? "Enviar" : "Iniciar Sesión")
+              )}
+            </button>
           </div>
         </form>
       </div>
