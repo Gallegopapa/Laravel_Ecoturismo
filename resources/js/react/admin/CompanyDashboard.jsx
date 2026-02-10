@@ -14,12 +14,32 @@ const CompanyDashboard = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const [rejecting, setRejecting] = useState(false);
+  const [placesManaged, setPlacesManaged] = useState([]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState('');
+  const [schedules, setSchedules] = useState([]);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
+  const [newSchedule, setNewSchedule] = useState({
+    dia_semana: 'lunes',
+    hora_inicio: '08:00',
+    hora_fin: '17:00',
+    activo: true,
+  });
 
   useEffect(() => {
     loadReservations();
     loadStats();
     loadRejectionReasons();
   }, [filter]);
+
+  useEffect(() => {
+    loadPlacesManaged();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPlaceId) {
+      loadSchedules(selectedPlaceId);
+    }
+  }, [selectedPlaceId]);
 
   const loadReservations = async () => {
     try {
@@ -55,6 +75,121 @@ const CompanyDashboard = () => {
     } catch (error) {
       console.error('Error cargando estadisticas:', error);
     }
+  };
+
+  const loadPlacesManaged = async () => {
+    try {
+      const data = await companyService.places.getAll();
+      setPlacesManaged(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length > 0) {
+        setSelectedPlaceId(String(data[0].id));
+      }
+    } catch (error) {
+      console.error('Error cargando lugares gestionados:', error);
+    }
+  };
+
+  const normalizeTime = (value) => {
+    if (!value) return '';
+    const timeStr = String(value);
+    return timeStr.length >= 5 ? timeStr.slice(0, 5) : timeStr;
+  };
+
+  const loadSchedules = async (placeId) => {
+    try {
+      setScheduleLoading(true);
+      const data = await companyService.places.schedules.getAll(placeId);
+      const normalized = Array.isArray(data)
+        ? data.map((item) => ({
+            ...item,
+            hora_inicio: normalizeTime(item.hora_inicio),
+            hora_fin: normalizeTime(item.hora_fin),
+          }))
+        : [];
+      setSchedules(normalized);
+    } catch (error) {
+      console.error('Error cargando horarios:', error);
+      showMessage('Error al cargar horarios', 'error');
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleScheduleChange = (scheduleId, field, value) => {
+    const nextValue = field.includes('hora_') ? normalizeTime(value) : value;
+    setSchedules((prev) =>
+      prev.map((item) =>
+        item.id === scheduleId ? { ...item, [field]: nextValue, _dirty: true } : item
+      )
+    );
+  };
+
+  const handleSaveSchedule = async (schedule) => {
+    if (!selectedPlaceId) return;
+
+    try {
+      setScheduleLoading(true);
+      await companyService.places.schedules.update(selectedPlaceId, schedule.id, {
+        dia_semana: schedule.dia_semana,
+        hora_inicio: normalizeTime(schedule.hora_inicio),
+        hora_fin: normalizeTime(schedule.hora_fin),
+        activo: schedule.activo,
+      });
+      showMessage('Horario actualizado', 'success');
+      loadSchedules(selectedPlaceId);
+    } catch (error) {
+      console.error('Error actualizando horario:', error);
+      showMessage('Error al actualizar horario', 'error');
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleDeleteSchedule = async (scheduleId) => {
+    if (!selectedPlaceId) return;
+
+    if (!window.confirm('Deseas eliminar este horario?')) {
+      return;
+    }
+
+    try {
+      setScheduleLoading(true);
+      await companyService.places.schedules.delete(selectedPlaceId, scheduleId);
+      showMessage('Horario eliminado', 'success');
+      loadSchedules(selectedPlaceId);
+    } catch (error) {
+      console.error('Error eliminando horario:', error);
+      showMessage('Error al eliminar horario', 'error');
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleAddSchedule = async () => {
+    if (!selectedPlaceId) return;
+
+    try {
+      setScheduleLoading(true);
+      await companyService.places.schedules.create(selectedPlaceId, newSchedule);
+      showMessage('Horario creado', 'success');
+      setNewSchedule({
+        dia_semana: 'lunes',
+        hora_inicio: '08:00',
+        hora_fin: '17:00',
+        activo: true,
+      });
+      loadSchedules(selectedPlaceId);
+    } catch (error) {
+      console.error('Error creando horario:', error);
+      showMessage('Error al crear horario', 'error');
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleAllDay = (scheduleId) => {
+    handleScheduleChange(scheduleId, 'hora_inicio', '00:00');
+    handleScheduleChange(scheduleId, 'hora_fin', '23:59');
   };
 
   const showMessage = (msg, type = 'success') => {
@@ -209,6 +344,159 @@ const CompanyDashboard = () => {
         >
           Rechazadas
         </button>
+      </div>
+
+      <div className="schedule-manager">
+        <div className="schedule-header">
+          <h2>Horarios del lugar</h2>
+          <div className="schedule-controls">
+            <label>
+              Lugar
+              <select
+                value={selectedPlaceId}
+                onChange={(event) => setSelectedPlaceId(event.target.value)}
+                disabled={scheduleLoading}
+              >
+                {placesManaged.length === 0 && <option value="">Sin lugares</option>}
+                {placesManaged.map((place) => (
+                  <option key={place.id} value={place.id}>
+                    {place.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        {scheduleLoading ? (
+          <p>Cargando horarios...</p>
+        ) : schedules.length === 0 ? (
+          <p>No hay horarios configurados para este lugar.</p>
+        ) : (
+          <div className="schedule-list">
+            {schedules.map((schedule) => (
+              <div key={schedule.id} className={`schedule-row ${schedule.activo ? '' : 'inactive'}`}>
+                <select
+                  value={schedule.dia_semana}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'dia_semana', event.target.value)}
+                  disabled={scheduleLoading}
+                >
+                  <option value="lunes">Lunes</option>
+                  <option value="martes">Martes</option>
+                  <option value="miercoles">Miercoles</option>
+                  <option value="jueves">Jueves</option>
+                  <option value="viernes">Viernes</option>
+                  <option value="sabado">Sabado</option>
+                  <option value="domingo">Domingo</option>
+                </select>
+                <input
+                  type="time"
+                  value={schedule.hora_inicio}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'hora_inicio', event.target.value)}
+                  disabled={scheduleLoading}
+                />
+                <input
+                  type="time"
+                  value={schedule.hora_fin}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'hora_fin', event.target.value)}
+                  disabled={scheduleLoading}
+                />
+                <label className="schedule-active">
+                  <input
+                    type="checkbox"
+                    checked={!!schedule.activo}
+                    onChange={(event) => handleScheduleChange(schedule.id, 'activo', event.target.checked)}
+                    disabled={scheduleLoading}
+                  />
+                  Activo
+                </label>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => handleAllDay(schedule.id)}
+                  disabled={scheduleLoading}
+                >
+                  Todo el dia
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => handleSaveSchedule(schedule)}
+                  disabled={scheduleLoading || !schedule._dirty}
+                >
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteSchedule(schedule.id)}
+                  disabled={scheduleLoading}
+                >
+                  Eliminar
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="schedule-new">
+          <h3>Agregar horario</h3>
+          <div className="schedule-row">
+            <select
+              value={newSchedule.dia_semana}
+              onChange={(event) => setNewSchedule({ ...newSchedule, dia_semana: event.target.value })}
+              disabled={scheduleLoading}
+            >
+              <option value="lunes">Lunes</option>
+              <option value="martes">Martes</option>
+              <option value="miercoles">Miercoles</option>
+              <option value="jueves">Jueves</option>
+              <option value="viernes">Viernes</option>
+              <option value="sabado">Sabado</option>
+              <option value="domingo">Domingo</option>
+            </select>
+            <input
+              type="time"
+              value={newSchedule.hora_inicio}
+              onChange={(event) => setNewSchedule({ ...newSchedule, hora_inicio: event.target.value })}
+              disabled={scheduleLoading}
+            />
+            <input
+              type="time"
+              value={newSchedule.hora_fin}
+              onChange={(event) => setNewSchedule({ ...newSchedule, hora_fin: event.target.value })}
+              disabled={scheduleLoading}
+            />
+            <label className="schedule-active">
+              <input
+                type="checkbox"
+                checked={!!newSchedule.activo}
+                onChange={(event) => setNewSchedule({ ...newSchedule, activo: event.target.checked })}
+                disabled={scheduleLoading}
+              />
+              Activo
+            </label>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setNewSchedule({ ...newSchedule, hora_inicio: '00:00', hora_fin: '23:59' })}
+              disabled={scheduleLoading}
+            >
+              Todo el dia
+            </button>
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={handleAddSchedule}
+              disabled={scheduleLoading}
+            >
+              Agregar
+            </button>
+          </div>
+          <p className="schedule-hint">
+            Para cerrar un dia, desactiva el horario o eliminelo. Para abrir todo el dia usa 00:00 - 23:59.
+          </p>
+        </div>
       </div>
 
       {/* Reservations List */}

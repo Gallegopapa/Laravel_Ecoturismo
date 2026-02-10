@@ -269,6 +269,13 @@
   align-items: center;
 }
 
+.helper-text {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c6c68;
+  margin: 4px 0 0 24px;
+}
+
 .place-options select {
   flex: 1;
   padding: 6px 8px;

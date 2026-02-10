@@ -8,7 +8,6 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
     email: '',
     password: '',
     tipo_usuario: 'normal',
-    is_admin: false,
     lugares: [],
   });
 
@@ -84,7 +83,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         name: formData.name,
         email: formData.email,
         tipo_usuario: formData.tipo_usuario,
-        is_admin: formData.tipo_usuario === 'admin' ? true : formData.is_admin,
+        is_admin: formData.tipo_usuario === 'admin',
       };
 
       // Agregar contraseña solo si se proporcionó
@@ -112,7 +111,6 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         email: '',
         password: '',
         tipo_usuario: 'normal',
-        is_admin: false,
         lugares: [],
       });
 
@@ -266,6 +264,10 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                               <option value="admin">Admin del Lugar</option>
                             </select>
 
+                            <small className="helper-text">
+                              Rol: define permisos dentro del lugar (no es admin del sistema).
+                            </small>
+
                             <label className="principal-label">
                               <input
                                 type="checkbox"
@@ -275,6 +277,9 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                               />
                               <span>Principal</span>
                             </label>
+                            <small className="helper-text">
+                              Principal: responsable principal del lugar (recibe reservas por defecto).
+                            </small>
                           </div>
                         )}
                       </div>
@@ -285,22 +290,6 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                 )}
               </div>
               {errors.lugares && <small className="error-text">{errors.lugares[0]}</small>}
-            </div>
-          )}
-
-          {/* Admin Checkbox */}
-          {formData.tipo_usuario !== 'admin' && (
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="is_admin"
-                  checked={formData.is_admin}
-                  onChange={handleInputChange}
-                  disabled={loading || formData.tipo_usuario === 'admin'}
-                />
-                <span>Es Administrador</span>
-              </label>
             </div>
           )}
 
