@@ -18,6 +18,8 @@ use App\Http\Controllers\API\PlaceScheduleController;
 use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\CompanyReservationController;
 use App\Http\Controllers\API\RejectionReasonController;
+use App\Http\Controllers\API\CompanyPlaceController;
+use App\Http\Controllers\API\CompanyPlaceScheduleController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
@@ -103,6 +105,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // RUTAS DE EMPRESA (para usuarios tipo empresa)
     // ============================================
     Route::prefix('company')->group(function () {
+        // Lugares gestionados por la empresa
+        Route::get('/places', [CompanyPlaceController::class, 'index']);
+        Route::get('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'index']);
+        Route::post('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'store']);
+        Route::put('/places/{place}/schedules/{schedule}', [CompanyPlaceScheduleController::class, 'update']);
+        Route::delete('/places/{place}/schedules/{schedule}', [CompanyPlaceScheduleController::class, 'destroy']);
+
         // Gestión de reservas desde la perspectiva de la empresa
         Route::get('/reservations', [CompanyReservationController::class, 'index']);
         Route::get('/reservations/stats', [CompanyReservationController::class, 'statsSummary']);

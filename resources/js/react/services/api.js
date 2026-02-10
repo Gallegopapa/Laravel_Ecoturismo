@@ -402,6 +402,30 @@ export const adminService = {
 
 // Servicios para usuario empresa
 export const companyService = {
+  places: {
+    getAll: async () => {
+      const response = await api.get('/company/places');
+      return response.data;
+    },
+    schedules: {
+      getAll: async (placeId) => {
+        const response = await api.get(`/company/places/${placeId}/schedules`);
+        return response.data;
+      },
+      create: async (placeId, payload) => {
+        const response = await api.post(`/company/places/${placeId}/schedules`, payload);
+        return response.data;
+      },
+      update: async (placeId, scheduleId, payload) => {
+        const response = await api.put(`/company/places/${placeId}/schedules/${scheduleId}`, payload);
+        return response.data;
+      },
+      delete: async (placeId, scheduleId) => {
+        const response = await api.delete(`/company/places/${placeId}/schedules/${scheduleId}`);
+        return response.data;
+      },
+    },
+  },
   reservations: {
     getAll: async (filters = {}) => {
       const response = await api.get('/company/reservations', { params: filters });
