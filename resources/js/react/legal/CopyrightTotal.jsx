@@ -8,91 +8,91 @@ export default function CopyrightTotal() {
     lugaresMontanosos: [
       {
         title: "Alto del Nudo",
-        url: "https://i.ytimg.com/vi/bUSFb7xuXS0/maxresdefault.jpg"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Alto del Toro",
-        url: "https://i.ytimg.com/vi/plgzBRBLu2w/maxresdefault.jpg"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Cerro Batero",
-        url: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSWV-Q2scLh_7Hxf-j28JidjCnluaCSQO_Q2hDzFfQVr7HJYAN_"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Kuakita Bosque Reserva",
-        url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEcIrbExz9TiGvPQv0TpeYV-Hmd-_9n_n7CS4KFaVgWjcgcDj"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Divisa de Don Juan",
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCzyxAIfsSSo9J6XuajyCRigraT7JgkQxDzQ&s"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Reserva Forestal La Nona",
-        url: "https://i.ytimg.com/vi/1X8WHyx4j8k/maxresdefault.jpg"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Reserva Natural Cerro Gobia",
-        url: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTw4k48BibSVtb4gIoNSsQrBC__c78P8KmccZ12dEOkA2EXsgQo"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Reserva Natural DMI Agualinda",
-        url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRAWSJVzT-bmo04s-F1ynx33LmqPTsj2Oz2T25cQ8N9LS5UvhZ8"
+        url: "https://www.tripadvisor.com/"
       }
     ],
     paraisosAcuaticos: [
       {
         title: "Farallones",
-        url: "https://d2kihw5e8drjh5.cloudfront.net/eyJidWNrZXQiOiJ1dGEtaW1hZ2VzIiwia2V5IjoicGxhY2VfaW1nLzk4MDE0MDUyNzkyNDQ2YWJiODRkYWRkOWI4MWZlZDg1IiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo2NDAsImhlaWdodCI6NjQwLCJmaXQiOiJpbnNpZGUifSwicm90YXRlIjpudWxsLCJ0b0Zvcm1hdCI6ICJ3ZWJwIn19"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Chorros de don Lolo",
-        url: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/f5/fb/13/photo0jpg.jpg?w=1200&h=1200&s=1"
+        url: "https://www.tripadvisor.com/"
       },
       {
         title: "Consota",
-        url: "https://comfamiliar.com/wp-content/uploads/2025/08/Toboganes.png"
+        url: "https://comfamiliar.com/parque-consota/"
       },
       {
         title: "Laguna del Otun",
-        url: "https://www.parquesnacionales.gov.co/wp-content/uploads/2022/04/laguna-otun.jpg"
+        url: "https://www.parquesnacionales.gov.co/"
       },
       {
         title: "Lago de la Pradera",
-        url: "https://caracol.com.co/resizer/v2/EBLRTW3CSFLKPOUQX5I4GB2YJQ.jpg?auth=ec62aa69a66a3b1f4083f12bb4b1b5d44f8d8814721f6d5b9ba4e048dddf23ba&width=1600&height=1067&quality=70&smart=true"
+        url: "https://caracol.com.co/"
       },
       {
         title: "Rio San Jose",
-        url: "https://territorioexplora.com.co/wp-content/uploads/2017/11/marmol001.jpg"
+        url: "https://territorioexplora.com.co/"
       },
       { 
         title: "Termales de Santa Rosa",
-        url: "https://cloudfront-us-east-1.images.arcpublishing.com/elespectador/XERXDCSKHFEEDDJFAKHPGKYRGU.jpg"
+        url: "https://www.booking.com/"
       }
     ],
     parquesYMas: [
       {
         title: "Jardín Botánico Marsella",
-        url: "https://rutasdelpaisajeculturalcafetero.com/wp-content/uploads/2016/07/jardin-botanico-alejandro-humbolt.jpg",
+        url: "https://rutasdelpaisajeculturalcafetero.com/",
       },
       {
         title: "Jardín Botánico UTP",
-        url: "https://media2.utp.edu.co/imagenes/WhatsApp%20Image%202022-02-04%20at%2009.38.43.jpeg",
+        url: "https://jardinbotanico.utp.edu.co/",
       },
       {
         title: "Parque Las Araucarias",
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMFAqc1cXzuj9_-0JRDWMG86QKd4oePUBNkQ&s",
+        url: "https://camarasantarosa.org/",
       },
       {
         title: "Parque Nacional Natural Tatamá",
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRql_kwNxFGi7NJvqMUUwR3U0G2CJBRAfdl7Q&s",
+        url: "https://www.parquesnacionales.gov.co/",
       },
       {
         title: "Parque Natural Regional Santa Emilia",
-        url: "https://cdn.shortpixel.ai/spai/q_lossless+w_916+to_webp+ret_img/nomadicniko.com/wp-content/uploads/2014/08/94bbe-img_5215.jpg?w=225",
+        url: "https://www.parquesnacionales.gov.co/",
       },
       {
         title: "Parque Regional Natural Cuchilla de San Juan",
-        url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbthSfsJ_VlPC4iOdo4OeTmEfF19WNY1VL4A&s",
+        url: "https://www.parquesnacionales.gov.co/",
       },
     ]
   };
