@@ -2,7 +2,7 @@
 
 Plataforma web para la promoción y gestión de destinos ecoturísticos en Risaralda, Colombia. Desarrollada con Laravel 12 (Backend) y React 19 (Frontend).
 
-## 📋 Tabla de Contenidos
+##  Tabla de Contenidos
 
 - [Características](#características)
 - [Tecnologías](#tecnologías)
@@ -15,7 +15,7 @@ Plataforma web para la promoción y gestión de destinos ecoturísticos en Risar
 - [API](#api)
 - [Contribuir](#contribuir)
 
-## ✨ Características
+##  Características
 
 - **Autenticación de Usuarios**: Sistema completo de registro, login y gestión de sesiones con Laravel Sanctum
 - **Gestión de Lugares**: CRUD completo para lugares turísticos con categorías, imágenes y coordenadas
@@ -28,7 +28,7 @@ Plataforma web para la promoción y gestión de destinos ecoturísticos en Risar
 - **Perfil de Usuario**: Gestión completa de perfil con foto de perfil
 - **Responsive Design**: Diseño adaptable a diferentes dispositivos
 
-## 🛠 Tecnologías
+##  Tecnologías
 
 ### Backend
 - **Laravel 12**: Framework PHP
@@ -44,14 +44,14 @@ Plataforma web para la promoción y gestión de destinos ecoturísticos en Risar
 - **Vite**: Build tool y dev server
 - **CSS3**: Estilos personalizados
 
-## 📦 Requisitos
+##  Requisitos
 
 - PHP 8.2 o superior
 - Composer
 - Node.js 18+ y npm
 - SQLite (o MySQL/PostgreSQL)
 
-## 🚀 Instalación
+##  Instalación
 
 ### 1. Clonar el repositorio
 
@@ -112,7 +112,7 @@ php artisan migrate
 php artisan db:seed
 ```
 
-## ⚙️ Configuración
+##  Configuración
 
 ### Variables de Entorno Importantes
 
@@ -131,7 +131,7 @@ DB_CONNECTION=sqlite
 
 El archivo `vite.config.js` ya está configurado para trabajar con Laravel. Asegúrate de que la URL del servidor de desarrollo coincida con `APP_URL`.
 
-## 🎯 Uso
+##  Uso
 
 ### Desarrollo
 
@@ -170,7 +170,7 @@ php artisan view:cache
 
 3. Configurar el servidor web (Apache/Nginx) para apuntar a la carpeta `public/`
 
-## 📁 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Laravel_Ecoturismo/
@@ -204,7 +204,7 @@ Laravel_Ecoturismo/
 └── vite.config.js             # Configuración de Vite
 ```
 
-## 📚 Documentación
+##  Documentación
 
 La documentación completa del proyecto está disponible en los siguientes archivos:
 
@@ -241,7 +241,7 @@ La API REST está disponible en `/api`. Ver [API_DOCUMENTATION.md](./API_DOCUMEN
 - `POST /api/reservations` - Crear reserva
 - `POST /api/contacts` - Enviar mensaje de contacto
 
-## 👥 Usuarios y Roles
+##  Usuarios y Roles
 
 ### Usuario Regular
 - Ver lugares y detalles
@@ -258,7 +258,7 @@ La API REST está disponible en `/api`. Ver [API_DOCUMENTATION.md](./API_DOCUMEN
 - Ver todas las reservas
 - Ver mensajes de contacto
 
-## 🔐 Autenticación
+##  Autenticación
 
 El sistema utiliza **Laravel Sanctum** para autenticación basada en tokens. Los tokens se envían en el header:
 
@@ -268,21 +268,21 @@ Authorization: Bearer {token}
 
 Los tokens expiran después de 30 días.
 
-## 🗺 Mapa Interactivo
+##  Mapa Interactivo
 
 El mapa interactivo utiliza Leaflet y muestra todos los lugares con coordenadas. Los usuarios pueden:
 - Ver todos los lugares en el mapa
 - Hacer clic en los marcadores para ver detalles
 - Navegar desde el mapa a la página de detalles
 
-## 📝 Notas Importantes
+##  Notas Importantes
 
 1. **Base de Datos**: Por defecto usa SQLite, pero puede configurarse para MySQL o PostgreSQL
 2. **Imágenes**: Las imágenes se almacenan en `storage/app/public/places/` y `storage/app/public/profiles/`
 3. **Tokens**: Los tokens de Sanctum se almacenan en la tabla `personal_access_tokens`
 4. **CORS**: Configurado para desarrollo local, ajustar para producción
 
-## 🤝 Contribuir
+##  Contribuir
 
 1. Fork el proyecto
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
@@ -290,15 +290,15 @@ El mapa interactivo utiliza Leaflet y muestra todos los lugares con coordenadas.
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+##  Licencia
 
 Este proyecto está bajo la Licencia MIT.
 
-## 👨‍💻 Autor
+##  Autor
 
 Desarrollado para Risaralda EcoTurismo
 
-## 📞 Contacto
+##  Contacto
 
 Para más información, contacta a través del formulario de contacto en la aplicación o envía un email a: proyectoecoturismo2@gmail.com
 
