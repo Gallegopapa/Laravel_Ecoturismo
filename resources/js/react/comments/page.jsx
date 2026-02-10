@@ -323,10 +323,6 @@ const CommentsPage = () => {
                 Volver
               </button>
             </Link>
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
             <button
               type="submit"
               className="btn"
