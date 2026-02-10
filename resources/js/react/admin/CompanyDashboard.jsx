@@ -17,6 +17,7 @@ const CompanyDashboard = () => {
 
   useEffect(() => {
     loadReservations();
+    loadStats();
     loadRejectionReasons();
   }, [filter]);
 
@@ -42,6 +43,20 @@ const CompanyDashboard = () => {
     }
   };
 
+  const loadStats = async () => {
+    try {
+      const data = await companyService.reservations.getStatsSummary();
+      setStats({
+        pendientes: data?.pendientes || 0,
+        aceptadas: data?.aceptadas || 0,
+        rechazadas: data?.rechazadas || 0,
+        total: data?.total || 0,
+      });
+    } catch (error) {
+      console.error('Error cargando estadisticas:', error);
+    }
+  };
+
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setMessageType(type);
@@ -54,6 +69,7 @@ const CompanyDashboard = () => {
       await companyService.reservations.accept(reservation.id);
       showMessage('Reserva aceptada correctamente', 'success');
       loadReservations();
+      loadStats();
     } catch (error) {
       showMessage('Error al aceptar reserva', 'error');
     } finally {
@@ -69,6 +85,7 @@ const CompanyDashboard = () => {
       setShowRejectModal(false);
       setSelectedReservation(null);
       loadReservations();
+      loadStats();
     } catch (error) {
       showMessage('Error al rechazar reserva', 'error');
     } finally {

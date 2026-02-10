@@ -39,6 +39,7 @@ import TerritoriosDelCafe from './react/places2/territoriosDelCafe/page.jsx';
 
 // Panel de administración
 import AdminPanel from './react/admin/AdminPanel.jsx';
+import CompanyDashboard from './react/admin/CompanyDashboard.jsx';
 
 // Crear router
 const router = createBrowserRouter([
@@ -176,6 +177,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute requireAdmin={true}>
         <AdminPanel />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/company/dashboard',
+    element: (
+      <ProtectedRoute requireCompany={true}>
+        <CompanyDashboard />
       </ProtectedRoute>
     ),
   },

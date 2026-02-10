@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export const ProtectedRoute = ({ children, requireAdmin = false }) => {
+export const ProtectedRoute = ({ children, requireAdmin = false, requireCompany = false }) => {
   const { isAuthenticated, loading, isAdmin, user } = useAuth();
 
   if (loading) {
@@ -23,6 +23,11 @@ export const ProtectedRoute = ({ children, requireAdmin = false }) => {
 
   if (requireAdmin && !isAdmin) {
     console.log('Usuario no es admin:', { user, isAdmin, requireAdmin });
+    return <Navigate to="/pagLogueados" replace />;
+  }
+
+  if (requireCompany && user?.tipo_usuario !== 'empresa') {
+    console.log('Usuario no es empresa:', { user, requireCompany });
     return <Navigate to="/pagLogueados" replace />;
   }
 

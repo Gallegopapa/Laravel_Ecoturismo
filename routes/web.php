@@ -116,9 +116,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/perfil/password', [ProfileController::class, 'changePassword'])->name('profile.password');
 
     // ============================================
-    // COMPANY/EMPRESA DASHBOARD ROUTES
+    // COMPANY/EMPRESA DASHBOARD ROUTES (server-side)
     // ============================================
-    Route::get('/empresa/dashboard', [CompanyDashboardController::class, 'index'])->name('company.dashboard');
     Route::post('/empresa/reservas/{id}/aceptar', [CompanyDashboardController::class, 'accept'])->name('company.accept');
     Route::post('/empresa/reservas/{id}/rechazar', [CompanyDashboardController::class, 'reject'])->name('company.reject');
 });
@@ -134,6 +133,13 @@ Route::post('/mensajes', [MessageController::class, 'store'])->name('mensajes');
 Route::get('/', function () {
     return view('app');
 })->name('pagcentral');
+
+// ============================================
+// COMPANY/EMPRESA DASHBOARD (React)
+// ============================================
+Route::get('/empresa/dashboard', function () {
+    return redirect('/company/dashboard');
+})->name('company.dashboard');
 
 // ============================================
 // FALLBACK: Todas las demás rutas GET sirven la app React

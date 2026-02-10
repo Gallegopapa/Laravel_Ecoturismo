@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('company')->group(function () {
         // Gestión de reservas desde la perspectiva de la empresa
         Route::get('/reservations', [CompanyReservationController::class, 'index']);
+        Route::get('/reservations/stats', [CompanyReservationController::class, 'statsSummary']);
         Route::get('/reservations/{companyReservation}', [CompanyReservationController::class, 'show']);
         Route::post('/reservations/{companyReservation}/accept', [CompanyReservationController::class, 'accept']);
         Route::post('/reservations/{companyReservation}/reject', [CompanyReservationController::class, 'reject']);

@@ -154,8 +154,8 @@ const Header2 = () => {
 
           {/* Botón especial para usuarios empresa */}
           {isCompanyUser && (
-            <a 
-              href="/empresa/dashboard" 
+            <Link
+              to="/company/dashboard"
               className="nav-link company-dashboard-btn"
               onClick={handleLinkClick}
               style={{
@@ -168,7 +168,7 @@ const Header2 = () => {
               }}
             >
               📊 Ver Mis Reservas
-            </a>
+            </Link>
           )}
 
           {/* Menú desplegable de Usuario */}

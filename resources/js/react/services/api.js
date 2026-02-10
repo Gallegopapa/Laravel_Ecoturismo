@@ -407,6 +407,10 @@ export const companyService = {
       const response = await api.get('/company/reservations', { params: filters });
       return response.data;
     },
+    getStatsSummary: async () => {
+      const response = await api.get('/company/reservations/stats');
+      return response.data;
+    },
     getById: async (id) => {
       const response = await api.get(`/company/reservations/${id}`);
       return response.data;

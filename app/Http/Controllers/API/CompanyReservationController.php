@@ -206,4 +206,43 @@ class CompanyReservationController extends Controller
 
         return response()->json($stats);
     }
+
+    /**
+     * Obtener estadísticas globales de reservas para la empresa
+     */
+    public function statsSummary(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        // Validar que sea usuario empresa
+        if (!$user->isCompanyUser()) {
+            return response()->json([
+                'message' => 'No tienes permisos para acceder a este recurso.'
+            ], 403);
+        }
+
+        // Obtener lugares asignados al usuario
+        $placesIds = $user->placesManaged()->pluck('places.id')->toArray();
+
+        if (empty($placesIds)) {
+            return response()->json([
+                'message' => 'No tienes lugares asignados.'
+            ], 403);
+        }
+
+        $stats = [
+            'pendientes' => CompanyReservation::whereIn('place_id', $placesIds)
+                ->where('estado', 'pendiente')
+                ->count(),
+            'aceptadas' => CompanyReservation::whereIn('place_id', $placesIds)
+                ->where('estado', 'aceptada')
+                ->count(),
+            'rechazadas' => CompanyReservation::whereIn('place_id', $placesIds)
+                ->where('estado', 'rechazada')
+                ->count(),
+            'total' => CompanyReservation::whereIn('place_id', $placesIds)->count(),
+        ];
+
+        return response()->json($stats);
+    }
 }
