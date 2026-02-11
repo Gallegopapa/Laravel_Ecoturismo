@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
@@ -104,6 +104,8 @@ L.Icon.Default.mergeOptions({
 export default function MapView({ locations }) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
 
   const categories = useMemo(() => {
     const setCat = new Set();
@@ -114,6 +116,32 @@ export default function MapView({ locations }) {
     });
     return Array.from(setCat);
   }, [locations]);
+
+  // Bloquear scroll en el contenedor del mapa
+  useEffect(() => {
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+    };
+
+    const handleTouchMove = (e) => {
+      // Permitir zoom con dos dedos pero no movimiento
+      if (e.touches.length === 2) return;
+      if (e.touches.length === 1) {
+        e.preventDefault();
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
 
   const filtered = locations.filter(l => {
     const matchQuery = 
@@ -148,7 +176,7 @@ export default function MapView({ locations }) {
   const center = filtered.length > 0 ? [filtered[0].latitude, filtered[0].longitude] : [4.814, -75.694];
 
   return (
-    <div className="map-view-container">
+    <div className="map-view-container" ref={mapContainerRef}>
       <div className="map-controls">
         <input 
           type="text"
@@ -172,7 +200,12 @@ export default function MapView({ locations }) {
       <MapContainer 
         {...(showInitialBounds ? { bounds: initialBounds, boundsOptions: { padding: [80, 80] } } : { center: center, zoom: filtered.length > 0 ? 11 : initialZoom })}
         style={{ height: '100%', width: '100%' }}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
+        ref={(map) => {
+          if (map) {
+            mapInstanceRef.current = map._leaflet_map || map;
+          }
+        }}
       >
         <TileLayer 
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
@@ -180,6 +213,34 @@ export default function MapView({ locations }) {
         />
         <MapContent locations={filtered} />
       </MapContainer>
+
+      {/* Botones de zoom flotantes */}
+      <div className="map-zoom-controls">
+        <button 
+          className="map-zoom-button map-zoom-in" 
+          onClick={() => {
+            if (mapInstanceRef.current) {
+              mapInstanceRef.current.zoomIn();
+            }
+          }}
+          title="Acercar (Zoom +)"
+          aria-label="Acercar"
+        >
+          +
+        </button>
+        <button 
+          className="map-zoom-button map-zoom-out" 
+          onClick={() => {
+            if (mapInstanceRef.current) {
+              mapInstanceRef.current.zoomOut();
+            }
+          }}
+          title="Alejar (Zoom -)"
+          aria-label="Alejar"
+        >
+          −
+        </button>
+      </div>
     </div>
   );
 }
