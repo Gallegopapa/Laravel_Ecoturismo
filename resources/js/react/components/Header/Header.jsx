@@ -43,7 +43,7 @@ const Header = () => {
           </button>
 
           <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
-            <Link to="/comentarios" onClick={closeMobileMenu} data-i18n="places">{t('places')}</Link>
+            <Link to="/comentarios" onClick={closeMobileMenu} data-i18n="reviews">Reseñas</Link>
             <Link to="/lugares" onClick={closeMobileMenu} data-i18n="places">{t('places')}</Link>
             <Link to="/ecohoteles" onClick={closeMobileMenu} data-i18n="ecohotels">{t('ecohotels')}</Link>
             <Link to="/contacto" onClick={closeMobileMenu} data-i18n="contact">{t('contact')}</Link>
