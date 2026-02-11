@@ -10,7 +10,7 @@ Este sistema implementa funcionalidades completas de accesibilidad y cambio de i
 
 ```
 resources/js/react/
-├── contexts/
+├── contexts/+{}
 │   ├── AccessibilityContext.jsx   # Contexto de configuraciones de accesibilidad
 │   └── LanguageContext.jsx        # Contexto de idioma
 ├── i18n/
