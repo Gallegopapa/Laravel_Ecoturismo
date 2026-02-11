@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -55,9 +56,9 @@ class ProfileController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/'],
+            'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
             'email' => ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
-            'telefono' => ['nullable', 'string', 'max:20'],
+            'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB máximo
         ], [
             'name.required' => 'El nombre de usuario es requerido.',

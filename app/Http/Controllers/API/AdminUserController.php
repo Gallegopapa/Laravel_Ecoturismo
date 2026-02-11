@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuarios;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -69,7 +70,7 @@ class AdminUserController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|min:3|unique:usuarios,name|regex:/^[a-zA-Z0-9_]+$/',
+            'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name', 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
             'email' => 'nullable|email|max:255|unique:usuarios,email',
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',
@@ -154,7 +155,7 @@ class AdminUserController extends Controller
     public function update(Request $request, Usuarios $user): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'sometimes|required|string|max:255|min:3|unique:usuarios,name,' . $user->id . '|regex:/^[a-zA-Z0-9_]+$/',
+            'name' => ['sometimes', 'required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
             'email' => 'nullable|email|max:255|unique:usuarios,email,' . $user->id,
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',

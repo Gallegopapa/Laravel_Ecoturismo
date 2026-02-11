@@ -83,16 +83,9 @@ const EditUserModal = ({ isOpen, onClose, userId, user, places = [], onUpdated }
 
       return {
         ...prev,
-        lugares: [...lugares, { place_id: placeId, rol: 'gerente', es_principal: false }],
+        lugares: [...lugares, { place_id: placeId, es_principal: false }],
       };
     });
-  };
-
-  const handlePlaceRoleChange = (placeId, rol) => {
-    setFormData((prev) => ({
-      ...prev,
-      lugares: prev.lugares.map((p) => (p.place_id === placeId ? { ...p, rol } : p)),
-    }));
   };
 
   const handlePlacePrincipalChange = (placeId) => {
@@ -213,18 +206,6 @@ const EditUserModal = ({ isOpen, onClose, userId, user, places = [], onUpdated }
 
                         {selectedPlace && (
                           <div className="place-options">
-                            <select
-                              value={selectedPlace.rol}
-                              onChange={(e) => handlePlaceRoleChange(place.id, e.target.value)}
-                              disabled={loading}
-                            >
-                              <option value="gerente">Gerente</option>
-                              <option value="recepcionista">Recepcionista</option>
-                              <option value="admin">Admin del Lugar</option>
-                            </select>
-                            <small className="helper-text">
-                              Rol: define permisos dentro del lugar (no es admin del sistema).
-                            </small>
                             <label className="principal-label">
                               <input
                                 type="checkbox"

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Place;
@@ -149,9 +150,9 @@ class PlaceController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'name' => ['required', 'string', 'max:255', new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
+            'location' => ['nullable', 'string', 'max:255', new NoProfanity()],
             'image' => 'nullable|string|max:500',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
@@ -246,9 +247,9 @@ class PlaceController extends Controller
     public function update(Request $request, Place $place): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'name' => ['sometimes', 'string', 'max:255', new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
+            'location' => ['nullable', 'string', 'max:255', new NoProfanity()],
             'image' => 'nullable|string|max:500',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',

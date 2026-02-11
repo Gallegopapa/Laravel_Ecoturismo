@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -14,10 +15,10 @@ class MessageController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'email' => 'required|email|max:255',
-            'message' => 'required|string|max:1000',
-            'subject' => 'nullable|string|max:255',
+            'message' => ['required', 'string', 'max:1000', new NoProfanity()],
+            'subject' => ['nullable', 'string', 'max:255', new NoProfanity()],
         ], [
             'name.required' => 'El nombre es requerido.',
             'email.required' => 'El correo electrónico es requerido.',

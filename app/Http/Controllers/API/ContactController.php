@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\Contact;
@@ -16,10 +17,10 @@ class ContactController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'message' => 'required|string|max:2000',
+            'phone' => ['required', 'string', 'max:20', new NoProfanity()],
+            'message' => ['required', 'string', 'max:2000', new NoProfanity()],
         ], [
             'name.required' => 'El nombre es requerido.',
             'email.required' => 'El correo electrónico es requerido.',

@@ -358,7 +358,6 @@ const UsersAdmin = () => {
           <li><strong>Haz clic</strong> en el botón "Crear Usuario Empresa" arriba</li>
           <li><strong>Rellena el formulario:</strong> Nombre, email, teléfono, etc.</li>
           <li><strong>Selecciona el LUGAR</strong> para el cual trabajará esta empresa</li>
-          <li><strong>Elige el rol:</strong> Gerente (puede aceptar/rechazar) o Recepcionista</li>
           <li><strong>Marca como "Principal"</strong> si es el contacto principal del lugar</li>
           <li><strong>Copia la contraseña generada</strong> y compártela con la empresa</li>
         </ol>

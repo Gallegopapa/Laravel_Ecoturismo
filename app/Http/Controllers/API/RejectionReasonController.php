@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\RejectionReason;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -25,9 +26,9 @@ class RejectionReasonController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'code' => 'required|string|max:50|unique:rejection_reasons,code',
-            'descripcion' => 'required|string|max:255',
-            'detalles' => 'nullable|string',
+            'code' => ['required', 'string', 'max:50', 'unique:rejection_reasons,code', new NoProfanity()],
+            'descripcion' => ['required', 'string', 'max:255', new NoProfanity()],
+            'detalles' => ['nullable', 'string', new NoProfanity()],
         ], [
             'code.required' => 'El código es requerido.',
             'code.unique' => 'Este código ya está registrado.',
@@ -56,9 +57,9 @@ class RejectionReasonController extends Controller
     public function update(Request $request, RejectionReason $reason): JsonResponse
     {
         $data = $request->validate([
-            'code' => 'sometimes|required|string|max:50|unique:rejection_reasons,code,' . $reason->id,
-            'descripcion' => 'sometimes|required|string|max:255',
-            'detalles' => 'nullable|string',
+            'code' => ['sometimes', 'required', 'string', 'max:50', 'unique:rejection_reasons,code,' . $reason->id, new NoProfanity()],
+            'descripcion' => ['sometimes', 'required', 'string', 'max:255', new NoProfanity()],
+            'detalles' => ['nullable', 'string', new NoProfanity()],
         ], [
             'code.unique' => 'Este código ya está registrado.',
             'descripcion.required' => 'La descripción es requerida.',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\Models\CompanyReservation;
@@ -97,8 +98,8 @@ class ReservationController extends Controller
             'fecha_visita' => 'required|date|after_or_equal:today',
             'hora_visita' => 'required|date_format:H:i',
             'personas' => 'required|integer|min:1|max:50',
-            'telefono_contacto' => 'nullable|string|max:20',
-            'comentarios' => 'nullable|string|max:1000',
+            'telefono_contacto' => ['nullable', 'string', 'max:20', new NoProfanity()],
+            'comentarios' => ['nullable', 'string', 'max:1000', new NoProfanity()],
             'precio_total' => 'nullable|numeric|min:0',
             'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada',
         ], [
@@ -305,8 +306,8 @@ class ReservationController extends Controller
             'fecha_visita' => 'sometimes|date',
             'hora_visita' => 'nullable|date_format:H:i',
             'personas' => 'sometimes|integer|min:1|max:50',
-            'telefono_contacto' => 'nullable|string|max:20',
-            'comentarios' => 'nullable|string|max:1000',
+            'telefono_contacto' => ['nullable', 'string', 'max:20', new NoProfanity()],
+            'comentarios' => ['nullable', 'string', 'max:1000', new NoProfanity()],
             'precio_total' => 'nullable|numeric|min:0',
             'estado' => 'sometimes|string|in:pendiente,confirmada,cancelada,completada,rechazada,aceptada',
         ], [

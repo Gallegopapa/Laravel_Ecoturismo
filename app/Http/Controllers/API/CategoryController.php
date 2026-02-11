@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -34,8 +35,8 @@ class CategoryController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string',
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name', new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
             'icon' => 'nullable|string|max:255',
         ], [
             'name.required' => 'El nombre de la categoría es requerido.',
@@ -54,8 +55,8 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string',
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id, new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
             'icon' => 'nullable|string|max:255',
         ], [
             'name.required' => 'El nombre de la categoría es requerido.',

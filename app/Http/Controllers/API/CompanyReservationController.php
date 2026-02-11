@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\CompanyReservation;
 use App\Models\RejectionReason;
+use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -195,7 +196,7 @@ class CompanyReservationController extends Controller
         // Validar datos de rechazo
         $data = $request->validate([
             'rejection_reason_id' => 'required|exists:rejection_reasons,id',
-            'comentario' => 'nullable|string|max:500',
+            'comentario' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], [
             'rejection_reason_id.required' => 'La razón de rechazo es requerida.',
             'rejection_reason_id.exists' => 'La razón de rechazo seleccionada no existe.',

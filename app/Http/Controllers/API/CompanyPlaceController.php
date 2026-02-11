@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Place;
+use App\Rules\NoProfanity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -75,13 +76,13 @@ class CompanyPlaceController extends Controller
         }
 
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'name' => ['required', 'string', 'max:255', new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
+            'location' => ['nullable', 'string', 'max:255', new NoProfanity()],
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'telefono' => 'nullable|string|max:20',
+            'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
