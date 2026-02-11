@@ -47,6 +47,18 @@ header {
   max-width: 100%;
 }
 
+/* Escalado accesibilidad: header no logueados */
+body.font-large .titulos h2,
+body.font-large .navbar a,
+body.font-large .nav-link {
+  font-size: 1.04em !important;
+}
+body.font-extra-large .titulos h2,
+body.font-extra-large .navbar a,
+body.font-extra-large .nav-link {
+  font-size: 1.08em !important;
+}
+
 .navbar {
   display: flex;
   align-items: center;
@@ -116,11 +128,18 @@ header {
 @media (max-width: 1024px) and (min-width: 769px) {
   .header-container {
     padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: 0;
+    width: 100%;
+    align-items: flex-start;
   }
 
   .logo-principal {
     flex-shrink: 1;
     min-width: 0;
+    max-width: 180px;
+    margin-right: 12px;
   }
 
   .logo-principal img {
@@ -131,16 +150,33 @@ header {
 
   .titulos h2 {
     font-size: 16px;
-    max-width: 200px;
+    max-width: 180px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    margin-right: 12px;
   }
 
   .navbar {
-    gap: 6px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
+    width: auto;
+    flex: 1 1 0;
+  }
+  .user-dropdown {
+    margin-left: 0 !important;
   }
 
   .navbar a {
     padding: 8px 12px;
     font-size: 14px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    min-width: 0;
+    width: auto;
   }
 }
 

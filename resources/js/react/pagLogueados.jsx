@@ -6,6 +6,7 @@ import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 // import Card from '@/react/components/Cards/Card';
 import Slider from "@/react/components/slider/Slider";
+import HomePage from "./components/HomePage";
 
 function PagLogueados() {
   const navigate = useNavigate();
@@ -33,40 +34,16 @@ function PagLogueados() {
 
   // Si no hay usuario autenticado, no renderizar nada (será redirigido)
   if (!isAuthenticated || !user) {
-    return null;
+    return (
+      <div className="page-layout">
+        <Header2 />
+        <main className="page-content">
+          <HomePage loggedIn={true} user={user} />
+        </main>
+        <Footer />
+      </div>
+    );
   }
-
-  return (
-    <div className="page-layout">
-      <Header2 />
-      {/* MAIN */}
-      <main className="page-content">
-        <Slider />
-
-        {/* CARDS */}
-        <div className="contenedorcards">
-          {/* <Card 
-            urlImg={"https://picsum.photos/id/40/300/200"}
-            title={"Paisajes"}
-            description={"Conoce los paisajes más hermosos de la región."}
-          /> */}
-          {/* <Card 
-            urlImg={"https://picsum.photos/id/41/300/200"}
-            title={"Gastronomía"}
-            description={"Sabores únicos que te encantarán."}
-          /> */}
-          {/* <Card 
-            urlImg={"https://picsum.photos/id/42/300/200"}
-            title={"Cultura"}
-            description={"Tradición y arte en cada rincón."}
-          /> */}
-        </div>
-        {/* CARDS */}
-      </main>
-
-      <Footer />
-    </div>
-  );
 }
 
 export default PagLogueados;

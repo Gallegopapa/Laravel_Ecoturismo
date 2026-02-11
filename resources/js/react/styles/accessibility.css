@@ -87,6 +87,23 @@ body.font-extra-large .nav-link {
   font-size: 1.08em !important;
 }
 
+/* Escalar menú de perfil y header de no logueados */
+body.font-large .user-dropdown,
+body.font-large .user-menu-btn,
+body.font-large .user-avatar,
+body.font-large .user-name,
+body.font-large .user-menu {
+  font-size: 1.04em !important;
+}
+
+body.font-extra-large .user-dropdown,
+body.font-extra-large .user-menu-btn,
+body.font-extra-large .user-avatar,
+body.font-extra-large .user-name,
+body.font-extra-large .user-menu {
+  font-size: 1.08em !important;
+}
+
 @media (max-width: 768px) {
   body.font-large .titulos h2,
   body.font-extra-large .titulos h2 {

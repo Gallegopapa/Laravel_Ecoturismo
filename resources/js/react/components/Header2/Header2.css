@@ -229,6 +229,23 @@ header {
   min-width: 220px;
 }
 
+/* Escalado accesibilidad: sobrescribe font-size si está activa */
+body.font-large .user-dropdown,
+body.font-large .user-menu-btn,
+body.font-large .user-avatar,
+body.font-large .user-name,
+body.font-large .user-menu {
+  font-size: 1.04em !important;
+}
+
+body.font-extra-large .user-dropdown,
+body.font-extra-large .user-menu-btn,
+body.font-extra-large .user-avatar,
+body.font-extra-large .user-name,
+body.font-extra-large .user-menu {
+  font-size: 1.08em !important;
+}
+
 .menu-divider {
   height: 1px;
   background: #e0e0e0;

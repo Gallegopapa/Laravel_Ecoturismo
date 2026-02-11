@@ -6,6 +6,7 @@ import Header from "./components/Header/Header";
 import Header2 from "./components/Header2/Header2";
 import Footer from "./components/Footer/Footer";
 import Slider from "./components/slider/Slider";
+import HomePage from "./components/HomePage";
 
 function App() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -38,15 +39,9 @@ function App() {
   return (
     <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
-
       <main className="page-content">
-        <Slider />
-
-        <div className="contenedorcards">
-          {/* cards futuras */}
-        </div>
+        <HomePage loggedIn={isAuthenticated && user} user={user} />
       </main>
-
       <Footer />
     </div>
   );
