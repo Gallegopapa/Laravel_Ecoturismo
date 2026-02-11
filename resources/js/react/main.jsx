@@ -20,7 +20,12 @@ import ParquesYMas from "./places2/parquesYMas/page.jsx";
 import TerritoriosDelCafe from "./places2/territoriosDelCafe/page.jsx";
 import PlaceDetailPage from "./places/detail/page.jsx";
 import CompanyDashboard from "./admin/CompanyDashboard.jsx";
+import AdminPanel from "./admin/AdminPanel.jsx";
+import EcohotelsPage from "./ecohotels/page.jsx";
+import EcohotelDetailPage from "./ecohotels/detail/page.jsx";
 
+console.log('🔥🔥🔥 MAIN.JSX CARGADO - Router creándose - VERSION 2.0 🔥🔥🔥');
+console.log('Rutas disponibles: /', '/lugares', '/ecohoteles', '/admin');
 
 const router = createBrowserRouter([
   {
@@ -48,15 +53,35 @@ const router = createBrowserRouter([
     element: <PlaceDetailPage />,
   },
   {
+    path: "/lugares",
+    element: <PlacesPage />,
+  },
+  {
     path: "/places",
     element: <PlacesPage />,
+  },
+  {
+    path: "/ecohoteles",
+    element: <EcohotelsPage />,
+  },
+  {
+    path: "/ecohoteles/:id",
+    element: <EcohotelDetailPage />,
   },
   {
     path: "/comments",
     element: <CommentsPage />,
   },
   {
+    path: "/comentarios",
+    element: <CommentsPage />,
+  },
+  {
     path: "/comments2",
+    element: <Comments2Page />,
+  },
+  {
+    path: "/comentarios2",
     element: <Comments2Page />,
   },
   {
@@ -70,6 +95,10 @@ const router = createBrowserRouter([
   {
     path: "/company/dashboard",
     element: <CompanyDashboard />,
+  },
+  {
+    path: "/admin",
+    element: <AdminPanel />,
   },
 
   // 🌿 RUTAS DEL MENÚ LUGARES

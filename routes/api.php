@@ -20,6 +20,7 @@ use App\Http\Controllers\API\CompanyReservationController;
 use App\Http\Controllers\API\RejectionReasonController;
 use App\Http\Controllers\API\CompanyPlaceController;
 use App\Http\Controllers\API\CompanyPlaceScheduleController;
+use App\Http\Controllers\API\EcohotelController;
 
 // ============================================
 // RUTAS PÚBLICAS (sin autenticación)
@@ -34,6 +35,10 @@ Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{place}', [PlaceController::class, 'show']);
 Route::get('/places/{place}/available-schedules', [PlaceController::class, 'getAvailableSchedules']);
 Route::get('/places/{place}/schedules', [PlaceScheduleController::class, 'index']);
+
+// Rutas públicas de ecohoteles
+Route::get('/ecohotels', [EcohotelController::class, 'index']);
+Route::get('/ecohotels/{ecohotel}', [EcohotelController::class, 'show']);
 
 // Rutas públicas de categorías
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -137,6 +142,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/places/{place}', [AdminPlaceController::class, 'update']); // POST para FormData con _method=PUT
         Route::put('/places/{place}', [AdminPlaceController::class, 'update']); // Mantener PUT también por compatibilidad
         Route::delete('/places/{place}', [AdminPlaceController::class, 'destroy']);
+        
+        // Rutas de ecohoteles para admin
+        Route::apiResource('ecohotels', EcohotelController::class);
         
         // Rutas de usuarios para admin (mejorado con tipo_usuario y lugares)
         Route::get('/users', [AdminUserController::class, 'index']);

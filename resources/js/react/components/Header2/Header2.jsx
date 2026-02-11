@@ -150,6 +150,8 @@ const Header2 = () => {
             )}
           </div>
 
+          <Link to="/ecohoteles" className="nav-link">Ecohoteles</Link>
+
           <Link to="/contacto" className="nav-link">Contacto</Link>
 
           {/* Botón especial para usuarios empresa */}

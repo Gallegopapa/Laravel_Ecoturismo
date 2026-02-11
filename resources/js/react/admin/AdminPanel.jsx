@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PlacesAdmin from './PlacesAdmin';
+import EcohotelsAdmin from './EcohotelsAdmin';
 import UsersAdmin from './UsersAdmin';
 import ReservationsAdmin from './ReservationsAdmin';
 import Header2 from '../components/Header2/Header2';
@@ -31,6 +32,12 @@ const AdminPanel = () => {
             Lugares
           </button>
           <button
+            className={activeTab === 'ecohotels' ? 'active' : ''}
+            onClick={() => setActiveTab('ecohotels')}
+          >
+            Ecohoteles
+          </button>
+          <button
             className={activeTab === 'users' ? 'active' : ''}
             onClick={() => setActiveTab('users')}
           >
@@ -46,6 +53,7 @@ const AdminPanel = () => {
 
         <div className="admin-content">
           {activeTab === 'places' && <PlacesAdmin />}
+          {activeTab === 'ecohotels' && <EcohotelsAdmin />}
           {activeTab === 'users' && <UsersAdmin />}
           {activeTab === 'reservations' && <ReservationsAdmin />}
         </div>
@@ -56,4 +64,3 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
-

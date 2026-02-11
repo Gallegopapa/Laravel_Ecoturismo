@@ -144,9 +144,13 @@ export default function Login() {
                 required
                 placeholder="tu@email.com o tu_usuario"
               />
-              {errors.login && <p className="error">{Array.isArray(errors.login) ? errors.login[0] : errors.login}</p>}
-              {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
-              {errors.credentials && <p className="error">{Array.isArray(errors.credentials) ? errors.credentials[0] : errors.credentials}</p>}
+              {(errors.login || errors.email || errors.credentials) && (
+                <p className="error">
+                  {Array.isArray(errors.login) ? errors.login[0] : errors.login ||
+                   Array.isArray(errors.email) ? errors.email[0] : errors.email ||
+                   Array.isArray(errors.credentials) ? errors.credentials[0] : errors.credentials}
+                </p>
+              )}
             </>
           )}
 

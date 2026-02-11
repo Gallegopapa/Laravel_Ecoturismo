@@ -41,6 +41,10 @@ import TerritoriosDelCafe from './react/places2/territoriosDelCafe/page.jsx';
 import AdminPanel from './react/admin/AdminPanel.jsx';
 import CompanyDashboard from './react/admin/CompanyDashboard.jsx';
 
+// Ecohoteles
+import EcohotelsPage from './react/ecohotels/page.jsx';
+import EcohotelDetailPage from './react/ecohotels/detail/page.jsx';
+
 // Crear router
 const router = createBrowserRouter([
   {
@@ -82,6 +86,14 @@ const router = createBrowserRouter([
   {
     path: '/lugares/:id',
     element: <PlaceDetailPage />,
+  },
+  {
+    path: '/ecohoteles',
+    element: <EcohotelsPage />,
+  },
+  {
+    path: '/ecohoteles/:id',
+    element: <EcohotelDetailPage />,
   },
   {
     path: '/mapa',

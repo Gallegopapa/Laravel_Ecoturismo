@@ -43,6 +43,7 @@ const Header = () => {
           <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
             <Link to="/comentarios" onClick={closeMobileMenu}>Reseñas</Link>
             <Link to="/lugares" onClick={closeMobileMenu}>Lugares</Link>
+            <Link to="/ecohoteles" onClick={closeMobileMenu}>Ecohoteles</Link>
             <Link to="/contacto" onClick={closeMobileMenu}>Contacto</Link>
             <Link to="/login" onClick={closeMobileMenu}>Login</Link>
           </nav>

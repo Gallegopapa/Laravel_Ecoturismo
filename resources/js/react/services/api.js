@@ -393,6 +393,79 @@ export const adminService = {
     },
   },
   
+  // Ecohoteles
+  ecohotels: {
+    getAll: async () => {
+      const response = await api.get('/admin/ecohotels');
+      return response.data;
+    },
+    getById: async (id) => {
+      const response = await api.get(`/admin/ecohotels/${id}`);
+      return response.data;
+    },
+    create: async (ecohotelData) => {
+      const formData = new FormData();
+      formData.append('name', ecohotelData.name);
+      if (ecohotelData.location) formData.append('location', ecohotelData.location);
+      if (ecohotelData.description) formData.append('description', ecohotelData.description);
+      if (ecohotelData.latitude) formData.append('latitude', ecohotelData.latitude);
+      if (ecohotelData.longitude) formData.append('longitude', ecohotelData.longitude);
+      if (ecohotelData.telefono) formData.append('telefono', ecohotelData.telefono);
+      if (ecohotelData.email) formData.append('email', ecohotelData.email);
+      if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
+      if (ecohotelData.image) formData.append('image', ecohotelData.image);
+      
+      // Agregar categorías como array
+      if (ecohotelData.categories && Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
+        ecohotelData.categories.forEach((categoryId) => {
+          formData.append('categories[]', categoryId);
+        });
+      }
+      
+      const response = await api.post('/admin/ecohotels', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    update: async (id, ecohotelData) => {
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      if (ecohotelData.name) formData.append('name', ecohotelData.name);
+      if (ecohotelData.location) formData.append('location', ecohotelData.location);
+      if (ecohotelData.description) formData.append('description', ecohotelData.description);
+      if (ecohotelData.latitude !== undefined && ecohotelData.latitude !== '') formData.append('latitude', ecohotelData.latitude);
+      if (ecohotelData.longitude !== undefined && ecohotelData.longitude !== '') formData.append('longitude', ecohotelData.longitude);
+      if (ecohotelData.telefono) formData.append('telefono', ecohotelData.telefono);
+      if (ecohotelData.email) formData.append('email', ecohotelData.email);
+      if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
+      if (ecohotelData.image) formData.append('image', ecohotelData.image);
+      
+      // Agregar categorías como array
+      if (ecohotelData.categories !== undefined) {
+        if (Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
+          ecohotelData.categories.forEach((categoryId) => {
+            formData.append('categories[]', categoryId);
+          });
+        } else {
+          formData.append('categories[]', '');
+        }
+      }
+      
+      const response = await api.post(`/admin/ecohotels/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    delete: async (id) => {
+      const response = await api.delete(`/admin/ecohotels/${id}`);
+      return response.data;
+    },
+  },
+  
   // Usuarios
   users: {
     getAll: async () => {
