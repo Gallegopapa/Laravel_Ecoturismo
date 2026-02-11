@@ -257,112 +257,155 @@ const EcohotelsAdmin = () => {
               <button type="button" className="close-btn" onClick={closeModals}>×</button>
             </div>
             <form onSubmit={handleCreate} className="modal-form">
-              <div className="form-group">
-                <label htmlFor="name">Nombre *</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="location">Ubicación</label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="description">Descripción</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="latitude">Latitud</label>
-                  <input
-                    type="number"
-                    id="latitude"
-                    name="latitude"
-                    value={formData.latitude}
-                    onChange={handleInputChange}
-                    step="any"
-                  />
+              
+              {/* SECCIÓN: Información Básica */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">1</div>
+                  Información Básica
                 </div>
                 <div className="form-group">
-                  <label htmlFor="longitude">Longitud</label>
+                  <label htmlFor="name" className="required">Nombre</label>
                   <input
-                    type="number"
-                    id="longitude"
-                    name="longitude"
-                    value={formData.longitude}
+                    placeholder='Ej: Eco Resort La Selva'
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    step="any"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Descripción</label>
+                  <textarea
+                    placeholder='Describe el ecohotel: amenidades, características especiales, experiencias únicas...'
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows="4"
                   />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="telefono">Teléfono</label>
-                <input
-                  type="text"
-                  id="telefono"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleInputChange}
-                />
+              {/* SECCIÓN: Ubicación */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">2</div>
+                  Ubicación
+                </div>
+                <div className="form-group">
+                  <label htmlFor="location">Ubicación</label>
+                  <input
+                    placeholder='Ej: Municipio de Pereira, Risaralda'
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="latitude">Latitud</label>
+                    <input
+                      placeholder='Ej: 4.8133'
+                      type="number"
+                      id="latitude"
+                      name="latitude"
+                      value={formData.latitude}
+                      onChange={handleInputChange}
+                      step="any"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="longitude">Longitud</label>
+                    <input
+                      placeholder='Ej: -75.6963'
+                      type="number"
+                      id="longitude"
+                      name="longitude"
+                      value={formData.longitude}
+                      onChange={handleInputChange}
+                      step="any"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
+              {/* SECCIÓN: Contacto */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">3</div>
+                  Información de Contacto
+                </div>
+                <div className="form-group">
+                  <label htmlFor="telefono">Teléfono</label>
+                  <input
+                    placeholder='Ej: +57 300 1234567'
+                    type="text"
+                    id="telefono"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    placeholder='Ej: contacto@ecohotel.com'
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="sitio_web">Sitio Web</label>
+                  <input
+                    type="url"
+                    id="sitio_web"
+                    name="sitio_web"
+                    value={formData.sitio_web}
+                    onChange={handleInputChange}
+                    placeholder="https://www.ecohotel.com"
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="sitio_web">Sitio Web</label>
-                <input
-                  type="url"
-                  id="sitio_web"
-                  name="sitio_web"
-                  value={formData.sitio_web}
-                  onChange={handleInputChange}
-                  placeholder="https://ejemplo.com"
-                />
+              {/* SECCIÓN: Imagen */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">4</div>
+                  Imagen Representativa
+                </div>
+                <div className="form-group">
+                  <label htmlFor="image">Selecciona una imagen (máx. 5MB)</label>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="image">Imagen (máx. 5MB)</label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Categorías</label>
+              {/* SECCIÓN: Categorías */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">5</div>
+                  Categorías
+                </div>
+                <label style={{ marginBottom: '1rem', display: 'block', color: '#666', fontSize: '0.9rem' }}>
+                  Selecciona las categorías que mejor describen este ecohotel
+                </label>
                 <div className="categories-checkbox">
                   {categories.map((category) => (
                     <label key={category.id} className="checkbox-label">
@@ -377,12 +420,13 @@ const EcohotelsAdmin = () => {
                 </div>
               </div>
 
+              {/* BOTONES DE ACCIÓN */}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={closeModals}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn-primary">
-                  Crear
+                  Crear Ecohotel
                 </button>
               </div>
             </form>
@@ -399,123 +443,160 @@ const EcohotelsAdmin = () => {
               <button type="button" className="close-btn" onClick={closeModals}>×</button>
             </div>
             <form onSubmit={handleEdit} className="modal-form">
-              <div className="form-group">
-                <label htmlFor="edit-name">Nombre *</label>
-                <input
-                  type="text"
-                  id="edit-name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="edit-location">Ubicación</label>
-                <input
-                  type="text"
-                  id="edit-location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="edit-description">Descripción</label>
-                <textarea
-                  id="edit-description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows="4"
-                />
-              </div>
-
-              <div className="form-row">
+              
+              {/* SECCIÓN: Información Básica */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">1</div>
+                  Información Básica
+                </div>
                 <div className="form-group">
-                  <label htmlFor="edit-latitude">Latitud</label>
+                  <label htmlFor="edit-name" className="required">Nombre</label>
                   <input
-                    type="number"
-                    id="edit-latitude"
-                    name="latitude"
-                    value={formData.latitude}
+                    type="text"
+                    id="edit-name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    step="any"
+                    required
                   />
                 </div>
+
                 <div className="form-group">
-                  <label htmlFor="edit-longitude">Longitud</label>
+                  <label htmlFor="edit-description">Descripción</label>
+                  <textarea
+                    id="edit-description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows="4"
+                  />
+                </div>
+              </div>
+
+              {/* SECCIÓN: Ubicación */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">2</div>
+                  Ubicación
+                </div>
+                <div className="form-group">
+                  <label htmlFor="edit-location">Ubicación</label>
                   <input
-                    type="number"
-                    id="edit-longitude"
-                    name="longitude"
-                    value={formData.longitude}
+                    type="text"
+                    id="edit-location"
+                    name="location"
+                    value={formData.location}
                     onChange={handleInputChange}
-                    step="any"
                   />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="edit-latitude">Latitud</label>
+                    <input
+                      type="number"
+                      id="edit-latitude"
+                      name="latitude"
+                      value={formData.latitude}
+                      onChange={handleInputChange}
+                      step="any"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="edit-longitude">Longitud</label>
+                    <input
+                      type="number"
+                      id="edit-longitude"
+                      name="longitude"
+                      value={formData.longitude}
+                      onChange={handleInputChange}
+                      step="any"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="edit-telefono">Teléfono</label>
-                <input
-                  type="text"
-                  id="edit-telefono"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="edit-email">Email</label>
-                <input
-                  type="email"
-                  id="edit-email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="edit-sitio_web">Sitio Web</label>
-                <input
-                  type="url"
-                  id="edit-sitio_web"
-                  name="sitio_web"
-                  value={formData.sitio_web}
-                  onChange={handleInputChange}
-                  placeholder="https://ejemplo.com"
-                />
-              </div>
-
-              {editingEcohotel.image && (
+              {/* SECCIÓN: Contacto */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">3</div>
+                  Información de Contacto
+                </div>
                 <div className="form-group">
-                  <label>Imagen actual</label>
-                  <img
-                    src={editingEcohotel.image}
-                    alt={editingEcohotel.name}
-                    style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover' }}
+                  <label htmlFor="edit-telefono">Teléfono</label>
+                  <input
+                    type="text"
+                    id="edit-telefono"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleInputChange}
                   />
                 </div>
-              )}
 
-              <div className="form-group">
-                <label htmlFor="edit-image">Nueva Imagen (máx. 5MB)</label>
-                <input
-                  type="file"
-                  id="edit-image"
-                  name="image"
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
+                <div className="form-group">
+                  <label htmlFor="edit-email">Email</label>
+                  <input
+                    type="email"
+                    id="edit-email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="edit-sitio_web">Sitio Web</label>
+                  <input
+                    type="url"
+                    id="edit-sitio_web"
+                    name="sitio_web"
+                    value={formData.sitio_web}
+                    onChange={handleInputChange}
+                    placeholder="https://ejemplo.com"
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label>Categorías</label>
+              {/* SECCIÓN: Imagen */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">4</div>
+                  Imagen Representativa
+                </div>
+                {editingEcohotel.image && (
+                  <div className="image-preview">
+                    <label style={{ display: 'block', marginBottom: '0.75rem', color: '#2c5f2d', fontWeight: '600', fontSize: '0.9rem' }}>
+                      Imagen Actual
+                    </label>
+                    <img
+                      src={editingEcohotel.image}
+                      alt={editingEcohotel.name}
+                    />
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label htmlFor="edit-image">Cambiar Imagen (máx. 5MB)</label>
+                  <input
+                    type="file"
+                    id="edit-image"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+
+              {/* SECCIÓN: Categorías */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">5</div>
+                  Categorías
+                </div>
+                <label style={{ marginBottom: '1rem', display: 'block', color: '#666', fontSize: '0.9rem' }}>
+                  Selecciona las categorías que mejor describen este ecohotel
+                </label>
                 <div className="categories-checkbox">
                   {categories.map((category) => (
                     <label key={category.id} className="checkbox-label">
@@ -530,12 +611,13 @@ const EcohotelsAdmin = () => {
                 </div>
               </div>
 
+              {/* BOTONES DE ACCIÓN */}
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={closeModals}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn-primary">
-                  Actualizar
+                  ✓ Actualizar
                 </button>
               </div>
             </form>
@@ -556,45 +638,72 @@ const EcohotelsAdmin = () => {
                 <img
                   src={viewingEcohotel.image}
                   alt={viewingEcohotel.name}
-                  className="detail-image"
+                  className="modal-view .detail-image"
                 />
               )}
               <div className="detail-item">
-                <strong>Nombre:</strong> {viewingEcohotel.name}
+                <strong>Nombre</strong>
+                <p>{viewingEcohotel.name}</p>
               </div>
               <div className="detail-item">
-                <strong>Ubicación:</strong> {viewingEcohotel.location || 'N/A'}
+                <strong>Ubicación</strong>
+                <p>{viewingEcohotel.location || 'No especificada'}</p>
               </div>
               <div className="detail-item">
-                <strong>Descripción:</strong> {viewingEcohotel.description || 'N/A'}
+                <strong>Descripción</strong>
+                <p>{viewingEcohotel.description || 'No disponible'}</p>
               </div>
               <div className="detail-item">
-                <strong>Teléfono:</strong> {viewingEcohotel.telefono || 'N/A'}
+                <strong>Teléfono</strong>
+                <p>{viewingEcohotel.telefono || 'No disponible'}</p>
               </div>
               <div className="detail-item">
-                <strong>Email:</strong> {viewingEcohotel.email || 'N/A'}
+                <strong>Email</strong>
+                <p>{viewingEcohotel.email || 'No disponible'}</p>
               </div>
               <div className="detail-item">
-                <strong>Sitio Web:</strong>{' '}
+                <strong>Sitio Web</strong>
                 {viewingEcohotel.sitio_web ? (
                   <a href={viewingEcohotel.sitio_web} target="_blank" rel="noopener noreferrer">
                     {viewingEcohotel.sitio_web}
                   </a>
                 ) : (
-                  'N/A'
+                  <p>No disponible</p>
                 )}
               </div>
               <div className="detail-item">
-                <strong>Coordenadas:</strong>{' '}
-                {viewingEcohotel.latitude && viewingEcohotel.longitude
-                  ? `${viewingEcohotel.latitude}, ${viewingEcohotel.longitude}`
-                  : 'N/A'}
+                <strong>Coordenadas</strong>
+                <p>
+                  {viewingEcohotel.latitude && viewingEcohotel.longitude
+                    ? `${viewingEcohotel.latitude}, ${viewingEcohotel.longitude}`
+                    : 'No especificadas'}
+                </p>
               </div>
               <div className="detail-item">
-                <strong>Categorías:</strong>{' '}
-                {viewingEcohotel.categories && viewingEcohotel.categories.length > 0
-                  ? viewingEcohotel.categories.map((cat) => cat.name).join(', ')
-                  : 'Sin categorías'}
+                <strong>Categorías</strong>
+                {viewingEcohotel.categories && viewingEcohotel.categories.length > 0 ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    {viewingEcohotel.categories.map((cat) => (
+                      <span
+                        key={cat.id}
+                        style={{
+                          display: 'inline-block',
+                          padding: '0.4rem 0.8rem',
+                          background: '#e8f5e9',
+                          color: '#2c5f2d',
+                          borderRadius: '20px',
+                          fontSize: '0.85rem',
+                          fontWeight: '500',
+                          border: '1px solid #c8e6c9'
+                        }}
+                      >
+                        {cat.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Sin categorías</p>
+                )}
               </div>
             </div>
           </div>

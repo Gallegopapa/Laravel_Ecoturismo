@@ -62,7 +62,7 @@ const EcohotelsPage = () => {
       <div className="page-layout">
         {isAuthenticated ? <Header2 /> : <Header />}
         <div className="page-content">
-          <div className="loading">Cargando ecohoteles...</div>
+          <div className="loading">Cargando Ecohoteles...</div>
         </div>
         <Footer />
       </div>
