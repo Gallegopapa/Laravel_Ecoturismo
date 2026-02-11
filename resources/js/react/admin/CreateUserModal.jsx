@@ -258,6 +258,23 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                         
                         {selectedPlace && (
                           <div className="place-options">
+<<<<<<< Updated upstream
+=======
+                            <select
+                              value={selectedPlace.rol}
+                              onChange={(e) => handlePlaceRoleChange(place.id, e.target.value)}
+                              disabled={loading}
+                            >
+                              <option value="gerente">Gerente</option>
+                              <option value="recepcionista">Recepcionista</option>
+                              <option value="admin">Admin del Lugar</option>
+                            </select>
+
+                            <small className="helper-text">
+                              Rol: define permisos dentro del lugar (no es admin del sistema).
+                            </small>
+
+>>>>>>> Stashed changes
                             <label className="principal-label">
                               <input
                                 type="checkbox"

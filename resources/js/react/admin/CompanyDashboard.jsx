@@ -24,6 +24,7 @@ const CompanyDashboard = () => {
     hora_fin: '17:00',
     activo: true,
   });
+<<<<<<< Updated upstream
   const [placeForm, setPlaceForm] = useState({
     name: '',
     location: '',
@@ -148,6 +149,8 @@ const CompanyDashboard = () => {
     const finalImage = imagenSubida || imagenLocal || apiImage || '';
     return normalizeImageUrl(finalImage);
   };
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     loadReservations();
@@ -165,6 +168,7 @@ const CompanyDashboard = () => {
     }
   }, [selectedPlaceId]);
 
+<<<<<<< Updated upstream
   useEffect(() => {
     if (selectedPlaceId) {
       loadPlaceDetails(selectedPlaceId);
@@ -185,6 +189,8 @@ const CompanyDashboard = () => {
     }
   }, [selectedPlaceId]);
 
+=======
+>>>>>>> Stashed changes
   const loadReservations = async () => {
     try {
       setLoading(true);
@@ -224,18 +230,25 @@ const CompanyDashboard = () => {
   const loadPlacesManaged = async () => {
     try {
       const data = await companyService.places.getAll();
+<<<<<<< Updated upstream
       const list = Array.isArray(data) ? data : [];
       setPlacesManaged(list);
       if (list.length > 0) {
         setSelectedPlaceId(String(list[0].id));
       } else {
         setSelectedPlaceId('');
+=======
+      setPlacesManaged(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length > 0) {
+        setSelectedPlaceId(String(data[0].id));
+>>>>>>> Stashed changes
       }
     } catch (error) {
       console.error('Error cargando lugares gestionados:', error);
     }
   };
 
+<<<<<<< Updated upstream
   const loadPlaceDetails = async (placeId) => {
     try {
       setPlaceLoading(true);
@@ -262,6 +275,8 @@ const CompanyDashboard = () => {
     }
   };
 
+=======
+>>>>>>> Stashed changes
   const normalizeTime = (value) => {
     if (!value) return '';
     const timeStr = String(value);
@@ -365,6 +380,7 @@ const CompanyDashboard = () => {
     handleScheduleChange(scheduleId, 'hora_fin', '23:59');
   };
 
+<<<<<<< Updated upstream
   const handlePlaceChange = (field, value) => {
     setPlaceForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -422,6 +438,8 @@ const CompanyDashboard = () => {
     }
   };
 
+=======
+>>>>>>> Stashed changes
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setMessageType(type);
@@ -576,6 +594,159 @@ const CompanyDashboard = () => {
         >
           Rechazadas
         </button>
+      </div>
+
+      <div className="schedule-manager">
+        <div className="schedule-header">
+          <h2>Horarios del lugar</h2>
+          <div className="schedule-controls">
+            <label>
+              Lugar
+              <select
+                value={selectedPlaceId}
+                onChange={(event) => setSelectedPlaceId(event.target.value)}
+                disabled={scheduleLoading}
+              >
+                {placesManaged.length === 0 && <option value="">Sin lugares</option>}
+                {placesManaged.map((place) => (
+                  <option key={place.id} value={place.id}>
+                    {place.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        {scheduleLoading ? (
+          <p>Cargando horarios...</p>
+        ) : schedules.length === 0 ? (
+          <p>No hay horarios configurados para este lugar.</p>
+        ) : (
+          <div className="schedule-list">
+            {schedules.map((schedule) => (
+              <div key={schedule.id} className={`schedule-row ${schedule.activo ? '' : 'inactive'}`}>
+                <select
+                  value={schedule.dia_semana}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'dia_semana', event.target.value)}
+                  disabled={scheduleLoading}
+                >
+                  <option value="lunes">Lunes</option>
+                  <option value="martes">Martes</option>
+                  <option value="miercoles">Miercoles</option>
+                  <option value="jueves">Jueves</option>
+                  <option value="viernes">Viernes</option>
+                  <option value="sabado">Sabado</option>
+                  <option value="domingo">Domingo</option>
+                </select>
+                <input
+                  type="time"
+                  value={schedule.hora_inicio}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'hora_inicio', event.target.value)}
+                  disabled={scheduleLoading}
+                />
+                <input
+                  type="time"
+                  value={schedule.hora_fin}
+                  onChange={(event) => handleScheduleChange(schedule.id, 'hora_fin', event.target.value)}
+                  disabled={scheduleLoading}
+                />
+                <label className="schedule-active">
+                  <input
+                    type="checkbox"
+                    checked={!!schedule.activo}
+                    onChange={(event) => handleScheduleChange(schedule.id, 'activo', event.target.checked)}
+                    disabled={scheduleLoading}
+                  />
+                  Activo
+                </label>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => handleAllDay(schedule.id)}
+                  disabled={scheduleLoading}
+                >
+                  Todo el dia
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => handleSaveSchedule(schedule)}
+                  disabled={scheduleLoading || !schedule._dirty}
+                >
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteSchedule(schedule.id)}
+                  disabled={scheduleLoading}
+                >
+                  Eliminar
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="schedule-new">
+          <h3>Agregar horario</h3>
+          <div className="schedule-row">
+            <select
+              value={newSchedule.dia_semana}
+              onChange={(event) => setNewSchedule({ ...newSchedule, dia_semana: event.target.value })}
+              disabled={scheduleLoading}
+            >
+              <option value="lunes">Lunes</option>
+              <option value="martes">Martes</option>
+              <option value="miercoles">Miercoles</option>
+              <option value="jueves">Jueves</option>
+              <option value="viernes">Viernes</option>
+              <option value="sabado">Sabado</option>
+              <option value="domingo">Domingo</option>
+            </select>
+            <input
+              type="time"
+              value={newSchedule.hora_inicio}
+              onChange={(event) => setNewSchedule({ ...newSchedule, hora_inicio: event.target.value })}
+              disabled={scheduleLoading}
+            />
+            <input
+              type="time"
+              value={newSchedule.hora_fin}
+              onChange={(event) => setNewSchedule({ ...newSchedule, hora_fin: event.target.value })}
+              disabled={scheduleLoading}
+            />
+            <label className="schedule-active">
+              <input
+                type="checkbox"
+                checked={!!newSchedule.activo}
+                onChange={(event) => setNewSchedule({ ...newSchedule, activo: event.target.checked })}
+                disabled={scheduleLoading}
+              />
+              Activo
+            </label>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setNewSchedule({ ...newSchedule, hora_inicio: '00:00', hora_fin: '23:59' })}
+              disabled={scheduleLoading}
+            >
+              Todo el dia
+            </button>
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={handleAddSchedule}
+              disabled={scheduleLoading}
+            >
+              Agregar
+            </button>
+          </div>
+          <p className="schedule-hint">
+            Para cerrar un dia, desactiva el horario o eliminelo. Para abrir todo el dia usa 00:00 - 23:59.
+          </p>
+        </div>
       </div>
 
       {/* Reservations List */}
