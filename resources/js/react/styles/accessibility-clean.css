@@ -17,22 +17,96 @@
 
 /* ============== TAMAÑO DE TEXTO ============== */
 
-/* Aumento gradual: +8% */
+/* Aumento sutil: +1% */
+/* Aumento moderado: +4% */
 body.font-large {
-  font-size: 108% !important;
+  font-size: 104% !important;
 }
 
-body.font-large * {
-  font-size: 108% !important;
-}
-
-/* Aumento mayor pero gradual: +15% */
+/* Aumento mayor moderado: +8% */
 body.font-extra-large {
-  font-size: 115% !important;
+  font-size: 108% !important;
 }
 
-body.font-extra-large * {
-  font-size: 115% !important;
+/* Restablecer crecimiento selectivo para elementos interactivos y contenido
+   (botones, enlaces, filtros, tarjetas) pero sin tocar los títulos del header
+   o los H1 principales. */
+body.font-large button,
+body.font-large .btn,
+body.font-large a,
+body.font-large .navbar a,
+body.font-large .filtro-btn,
+body.font-large .ubicacion,
+body.font-large .lugar-info h3,
+body.font-large .lugar-info p,
+body.font-large .lugar-card h3,
+body.font-large .lugar-card p,
+body.font-large .category-tag {
+  font-size: 1.02em !important;
+}
+
+body.font-extra-large button,
+body.font-extra-large .btn,
+body.font-extra-large a,
+body.font-extra-large .navbar a,
+body.font-extra-large .filtro-btn,
+body.font-extra-large .ubicacion,
+body.font-extra-large .lugar-info h3,
+body.font-extra-large .lugar-info p,
+body.font-extra-large .lugar-card h3,
+body.font-extra-large .lugar-card p,
+body.font-extra-large .category-tag {
+  font-size: 1.04em !important;
+}
+
+/* Hacer que elementos del header escalen también (enlaces, título breve) */
+body.font-large .titulos h2,
+body.font-large .navbar a,
+body.font-large .nav-link {
+  font-size: 1.04em !important;
+}
+
+body.font-extra-large .titulos h2,
+body.font-extra-large .navbar a,
+body.font-extra-large .nav-link {
+  font-size: 1.08em !important;
+}
+
+@media (max-width: 768px) {
+  body.font-large .titulos h2,
+  body.font-extra-large .titulos h2 {
+    font-size: 1.04em !important;
+  }
+
+  body.font-large .navbar a,
+  body.font-extra-large .navbar a,
+  body.font-large .nav-link,
+  body.font-extra-large .nav-link {
+    font-size: 1.04em !important;
+  }
+}
+
+/* No excepciones forzadas aquí — dejar que las reglas de página controlen títulos
+   Esto preserva el layout original y aplica un aumento moderado global. */
+
+/* Asegurar que el título del header y links de navegación no se reduzcan
+   y que el título principal de detalle aumente ligeramente */
+body.font-large .titulos h2,
+body.font-extra-large .titulos h2 {
+  font-size: 18px !important;
+}
+
+body.font-large .navbar a,
+body.font-extra-large .navbar a {
+  font-size: 16px !important;
+}
+
+body.font-large .detail-header h1 {
+  font-size: 2.6rem !important;
+}
+
+body.font-extra-large .detail-header h1 {
+  font-size: 2.7rem !important;
 }
 
 /* ============== ALTO CONTRASTE ============== */

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
-import { useLanguage } from '../../contexts/LanguageContext';
 import { useTranslation } from '../../i18n/useTranslation';
 import './AccessibilityPanel.css';
 
@@ -41,8 +40,6 @@ const AccessibilityPanel = () => {
     toggleReduceMotion,
     resetSettings
   } = useAccessibility();
-  
-  const { language, changeLanguage } = useLanguage();
 
   // Referencias para manejo de focus
   const buttonRef = useRef(null);
@@ -410,29 +407,6 @@ const AccessibilityPanel = () => {
               </div>
               {renderStatusBadge(reduceMotion)}
             </button>
-          </section>
-
-          <hr className="panel-divider" />
-          <section className="panel-section">
-            <h3 className="section-title">{t('language')}</h3>
-            <div className="language-selector">
-              <button
-                className={`language-button ${language === 'es' ? 'active' : ''}`}
-                onClick={() => changeLanguage('es')}
-                aria-pressed={language === 'es'}
-                aria-label={t('spanish')}
-              >
-                🇪🇸 {t('spanish')}
-              </button>
-              <button
-                className={`language-button ${language === 'en' ? 'active' : ''}`}
-                onClick={() => changeLanguage('en')}
-                aria-pressed={language === 'en'}
-                aria-label={t('english')}
-              >
-                🇬🇧 {t('english')}
-              </button>
-            </div>
           </section>
 
           <hr className="panel-divider" />

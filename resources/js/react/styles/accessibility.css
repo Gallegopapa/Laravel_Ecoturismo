@@ -24,43 +24,127 @@
    ============================================ */
 
 body.font-large {
-  font-size: 112.5% !important;
+  font-size: 101% !important;
 }
 
-body.font-large p,
-body.font-large h1,
-body.font-large h2,
-body.font-large h3,
-body.font-large h4,
-body.font-large h5,
-body.font-large h6,
-body.font-large span,
-body.font-large div,
-body.font-large button,
-body.font-large a,
-body.font-large li,
-body.font-large td {
-  font-size: 112.5% !important;
+
+body.font-extra-large {
+  font-size: 102% !important;
+}
+
+/* Nota: no forzar tamaños por elemento aquí — dejar que los rem y reglas específicas prevalezcan */
+
+/* Mantener solo aumentos globales y evitar overrides que rompan layout */
+body.font-large {
+  font-size: 104% !important;
 }
 
 body.font-extra-large {
-  font-size: 125% !important;
+  font-size: 108% !important;
 }
 
-body.font-extra-large p,
-body.font-extra-large h1,
-body.font-extra-large h2,
-body.font-extra-large h3,
-body.font-extra-large h4,
-body.font-extra-large h5,
-body.font-extra-large h6,
-body.font-extra-large span,
-body.font-extra-large div,
+/* Restablecer crecimiento selectivo para elementos interactivos y contenido
+   (botones, enlaces, filtros, tarjetas) pero sin tocar los títulos del header
+   o los H1 principales. */
+body.font-large button,
+body.font-large .btn,
+body.font-large a,
+body.font-large .navbar a,
+body.font-large .filtro-btn,
+body.font-large .ubicacion,
+body.font-large .lugar-info h3,
+body.font-large .lugar-info p,
+body.font-large .lugar-card h3,
+body.font-large .lugar-card p,
+body.font-large .category-tag {
+  font-size: 1.02em !important;
+}
+
 body.font-extra-large button,
+body.font-extra-large .btn,
 body.font-extra-large a,
-body.font-extra-large li,
-body.font-extra-large td {
-  font-size: 125% !important;
+body.font-extra-large .navbar a,
+body.font-extra-large .filtro-btn,
+body.font-extra-large .ubicacion,
+body.font-extra-large .lugar-info h3,
+body.font-extra-large .lugar-info p,
+body.font-extra-large .lugar-card h3,
+body.font-extra-large .lugar-card p,
+body.font-extra-large .category-tag {
+  font-size: 1.04em !important;
+}
+
+/* Escalar header y enlaces cuando se activa accesibilidad */
+body.font-large .titulos h2,
+body.font-large .navbar a,
+body.font-large .nav-link {
+  font-size: 1.04em !important;
+}
+
+body.font-extra-large .titulos h2,
+body.font-extra-large .navbar a,
+body.font-extra-large .nav-link {
+  font-size: 1.08em !important;
+}
+
+@media (max-width: 768px) {
+  body.font-large .titulos h2,
+  body.font-extra-large .titulos h2 {
+    font-size: 1.04em !important;
+  }
+
+  body.font-large .navbar a,
+  body.font-extra-large .navbar a,
+  body.font-large .nav-link,
+  body.font-extra-large .nav-link {
+    font-size: 1.04em !important;
+  }
+}
+
+/* ===================================================
+   Forzar escalado proporcional del título del header
+   usando las medidas base definidas en Header.css.
+   Esto evita que em/rems menores que el px original
+   reduzcan el tamaño del h2.
+   =================================================== */
+body.font-large .titulos h2 {
+  font-size: calc(18px * 1.04) !important;
+}
+
+body.font-extra-large .titulos h2 {
+  font-size: calc(18px * 1.08) !important;
+}
+
+/* Tablet breakpoint (Header.css usa 16px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  body.font-large .titulos h2 {
+    font-size: calc(16px * 1.04) !important;
+  }
+  body.font-extra-large .titulos h2 {
+    font-size: calc(16px * 1.08) !important;
+  }
+  body.font-large .navbar a {
+    font-size: calc(14px * 1.04) !important;
+  }
+  body.font-extra-large .navbar a {
+    font-size: calc(14px * 1.08) !important;
+  }
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  body.font-large .titulos h2 {
+    font-size: calc(16px * 1.04) !important;
+  }
+  body.font-extra-large .titulos h2 {
+    font-size: calc(16px * 1.08) !important;
+  }
+  body.font-large .navbar a {
+    font-size: calc(16px * 1.04) !important;
+  }
+  body.font-extra-large .navbar a {
+    font-size: calc(16px * 1.08) !important;
+  }
 }
 
 /* ============================================
@@ -284,6 +368,111 @@ body.line-spacing-relaxed * {
 body.line-spacing-very-relaxed,
 body.line-spacing-very-relaxed * {
   line-height: 2 !important;
+}
+
+/* ============================================
+   REGLAS GENERALES PARA EVITAR DESCUADRES
+   Cuando el usuario aumenta la fuente, algunos
+   elementos con ancho fijo pueden desbordarse.
+   Añadimos reglas suaves para permitir reflujo y
+   evitar que el layout se rompa en tarjetas/headers
+   ============================================ */
+
+body.font-large .card,
+body.font-extra-large .card,
+body.font-large .place-card,
+body.font-extra-large .place-card,
+body.font-large .card *,
+body.font-extra-large .card *,
+body.font-large .place-card *,
+body.font-extra-large .place-card * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Asegurar imágenes y medias no rompan el layout */
+body.font-large img,
+body.font-extra-large img,
+body.font-large video,
+body.font-extra-large video {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Forzar que contenedores flex puedan hacer wrap */
+body.font-large .flex-row,
+body.font-extra-large .flex-row,
+body.font-large .cards-container,
+body.font-extra-large .cards-container {
+  flex-wrap: wrap !important;
+}
+
+/* ============================================
+   AJUSTES ESPECÍFICOS PARA HEADER Y BOTONES EN TARJETAS
+   Evitar que el header se solape y que botones absolutos
+   dentro de .card se salgan cuando la fuente aumenta.
+   ============================================ */
+
+body.font-large header,
+body.font-extra-large header {
+  min-height: 96px !important;
+}
+
+body.font-large .header-container,
+body.font-extra-large .header-container {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+
+body.font-large .titulos h2,
+body.font-extra-large .titulos h2 {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.1 !important;
+}
+
+/* Permitir que el navbar haga wrap en casos de aumento de fuente */
+body.font-large .navbar,
+body.font-extra-large .navbar {
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+body.font-large .navbar a,
+body.font-extra-large .navbar a {
+  white-space: normal !important;
+  padding: 6px 10px !important;
+  font-size: 1rem !important;
+}
+
+/* Ajustes para tarjetas: permitir reflujo y dar espacio inferior */
+body.font-large .card,
+body.font-extra-large .card {
+  height: auto !important;
+  min-height: 420px !important;
+  padding-bottom: 80px !important;
+}
+
+/* Botones absolutos: permitir que el texto haga wrap y no desborde */
+body.font-large .card .ubicacion,
+body.font-extra-large .card .ubicacion,
+body.font-large .card .ubication-button,
+body.font-extra-large .card .ubication-button,
+body.font-large .card .favorito,
+body.font-extra-large .card .favorito {
+  max-width: 46% !important;
+  white-space: normal !important;
+  padding: 6px 10px !important;
+  box-sizing: border-box !important;
+}
+
+body.font-large .card p,
+body.font-extra-large .card p {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
 }
 
 /* ============================================
