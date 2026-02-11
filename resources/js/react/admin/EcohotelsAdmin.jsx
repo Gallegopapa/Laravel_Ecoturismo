@@ -397,7 +397,7 @@ const EcohotelsAdmin = () => {
                 </div>
               </div>
 
-              {/* SECCIÓN: Categorías */}
+              {/* SECCIÓN: Categorías
               <div className="form-section">
                 <div className="form-section-title">
                   <div className="form-section-icon">5</div>
@@ -418,7 +418,7 @@ const EcohotelsAdmin = () => {
                     </label>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* BOTONES DE ACCIÓN */}
               <div className="modal-actions">
