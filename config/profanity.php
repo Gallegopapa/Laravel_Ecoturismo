@@ -5,20 +5,19 @@ return [
         // English
         'fuck', 'fucks', 'fucked', 'fucking', 'shit', 'shitty', 'shits', 'bitch', 'bitches', 'bastard', 'asshole', 'assholes', 'dick', 'crap', 'damn',
 
-        // Spanish (ampliada)
-        'puta', 'puto', 'putas', 'putos', 'puta madre', 'hijo de puta', 'hdp',
-        'mierda', 'mierdas', 'mierdero', 'mierd*',
+        // Spanish - Solo palabras exactas y puntuales
+        'puta', 'puto', 'putas', 'putos', 'hijo de puta', 'hdp',
+        'mierda', 'mierdas', 'mierdero',
         'joder', 'jodida', 'jodido', 'jodiendo', 'jodete', 'jódete',
-        'cabron', 'cabrón', 'cabrons', 'cabróna', 'cabrona',
+        'cabron', 'cabrón', 'cabrona',
         'gilipollas', 'gilipolla', 'gilipollez',
         'pendejo', 'pendeja', 'pendejos', 'pendejas',
-        'coño', 'coños', 'coñazo', 'coñ*', 'cojones', 'cojon', 'cojones', 'marica', 'marika', 'mk', 'guevon', 'huevon', 'malparido', 'malparida', 'malparidos', 'malparidas', 'pirobo', 'piroba', 'pirobas', 'pirobos', 
-        'zorra', 'zorro', 'zorras', 'zorros', 'zorr*',
+        'coño', 'coños', 'coñazo', 'cojones', 'cojon', 'marica', 'marika', 'mk', 'guevon', 'huevon', 'malparido', 'malparida', 'malparidos', 'malparidas', 'pirobo', 'piroba', 'pirobas', 'pirobos',
+        'zorra', 'zorro', 'zorras', 'zorros',
         'idiota', 'idiotas', 'imbecil', 'imbécil', 'imbeciles', 'tonto', 'tontos', 'tarado', 'tarados',
-        'puta\s+madre',
 
         // Otros insultos comunes
-        'perra', 'culero', 'culera', 'culero', 'golfa', 'putón', 'puton', 'maricon', 'maricón', 'maricona', 'maricones', 'mariconas',
+        'perra', 'culero', 'culera', 'golfa', 'putón', 'puton', 'maricon', 'maricón', 'maricona', 'maricones', 'mariconas',
         'chinga', 'chingada', 'chingar', 'chingao', 'chingado', 'chingados',
         'sidoso', 'sidosa'
     ],

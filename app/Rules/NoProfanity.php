@@ -62,20 +62,10 @@ class NoProfanity implements Rule
             $regex = '/(' . $pattern . ')/iu';
         }
 
-        // Primera comprobación sobre el texto normalizado (con espacios)
+        // Comprobación: solo bloquear palabras completas que coincidan exactamente
+        // La normalización inicial ya maneja evasiones como "p.u.t.a" => "p u t a"
         if (preg_match($regex, ' ' . $text . ' ')) {
             return false;
-        }
-
-        // Comprobación adicional para evasiones que insertan separadores
-        // entre letras (p.u.t.a => p u t a). Colapsamos espacios y
-        // comprobamos subcadenas.
-        $collapsed = preg_replace('/\s+/u', '', $text);
-        foreach ($normalizedWords as $w) {
-            $wCollapsed = preg_replace('/\s+/u', '', $w);
-            if ($wCollapsed !== '' && mb_stripos($collapsed, $wCollapsed) !== false) {
-                return false;
-            }
         }
 
         return true;
