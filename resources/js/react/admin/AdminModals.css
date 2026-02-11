@@ -9,8 +9,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10001;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -274,6 +275,18 @@
   font-size: 0.8rem;
   color: #6c6c68;
   margin: 4px 0 0 24px;
+}
+
+.readonly-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 0.95rem;
 }
 
 .place-options select {

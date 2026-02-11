@@ -159,7 +159,7 @@ const Header2 = () => {
               className="nav-link company-dashboard-btn"
               onClick={handleLinkClick}
             >
-              📊 Ver Mis Reservas
+              🧭 Panel de Empresa
             </Link>
           )}
 

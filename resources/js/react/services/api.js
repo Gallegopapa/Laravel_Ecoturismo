@@ -373,6 +373,24 @@ export const adminService = {
       const response = await api.delete(`/admin/places/${id}`);
       return response.data;
     },
+    schedules: {
+      getAll: async (placeId) => {
+        const response = await api.get(`/admin/places/${placeId}/schedules`);
+        return response.data;
+      },
+      create: async (placeId, payload) => {
+        const response = await api.post(`/admin/places/${placeId}/schedules`, payload);
+        return response.data;
+      },
+      update: async (placeId, scheduleId, payload) => {
+        const response = await api.put(`/admin/places/${placeId}/schedules/${scheduleId}`, payload);
+        return response.data;
+      },
+      delete: async (placeId, scheduleId) => {
+        const response = await api.delete(`/admin/places/${placeId}/schedules/${scheduleId}`);
+        return response.data;
+      },
+    },
   },
   
   // Usuarios
@@ -405,6 +423,34 @@ export const companyService = {
   places: {
     getAll: async () => {
       const response = await api.get('/company/places');
+      return response.data;
+    },
+    getById: async (id) => {
+      const response = await api.get(`/company/places/${id}`);
+      return response.data;
+    },
+    update: async (id, placeData) => {
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      formData.append('name', placeData.name);
+      if (placeData.location !== undefined) formData.append('location', placeData.location);
+      if (placeData.description !== undefined) formData.append('description', placeData.description);
+      if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
+      if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
+      if (placeData.telefono !== undefined) formData.append('telefono', placeData.telefono);
+      if (placeData.email !== undefined) formData.append('email', placeData.email);
+      if (placeData.sitio_web !== undefined) formData.append('sitio_web', placeData.sitio_web);
+      if (placeData.image) formData.append('image', placeData.image);
+
+      const response = await api.post(`/company/places/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    delete: async (id) => {
+      const response = await api.delete(`/company/places/${id}`);
       return response.data;
     },
     schedules: {

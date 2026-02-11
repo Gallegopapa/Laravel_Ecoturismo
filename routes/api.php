@@ -107,6 +107,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('company')->group(function () {
         // Lugares gestionados por la empresa
         Route::get('/places', [CompanyPlaceController::class, 'index']);
+        Route::get('/places/{place}', [CompanyPlaceController::class, 'show']);
+        Route::post('/places/{place}', [CompanyPlaceController::class, 'update']); // POST para FormData con _method=PUT
+        Route::put('/places/{place}', [CompanyPlaceController::class, 'update']);
+        Route::delete('/places/{place}', [CompanyPlaceController::class, 'destroy']);
         Route::get('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'index']);
         Route::post('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'store']);
         Route::put('/places/{place}/schedules/{schedule}', [CompanyPlaceScheduleController::class, 'update']);

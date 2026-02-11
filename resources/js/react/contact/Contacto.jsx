@@ -202,48 +202,52 @@ export default function Contact() {
                 <input
                   type="text"
                   name="name"
-                  className="input"
+                  className={`input ${errors.name ? 'input-error' : ''}`}
                   value={formData.name}
                   onChange={handleChange}
                 />
                 <label>Nombre de usuario</label>
                 <span>Nombre de usuario</span>
               </div>
+              {errors.name && <p className="field-error">{errors.name}</p>}
 
               <div className="input-container focus">
                 <input
                   type="email"
                   name="email"
-                  className="input"
+                  className={`input ${errors.email ? 'input-error' : ''}`}
                   value={formData.email}
                   onChange={handleChange}
                 />
                 <label>Correo</label>
                 <span>Correo</span>
               </div>
+              {errors.email && <p className="field-error">{errors.email}</p>}
 
               <div className="input-container focus">
                 <input
                   type="tel"
                   name="phone"
-                  className="input"
+                  className={`input ${errors.phone ? 'input-error' : ''}`}
                   value={formData.phone}
                   onChange={handleChange}
                 />
                 <label>Teléfono</label>
                 <span>Teléfono</span>
               </div>
+              {errors.phone && <p className="field-error">{errors.phone}</p>}
 
               <div className="input-container textarea focus">
                 <textarea
                   name="message"
-                  className="input"
+                  className={`input ${errors.message ? 'input-error' : ''}`}
                   value={formData.message}
                   onChange={handleChange}
                 ></textarea>
                 <label>Mensaje</label>
                 <span>Mensaje</span>
               </div>
+              {errors.message && <p className="field-error">{errors.message}</p>}
 
               <div className={`char-counter ${formData.message.length > 500 ? 'error' : ''}`}>
                 {formData.message.length}/500
@@ -261,8 +265,8 @@ export default function Contact() {
               </div>
 
               {successMsg && (
-                <p style={{ color: "#4ade80", marginTop: "10px", fontWeight: "bold" }}>
-                  {successMsg}
+                <p style={{ color: "#2563eb", marginTop: "10px", fontWeight: "bold", backgroundColor: "#dbeafe", padding: "12px", borderRadius: "6px", border: "1px solid #93c5fd" }}>
+                  ✓ {successMsg}
                 </p>
               )}
 

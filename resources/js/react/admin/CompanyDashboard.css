@@ -112,6 +112,87 @@
   overflow-x: auto;
 }
 
+.place-manager {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.place-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.place-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.place-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.place-controls select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  min-width: 220px;
+}
+
+.place-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.place-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.place-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.place-form-grid input,
+.place-form-grid textarea {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-family: inherit;
+}
+
+.place-form-full {
+  grid-column: 1 / -1;
+}
+
+.place-image-preview img {
+  max-width: 240px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.place-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .schedule-manager {
   margin-top: 30px;
   padding: 20px;

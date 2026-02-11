@@ -9,6 +9,21 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+@media (max-width: 768px) {
+  .admin-container {
+    margin: 80px 0 100px 0;
+    padding: 12px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-container {
+    margin: 70px 0 80px 0;
+    padding: 8px;
+  }
+}
+
 .admin-header {
   margin-bottom: 20px;
 }
@@ -84,6 +99,22 @@
   background: #f9f9f9;
   padding: 20px;
   border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .admin-form-section,
+  .admin-list-section {
+    margin-bottom: 50px !important;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-form-section,
+  .admin-list-section {
+    margin-bottom: 30px !important;
+    padding: 10px;
+  }
 }
 
 .admin-form-section h2,
@@ -173,12 +204,26 @@
   background: #5a5a56;
 }
 
+.btn-edit,
+.btn-delete,
+.btn-schedule {
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .btn-edit {
   background: #0078d4;
   color: white;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  margin: 0;
 }
 
 .btn-edit:hover {
@@ -188,13 +233,21 @@
 .btn-delete {
   background: #d7263d;
   color: white;
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  margin: 0;
 }
 
 .btn-delete:hover {
   background: #b81e32;
+}
+
+.btn-schedule {
+  background: #28a745;
+  color: white;
+  gap: 4px;
+}
+
+.btn-schedule:hover {
+  background: #218838;
+  transform: translateY(-1px);
 }
 
 /* Filtros para reservas */
@@ -296,8 +349,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 10001;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .contact-modal {
@@ -482,6 +536,19 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-form-grid {
+    gap: 10px;
+  }
+}
+
 .edit-form-grid .form-group {
   margin-bottom: 0;
 }
@@ -532,16 +599,28 @@
   .admin-header {
     flex-direction: column;
     align-items: flex-start !important;
-    gap: 15px;
+    gap: 10px;
   }
 
   .admin-header h1 {
     margin: 0;
+    font-size: 1.5rem;
   }
 
   .btn-back-home {
-    width: 100%;
-    text-align: center;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    align-self: flex-start;
+  }
+
+  .admin-tabs {
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+
+  .admin-tabs button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
   }
 
   .reservations-header {
@@ -580,6 +659,196 @@
   }
 }
 
+@media (max-width: 600px) {
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .admin-table td {
+    display: block;
+    padding: 8px 0 8px 0;
+    border: none;
+    margin-bottom: 8px;
+  }
+
+  .admin-table td:before {
+    content: attr(data-label);
+    display: block;
+    font-weight: bold;
+    color: #666;
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .admin-table td:last-child {
+    display: block;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .admin-table td:last-child:before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .admin-table td:last-child button {
+    display: block;
+    width: 100%;
+    padding: 6px 8px !important;
+    font-size: 0.7rem !important;
+    margin: 3px 0 !important;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .admin-tabs button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+
+  .admin-header h1 {
+    margin: 0;
+  }
+
+  .btn-back-home {
+    width: 100%;
+    text-align: center;
+  }
+
+  .reservations-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservations-filters {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reservations-filters .btn-filter {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .reservations-table {
+    min-width: 800px;
+  }
+
+  .user-cell,
+  .place-cell {
+    min-width: 150px;
+  }
+
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-form-actions {
+    flex-direction: column;
+  }
+
+  .edit-form-actions button {
+    width: 100%;
+  }
+
+  /* Tabla de usuarios responsive */
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tbody {
+    display: block;
+  }
+
+  .admin-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    background: white;
+  }
+
+  .admin-table td {
+    display: block;
+    padding: 8px 0 !important;
+    border: none;
+    text-align: left !important;
+    margin-bottom: 8px;
+  }
+
+  .admin-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+    display: inline-block;
+    width: 100px;
+    margin-right: 10px;
+  }
+
+  .admin-table td:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 12px !important;
+    border-top: 1px solid #eee;
+    margin-top: 12px;
+  }
+
+  .admin-table td:last-child button {
+    flex: 1;
+    min-width: 100px;
+    padding: 8px 10px !important;
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+  }
+
+  .admin-table .btn-primary,
+  .admin-table .btn-delete {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 @media (max-width: 480px) {
   .reservations-table {
     min-width: 700px;
@@ -595,18 +864,105 @@
     font-size: 0.8rem;
     padding: 5px 10px;
   }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-bottom: 12px;
+  }
+
+  .admin-tabs button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-tabs button.active {
+    padding: 6px 10px;
+  }
+
+  /* Optimizar tablas admin para pantallas muy pequeñas */
+  .admin-table {
+    display: block;
+    overflow-x: visible;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .admin-table td {
+    display: block;
+    text-align: left;
+    padding: 8px 0 8px 0;
+    border: none;
+    margin-bottom: 8px;
+  }
+
+  .admin-table td:first-child {
+    margin-top: 0;
+  }
+
+  .admin-table td:before {
+    content: attr(data-label);
+    display: block;
+    font-weight: bold;
+    color: #666;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .admin-table td:last-child {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+
+  .admin-table td:last-child button {
+    display: block;
+    width: 100%;
+    padding: 6px 8px !important;
+    font-size: 0.65rem !important;
+    margin: 3px 0 !important;
+  }
+
+  .admin-table td:last-child button:last-child {
+    margin-bottom: 0 !important;
+  }
 }
 
 /* Alinear botones de acción en la tabla */
 .admin-table td:last-child {
   white-space: nowrap;
   text-align: center;
+  vertical-align: middle;
 }
 
 .admin-table td:last-child button {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 4px;
+  margin: 0;
+}
+
+.admin-table td:last-child > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-height: 36px;
 }
 
 /* Contenedor para botones de acción */
@@ -631,6 +987,7 @@
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  vertical-align: middle;
 }
 
 .admin-table th {
@@ -671,11 +1028,58 @@
 
   .admin-table {
     font-size: 0.85rem;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
   }
 
   .admin-table th,
   .admin-table td {
     padding: 8px;
+    display: block;
+    text-align: left;
+    border-bottom: none;
+    position: relative;
+  }
+
+  .admin-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .admin-table td:last-child {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+
+  .admin-table td:last-child > div {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn-edit,
+  .btn-delete,
+  .btn-schedule {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    height: auto;
   }
 
   .form-actions {
@@ -685,6 +1089,36 @@
   .btn-primary,
   .btn-secondary {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-container {
+    padding: 10px;
+  }
+
+  .admin-table {
+    font-size: 0.75rem;
+  }
+
+  .admin-table td {
+    padding: 6px;
+  }
+
+  .admin-table td:before {
+    font-size: 0.75rem;
+  }
+
+  .thumb {
+    width: 60px;
+    height: 45px;
+  }
+
+  .btn-edit,
+  .btn-delete,
+  .btn-schedule {
+    padding: 6px 10px;
+    font-size: 0.7rem;
   }
 }
 
@@ -793,3 +1227,81 @@
   }
 }
 
+@media (max-width: 480px) {
+  .categories-checkboxes {
+    grid-template-columns: 1fr;
+    max-height: 200px;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .category-checkbox-label {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+
+  .category-checkbox-text {
+    font-size: 0.8rem;
+  }
+
+  .category-checkbox {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Extra small devices (320px and below) */
+@media (max-width: 320px) {
+  .admin-tabs {
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+
+  .admin-tabs button {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+
+  .admin-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .btn-back-home {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  .admin-table td {
+    padding: 6px 0 !important;
+  }
+
+  .admin-table td:before {
+    min-width: 70px;
+    font-size: 0.65rem !important;
+  }
+
+  .admin-table td:last-child button {
+    padding: 4px 6px !important;
+    font-size: 0.65rem !important;
+    margin: 2px 0 !important;
+  }
+
+  .admin-table tr {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content {
+    margin: 10px;
+  }
+
+  .admin-header {
+    padding: 10px;
+  }
+
+  .btn-primary,
+  .btn-delete {
+    padding: 6px 10px !important;
+    font-size: 0.7rem !important;
+  }
+}

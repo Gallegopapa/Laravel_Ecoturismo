@@ -76,6 +76,17 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
     setMessage('');
     setGeneratedPassword('');
 
+    // Validar que usuario empresa tenga al menos un lugar asignado
+    console.log('Tipo usuario:', formData.tipo_usuario);
+    console.log('Lugares:', formData.lugares);
+    
+    if (formData.tipo_usuario === 'empresa' && (!formData.lugares || formData.lugares.length === 0)) {
+      console.log('Validación falló - no hay lugares asignados');
+      setErrors({ lugares: ['Debe asignar al menos un lugar para usuario empresa'] });
+      setMessage('Error: Usuario empresa debe tener al menos un lugar asignado');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -147,7 +158,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         </div>
 
         {message && (
-          <div className={`alert alert-${generatedPassword ? 'warning' : 'success'}`}>
+          <div className={`alert alert-${message.includes('Error') ? 'error' : generatedPassword ? 'warning' : 'success'}`}>
             {message}
           </div>
         )}
@@ -235,7 +246,9 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
           {/* Lugares - Solo para usuarios empresa */}
           {formData.tipo_usuario === 'empresa' && (
             <div className="form-group">
-              <label>Lugares Asignados</label>
+              <label>Lugares Asignados *</label>
+              <small style={{ color: '#dc3545', marginLeft: '8px' }}>Obligatorio para usuario empresa</small>
+              {errors.lugares && <div className="error-text" style={{ marginTop: '8px' }}>{errors.lugares[0]}</div>}
               <div className="places-list">
                 {places.length > 0 ? (
                   places.map(place => {

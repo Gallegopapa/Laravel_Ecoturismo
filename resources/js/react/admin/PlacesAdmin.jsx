@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { adminService, categoriesService } from '../services/api';
+import PlaceSchedulesManager from './PlaceSchedulesManager';
 import './admin.css';
 
 const PlacesAdmin = () => {
@@ -8,6 +9,7 @@ const PlacesAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingPlace, setEditingPlace] = useState(null);
+  const [managingSchedulesPlace, setManagingSchedulesPlace] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -428,13 +430,14 @@ const PlacesAdmin = () => {
                 <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Ubicación</th>
+                <th>Coordenadas</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {places.map((place) => (
                 <tr key={place.id}>
-                  <td>
+                  <td data-label="Imagen">
                     {place.imagen && place.imagen !== '/imagenes/placeholder.jpg' ? (
                       <img 
                         src={place.imagen} 
@@ -449,9 +452,9 @@ const PlacesAdmin = () => {
                       <span className="no-image">Sin imagen</span>
                     )}
                   </td>
-                  <td>{place.name}</td>
-                  <td>{place.location || '-'}</td>
-                  <td>
+                  <td data-label="Nombre">{place.name}</td>
+                  <td data-label="Ubicación">{place.location || '-'}</td>
+                  <td data-label="Coordenadas">
                     {place.latitude && place.longitude ? (
                       <span style={{ fontSize: '0.85rem', fontFamily: 'monospace' }}>
                         {parseFloat(place.latitude).toFixed(6)}, {parseFloat(place.longitude).toFixed(6)}
@@ -460,17 +463,26 @@ const PlacesAdmin = () => {
                       <span style={{ color: '#999', fontSize: '0.85rem' }}>Sin coordenadas</span>
                     )}
                   </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <td data-label="Acciones">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'nowrap' }}>
                       <button
                         onClick={() => handleEdit(place)}
                         className="btn-edit"
+                        title="Editar lugar"
                       >
                         Editar
                       </button>
                       <button
+                        onClick={() => setManagingSchedulesPlace(place)}
+                        className="btn-schedule"
+                        title="Gestionar horarios"
+                      >
+                        📅 Horarios
+                      </button>
+                      <button
                         onClick={() => handleDelete(place.id)}
                         className="btn-delete"
+                        title="Eliminar lugar"
                       >
                         Borrar
                       </button>
@@ -482,6 +494,15 @@ const PlacesAdmin = () => {
           </table>
         )}
       </div>
+
+      {/* Modal de gestión de horarios */}
+      {managingSchedulesPlace && (
+        <PlaceSchedulesManager
+          placeId={managingSchedulesPlace.id}
+          placeName={managingSchedulesPlace.name}
+          onClose={() => setManagingSchedulesPlace(null)}
+        />
+      )}
     </div>
   );
 };

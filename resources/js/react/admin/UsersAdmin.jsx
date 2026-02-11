@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/api';
 import CreateUserModal from './CreateUserModal';
+import EditUserModal from './EditUserModal';
 import './admin.css';
 import './AdminModals.css';
 
@@ -10,6 +11,9 @@ const UsersAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
   const [userFilter, setUserFilter] = useState('all'); // all, normal, empresa, admin
 
   useEffect(() => {
@@ -66,6 +70,17 @@ const UsersAdmin = () => {
     setShowCreateModal(false);
     loadUsers();
     showMessage('Usuario empresa creado correctamente');
+  };
+
+  const handleEditPermissions = (user) => {
+    setEditingUserId(user.id);
+    setEditingUser(user);
+    setShowEditModal(true);
+  };
+
+  const handleUserUpdated = () => {
+    loadUsers();
+    showMessage('Permisos actualizados correctamente');
   };
 
   const getPlaceNames = (user) => {
@@ -135,6 +150,15 @@ const UsersAdmin = () => {
         onClose={() => setShowCreateModal(false)}
         onUserCreated={handleUserCreated}
         places={places}
+      />
+
+      <EditUserModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        userId={editingUserId}
+        user={editingUser}
+        places={places}
+        onUpdated={handleUserUpdated}
       />
 
       {/* Sección de controles */}
@@ -248,9 +272,9 @@ const UsersAdmin = () => {
               <tbody>
                 {filteredUsers.map((user) => (
                   <tr key={user.id} style={{borderBottom: '1px solid #dee2e6'}}>
-                    <td style={{padding: '12px'}}>{user.name}</td>
-                    <td style={{padding: '12px'}}>{user.email || '-'}</td>
-                    <td style={{padding: '12px'}}>
+                    <td style={{padding: '12px'}} data-label="Nombre">{user.name}</td>
+                    <td style={{padding: '12px'}} data-label="Email">{user.email || '-'}</td>
+                    <td style={{padding: '12px'}} data-label="Tipo">
                       <span
                         style={{
                           padding: '4px 12px',
@@ -265,13 +289,23 @@ const UsersAdmin = () => {
                       </span>
                     </td>
                     {userFilter === 'empresa' && (
-                      <td style={{padding: '12px'}}>
+                      <td style={{padding: '12px'}} data-label="Lugares">
                         <div style={{fontSize: '0.9em', color: '#666'}}>
                           {getPlaceNames(user)}
                         </div>
                       </td>
                     )}
-                    <td style={{padding: '12px', textAlign: 'center'}}>
+                    <td style={{padding: '12px', textAlign: 'center'}} data-label="Acciones">
+                      <button
+                        onClick={() => handleEditPermissions(user)}
+                        className="btn-primary"
+                        style={{
+                          padding: '6px 12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Editar permisos
+                      </button>
                       <button
                         onClick={() => handleDelete(user.id)}
                         className="btn-delete"

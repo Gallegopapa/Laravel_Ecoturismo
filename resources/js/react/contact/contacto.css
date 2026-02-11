@@ -488,9 +488,21 @@ textarea.input {
 }
 
 /* ---------- RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+  .contact-page-container {
+    padding: 100px 20px;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
 @media (max-width: 850px) {
   .contact-page-container {
     max-height: 300vh !important;
+    padding: 90px 15px;
   }
 
   .form {
@@ -517,15 +529,44 @@ textarea.input {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .contact-page-container {
-    padding: 80px 1.5rem 1.5rem 1.5rem;
-    padding-bottom: 60px;
+    padding: 80px 12px 60px 12px;
   }
 
   form,
   .contact-info {
-    padding: 1.7rem 1.6rem;
+    padding: 1.5rem 1.2rem;
+  }
+
+  .tittle {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .text {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-container {
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-page-container {
+    padding: 80px 10px 60px 10px;
+  }
+
+  form,
+  .contact-info {
+    padding: 1.4rem 1rem;
   }
 
   .text,
@@ -589,6 +630,22 @@ textarea.input {
   border-radius: 8px;
   border-left: 4px solid #c0392b;
   animation: slideIn 0.3s ease;
+}
+
+/* Estilos para errores de campos individuales */
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  display: block;
+  animation: slideIn 0.2s ease;
 }
 
 @keyframes slideIn {
