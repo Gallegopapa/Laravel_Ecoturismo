@@ -33,12 +33,4 @@ class Ecohotel extends Model
     {
         return $this->belongsToMany(Category::class, 'category_ecohotel');
     }
-
-    /**
-     * Relación uno a muchos con reviews
-     */
-    public function reviews()
-    {
-        return $this->hasMany(Review::class, 'ecohotel_id');
-    }
 }

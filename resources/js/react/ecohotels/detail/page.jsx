@@ -125,6 +125,12 @@ const EcohotelDetailPage = () => {
                     </p>
                   </div>
                 )}
+                {!ecohotel.telefono && (
+                  <div className="info-item">
+                    <strong>📞 Teléfono:</strong>
+                    <p className="no-info">No hay información disponible</p>
+                  </div>
+                )}
 
                 {ecohotel.email && (
                   <div className="info-item">
@@ -132,6 +138,12 @@ const EcohotelDetailPage = () => {
                     <p>
                       <a href={`mailto:${ecohotel.email}`}>{ecohotel.email}</a>
                     </p>
+                  </div>
+                )}
+                {!ecohotel.email && (
+                  <div className="info-item">
+                    <strong>📧 Email:</strong>
+                    <p className="no-info">No hay información disponible</p>
                   </div>
                 )}
 
@@ -143,6 +155,12 @@ const EcohotelDetailPage = () => {
                         Visitar sitio web
                       </a>
                     </p>
+                  </div>
+                )}
+                {!ecohotel.sitio_web && (
+                  <div className="info-item">
+                    <strong>🌐 Sitio Web:</strong>
+                    <p className="no-info">No hay información disponible</p>
                   </div>
                 )}
 

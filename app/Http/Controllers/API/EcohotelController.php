@@ -28,10 +28,10 @@ class EcohotelController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'location' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
@@ -39,12 +39,15 @@ class EcohotelController extends Controller
             'categories.*' => 'exists:categories,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
-            'image.image' => 'El archivo debe ser una imagen.',
-            'image.max' => 'La imagen no puede exceder 5MB.',
+            'location.required' => 'La ubicación es requerida.',
+            'latitude.required' => 'La latitud es requerida.',
             'latitude.numeric' => 'La latitud debe ser un número.',
             'latitude.between' => 'La latitud debe estar entre -90 y 90.',
+            'longitude.required' => 'La longitud es requerida.',
             'longitude.numeric' => 'La longitud debe ser un número.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
+            'image.image' => 'El archivo debe ser una imagen.',
+            'image.max' => 'La imagen no puede exceder 5MB.',
             'email.email' => 'El email debe ser válido.',
             'sitio_web.url' => 'El sitio web debe ser una URL válida.',
             'categories.array' => 'Las categorías deben ser un array.',
@@ -80,11 +83,22 @@ class EcohotelController extends Controller
     /**
      * Mostrar un ecohotel específico
      */
-    public function show(Ecohotel $ecohotel): JsonResponse
+    public function show($id): JsonResponse
     {
-        $ecohotel->load('categories', 'reviews.usuario');
-        
-        return response()->json($ecohotel);
+        try {
+            $ecohotel = Ecohotel::with('categories')->findOrFail($id);
+            return response()->json($ecohotel);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Ecohotel no encontrado',
+                'error' => true
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al cargar el ecohotel: ' . $e->getMessage(),
+                'error' => true
+            ], 500);
+        }
     }
 
     /**
@@ -95,10 +109,10 @@ class EcohotelController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'location' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
@@ -106,12 +120,15 @@ class EcohotelController extends Controller
             'categories.*' => 'exists:categories,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
-            'image.image' => 'El archivo debe ser una imagen.',
-            'image.max' => 'La imagen no puede exceder 5MB.',
+            'location.required' => 'La ubicación es requerida.',
+            'latitude.required' => 'La latitud es requerida.',
             'latitude.numeric' => 'La latitud debe ser un número.',
             'latitude.between' => 'La latitud debe estar entre -90 y 90.',
+            'longitude.required' => 'La longitud es requerida.',
             'longitude.numeric' => 'La longitud debe ser un número.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
+            'image.image' => 'El archivo debe ser una imagen.',
+            'image.max' => 'La imagen no puede exceder 5MB.',
             'email.email' => 'El email debe ser válido.',
             'sitio_web.url' => 'El sitio web debe ser una URL válida.',
             'categories.array' => 'Las categorías deben ser un array.',

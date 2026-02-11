@@ -52,6 +52,9 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 110px;
+  align-self: start;
 }
 
 .detail-image img {
@@ -114,6 +117,11 @@
   text-decoration: underline;
 }
 
+.info-item .no-info {
+  color: #999;
+  font-style: italic;
+}
+
 .categories-tags {
   display: flex;
   flex-wrap: wrap;
@@ -166,6 +174,12 @@
   .detail-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  .detail-image {
+    position: relative;
+    top: auto;
+    align-self: auto;
   }
 }
 
