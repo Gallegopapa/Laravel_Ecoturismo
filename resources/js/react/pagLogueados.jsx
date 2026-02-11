@@ -34,16 +34,19 @@ function PagLogueados() {
 
   // Si no hay usuario autenticado, no renderizar nada (será redirigido)
   if (!isAuthenticated || !user) {
-    return (
-      <div className="page-layout">
-        <Header2 />
-        <main className="page-content">
-          <HomePage loggedIn={true} user={user} />
-        </main>
-        <Footer />
-      </div>
-    );
+    return null;
   }
+
+  // Renderizar contenido principal para usuario autenticado
+  return (
+    <div className="page-layout">
+      <Header2 />
+      <main className="page-content">
+        <HomePage loggedIn={true} user={user} />
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
 export default PagLogueados;

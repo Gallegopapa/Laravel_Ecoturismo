@@ -1,87 +1,196 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import './HomePage.css';
 
+const beneficios = [
+  {
+    icon: "🌱",
+    title: "Turismo sostenible",
+    desc: "Promovemos experiencias responsables y ecológicas."
+  },
+  {
+    icon: "🏨",
+    title: "Reserva fácil",
+    desc: "Ecohoteles y destinos con gestión directa y segura."
+  },
+  {
+    icon: "💼",
+    title: "Empresas registradas",
+    desc: "Conecta con operadores locales y apoya la economía."
+  },
+  {
+    icon: "🔒",
+    title: "Acceso exclusivo",
+    desc: "Funciones avanzadas para usuarios registrados."
+  }
+];
+
+const destinos = [
+  {
+    id: 101,
+    img: "/imagenes/farallones.jpeg",
+    title: "Farallones de Risaralda",
+    desc: "Montañas, senderos y biodiversidad única."
+  },
+  {
+    id: 102,
+    img: "/imagenes/termales.jpg",
+    title: "Termales Santa Rosa",
+    desc: "Relájate en aguas termales rodeado de naturaleza."
+  },
+  {
+    id: 103,
+    img: "/imagenes/ukumari.jpg",
+    title: "Parque Natural Ucumari",
+    desc: "Explora la fauna y flora de la región."
+  },
+  {
+    id: 104,
+    img: "/imagenes/mirador.jpg",
+    title: "Mirador de la Divisa",
+    desc: "Vistas panorámicas y paisajes verdes."
+  }
+];
+
+const estadisticas = [
+  { label: "Usuarios", value: "+3,500" },
+  { label: "Reservas", value: "+1,200" },
+  { label: "Empresas", value: "+80" }
+];
+
 const HomePage = ({ loggedIn, user }) => {
+  const navigate = useNavigate();
+
+  // Funciones de navegación
+  const goEcohoteles = () => navigate('/ecohoteles');
+  const goLogin = () => navigate('/login');
+  const goRegister = () => navigate('/register');
+  const goPlaceDetail = (id) => navigate(`/lugares/${id}`); // Ahora usa el id real
+  const goReservas = () => navigate('/reservas');
+  const goPerfil = () => navigate('/perfil');
+  const goEmpresa = () => navigate('/company/dashboard');
+
+  if (!loggedIn) {
+    return (
+      <div className="homepage">
+        {/* HERO */}
+        <section className="hero-fixed">
+          <img src="/imagenes/slideone.jpg" alt="Ecoturismo Risaralda" className="hero-bg" />
+          <div className="hero-overlay"></div>
+          <div className="hero-content">
+            <h1 className="hero-title">Descubre Risaralda EcoTurismo</h1>
+            <p className="hero-subtitle">La plataforma líder para reservas, destinos y turismo sostenible en Risaralda.</p>
+            <div className="hero-btns">
+              <button className="btn-primary" onClick={goEcohoteles}>Explorar destinos</button>
+              <button className="btn-secondary" onClick={goLogin}>Iniciar sesión</button>
+              <button className="btn-secondary" onClick={goRegister}>Registrarse</button>
+            </div>
+          </div>
+        </section>
+
+        {/* BENEFICIOS */}
+        <section className="beneficios section-alt">
+          <h2>Beneficios de registrarse</h2>
+          <div className="beneficios-cards">
+            {beneficios.map((b, idx) => (
+              <div className="beneficio-card" key={idx}>
+                <span className="icon-beneficio">{b.icon}</span>
+                <h3>{b.title}</h3>
+                <p>{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CARACTERÍSTICAS */}
+        <section className="caracteristicas section-white">
+          <h2>Características principales</h2>
+          <div className="caracteristicas-grid">
+            <div className="caracteristica-card">
+              <span className="icon-caracteristica">🗓️</span>
+              <h3>Sistema de reservas</h3>
+              <p>Gestiona tus viajes y ecohoteles de forma fácil y segura.</p>
+              <div className="caracteristica-btn-container">
+                <button className="btn-terciary" onClick={goEcohoteles}>Ver ecohoteles</button>
+              </div>
+            </div>
+            <div className="caracteristica-card">
+              <span className="icon-caracteristica">🌳</span>
+              <h3>Turismo sostenible</h3>
+              <p>Contribuye a la conservación y desarrollo local.</p>
+              <div className="caracteristica-btn-container">
+                <button className="btn-terciary" onClick={goEcohoteles}>Ver destinos</button>
+              </div>
+            </div>
+            <div className="caracteristica-card">
+              <span className="icon-caracteristica">🏢</span>
+              <h3>Empresas registradas</h3>
+              <p>Accede a servicios de operadores certificados.</p>
+              <div className="caracteristica-btn-container">
+                <button className="btn-terciary" onClick={goEmpresa}>Ver empresas</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* DESTINOS DESTACADOS */}
+        <section className="destacados section-alt">
+          <h2>Destinos destacados</h2>
+          <div className="destinos-grid">
+            {destinos.map((d) => (
+              <div className="destino-card" key={d.id} onClick={() => goPlaceDetail(d.id)}>
+                <img src={d.img} alt={d.title} />
+                <h3>{d.title}</h3>
+                <p>{d.desc}</p>
+                <div className="destino-btn-container">
+                  <button className="btn-terciary">Ver más</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CONFIANZA */}
+        <section className="confianza section-white">
+          <h2>Confianza y comunidad</h2>
+          <div className="estadisticas">
+            {estadisticas.map((e, idx) => (
+              <div className="estadistica-card" key={idx}>
+                <span className="estadistica-value">{e.value}</span>
+                <span className="estadistica-label">{e.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA FINAL */}
+        <section className="cta-final section-alt">
+          <h2>¿Listo para vivir la experiencia?</h2>
+          <p>Regístrate gratis y comienza a explorar los mejores destinos de ecoturismo en Risaralda.</p>
+          <button className="btn-primary" onClick={goRegister}>Comenzar ahora</button>
+        </section>
+      </div>
+    );
+  }
+
+  // Vista logueados
   return (
     <div className="homepage">
-      {/* Hero/banner */}
-      <section className="hero">
-        <img src="/imagenes/slideone.jpg" alt="Risaralda EcoTurismo" className="hero-img" />
+      <section className="hero-fixed">
+        <img src="/imagenes/slideone.jpg" alt="Ecoturismo Risaralda" className="hero-bg" />
+        <div className="hero-overlay"></div>
         <div className="hero-content">
-          <h1>{loggedIn ? `¡Bienvenido, ${user?.name || 'usuario'}!` : 'Descubre Risaralda EcoTurismo'}</h1>
-          <p>{loggedIn ? 'Explora lugares, eventos y novedades.' : 'Reserva, explora y disfruta los mejores destinos de Risaralda.'}</p>
-          {!loggedIn && <button className="hero-btn">Iniciar sesión</button>}
-        </div>
-      </section>
-
-      {/* Beneficios para no logueados */}
-      {!loggedIn && (
-        <section className="beneficios">
-          <h2>Beneficios de iniciar sesión</h2>
-          <div className="beneficios-cards">
-            <div className="beneficio-card">
-              <span className="icon">🌟</span>
-              <h3>Reserva fácil</h3>
-              <p>Accede a reservas rápidas y seguras.</p>
-            </div>
-            <div className="beneficio-card">
-              <span className="icon">💬</span>
-              <h3>Comentarios y reseñas</h3>
-              <p>Comparte tu experiencia y lee opiniones.</p>
-            </div>
-            <div className="beneficio-card">
-              <span className="icon">❤️</span>
-              <h3>Favoritos</h3>
-              <p>Guarda tus lugares preferidos.</p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Lugares destacados */}
-      <section className="destacados">
-        <h2>Lugares destacados</h2>
-        <div className="lugares-cards">
-          {/* Ejemplo de tarjetas, reemplazar por datos reales */}
-          <div className="lugar-card">
-            <img src="/imagenes/ukumari.jpg" alt="Parque Natural Ucumari" />
-            <h3>Parque Natural Ucumari</h3>
-            <p>Explora la biodiversidad y senderos únicos.</p>
-            <button>Ver más</button>
-          </div>
-          <div className="lugar-card">
-            <img src="/imagenes/termales.jpg" alt="Termales Santa Rosa" />
-            <h3>Termales Santa Rosa</h3>
-            <p>Relájate en aguas termales rodeado de naturaleza.</p>
-            <button>Ver más</button>
-          </div>
-          <div className="lugar-card">
-            <img src="/imagenes/farallones.jpeg" alt="Reserva Otún Quimbaya" />
-            <h3>Reserva Otún Quimbaya</h3>
-            <p>Descubre aves y paisajes espectaculares.</p>
-            <button>Ver más</button>
+          <h1 className="hero-title">Bienvenido, {user?.name || 'usuario'}!</h1>
+          <p className="hero-subtitle">Accede rápidamente a tus reservas, ecohoteles y funciones exclusivas.</p>
+          <div className="hero-btns">
+            <button className="btn-primary" onClick={goReservas}>Mis reservas</button>
+            <button className="btn-secondary" onClick={goEcohoteles}>Explorar ecohoteles</button>
+            <button className="btn-terciary" onClick={goEmpresa}>Registrar empresa</button>
+            <button className="btn-terciary" onClick={goPerfil}>Mi perfil</button>
           </div>
         </div>
       </section>
-
-      {/* Novedades/eventos para logueados */}
-      {loggedIn && (
-        <section className="novedades">
-          <h2>Novedades y eventos</h2>
-          <div className="novedades-cards">
-            <div className="novedad-card">
-              <h3>Festival de Ecoturismo</h3>
-              <p>Participa en actividades y charlas sobre turismo sostenible.</p>
-              <span className="fecha">15-18 Feb</span>
-            </div>
-            <div className="novedad-card">
-              <h3>Sendero nocturno</h3>
-              <p>Recorre el bosque en una experiencia única.</p>
-              <span className="fecha">22 Feb</span>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Panel visual, recomendaciones, etc. se pueden agregar modularmente aquí */}
     </div>
   );
 };
