@@ -38,8 +38,6 @@ main {
 .page-content {
   flex: 1 1 auto;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
 }
 
 .page-layout > .page-content {
@@ -121,8 +119,7 @@ header {
   max-width: none;
   margin-left: calc(-50vw + 50%);
   margin-right: calc(-50vw + 50%);
-  flex: 1 1 auto;
-  min-height: 80vh;
+  height: 80vh;
   position: relative;
   overflow: hidden;
   border-radius: 0;
@@ -239,7 +236,7 @@ footer a:hover{
   }
 
   .slider-container {
-    height: 65vh;
+    height: 88vh;
   }
 }
 
@@ -260,7 +257,7 @@ footer a:hover{
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    height: 70vh;
+    height: 88vh;
   }
 
   .slide img {
@@ -305,7 +302,7 @@ footer a:hover{
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    height: 60vh;
+    height: 75vh;
   }
 
   .slide img {
@@ -345,7 +342,7 @@ footer a:hover{
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    height: 50vh;
+    height: 70vh;
   }
 
   .slide img {
@@ -385,7 +382,7 @@ footer a:hover{
     width: 100%;
     margin-left: 0;
     margin-right: 0;
-    height: 45vh;
+    height: 65vh;
   }
 
   .slide img {
