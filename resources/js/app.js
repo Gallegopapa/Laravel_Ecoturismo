@@ -2,7 +2,7 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './react/index.css';
-import './react/styles/accessibility.css';
+import './react/styles/accessibility-clean.css';
 
 // Importar AuthProvider
 import { AuthProvider } from './react/context/AuthContext';

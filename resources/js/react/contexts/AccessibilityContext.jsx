@@ -31,10 +31,27 @@ export const AccessibilityProvider = ({ children }) => {
   const [highContrast, setHighContrast] = useState(false);
   const [underlineLinks, setUnderlineLinks] = useState(false);
   const [grayscale, setGrayscale] = useState(false);
+  const [lineSpacing, setLineSpacing] = useState('normal'); // 'normal' | 'relaxed' | 'very-relaxed'
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  /**
+   * Efecto inicial: Limpiar body de clases anteriores
+   * Se ejecuta una vez al montar el componente
+   */
+  useEffect(() => {
+    const body = document.body;
+    // Remover TODAS las clases de accesibilidad al iniciar
+    body.classList.remove(
+      'font-large', 'font-extra-large', 'high-contrast', 
+      'underline-links', 'grayscale-mode', 'line-spacing-relaxed',
+      'line-spacing-very-relaxed', 'reduce-motion'
+    );
+  }, []);
 
   /**
    * Efecto inicial: Cargar configuraciones guardadas desde localStorage
    * Se ejecuta una vez al montar el componente
+   * IMPORTANTE: Siempre comienza con valores por defecto limpios
    */
   useEffect(() => {
     const loadSettings = () => {
@@ -42,13 +59,34 @@ export const AccessibilityProvider = ({ children }) => {
         const savedSettings = localStorage.getItem('accessibility-settings');
         if (savedSettings) {
           const settings = JSON.parse(savedSettings);
-          setFontSize(settings.fontSize || 'normal');
-          setHighContrast(settings.highContrast || false);
-          setUnderlineLinks(settings.underlineLinks || false);
-          setGrayscale(settings.grayscale || false);
+          // Solo cargar si son válidos, de lo contrario usar defaults
+          if (settings.fontSize && ['normal', 'large', 'extra-large'].includes(settings.fontSize)) {
+            setFontSize(settings.fontSize);
+          }
+          if (typeof settings.highContrast === 'boolean') {
+            setHighContrast(settings.highContrast);
+          }
+          if (typeof settings.underlineLinks === 'boolean') {
+            setUnderlineLinks(settings.underlineLinks);
+          }
+          if (typeof settings.grayscale === 'boolean') {
+            setGrayscale(settings.grayscale);
+          }
+          if (settings.lineSpacing && ['normal', 'relaxed', 'very-relaxed'].includes(settings.lineSpacing)) {
+            setLineSpacing(settings.lineSpacing);
+          }
+          if (typeof settings.reduceMotion === 'boolean') {
+            setReduceMotion(settings.reduceMotion);
+          }
         }
       } catch (error) {
         console.error('Error al cargar configuraciones de accesibilidad:', error);
+        // Si hay error, limpiar localStorage corrupto
+        try {
+          localStorage.removeItem('accessibility-settings');
+        } catch (e) {
+          console.error('Error al limpiar localStorage:', e);
+        }
       }
     };
 
@@ -64,7 +102,9 @@ export const AccessibilityProvider = ({ children }) => {
       fontSize,
       highContrast,
       underlineLinks,
-      grayscale
+      grayscale,
+      lineSpacing,
+      reduceMotion
     };
 
     try {
@@ -72,7 +112,7 @@ export const AccessibilityProvider = ({ children }) => {
     } catch (error) {
       console.error('Error al guardar configuraciones de accesibilidad:', error);
     }
-  }, [fontSize, highContrast, underlineLinks, grayscale]);
+  }, [fontSize, highContrast, underlineLinks, grayscale, lineSpacing, reduceMotion]);
 
   /**
    * Efecto: Aplicar clases CSS al <body> según configuraciones activas
@@ -83,7 +123,8 @@ export const AccessibilityProvider = ({ children }) => {
 
     // Limpiar todas las clases de accesibilidad previas
     body.classList.remove('font-large', 'font-extra-large', 'high-contrast', 
-                           'underline-links', 'grayscale-mode');
+                           'underline-links', 'grayscale-mode', 'line-spacing-relaxed',
+                           'line-spacing-very-relaxed', 'reduce-motion');
 
     // Aplicar clases según configuraciones activas
     if (fontSize === 'large') {
@@ -103,7 +144,17 @@ export const AccessibilityProvider = ({ children }) => {
     if (grayscale) {
       body.classList.add('grayscale-mode');
     }
-  }, [fontSize, highContrast, underlineLinks, grayscale]);
+
+    if (lineSpacing === 'relaxed') {
+      body.classList.add('line-spacing-relaxed');
+    } else if (lineSpacing === 'very-relaxed') {
+      body.classList.add('line-spacing-very-relaxed');
+    }
+
+    if (reduceMotion) {
+      body.classList.add('reduce-motion');
+    }
+  }, [fontSize, highContrast, underlineLinks, grayscale, lineSpacing, reduceMotion]);
 
   /**
    * Aumentar el tamaño de texto
@@ -153,6 +204,35 @@ export const AccessibilityProvider = ({ children }) => {
   };
 
   /**
+   * Aumentar espaciado de líneas
+   */
+  const increaseLineSpacing = () => {
+    if (lineSpacing === 'normal') {
+      setLineSpacing('relaxed');
+    } else if (lineSpacing === 'relaxed') {
+      setLineSpacing('very-relaxed');
+    }
+  };
+
+  /**
+   * Disminuir espaciado de líneas
+   */
+  const decreaseLineSpacing = () => {
+    if (lineSpacing === 'very-relaxed') {
+      setLineSpacing('relaxed');
+    } else if (lineSpacing === 'relaxed') {
+      setLineSpacing('normal');
+    }
+  };
+
+  /**
+   * Alternar reducción de movimiento
+   */
+  const toggleReduceMotion = () => {
+    setReduceMotion(prev => !prev);
+  };
+
+  /**
    * Resetear todas las configuraciones a valores por defecto
    */
   const resetSettings = () => {
@@ -160,6 +240,8 @@ export const AccessibilityProvider = ({ children }) => {
     setHighContrast(false);
     setUnderlineLinks(false);
     setGrayscale(false);
+    setLineSpacing('normal');
+    setReduceMotion(false);
   };
 
   // Valor del contexto que se provee a todos los componentes hijos
@@ -169,6 +251,8 @@ export const AccessibilityProvider = ({ children }) => {
     highContrast,
     underlineLinks,
     grayscale,
+    lineSpacing,
+    reduceMotion,
     
     // Funciones
     increaseFontSize,
@@ -176,6 +260,9 @@ export const AccessibilityProvider = ({ children }) => {
     toggleHighContrast,
     toggleUnderlineLinks,
     toggleGrayscale,
+    increaseLineSpacing,
+    decreaseLineSpacing,
+    toggleReduceMotion,
     resetSettings
   };
 

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../../i18n/useTranslation";
 import icono from "@/react/components/imagenes/iconoecoturismo.jpg";
 import "./Header.css";
 
 const Header = () => {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -41,11 +43,11 @@ const Header = () => {
           </button>
 
           <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
-            <Link to="/comentarios" onClick={closeMobileMenu}>Reseñas</Link>
-            <Link to="/lugares" onClick={closeMobileMenu}>Lugares</Link>
-            <Link to="/ecohoteles" onClick={closeMobileMenu}>Ecohoteles</Link>
-            <Link to="/contacto" onClick={closeMobileMenu}>Contacto</Link>
-            <Link to="/login" onClick={closeMobileMenu}>Login</Link>
+            <Link to="/comentarios" onClick={closeMobileMenu} data-i18n="places">{t('places')}</Link>
+            <Link to="/lugares" onClick={closeMobileMenu} data-i18n="places">{t('places')}</Link>
+            <Link to="/ecohoteles" onClick={closeMobileMenu} data-i18n="ecohotels">{t('ecohotels')}</Link>
+            <Link to="/contacto" onClick={closeMobileMenu} data-i18n="contact">{t('contact')}</Link>
+            <Link to="/login" onClick={closeMobileMenu} data-i18n="login">{t('login')}</Link>
           </nav>
         </div>
       </header>

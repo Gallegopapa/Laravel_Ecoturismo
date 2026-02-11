@@ -29,11 +29,16 @@ const AccessibilityPanel = () => {
     highContrast,
     underlineLinks,
     grayscale,
+    lineSpacing,
+    reduceMotion,
     increaseFontSize,
     decreaseFontSize,
     toggleHighContrast,
     toggleUnderlineLinks,
     toggleGrayscale,
+    increaseLineSpacing,
+    decreaseLineSpacing,
+    toggleReduceMotion,
     resetSettings
   } = useAccessibility();
   
@@ -156,6 +161,16 @@ const AccessibilityPanel = () => {
     if (fontSize === 'large') return t('fontSizeLarge');
     if (fontSize === 'extra-large') return t('fontSizeExtraLarge');
     return fontSize;
+  };
+
+  /**
+   * Obtener label del espaciado de líneas actual
+   */
+  const getLineSpacingLabel = () => {
+    if (lineSpacing === 'normal') return t('lineSpacingNormal');
+    if (lineSpacing === 'relaxed') return t('lineSpacingRelaxed');
+    if (lineSpacing === 'very-relaxed') return t('lineSpacingVeryRelaxed');
+    return lineSpacing;
   };
 
   return (
@@ -339,7 +354,65 @@ const AccessibilityPanel = () => {
 
           <hr className="panel-divider" />
 
-          {/* Sección: Selector de idioma */}
+          {/* Sección: Espaciado de líneas */}
+          <section className="panel-section">
+            <h3 className="section-title">{t('lineSpacingDescription')}</h3>
+            <div className="font-size-controls">
+              <div className="font-size-display">
+                <span className="current-size-label">{getLineSpacingLabel()}</span>
+              </div>
+              <div className="font-size-buttons">
+                <button
+                  className="control-button"
+                  onClick={decreaseLineSpacing}
+                  disabled={lineSpacing === 'normal'}
+                  aria-label={t('decreaseLineSpacing')}
+                  title={t('decreaseLineSpacing')}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <text x="2" y="20" fontSize="20" fontWeight="bold">−</text>
+                  </svg>
+                  <span>{t('decreaseLineSpacing')}</span>
+                </button>
+                <button
+                  className="control-button"
+                  onClick={increaseLineSpacing}
+                  disabled={lineSpacing === 'very-relaxed'}
+                  aria-label={t('increaseLineSpacing')}
+                  title={t('increaseLineSpacing')}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <text x="2" y="20" fontSize="20" fontWeight="bold">+</text>
+                  </svg>
+                  <span>{t('increaseLineSpacing')}</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <hr className="panel-divider" />
+
+          {/* Sección: Reducir movimiento */}
+          <section className="panel-section">
+            <button
+              className={`toggle-option ${reduceMotion ? 'active' : ''}`}
+              onClick={toggleReduceMotion}
+              aria-pressed={reduceMotion}
+              title={t('reduceMotionDescription')}
+            >
+              <div className="option-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M3 12h18" />
+                  <path d="M3 6h18" />
+                  <path d="M3 18h18" />
+                </svg>
+                <span className="option-label">{t('reduceMotion')}</span>
+              </div>
+              {renderStatusBadge(reduceMotion)}
+            </button>
+          </section>
+
+          <hr className="panel-divider" />
           <section className="panel-section">
             <h3 className="section-title">{t('language')}</h3>
             <div className="language-selector">

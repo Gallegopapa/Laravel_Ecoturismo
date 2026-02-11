@@ -2,84 +2,116 @@
    ESTILOS GLOBALES DE ACCESIBILIDAD
    ============================================
    
-   Estas clases se aplican al <body> del documento
-   según las configuraciones del usuario.
+   IMPORTANTE: Estos estilos SOLO se aplican cuando
+   el usuario activa las opciones en el panel.
    
-   Clases disponibles:
-   - font-large: Aumenta el tamaño base del texto a 112.5%
-   - font-extra-large: Aumenta el tamaño base del texto a 125%
+   Las clases NUNCA están presentes por defecto.
+   
+   Clases aplicadas dinámicamente:
+   - font-large: Aumenta el tamaño base del texto
+   - font-extra-large: Aumenta el tamaño base más aún
    - high-contrast: Modo de alto contraste
    - underline-links: Subraya todos los enlaces
-   - grayscale-mode: Convierte todo a escala de grises
+   - grayscale-mode: Escala de grises
+   - line-spacing-relaxed: Espaciado de líneas relajado
+   - line-spacing-very-relaxed: Espaciado de líneas muy relajado
+   - reduce-motion: Reducir animaciones
 */
 
 /* ============================================
    TAMAÑO DE TEXTO
+   Solo aplica si la clase está presente
    ============================================ */
 
-/* Tamaño grande: 112.5% (18px si la base es 16px) */
 body.font-large {
-  font-size: 112.5%;
+  font-size: 112.5% !important;
 }
 
-/* Tamaño extra grande: 125% (20px si la base es 16px) */
+body.font-large p,
+body.font-large h1,
+body.font-large h2,
+body.font-large h3,
+body.font-large h4,
+body.font-large h5,
+body.font-large h6,
+body.font-large span,
+body.font-large div,
+body.font-large button,
+body.font-large a,
+body.font-large li,
+body.font-large td {
+  font-size: 112.5% !important;
+}
+
 body.font-extra-large {
-  font-size: 125%;
+  font-size: 125% !important;
+}
+
+body.font-extra-large p,
+body.font-extra-large h1,
+body.font-extra-large h2,
+body.font-extra-large h3,
+body.font-extra-large h4,
+body.font-extra-large h5,
+body.font-extra-large h6,
+body.font-extra-large span,
+body.font-extra-large div,
+body.font-extra-large button,
+body.font-extra-large a,
+body.font-extra-large li,
+body.font-extra-large td {
+  font-size: 125% !important;
 }
 
 /* ============================================
    ALTO CONTRASTE
+   SOLO aplica si la clase está presente
    ============================================ */
 
 body.high-contrast {
-  /* Fondo blanco puro y texto negro puro */
   background-color: #ffffff !important;
   color: #000000 !important;
 }
 
-body.high-contrast * {
-  /* Forzar alto contraste en todos los elementos */
+body.high-contrast {
   background-color: #ffffff !important;
   color: #000000 !important;
-  border-color: #000000 !important;
 }
 
-/* Links en alto contraste */
+body.high-contrast p,
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6,
+body.high-contrast div,
+body.high-contrast section,
+body.high-contrast article,
+body.high-contrast main {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
 body.high-contrast a {
-  color: #0000ff !important;
+  color: #0000cc !important;
   text-decoration: underline !important;
-  font-weight: 600 !important;
 }
 
 body.high-contrast a:visited {
-  color: #551a8b !important;
+  color: #660066 !important;
 }
 
-body.high-contrast a:hover,
-body.high-contrast a:focus {
-  color: #cc0000 !important;
-  background-color: #ffff00 !important;
-}
-
-/* Botones en alto contraste */
 body.high-contrast button,
-body.high-contrast .btn,
 body.high-contrast input[type="button"],
-body.high-contrast input[type="submit"] {
+body.high-contrast input[type="submit"],
+body.high-contrast input[type="reset"],
+body.high-contrast .btn {
   background-color: #000000 !important;
   color: #ffffff !important;
   border: 2px solid #000000 !important;
-  font-weight: 600 !important;
 }
 
-body.high-contrast button:hover,
-body.high-contrast button:focus {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border: 3px solid #000000 !important;
-}
-
-/* Inputs en alto contraste */
 body.high-contrast input,
 body.high-contrast textarea,
 body.high-contrast select {
@@ -88,47 +120,74 @@ body.high-contrast select {
   border: 2px solid #000000 !important;
 }
 
-body.high-contrast input:focus,
-body.high-contrast textarea:focus,
-body.high-contrast select:focus {
-  outline: 3px solid #000000 !important;
-  outline-offset: 2px !important;
+body.high-contrast table {
+  border-collapse: collapse !important;
+  border: 2px solid #000000 !important;
 }
 
-/* Imágenes en alto contraste (mantener visibilidad) */
-body.high-contrast img {
-  opacity: 1 !important;
-  filter: contrast(1.2) !important;
+body.high-contrast tr,
+body.high-contrast th,
+body.high-contrast td {
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.high-contrast th {
+  background-color: #000000 !important;
+  color: #ffffff !important;
 }
 
 /* ============================================
-   SUBRAYAR ENLACES
+   SUBRAYAR ENLACES - MEJORADO
    ============================================ */
 
-body.underline-links a {
+/* Subrayar todos los enlaces */
+body.underline-links a,
+body.underline-links button[role="link"],
+body.underline-links [role="link"] {
   text-decoration: underline !important;
   text-decoration-thickness: 2px !important;
-  text-underline-offset: 2px !important;
+  text-underline-offset: 3px !important;
 }
 
-body.underline-links a:hover {
+/* Aumentar grosor en hover */
+body.underline-links a:hover,
+body.underline-links button[role="link"]:hover,
+body.underline-links [role="link"]:hover {
   text-decoration-thickness: 3px !important;
 }
 
+/* Botones con apariencia de enlaces */
+body.underline-links .btn-link,
+body.underline-links [role="button"].link {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
 /* ============================================
-   ESCALA DE GRISES
+   ESCALA DE GRISES - MEJORADO
    ============================================ */
 
 body.grayscale-mode {
-  filter: grayscale(100%);
-  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%) !important;
+  -webkit-filter: grayscale(100%) !important;
 }
 
-/* Mantener el panel de accesibilidad en color cuando el modo gris está activo */
+body.grayscale-mode * {
+  filter: grayscale(100%) !important;
+  -webkit-filter: grayscale(100%) !important;
+}
+
+/* Excepciones - Mantener color en elementos específicos */
 body.grayscale-mode .accessibility-floating-button,
-body.grayscale-mode .accessibility-panel {
-  filter: none;
-  -webkit-filter: none;
+body.grayscale-mode .accessibility-panel,
+body.grayscale-mode .accessibility-overlay,
+body.grayscale-mode .alert-success,
+body.grayscale-mode .alert-danger,
+body.grayscale-mode .alert-warning,
+body.grayscale-mode .alert-info {
+  filter: none !important;
+  -webkit-filter: none !important;
 }
 
 /* ============================================
@@ -137,19 +196,49 @@ body.grayscale-mode .accessibility-panel {
 
 /* Focus visible mejorado para todos los elementos interactivos */
 *:focus-visible {
-  outline: 3px solid #3498db;
-  outline-offset: 2px;
+  outline: 3px solid #3498db !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible {
+  outline: 3px solid #4a90e2 !important;
+  outline-offset: 2px !important;
+}
+
+body.high-contrast *:focus-visible,
+body.high-contrast button:focus-visible,
+body.high-contrast a:focus-visible,
+body.high-contrast input:focus-visible {
+  outline: 3px solid #000000 !important;
+  outline-offset: 2px !important;
+  background-color: #ffff00 !important;
 }
 
 /* Mejorar contraste de selección de texto */
 ::selection {
-  background-color: #3498db;
-  color: #ffffff;
+  background-color: #4a90e2 !important;
+  color: #ffffff !important;
 }
 
 ::-moz-selection {
-  background-color: #3498db;
-  color: #ffffff;
+  background-color: #4a90e2 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast ::selection {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+body.high-contrast ::-moz-selection {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
 }
 
 /* ============================================
@@ -160,6 +249,16 @@ body.grayscale-mode .accessibility-panel {
    para reducir animaciones
 */
 
+/* Reducción de movimiento personalizzada */
+body.reduce-motion,
+body.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Sistema nativo */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -169,6 +268,22 @@ body.grayscale-mode .accessibility-panel {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ============================================
+   ESPACIADO DE LÍNEAS
+   ============================================ */
+
+/* Espaciado relajado: 1.75 */
+body.line-spacing-relaxed,
+body.line-spacing-relaxed * {
+  line-height: 1.75 !important;
+}
+
+/* Espaciado muy relajado: 2 */
+body.line-spacing-very-relaxed,
+body.line-spacing-very-relaxed * {
+  line-height: 2 !important;
 }
 
 /* ============================================
@@ -203,6 +318,43 @@ body.grayscale-mode .accessibility-panel {
     color: #e0e0e0;
     border-color: #444;
   }
+}
+
+/* ============================================
+   SOPORTE PARA NAVEGACIÓN POR TECLADO
+   ============================================ */
+
+/* Asegurar que los elementos interactivos sean accesibles */
+a,
+button,
+input,
+textarea,
+select,
+[tabindex],
+[role="button"],
+[role="link"] {
+  outline: none;
+}
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus,
+[role="button"]:focus,
+[role="link"]:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+body.high-contrast a:focus,
+body.high-contrast button:focus,
+body.high-contrast input:focus,
+body.high-contrast textarea:focus,
+body.high-contrast select:focus {
+  outline: 3px solid #000000;
+  outline-offset: 2px;
 }
 
 /* ============================================

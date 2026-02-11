@@ -24,6 +24,10 @@ export const translations = {
     highContrast: 'Alto contraste',
     underlineLinks: 'Subrayar enlaces',
     grayscale: 'Escala de grises',
+    lineSpacing: 'Espaciado de líneas',
+    increaseLineSpacing: 'Aumentar espaciado de líneas',
+    decreaseLineSpacing: 'Disminuir espaciado de líneas',
+    reduceMotion: 'Reducir movimiento',
     resetSettings: 'Restablecer configuración',
     language: 'Idioma',
     selectLanguage: 'Seleccionar idioma',
@@ -38,11 +42,15 @@ export const translations = {
     fontSizeNormal: 'Normal',
     fontSizeLarge: 'Grande',
     fontSizeExtraLarge: 'Extra grande',
+    lineSpacingNormal: 'Normal',
+    lineSpacingRelaxed: 'Relajado',
+    lineSpacingVeryRelaxed: 'Muy relajado',
     
     // Navegación general
     home: 'Inicio',
     places: 'Lugares',
     ecohotels: 'Ecohoteles',
+    reviews: 'Reseñas',
     about: 'Nosotros',
     contact: 'Contacto',
     login: 'Iniciar sesión',
@@ -67,8 +75,30 @@ export const translations = {
     highContrastDescription: 'Aumenta el contraste de colores para mejor visibilidad',
     underlineLinksDescription: 'Subraya todos los enlaces para identificarlos fácilmente',
     grayscaleDescription: 'Convierte la interfaz a escala de grises',
+    lineSpacingDescription: 'Aumenta el espacio entre líneas de texto',
+    reduceMotionDescription: 'Reduce animaciones y transiciones para evitar mareos',
     resetDescription: 'Restaura todas las configuraciones a valores predeterminados',
     languageDescription: 'Cambia el idioma de la interfaz',
+    
+    // Lugares específicos
+    wateryPlaces: 'Lugares Acuáticos',
+    mountainPlaces: 'Lugares Montañosos',
+    parksAndMore: 'Parques y Más',
+    allPlaces: 'Todos los Lugares',
+    myProfile: 'Mi Perfil',
+    myDashboard: 'Mi Dashboard',
+    companyPanel: 'Panel de Empresa',
+    myAccount: 'Mi Cuenta',
+    logOut: 'Cerrar Sesión',
+    myReservations: 'Mis Reservas',
+    myFavorites: 'Mis Favoritos',
+    adminPanel: 'Panel de Administrador',
+    
+    // Footer
+    cookies: 'Cookies',
+    termsOfUse: 'Términos de uso',
+    privacyPolicy: 'Política de privacidad',
+    copyright: 'Copyright-EcoTurismo',
   },
   
   en: {
@@ -80,6 +110,10 @@ export const translations = {
     highContrast: 'High contrast',
     underlineLinks: 'Underline links',
     grayscale: 'Grayscale',
+    lineSpacing: 'Line spacing',
+    increaseLineSpacing: 'Increase line spacing',
+    decreaseLineSpacing: 'Decrease line spacing',
+    reduceMotion: 'Reduce motion',
     resetSettings: 'Reset settings',
     language: 'Language',
     selectLanguage: 'Select language',
@@ -94,11 +128,15 @@ export const translations = {
     fontSizeNormal: 'Normal',
     fontSizeLarge: 'Large',
     fontSizeExtraLarge: 'Extra large',
+    lineSpacingNormal: 'Normal',
+    lineSpacingRelaxed: 'Relaxed',
+    lineSpacingVeryRelaxed: 'Very relaxed',
     
     // General navigation
     home: 'Home',
     places: 'Places',
     ecohotels: 'Ecohotels',
+    reviews: 'Reviews',
     about: 'About',
     contact: 'Contact',
     login: 'Log in',
@@ -123,8 +161,30 @@ export const translations = {
     highContrastDescription: 'Increase color contrast for better visibility',
     underlineLinksDescription: 'Underline all links for easy identification',
     grayscaleDescription: 'Convert interface to grayscale',
+    lineSpacingDescription: 'Increase space between text lines',
+    reduceMotionDescription: 'Reduce animations and transitions to prevent dizziness',
     resetDescription: 'Restore all settings to default values',
     languageDescription: 'Change interface language',
+    
+    // Specific places
+    wateryPlaces: 'Watery Places',
+    mountainPlaces: 'Mountain Places',
+    parksAndMore: 'Parks and More',
+    allPlaces: 'All Places',
+    myProfile: 'My Profile',
+    myDashboard: 'My Dashboard',
+    companyPanel: 'Company Panel',
+    myAccount: 'My Account',
+    logOut: 'Log Out',
+    myReservations: 'My Reservations',
+    myFavorites: 'My Favorites',
+    adminPanel: 'Admin Panel',
+    
+    // Footer
+    cookies: 'Cookies',
+    termsOfUse: 'Terms of use',
+    privacyPolicy: 'Privacy policy',
+    copyright: 'Copyright-EcoTurismo',
   }
 };
 

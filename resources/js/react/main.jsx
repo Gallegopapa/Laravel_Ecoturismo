@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import "./styles/accessibility.css"; // Estilos globales de accesibilidad
+import "./styles/accessibility-clean.css"; // Estilos limpios de accesibilidad
 import App from "./App.jsx";
 import ContactPage from "./contact/Contacto.jsx";
 import PlacesPage from "./places/page.jsx";
@@ -31,6 +31,7 @@ import { LanguageProvider } from "./contexts/LanguageContext.jsx";
 
 // COMPONENTE DE PANEL DE ACCESIBILIDAD
 import AccessibilityPanel from "./components/AccessibilityPanel/AccessibilityPanel.jsx";
+import TranslationHelper from "./components/TranslationHelper/TranslationHelper.jsx";
 
 console.log('🔥🔥🔥 MAIN.JSX CARGADO - Router creándose - VERSION 2.0 🔥🔥🔥');
 console.log('Rutas disponibles: /', '/lugares', '/ecohoteles', '/admin');
@@ -149,6 +150,7 @@ createRoot(document.getElementById("root")).render(
     <LanguageProvider>
       <RouterProvider router={router} />
       <AccessibilityPanel />
+      <TranslationHelper />
     </LanguageProvider>
   </AccessibilityProvider>
 );
