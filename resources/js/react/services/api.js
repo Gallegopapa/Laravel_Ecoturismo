@@ -1,7 +1,7 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 // Configurar la URL base de la API
-// Usar URL relativa si está en el mismo dominio, o absoluta si es necesario
+// Usar URL relativa si estÃ¡ en el mismo dominio, o absoluta si es necesario
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Crear instancia de axios
@@ -40,8 +40,8 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Si el token expiró o es inválido, limpiar y redirigir al login
-    // Pero solo si no estamos ya en la página de login
+    // Si el token expirÃ³ o es invÃ¡lido, limpiar y redirigir al login
+    // Pero solo si no estamos ya en la pÃ¡gina de login
     if (error.response?.status === 401) {
       const currentPath = window.location.pathname;
       if (currentPath !== '/login' && currentPath !== '/registro') {
@@ -68,7 +68,7 @@ api.interceptors.response.use(
   }
 );
 
-// Servicios de autenticación
+// Servicios de autenticaciÃ³n
 export const authService = {
   // Login
   login: async (credentials) => {
@@ -87,7 +87,7 @@ export const authService = {
     try {
       await api.post('/logout');
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error('Error al cerrar sesiÃ³n:', error);
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -180,7 +180,7 @@ export const reservationsService = {
   },
 };
 
-// Servicios de reseñas
+// Servicios de reseÃ±as
 export const reviewsService = {
   getAll: async () => {
     const response = await api.get('/reviews/all');
@@ -231,7 +231,7 @@ export const favoritesService = {
   },
 };
 
-// Servicios de categorías
+// Servicios de categorÃ­as
 export const categoriesService = {
   getAll: async () => {
     const response = await api.get('/categories');
@@ -261,8 +261,8 @@ export const profileService = {
       formData.append('foto_perfil', profileData.foto_perfil);
       
       // Para FormData, NO establecer Content-Type manualmente
-      // El navegador lo establecerá automáticamente con el boundary correcto
-      // El interceptor ya maneja esto, así que no necesitamos especificar headers aquí
+      // El navegador lo establecerÃ¡ automÃ¡ticamente con el boundary correcto
+      // El interceptor ya maneja esto, asÃ­ que no necesitamos especificar headers aquÃ­
       const response = await api.post('/profile', formData);
       return response.data;
     } else {
@@ -325,7 +325,7 @@ export const adminService = {
       if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorías como array
+      // Agregar categorÃ­as como array
       if (placeData.categories && Array.isArray(placeData.categories) && placeData.categories.length > 0) {
         placeData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
@@ -349,19 +349,19 @@ export const adminService = {
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorías como array (incluso si está vacío para sincronizar)
+      // Agregar categorÃ­as como array (incluso si estÃ¡ vacÃ­o para sincronizar)
       if (placeData.categories !== undefined) {
         if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
           placeData.categories.forEach((categoryId) => {
             formData.append('categories[]', categoryId);
           });
         } else {
-          // Si está vacío, enviar array vacío para desasociar todas las categorías
+          // Si estÃ¡ vacÃ­o, enviar array vacÃ­o para desasociar todas las categorÃ­as
           formData.append('categories[]', '');
         }
       }
       
-      // Usar POST con _method=PUT para FormData (más compatible)
+      // Usar POST con _method=PUT para FormData (mÃ¡s compatible)
       const response = await api.post(`/admin/places/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -415,7 +415,7 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorías como array
+      // Agregar categorÃ­as como array
       if (ecohotelData.categories && Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
         ecohotelData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
@@ -442,7 +442,7 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorías como array
+      // Agregar categorÃ­as como array
       if (ecohotelData.categories !== undefined) {
         if (Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
           ecohotelData.categories.forEach((categoryId) => {
@@ -498,7 +498,7 @@ export const companyService = {
       const response = await api.get('/company/places');
       return response.data;
     },
-<<<<<<< Updated upstream
+
     getById: async (id) => {
       const response = await api.get(`/company/places/${id}`);
       return response.data;
@@ -527,8 +527,7 @@ export const companyService = {
       const response = await api.delete(`/company/places/${id}`);
       return response.data;
     },
-=======
->>>>>>> Stashed changes
+
     schedules: {
       getAll: async (placeId) => {
         const response = await api.get(`/company/places/${placeId}/schedules`);

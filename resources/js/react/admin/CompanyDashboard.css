@@ -1,4 +1,4 @@
-.company-dashboard {
+﻿.company-dashboard {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -112,7 +112,7 @@
   overflow-x: auto;
 }
 
-<<<<<<< Updated upstream
+
 .place-manager {
   margin-top: 20px;
   padding: 20px;
@@ -194,8 +194,7 @@
   flex-wrap: wrap;
 }
 
-=======
->>>>>>> Stashed changes
+
 .schedule-manager {
   margin-top: 30px;
   padding: 20px;

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-<<<<<<< Updated upstream
 use App\Models\Place;
 use App\Rules\NoProfanity;
 use Illuminate\Http\JsonResponse;
@@ -32,13 +31,7 @@ class CompanyPlaceController extends Controller
         return null;
     }
 
-=======
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
-class CompanyPlaceController extends Controller
-{
->>>>>>> Stashed changes
     /**
      * Listar lugares gestionados por el usuario empresa.
      */
@@ -59,7 +52,7 @@ class CompanyPlaceController extends Controller
 
         return response()->json($places);
     }
-<<<<<<< Updated upstream
+
 
     /**
      * Obtener un lugar gestionado por el usuario empresa.
@@ -100,12 +93,12 @@ class CompanyPlaceController extends Controller
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
             'image.max' => 'La imagen no puede exceder 5MB.',
-            'latitude.numeric' => 'La latitud debe ser un número.',
+            'latitude.numeric' => 'La latitud debe ser un n?mero.',
             'latitude.between' => 'La latitud debe estar entre -90 y 90.',
-            'longitude.numeric' => 'La longitud debe ser un número.',
+            'longitude.numeric' => 'La longitud debe ser un n?mero.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
-            'categories.array' => 'Las categorías deben ser un array.',
-            'categories.*.exists' => 'Una o más categorías no existen.',
+            'categories.array' => 'Las categor?as deben ser un array.',
+            'categories.*.exists' => 'Una o m?s categor?as no existen.',
         ]);
 
         if ($request->hasFile('image')) {
@@ -162,6 +155,5 @@ class CompanyPlaceController extends Controller
             'message' => 'Lugar eliminado correctamente.'
         ]);
     }
-=======
->>>>>>> Stashed changes
+
 }

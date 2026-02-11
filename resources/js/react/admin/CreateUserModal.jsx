@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/api';
 import './AdminModals.css';
 
@@ -72,7 +72,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
     console.log('Lugares:', formData.lugares);
     
     if (formData.tipo_usuario === 'empresa' && (!formData.lugares || formData.lugares.length === 0)) {
-      console.log('Validación falló - no hay lugares asignados');
+      console.log('ValidaciÃ³n fallÃ³ - no hay lugares asignados');
       setErrors({ lugares: ['Debe asignar al menos un lugar para usuario empresa'] });
       setMessage('Error: Usuario empresa debe tener al menos un lugar asignado');
       return;
@@ -88,7 +88,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         is_admin: formData.tipo_usuario === 'admin',
       };
 
-      // Agregar contraseña solo si se proporcionó
+      // Agregar contraseÃ±a solo si se proporcionÃ³
       if (formData.password) {
         userData.password = formData.password;
       }
@@ -102,7 +102,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
 
       if (response.generated_password) {
         setGeneratedPassword(response.generated_password);
-        setMessage('Usuario creado. Contraseña generada automáticamente.');
+        setMessage('Usuario creado. ContraseÃ±a generada automÃ¡ticamente.');
       } else {
         setMessage('Usuario creado correctamente');
       }
@@ -121,7 +121,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         onUserCreated(response);
       }
 
-      // Cerrar modal después de 1.5 segundos
+      // Cerrar modal despuÃ©s de 1.5 segundos
       setTimeout(() => {
         onClose();
       }, 1500);
@@ -156,7 +156,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
 
         {generatedPassword && (
           <div className="generated-password-box">
-            <strong>Contraseña generada:</strong>
+            <strong>ContraseÃ±a generada:</strong>
             <div className="password-display">
               <code>{generatedPassword}</code>
               <button
@@ -219,19 +219,19 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
             </select>
           </div>
 
-          {/* Contraseña */}
+          {/* ContraseÃ±a */}
           <div className="form-group">
-            <label htmlFor="password">Contraseña (opcional)</label>
+            <label htmlFor="password">ContraseÃ±a (opcional)</label>
             <input
               type={showPassword ? 'text' : 'password'}
               id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Dejar vacío para generar automáticamente"
+              placeholder="Dejar vacÃ­o para generar automÃ¡ticamente"
               disabled={loading}
             />
-            <small>Si deja vacío, se generará una contraseña segura automáticamente.</small>
+            <small>Si deja vacÃ­o, se generarÃ¡ una contraseÃ±a segura automÃ¡ticamente.</small>
           </div>
 
           {/* Lugares - Solo para usuarios empresa */}
@@ -258,23 +258,8 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                         
                         {selectedPlace && (
                           <div className="place-options">
-<<<<<<< Updated upstream
-=======
-                            <select
-                              value={selectedPlace.rol}
-                              onChange={(e) => handlePlaceRoleChange(place.id, e.target.value)}
-                              disabled={loading}
-                            >
-                              <option value="gerente">Gerente</option>
-                              <option value="recepcionista">Recepcionista</option>
-                              <option value="admin">Admin del Lugar</option>
-                            </select>
 
-                            <small className="helper-text">
-                              Rol: define permisos dentro del lugar (no es admin del sistema).
-                            </small>
 
->>>>>>> Stashed changes
                             <label className="principal-label">
                               <input
                                 type="checkbox"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/api';
 import CreateUserModal from './CreateUserModal';
 import EditUserModal from './EditUserModal';
@@ -49,7 +49,7 @@ const UsersAdmin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de borrar este usuario?')) {
+    if (!window.confirm('Â¿EstÃ¡s seguro de borrar este usuario?')) {
       return;
     }
 
@@ -161,7 +161,7 @@ const UsersAdmin = () => {
         onUpdated={handleUserUpdated}
       />
 
-      {/* Sección de controles */}
+      {/* SecciÃ³n de controles */}
       <div className="admin-list-section">
         <div style={{
           display: 'flex',
@@ -171,7 +171,7 @@ const UsersAdmin = () => {
           flexWrap: 'wrap',
           gap: '10px'
         }}>
-          <h2 style={{margin: 0}}>Gestión de Usuarios</h2>
+          <h2 style={{margin: 0}}>GestiÃ³n de Usuarios</h2>
           <button
             onClick={() => setShowCreateModal(true)}
             className="btn-primary"
@@ -254,7 +254,7 @@ const UsersAdmin = () => {
         {loading ? (
           <p>Cargando usuarios...</p>
         ) : filteredUsers.length === 0 ? (
-          <p>No hay usuarios en esta categoría</p>
+          <p>No hay usuarios en esta categorÃ­a</p>
         ) : (
           <div style={{overflowX: 'auto'}}>
             <table className="admin-table" style={{width: '100%', borderCollapse: 'collapse'}}>
@@ -289,17 +289,15 @@ const UsersAdmin = () => {
                       </span>
                     </td>
                     {userFilter === 'empresa' && (
-<<<<<<< Updated upstream
+
                       <td style={{padding: '12px'}} data-label="Lugares">
-=======
-                      <td style={{padding: '12px'}}>
->>>>>>> Stashed changes
+
                         <div style={{fontSize: '0.9em', color: '#666'}}>
                           {getPlaceNames(user)}
                         </div>
                       </td>
                     )}
-<<<<<<< Updated upstream
+
                     <td style={{padding: '12px', textAlign: 'center'}} data-label="Acciones">
                       <button
                         onClick={() => handleEditPermissions(user)}
@@ -311,9 +309,7 @@ const UsersAdmin = () => {
                       >
                         Editar permisos
                       </button>
-=======
-                    <td style={{padding: '12px', textAlign: 'center'}}>
->>>>>>> Stashed changes
+
                       <button
                         onClick={() => handleDelete(user.id)}
                         className="btn-delete"
@@ -361,13 +357,13 @@ const UsersAdmin = () => {
         borderLeft: '4px solid #0d6efd',
         borderRadius: '4px'
       }}>
-        <h3 style={{marginTop: 0, color: '#0d6efd'}}>💡 Cómo crear un usuario Empresa</h3>
+        <h3 style={{marginTop: 0, color: '#0d6efd'}}>ðŸ’¡ CÃ³mo crear un usuario Empresa</h3>
         <ol style={{marginBottom: 0, lineHeight: '1.8'}}>
-          <li><strong>Haz clic</strong> en el botón "Crear Usuario Empresa" arriba</li>
-          <li><strong>Rellena el formulario:</strong> Nombre, email, teléfono, etc.</li>
-          <li><strong>Selecciona el LUGAR</strong> para el cual trabajará esta empresa</li>
+          <li><strong>Haz clic</strong> en el botÃ³n "Crear Usuario Empresa" arriba</li>
+          <li><strong>Rellena el formulario:</strong> Nombre, email, telÃ©fono, etc.</li>
+          <li><strong>Selecciona el LUGAR</strong> para el cual trabajarÃ¡ esta empresa</li>
           <li><strong>Marca como "Principal"</strong> si es el contacto principal del lugar</li>
-          <li><strong>Copia la contraseña generada</strong> y compártela con la empresa</li>
+          <li><strong>Copia la contraseÃ±a generada</strong> y compÃ¡rtela con la empresa</li>
         </ol>
         <p style={{
           marginTop: '15px',
@@ -376,8 +372,8 @@ const UsersAdmin = () => {
           borderRadius: '4px',
           marginBottom: 0
         }}>
-          <strong>⚠️ Importante:</strong> Cada usuario empresa verá SOLO las reservas del lugar asignado. 
-          Si un lugar tiene múltiples usuarios, todos verán las mismas reservas.
+          <strong>âš ï¸ Importante:</strong> Cada usuario empresa verÃ¡ SOLO las reservas del lugar asignado. 
+          Si un lugar tiene mÃºltiples usuarios, todos verÃ¡n las mismas reservas.
         </p>
       </div>
     </div>

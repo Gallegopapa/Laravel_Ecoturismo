@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { companyService } from '../services/api';
 import RejectReservationModal from './RejectReservationModal';
 import './CompanyDashboard.css';
@@ -24,7 +24,7 @@ const CompanyDashboard = () => {
     hora_fin: '17:00',
     activo: true,
   });
-<<<<<<< Updated upstream
+
   const [placeForm, setPlaceForm] = useState({
     name: '',
     location: '',
@@ -42,17 +42,17 @@ const CompanyDashboard = () => {
   const [placeSaving, setPlaceSaving] = useState(false);
   const [placeDeleting, setPlaceDeleting] = useState(false);
 
-  // Mapeo de imágenes locales (mismo que en places/detail/page.jsx)
+  // Mapeo de imÃ¡genes locales (mismo que en places/detail/page.jsx)
   const mapeoImagenesDeterministico = {
     'Lago De La Pradera': '/imagenes/Lago.jpeg',
-    'La Laguna Del Otún': '/imagenes/laguna.jpg',
-    'Laguna Del Otún': '/imagenes/laguna.jpg',
+    'La Laguna Del OtÃºn': '/imagenes/laguna.jpg',
+    'Laguna Del OtÃºn': '/imagenes/laguna.jpg',
     'Chorros De Don Lolo': '/imagenes/lolo-2.jpg',
     'Termales de Santa Rosa': '/imagenes/termaales.jpg',
-    'Parque Acuático Consota': '/imagenes/consota.jpg',
+    'Parque AcuÃ¡tico Consota': '/imagenes/consota.jpg',
     'Balneario Los Farallones': '/imagenes/farallones.jpeg',
     'Cascada Los Frailes': '/imagenes/frailes3.jpg',
-    'Río San José': '/imagenes/sanjose3.jpg',
+    'RÃ­o San JosÃ©': '/imagenes/sanjose3.jpg',
     'Rio San Jose': '/imagenes/sanjose3.jpg',
     'Alto Del Nudo': '/imagenes/nudo.jpg',
     'Alto Del Toro': '/imagenes/toro.jpg',
@@ -60,17 +60,17 @@ const CompanyDashboard = () => {
     'Cerro Batero': '/imagenes/batero.jpg',
     'Reserva Forestal La Nona': '/imagenes/lanona5.jpg',
     'Reserva Natural Cerro Gobia': '/imagenes/gobia.jpg',
-    'Kaukitá Bosque Reserva': '/imagenes/kaukita3.jpg',
+    'KaukitÃ¡ Bosque Reserva': '/imagenes/kaukita3.jpg',
     'Kaukita Bosque Reserva': '/imagenes/kaukita3.jpg',
     'Reserva Natural DMI Agualinda': '/imagenes/distritomanejo8.jpg',
-    'Parque Nacional Natural Tatamá': '/imagenes/tatama.jpg',
+    'Parque Nacional Natural TatamÃ¡': '/imagenes/tatama.jpg',
     'Parque Nacional Natural Tatama': '/imagenes/tatama.jpg',
     'Parque Las Araucarias': '/imagenes/araucarias.jpg',
     'Parque Regional Natural Cuchilla de San Juan': '/imagenes/cuchilla.jpg',
     'Parque Natural Regional Santa Emilia': '/imagenes/santaemilia2.jpg',
-    'Jardín Botánico UTP': '/imagenes/jardin.jpeg',
+    'JardÃ­n BotÃ¡nico UTP': '/imagenes/jardin.jpeg',
     'Jardin Botanico UTP': '/imagenes/jardin.jpeg',
-    'Jardín Botánico De Marsella': '/imagenes/jardinmarsella2.jpg',
+    'JardÃ­n BotÃ¡nico De Marsella': '/imagenes/jardinmarsella2.jpg',
     'Jardin Botanico De Marsella': '/imagenes/jardinmarsella2.jpg',
   };
 
@@ -86,14 +86,14 @@ const CompanyDashboard = () => {
 
   const mapeoImagenesLocales = {
     'lago de la pradera': '/imagenes/Lago.jpeg',
-    'la laguna del otún': '/imagenes/laguna.jpg',
-    'laguna del otún': '/imagenes/laguna.jpg',
+    'la laguna del otÃºn': '/imagenes/laguna.jpg',
+    'laguna del otÃºn': '/imagenes/laguna.jpg',
     'chorros de don lolo': '/imagenes/lolo-2.jpg',
     'termales de santa rosa': '/imagenes/termaales.jpg',
-    'parque acuático consota': '/imagenes/consota.jpg',
+    'parque acuÃ¡tico consota': '/imagenes/consota.jpg',
     'balneario los farallones': '/imagenes/farallones.jpeg',
     'cascada los frailes': '/imagenes/frailes3.jpg',
-    'río san josé': '/imagenes/sanjose3.jpg',
+    'rÃ­o san josÃ©': '/imagenes/sanjose3.jpg',
     'rio san jose': '/imagenes/sanjose3.jpg',
     'alto del nudo': '/imagenes/nudo.jpg',
     'alto del toro': '/imagenes/toro.jpg',
@@ -102,16 +102,16 @@ const CompanyDashboard = () => {
     'reserva forestal la nona': '/imagenes/lanona5.jpg',
     'reserva natural cerro gobia': '/imagenes/gobia.jpg',
     'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
-    'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
+    'kaukitÃ¡ bosque reserva': '/imagenes/kaukita3.jpg',
     'reserva natural dmi agualinda': '/imagenes/distritomanejo8.jpg',
-    'parque nacional natural tatamá': '/imagenes/tatama.jpg',
+    'parque nacional natural tatamÃ¡': '/imagenes/tatama.jpg',
     'parque nacional natural tatama': '/imagenes/tatama.jpg',
     'parque las araucarias': '/imagenes/araucarias.jpg',
     'parque regional natural cuchilla de san juan': '/imagenes/cuchilla.jpg',
     'parque natural regional santa emilia': '/imagenes/santaemilia2.jpg',
-    'jardín botánico utp': '/imagenes/jardin.jpeg',
+    'jardÃ­n botÃ¡nico utp': '/imagenes/jardin.jpeg',
     'jardin botanico utp': '/imagenes/jardin.jpeg',
-    'jardín botánico de marsella': '/imagenes/jardinmarsella2.jpg',
+    'jardÃ­n botÃ¡nico de marsella': '/imagenes/jardinmarsella2.jpg',
     'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
   };
 
@@ -149,8 +149,7 @@ const CompanyDashboard = () => {
     const finalImage = imagenSubida || imagenLocal || apiImage || '';
     return normalizeImageUrl(finalImage);
   };
-=======
->>>>>>> Stashed changes
+
 
   useEffect(() => {
     loadReservations();
@@ -168,7 +167,7 @@ const CompanyDashboard = () => {
     }
   }, [selectedPlaceId]);
 
-<<<<<<< Updated upstream
+
   useEffect(() => {
     if (selectedPlaceId) {
       loadPlaceDetails(selectedPlaceId);
@@ -189,8 +188,7 @@ const CompanyDashboard = () => {
     }
   }, [selectedPlaceId]);
 
-=======
->>>>>>> Stashed changes
+
   const loadReservations = async () => {
     try {
       setLoading(true);
@@ -230,25 +228,21 @@ const CompanyDashboard = () => {
   const loadPlacesManaged = async () => {
     try {
       const data = await companyService.places.getAll();
-<<<<<<< Updated upstream
+
       const list = Array.isArray(data) ? data : [];
       setPlacesManaged(list);
       if (list.length > 0) {
         setSelectedPlaceId(String(list[0].id));
       } else {
         setSelectedPlaceId('');
-=======
-      setPlacesManaged(Array.isArray(data) ? data : []);
-      if (Array.isArray(data) && data.length > 0) {
-        setSelectedPlaceId(String(data[0].id));
->>>>>>> Stashed changes
+
       }
     } catch (error) {
       console.error('Error cargando lugares gestionados:', error);
     }
   };
 
-<<<<<<< Updated upstream
+
   const loadPlaceDetails = async (placeId) => {
     try {
       setPlaceLoading(true);
@@ -275,8 +269,7 @@ const CompanyDashboard = () => {
     }
   };
 
-=======
->>>>>>> Stashed changes
+
   const normalizeTime = (value) => {
     if (!value) return '';
     const timeStr = String(value);
@@ -380,7 +373,7 @@ const CompanyDashboard = () => {
     handleScheduleChange(scheduleId, 'hora_fin', '23:59');
   };
 
-<<<<<<< Updated upstream
+
   const handlePlaceChange = (field, value) => {
     setPlaceForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -420,7 +413,7 @@ const CompanyDashboard = () => {
 
   const handlePlaceDelete = async () => {
     if (!selectedPlaceId) return;
-    if (!window.confirm('¿Seguro que deseas eliminar este lugar? Esta acción no se puede deshacer.')) {
+    if (!window.confirm('Â¿Seguro que deseas eliminar este lugar? Esta acciÃ³n no se puede deshacer.')) {
       return;
     }
 
@@ -438,8 +431,7 @@ const CompanyDashboard = () => {
     }
   };
 
-=======
->>>>>>> Stashed changes
+
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setMessageType(type);
@@ -753,7 +745,7 @@ const CompanyDashboard = () => {
       <div className="reservations-list">
         {reservations.length === 0 ? (
           <div className="empty-state">
-            <p>No hay reservas en esta categoría</p>
+            <p>No hay reservas en esta categorÃ­a</p>
           </div>
         ) : (
           reservations.map(companyRes => {
@@ -847,7 +839,7 @@ const CompanyDashboard = () => {
                 {selectedReservation && selectedReservation.id === companyRes.id && (
                   <div className="card-footer">
                     <h4>Detalles de la Reserva</h4>
-                    <p><strong>Número de personas:</strong> {peopleCount ?? 'N/A'}</p>
+                    <p><strong>NÃºmero de personas:</strong> {peopleCount ?? 'N/A'}</p>
                     <p><strong>Comentarios:</strong> {reservation.comentarios || 'Sin comentarios'}</p>
                     {companyRes.estado === 'rechazada' && (
                       <>
@@ -904,7 +896,7 @@ const CompanyDashboard = () => {
                 />
               </label>
               <label>
-                Ubicación
+                UbicaciÃ³n
                 <input
                   type="text"
                   value={placeForm.location}
@@ -913,7 +905,7 @@ const CompanyDashboard = () => {
                 />
               </label>
               <label className="place-form-full">
-                Descripción
+                DescripciÃ³n
                 <textarea
                   value={placeForm.description}
                   onChange={(event) => handlePlaceChange('description', event.target.value)}
@@ -942,7 +934,7 @@ const CompanyDashboard = () => {
                 />
               </label>
               <label>
-                Teléfono
+                TelÃ©fono
                 <input
                   type="text"
                   value={placeForm.telefono}
