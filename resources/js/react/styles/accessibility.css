@@ -1,0 +1,238 @@
+/* ============================================
+   ESTILOS GLOBALES DE ACCESIBILIDAD
+   ============================================
+   
+   Estas clases se aplican al <body> del documento
+   según las configuraciones del usuario.
+   
+   Clases disponibles:
+   - font-large: Aumenta el tamaño base del texto a 112.5%
+   - font-extra-large: Aumenta el tamaño base del texto a 125%
+   - high-contrast: Modo de alto contraste
+   - underline-links: Subraya todos los enlaces
+   - grayscale-mode: Convierte todo a escala de grises
+*/
+
+/* ============================================
+   TAMAÑO DE TEXTO
+   ============================================ */
+
+/* Tamaño grande: 112.5% (18px si la base es 16px) */
+body.font-large {
+  font-size: 112.5%;
+}
+
+/* Tamaño extra grande: 125% (20px si la base es 16px) */
+body.font-extra-large {
+  font-size: 125%;
+}
+
+/* ============================================
+   ALTO CONTRASTE
+   ============================================ */
+
+body.high-contrast {
+  /* Fondo blanco puro y texto negro puro */
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.high-contrast * {
+  /* Forzar alto contraste en todos los elementos */
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Links en alto contraste */
+body.high-contrast a {
+  color: #0000ff !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast a:visited {
+  color: #551a8b !important;
+}
+
+body.high-contrast a:hover,
+body.high-contrast a:focus {
+  color: #cc0000 !important;
+  background-color: #ffff00 !important;
+}
+
+/* Botones en alto contraste */
+body.high-contrast button,
+body.high-contrast .btn,
+body.high-contrast input[type="button"],
+body.high-contrast input[type="submit"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast button:hover,
+body.high-contrast button:focus {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+}
+
+/* Inputs en alto contraste */
+body.high-contrast input,
+body.high-contrast textarea,
+body.high-contrast select {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast input:focus,
+body.high-contrast textarea:focus,
+body.high-contrast select:focus {
+  outline: 3px solid #000000 !important;
+  outline-offset: 2px !important;
+}
+
+/* Imágenes en alto contraste (mantener visibilidad) */
+body.high-contrast img {
+  opacity: 1 !important;
+  filter: contrast(1.2) !important;
+}
+
+/* ============================================
+   SUBRAYAR ENLACES
+   ============================================ */
+
+body.underline-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 2px !important;
+}
+
+body.underline-links a:hover {
+  text-decoration-thickness: 3px !important;
+}
+
+/* ============================================
+   ESCALA DE GRISES
+   ============================================ */
+
+body.grayscale-mode {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+}
+
+/* Mantener el panel de accesibilidad en color cuando el modo gris está activo */
+body.grayscale-mode .accessibility-floating-button,
+body.grayscale-mode .accessibility-panel {
+  filter: none;
+  -webkit-filter: none;
+}
+
+/* ============================================
+   MEJORAS GENERALES DE ACCESIBILIDAD
+   ============================================ */
+
+/* Focus visible mejorado para todos los elementos interactivos */
+*:focus-visible {
+  outline: 3px solid #3498db;
+  outline-offset: 2px;
+}
+
+/* Mejorar contraste de selección de texto */
+::selection {
+  background-color: #3498db;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #3498db;
+  color: #ffffff;
+}
+
+/* ============================================
+   COMPATIBILIDAD CON PREFERS-REDUCED-MOTION
+   ============================================
+   
+   Respeta la preferencia del sistema del usuario
+   para reducir animaciones
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   MODO OSCURO DEL SISTEMA (Opcional)
+   ============================================
+   
+   Si el usuario tiene modo oscuro en el sistema,
+   aplicar un esquema oscuro básico
+*/
+
+@media (prefers-color-scheme: dark) {
+  body:not(.high-contrast) {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  body:not(.high-contrast) a {
+    color: #4fc3f7;
+  }
+
+  body:not(.high-contrast) button,
+  body:not(.high-contrast) .btn {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  body:not(.high-contrast) input,
+  body:not(.high-contrast) textarea,
+  body:not(.high-contrast) select {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+}
+
+/* ============================================
+   IMPRESIÓN
+   ============================================
+   
+   Asegurar que los estilos de accesibilidad
+   no afecten negativamente la impresión
+*/
+
+@media print {
+  body.font-large,
+  body.font-extra-large {
+    font-size: 12pt;
+  }
+
+  body.grayscale-mode {
+    filter: none;
+    -webkit-filter: none;
+  }
+
+  body.high-contrast,
+  body.high-contrast * {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  .accessibility-floating-button,
+  .accessibility-panel,
+  .accessibility-overlay {
+    display: none !important;
+  }
+}

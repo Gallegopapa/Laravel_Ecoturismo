@@ -1,0 +1,187 @@
+import { createContext, useContext, useState, useEffect } from 'react';
+
+/**
+ * AccessibilityContext
+ * 
+ * Contexto global para gestionar las configuraciones de accesibilidad.
+ * Maneja:
+ * - Tamaño de texto (3 niveles: normal, large, extra-large)
+ * - Alto contraste (activado/desactivado)
+ * - Subrayado de enlaces (activado/desactivado)
+ * - Escala de grises (activado/desactivado)
+ * 
+ * Todas las configuraciones se guardan en localStorage y se aplican
+ * como clases CSS en el elemento <body> del documento.
+ */
+
+const AccessibilityContext = createContext();
+
+// Hook personalizado para usar el contexto de accesibilidad
+export const useAccessibility = () => {
+  const context = useContext(AccessibilityContext);
+  if (!context) {
+    throw new Error('useAccessibility debe usarse dentro de AccessibilityProvider');
+  }
+  return context;
+};
+
+export const AccessibilityProvider = ({ children }) => {
+  // Estados para cada opción de accesibilidad
+  const [fontSize, setFontSize] = useState('normal'); // 'normal' | 'large' | 'extra-large'
+  const [highContrast, setHighContrast] = useState(false);
+  const [underlineLinks, setUnderlineLinks] = useState(false);
+  const [grayscale, setGrayscale] = useState(false);
+
+  /**
+   * Efecto inicial: Cargar configuraciones guardadas desde localStorage
+   * Se ejecuta una vez al montar el componente
+   */
+  useEffect(() => {
+    const loadSettings = () => {
+      try {
+        const savedSettings = localStorage.getItem('accessibility-settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          setFontSize(settings.fontSize || 'normal');
+          setHighContrast(settings.highContrast || false);
+          setUnderlineLinks(settings.underlineLinks || false);
+          setGrayscale(settings.grayscale || false);
+        }
+      } catch (error) {
+        console.error('Error al cargar configuraciones de accesibilidad:', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  /**
+   * Efecto: Guardar configuraciones en localStorage cuando cambien
+   * Se ejecuta cada vez que cambia alguna configuración
+   */
+  useEffect(() => {
+    const settings = {
+      fontSize,
+      highContrast,
+      underlineLinks,
+      grayscale
+    };
+
+    try {
+      localStorage.setItem('accessibility-settings', JSON.stringify(settings));
+    } catch (error) {
+      console.error('Error al guardar configuraciones de accesibilidad:', error);
+    }
+  }, [fontSize, highContrast, underlineLinks, grayscale]);
+
+  /**
+   * Efecto: Aplicar clases CSS al <body> según configuraciones activas
+   * Cada vez que cambia una configuración, actualiza las clases del body
+   */
+  useEffect(() => {
+    const body = document.body;
+
+    // Limpiar todas las clases de accesibilidad previas
+    body.classList.remove('font-large', 'font-extra-large', 'high-contrast', 
+                           'underline-links', 'grayscale-mode');
+
+    // Aplicar clases según configuraciones activas
+    if (fontSize === 'large') {
+      body.classList.add('font-large');
+    } else if (fontSize === 'extra-large') {
+      body.classList.add('font-extra-large');
+    }
+
+    if (highContrast) {
+      body.classList.add('high-contrast');
+    }
+
+    if (underlineLinks) {
+      body.classList.add('underline-links');
+    }
+
+    if (grayscale) {
+      body.classList.add('grayscale-mode');
+    }
+  }, [fontSize, highContrast, underlineLinks, grayscale]);
+
+  /**
+   * Aumentar el tamaño de texto
+   * Cicla entre: normal → large → extra-large
+   */
+  const increaseFontSize = () => {
+    if (fontSize === 'normal') {
+      setFontSize('large');
+    } else if (fontSize === 'large') {
+      setFontSize('extra-large');
+    }
+    // Si ya está en extra-large, no hace nada
+  };
+
+  /**
+   * Disminuir el tamaño de texto
+   * Cicla entre: extra-large → large → normal
+   */
+  const decreaseFontSize = () => {
+    if (fontSize === 'extra-large') {
+      setFontSize('large');
+    } else if (fontSize === 'large') {
+      setFontSize('normal');
+    }
+    // Si ya está en normal, no hace nada
+  };
+
+  /**
+   * Alternar alto contraste
+   */
+  const toggleHighContrast = () => {
+    setHighContrast(prev => !prev);
+  };
+
+  /**
+   * Alternar subrayado de enlaces
+   */
+  const toggleUnderlineLinks = () => {
+    setUnderlineLinks(prev => !prev);
+  };
+
+  /**
+   * Alternar escala de grises
+   */
+  const toggleGrayscale = () => {
+    setGrayscale(prev => !prev);
+  };
+
+  /**
+   * Resetear todas las configuraciones a valores por defecto
+   */
+  const resetSettings = () => {
+    setFontSize('normal');
+    setHighContrast(false);
+    setUnderlineLinks(false);
+    setGrayscale(false);
+  };
+
+  // Valor del contexto que se provee a todos los componentes hijos
+  const value = {
+    // Estados
+    fontSize,
+    highContrast,
+    underlineLinks,
+    grayscale,
+    
+    // Funciones
+    increaseFontSize,
+    decreaseFontSize,
+    toggleHighContrast,
+    toggleUnderlineLinks,
+    toggleGrayscale,
+    resetSettings
+  };
+
+  return (
+    <AccessibilityContext.Provider value={value}>
+      {children}
+    </AccessibilityContext.Provider>
+  );
+};

@@ -2,11 +2,16 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './react/index.css';
+import './react/styles/accessibility.css';
 
 // Importar AuthProvider
 import { AuthProvider } from './react/context/AuthContext';
 import { ProtectedRoute } from './react/components/ProtectedRoute';
 import ErrorBoundary from './react/components/ErrorBoundary';
+
+// CONTEXTOS DE ACCESIBILIDAD E IDIOMA
+import { AccessibilityProvider } from './react/contexts/AccessibilityContext.jsx';
+import { LanguageProvider } from './react/contexts/LanguageContext.jsx';
 
 // Importar componentes
 import App from './react/App.jsx';
@@ -50,6 +55,9 @@ import FAQPage from './react/faq/page.jsx';
 
 // Chatbot
 import FloatingChatbot from './react/components/FloatingChatbot/FloatingChatbot.jsx';
+
+// COMPONENTE DE PANEL DE ACCESIBILIDAD
+import AccessibilityPanel from './react/components/AccessibilityPanel/AccessibilityPanel.jsx';
 
 // Crear router
 const router = createBrowserRouter([
@@ -227,12 +235,17 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <ErrorBoundary>
-      <AuthProvider>
-        <>
-          <RouterProvider router={router} />
-          <FloatingChatbot />
-        </>
-      </AuthProvider>
+      <AccessibilityProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <>
+              <RouterProvider router={router} />
+              <FloatingChatbot />
+              <AccessibilityPanel />
+            </>
+          </AuthProvider>
+        </LanguageProvider>
+      </AccessibilityProvider>
     </ErrorBoundary>
   );
 } else {
