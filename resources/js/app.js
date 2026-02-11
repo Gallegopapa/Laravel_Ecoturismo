@@ -45,6 +45,12 @@ import CompanyDashboard from './react/admin/CompanyDashboard.jsx';
 import EcohotelsPage from './react/ecohotels/page.jsx';
 import EcohotelDetailPage from './react/ecohotels/detail/page.jsx';
 
+// FAQ
+import FAQPage from './react/faq/page.jsx';
+
+// Chatbot
+import FloatingChatbot from './react/components/FloatingChatbot/FloatingChatbot.jsx';
+
 // Crear router
 const router = createBrowserRouter([
   {
@@ -78,6 +84,14 @@ const router = createBrowserRouter([
   {
     path: '/contacto2',
     element: <ContactPage />,
+  },
+  {
+    path: '/preguntas-frecuentes',
+    element: <FAQPage />,
+  },
+  {
+    path: '/faq',
+    element: <FAQPage />,
   },
   {
     path: '/lugares',
@@ -214,7 +228,10 @@ if (rootElement) {
   createRoot(rootElement).render(
     <ErrorBoundary>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <>
+          <RouterProvider router={router} />
+          <FloatingChatbot />
+        </>
       </AuthProvider>
     </ErrorBoundary>
   );
