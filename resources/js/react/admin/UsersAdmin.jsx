@@ -34,15 +34,6 @@ const UsersAdmin = () => {
     }
   };
 
-  const loadPlaces = async () => {
-    try {
-      const data = await adminService.places.getAll();
-      setPlaces(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error al cargar lugares:', error);
-    }
-  };
-
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setTimeout(() => setMessage(''), 3000);
@@ -98,92 +89,25 @@ const UsersAdmin = () => {
     if (userFilter === 'admin') {
       return user.tipo_usuario === 'admin' || user.is_admin;
     }
-    if (userFilter === 'normal') {
-      return user.tipo_usuario === 'normal' && !user.is_admin;
-    }
-    return user.tipo_usuario === userFilter;
-  });
-
-  const getUserTypeColor = (user) => {
-    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
-      return '#dc3545';
-    }
-    switch (user?.tipo_usuario) {
-      case 'empresa':
-        return '#0d6efd';
-      case 'normal':
-        return '#198754';
-      default:
-        return '#6c757d';
-    }
-  };
-
-  const getUserTypeLabel = (user) => {
-    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
-      return 'Administrador';
-    }
-    switch (user?.tipo_usuario) {
-      case 'empresa':
-        return 'Empresa/Lugar';
-      case 'normal':
-        return 'Cliente';
-      default:
-        return 'Usuario';
-    }
-  };
-
-  const adminCount = users.filter(u => u.tipo_usuario === 'admin' || u.is_admin).length;
-  const clientCount = users.filter(u => u.tipo_usuario === 'normal' && !u.is_admin).length;
-  const companyCount = users.filter(u => u.tipo_usuario === 'empresa' && !u.is_admin).length;
-
-  return (
-    <div className="admin-panel">
-      {message && (
-        <div className={`admin-message ${message.includes('Error') ? 'error' : 'success'}`}>
-          {message}
-        </div>
-      )}
-
-      {/* Modal para crear usuario empresa */}
-      <CreateUserModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onUserCreated={handleUserCreated}
-        places={places}
-      />
-
-      <EditUserModal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        userId={editingUserId}
-        user={editingUser}
-        places={places}
-        onUpdated={handleUserUpdated}
-      />
-
-      {/* SecciÃ³n de controles */}
-      <div className="admin-list-section">
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}>
-          <h2 style={{margin: 0}}>GestiÃ³n de Usuarios</h2>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="btn-primary"
-            style={{
-              padding: '10px 20px',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            + Crear Usuario Empresa
-          </button>
-        </div>
+                      >
+                        Editar permisos
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="btn-delete"
+                        style={{
+                          padding: '6px 12px',
+                          marginLeft: '5px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                            ))}
+                          </tbody>
+                        </table>
 
         {/* Filtros */}
         <div style={{
@@ -289,13 +213,7 @@ const UsersAdmin = () => {
                       </span>
                     </td>
                     {userFilter === 'empresa' && (
-<<<<<<< Updated upstream
-
                       <td style={{padding: '12px'}} data-label="Lugares">
-
-=======
-                      <td style={{padding: '12px'}}>
->>>>>>> Stashed changes
                         <div style={{fontSize: '0.9em', color: '#666'}}>
                           {getPlaceNames(user)}
                         </div>
@@ -314,10 +232,6 @@ const UsersAdmin = () => {
                       >
                         Editar permisos
                       </button>
-
-=======
-                    <td style={{padding: '12px', textAlign: 'center'}}>
->>>>>>> Stashed changes
                       <button
                         onClick={() => handleDelete(user.id)}
                         className="btn-delete"
@@ -326,6 +240,10 @@ const UsersAdmin = () => {
                           marginLeft: '5px',
                           cursor: 'pointer'
                         }}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
                       >
                         Eliminar
                       </button>
