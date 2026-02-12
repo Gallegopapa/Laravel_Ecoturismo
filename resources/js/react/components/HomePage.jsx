@@ -77,7 +77,7 @@ const HomePage = ({ loggedIn, user }) => {
     // Funciones de navegación
     const goEcohoteles = () => navigate("/ecohoteles");
     const goLogin = () => navigate("/login");
-    const goRegister = () => navigate("/register");
+    const goRegister = () => navigate("/registro");
     const goPlaceDetail = (id) => navigate(`/lugares/${id}`); // Ahora usa el id real
     const goReservas = () => navigate("/reservas");
     const goPerfil = () => navigate("/perfil");
