@@ -6,6 +6,7 @@ import Header from '@/react/components/Header/Header';
 import Header2 from '@/react/components/Header2/Header2';
 import Footer from '@/react/components/Footer/Footer';
 import ReservationModal from '@/react/components/ReservationModal';
+import ReviewForm from '@/react/components/ReviewForm/ReviewForm';
 import usuarioImg from '@/react/components/imagenes/usuario.jpg';
 import './page.css';
 
@@ -22,6 +23,9 @@ const PlaceDetailPage = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editForm, setEditForm] = useState({ rating: 5, comment: '' });
+  const [submittingEdit, setSubmittingEdit] = useState(false);
 
   // Mapeo de imágenes locales (mismo que en places/page.jsx)
   const mapeoImagenesDeterministico = {
@@ -244,6 +248,74 @@ const PlaceDetailPage = () => {
       setIsFavorite(favorite);
     } catch (err) {
       console.error('Error al verificar favorito:', err);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await reviewsService.delete(reviewId);
+      setMessage('✅ Reseña eliminada correctamente');
+      await loadReviews(id);
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      console.error('Error al eliminar reseña:', err);
+      setMessage('❌ Error al eliminar la reseña');
+      setTimeout(() => setMessage(''), 3000);
+    }
+  };
+
+  const renderStars = (rating) => {
+    return [1, 2, 3, 4, 5].map((n) => (
+      <i key={n} style={{ color: n <= rating ? '#ffc107' : '#ddd', fontSize: '1.5rem', marginRight: '4px' }}>
+        ★
+      </i>
+    ));
+  };
+
+  const startEditReview = (review) => {
+    setEditingReviewId(review.id);
+    setEditForm({
+      rating: review.rating || 5,
+      comment: review.comment || ''
+    });
+  };
+
+  const cancelEditReview = () => {
+    setEditingReviewId(null);
+    setEditForm({ rating: 5, comment: '' });
+  };
+
+  const handleEditReviewChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({
+      ...prev,
+      [name]: name === 'rating' ? parseInt(value) : value
+    }));
+  };
+
+  const submitEditReview = async (reviewId) => {
+    if (!editForm.comment.trim()) {
+      setMessage('❌ El comentario no puede estar vacío');
+      return;
+    }
+
+    setSubmittingEdit(true);
+    try {
+      await reviewsService.update(reviewId, {
+        place_id: place.id,
+        rating: editForm.rating,
+        comment: editForm.comment
+      });
+      setMessage('✅ Reseña actualizada correctamente');
+      setEditingReviewId(null);
+      await loadReviews(id);
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      console.error('Error al actualizar reseña:', err);
+      setMessage('❌ Error al actualizar la reseña');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setSubmittingEdit(false);
     }
   };
 
@@ -590,6 +662,14 @@ const PlaceDetailPage = () => {
             </div>
           </div>
 
+          {/* Formulario para agregar reseña */}
+          <ReviewForm
+            placeId={place.id}
+            user={user}
+            isAuthenticated={isAuthenticated}
+            onReviewAdded={() => loadReviews(place.id)}
+          />
+
           {/* Sección de Reseñas */}
           <div className="place-reviews-section">
             <h2>Reseñas y Comentarios</h2>
@@ -618,7 +698,7 @@ const PlaceDetailPage = () => {
                       <div className="review-user-info">
                         <h4>{review.usuario?.name || 'Usuario Anónimo'}</h4>
                         <div className="review-rating">
-                          {'⭐'.repeat(review.rating || 0)}
+                          {renderStars(review.rating || 0)}
                         </div>
                         {review.fecha_comentario && (
                           <span className="review-date">
@@ -632,6 +712,145 @@ const PlaceDetailPage = () => {
                       </div>
                     </div>
                     <p className="review-comment">{review.comment}</p>
+                    
+                    {/* Formulario de edición inline */}
+                    {editingReviewId === review.id ? (
+                      <div style={{ marginTop: '15px', padding: '15px', background: '#f9f9f9', borderRadius: '8px', borderLeft: '4px solid #3498db' }}>
+                        <h4 style={{ marginTop: 0, color: '#2c3e50' }}>Editar tu reseña</h4>
+                        
+                        {/* Estrellas */}
+                        <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#2c3e50' }}>
+                          Calificación *
+                        </label>
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+                          {[1, 2, 3, 4, 5].map(n => (
+                            <button
+                              key={n}
+                              type="button"
+                              onClick={() => setEditForm(prev => ({ ...prev, rating: n }))}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '1.5rem',
+                                color: editForm.rating >= n ? '#ffc107' : '#ddd',
+                                padding: '0',
+                                marginRight: '4px',
+                                transition: 'color 0.2s'
+                              }}
+                            >
+                              ★
+                            </button>
+                          ))}
+                        </div>
+                        
+                        {/* Comentario */}
+                        <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#2c3e50' }}>
+                          Comentario *
+                        </label>
+                        <textarea
+                          name="comment"
+                          value={editForm.comment}
+                          onChange={handleEditReviewChange}
+                          maxLength={500}
+                          rows={3}
+                          style={{
+                            width: '100%',
+                            padding: '10px',
+                            border: '2px solid #e0e0e0',
+                            borderRadius: '6px',
+                            fontFamily: 'inherit',
+                            fontSize: '0.95rem',
+                            marginBottom: '8px',
+                            boxSizing: 'border-box'
+                          }}
+                        />
+                        <div style={{ textAlign: 'right', fontSize: '0.85rem', color: '#999', marginBottom: '12px' }}>
+                          {editForm.comment.length}/500 caracteres
+                        </div>
+                        
+                        {/* Botones */}
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => submitEditReview(review.id)}
+                            disabled={submittingEdit}
+                            style={{
+                              padding: '10px 20px',
+                              background: '#27ae60',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontWeight: 600,
+                              opacity: submittingEdit ? 0.6 : 1
+                            }}
+                          >
+                            Guardar cambios
+                          </button>
+                          <button
+                            onClick={cancelEditReview}
+                            disabled={submittingEdit}
+                            style={{
+                              padding: '10px 20px',
+                              background: '#95a5a6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontWeight: 600
+                            }}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Botones de editar y eliminar */}
+                        {isAuthenticated && user && (user.id === review.usuario?.id || user.is_admin) && (
+                          <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            {user.id === review.usuario?.id && (
+                              <button
+                                onClick={() => startEditReview(review)}
+                                style={{
+                                  padding: '8px 16px',
+                                  background: '#3498db',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.9rem',
+                                  fontWeight: 600,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Editar
+                              </button>
+                            )}
+                            {(user.id === review.usuario?.id || user.is_admin) && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm('¿Estás seguro de eliminar esta reseña?')) {
+                                    handleDeleteReview(review.id);
+                                  }
+                                }}
+                                style={{
+                                  padding: '8px 16px',
+                                  background: '#e74c3c',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.9rem',
+                                  fontWeight: '600',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Eliminar
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 ))}
                 {reviews.length > 5 && (

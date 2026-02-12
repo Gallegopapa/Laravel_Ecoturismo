@@ -263,20 +263,31 @@ const Comments2Page = () => {
           ) : (
             reviews.map((review) => (
               <div className="box" key={review.id}>
-                <p>
+                {/* Título con el comentario */}
+                <h3 style={{ 
+                  margin: "0 0 8px 0", 
+                  color: "#333",
+                  fontSize: "1.1rem",
+                  fontWeight: "600"
+                }}>
                   {review.comment || "Sin comentario"}
-                </p>
+                </h3>
+                
+                {/* Ubicación del lugar */}
                 {review.place && (
                   <p style={{ 
                     fontSize: "0.85rem", 
                     color: "#2ecc71", 
-                    marginBottom: "10px",
-                    fontWeight: "500"
+                    marginBottom: "12px",
+                    fontWeight: "500",
+                    margin: "0 0 12px 0"
                   }}>
                     📍 {review.place.name}
                     {review.place.location && ` - ${review.place.location}`}
                   </p>
                 )}
+                
+                {/* Información del usuario */}
                 <div className="in-box">
                   <div className="bx-img">
                     <img 
@@ -289,12 +300,8 @@ const Comments2Page = () => {
                   </div>
                   <div className="bxx-text">
                     <h4>{review.usuario?.name || "Usuario"}</h4>
-                    <h5>
-                      {review.comment 
-                        ? (review.comment.length > 60 
-                            ? review.comment.substring(0, 60) + "..." 
-                            : review.comment)
-                        : "Sin comentario"}
+                    <h5 style={{ color: "#666", fontWeight: "400" }}>
+                      {review.comment || "Sin comentario"}
                     </h5>
                     <div className="ratings">
                       {renderStars(review.rating)}
@@ -312,47 +319,51 @@ const Comments2Page = () => {
                         })}
                       </p>
                     )}
-                    <div style={{ marginTop: "10px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                      {/* Botón de editar solo para el autor */}
-                      {user && review.usuario && user.id === review.usuario.id && (
-                        <button
-                          type="button"
-                          onClick={() => startEdit(review)}
-                          style={{
-                            padding: "5px 12px",
-                            background: "#3498db",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                            fontSize: "0.85rem"
-                          }}
-                        >
-                          Editar
-                        </button>
-                      )}
-                      {/* Botón de eliminar para autor o admin */}
-                      {user && (
-                        (review.usuario && user.id === review.usuario.id) || user.is_admin
-                      ) && (
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(review.id)}
-                          style={{
-                            padding: "5px 15px",
-                            background: "#e74c3c",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                            fontSize: "0.85rem"
-                          }}
-                        >
-                          Eliminar
-                        </button>
-                      )}
-                    </div>
                   </div>
+                </div>
+                
+                {/* Botones de acción */}
+                <div style={{ marginTop: "12px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {/* Botón de editar solo para el autor */}
+                  {user && review.usuario && user.id === review.usuario.id && (
+                    <button
+                      type="button"
+                      onClick={() => startEdit(review)}
+                      style={{
+                        padding: "8px 16px",
+                        background: "#3498db",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "0.85rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                  {/* Botón de eliminar para autor o admin */}
+                  {user && (
+                    (review.usuario && user.id === review.usuario.id) || user.is_admin
+                  ) && (
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(review.id)}
+                      style={{
+                        padding: "8px 16px",
+                        background: "#e74c3c",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "0.85rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  )}
                 </div>
               </div>
             ))
@@ -361,7 +372,23 @@ const Comments2Page = () => {
 
         {/* Formulario de comentarios */}
         <form className="comentaarios" onSubmit={editingReviewId ? handleEditSubmit : handleSubmit}>
-          <h3 style={{ marginBottom: "20px", color: "#2c3e50" }}>Deja tu reseña</h3>
+          <h3 style={{ marginBottom: "20px", color: "#2c3e50" }}>
+            {editingReviewId ? "✏️ Editar tu reseña" : "Deja tu reseña"}
+          </h3>
+          
+          {editingReviewId && (
+            <div style={{
+              padding: "12px",
+              backgroundColor: "#e8f4f8",
+              border: "2px solid #3498db",
+              borderRadius: "8px",
+              marginBottom: "15px",
+              color: "#3498db",
+              fontSize: "0.9rem"
+            }}>
+              ℹ️ Estás editando tu reseña. Guarda los cambios cuando termines.
+            </div>
+          )}
           
           <div style={{ marginBottom: "15px" }}>
             <label htmlFor="place_id" style={{ 
@@ -464,12 +491,37 @@ const Comments2Page = () => {
             )}
           </div>
           
-          <div className="buttons-container">
-            <Link to="/pagLogueados">
-              <button type="button" className="volver" disabled={submitting}>
-                Volver
-              </button>
-            </Link>
+          <div className="buttons-container" style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <Link to="/pagLogueados">
+                <button type="button" className="volver" disabled={submitting}>
+                  Volver
+                </button>
+              </Link>
+              {editingReviewId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingReviewId(null);
+                    setEditForm({ place_id: "", rating: 5, comment: "" });
+                    setFormError("");
+                  }}
+                  style={{
+                    padding: "10px 20px",
+                    background: "#95a5a6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    fontWeight: "500"
+                  }}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+              )}
+            </div>
             <input 
               type="submit" 
               value={submitting ? "Guardando..." : (editingReviewId ? "Guardar cambios" : "Enviar")} 

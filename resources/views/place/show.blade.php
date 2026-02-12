@@ -283,10 +283,10 @@
                 <h3 style="margin-bottom:20px;">Todas las reseñas ({{ $reviews->count() }})</h3>
                 @if($reviews->count() > 0)
                     @foreach($reviews as $review)
-                        <div style="padding:20px; border-bottom:1px solid #ececec; margin-bottom:15px;">
+                        <div style="padding:20px; border-bottom:1px solid #ececec; margin-bottom:15px; background:#fff; border-radius:8px;">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
                                 <div>
-                                    <strong style="color:#1c1c1a;">{{ $review->usuario->name }}</strong>
+                                    <strong style="color:#1c1c1a; font-size:1.1em;">{{ $review->usuario->name }}</strong>
                                     <div style="color:#ffc107; font-size:1.2em; margin:5px 0;">
                                         @for($i = 1; $i <= 5; $i++)
                                             @if($i <= $review->rating)
@@ -300,46 +300,52 @@
                                 <span style="color:#6c6c68; font-size:0.9em;">{{ $review->fecha_comentario->format('d/m/Y') }}</span>
                             </div>
                             @if($review->comment)
-                                <p style="color:#1c1c1a; margin:10px 0;" id="comment-text-{{ $review->id }}">{{ $review->comment }}</p>
+                                <p style="color:#1c1c1a; margin:10px 0 15px 0; line-height:1.6;" id="comment-text-{{ $review->id }}">{{ $review->comment }}</p>
                             @endif
                             @auth
                                 @if($review->user_id == auth()->id())
-                                    <div style="display:flex; gap:8px; margin-top:10px;">
-                                        <button type="button" class="btn-edit" data-id="{{ $review->id }}" style="background:#0275d8; color:#fff; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-size:0.9em;">Editar</button>
-                                        <form method="POST" action="{{ route('reviews.destroy', $review) }}" onsubmit="return confirm('¿Eliminar tu reseña?');">
+                                    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+                                        <button type="button" class="btn-edit" data-id="{{ $review->id }}" style="background:#3498db; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.9em; font-weight:600; transition:all 0.3s ease;">
+                                            ✏️ Editar
+                                        </button>
+                                        <form method="POST" action="{{ route('reviews.destroy', $review) }}" onsubmit="return confirm('¿Estás seguro de eliminar tu reseña?');" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" style="background:#d7263d; color:#fff; border:none; padding:5px 12px; border-radius:5px; cursor:pointer; font-size:0.9em;">Eliminar</button>
+                                            <button type="submit" style="background:#e74c3c; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.9em; font-weight:600; transition:all 0.3s ease;">
+                                                🗑️ Eliminar
+                                            </button>
                                         </form>
                                     </div>
 
-                                    <form method="POST" action="{{ route('reviews.update', $review) }}" class="edit-form" id="edit-form-{{ $review->id }}" style="display:none; margin-top:12px;">
+                                    <form method="POST" action="{{ route('reviews.update', $review) }}" class="edit-form" id="edit-form-{{ $review->id }}" style="display:none; margin-top:15px; padding:15px; background:#f9f9f9; border-radius:8px; border-left:4px solid #3498db;">
                                         @csrf
                                         @method('PUT')
-                                        <label style="display:block; font-weight:600; margin-bottom:6px;">Calificación *</label>
-                                        <div style="display:flex; gap:5px; margin:6px 0;">
+                                        <h4 style="margin-top:0; color:#2c3e50;">Editar tu reseña</h4>
+                                        <label style="display:block; font-weight:600; margin-bottom:8px; color:#2c3e50;">Calificación *</label>
+                                        <div style="display:flex; gap:5px; margin:8px 0 12px 0;">
                                             @for($i = 5; $i >= 1; $i--)
-                                                <label style="cursor:pointer; font-size:1.6em; color:#ddd;">
-                                                    <input type="radio" name="rating" value="{{ $i }}" style="display:none;" {{ $review->rating == $i ? 'checked' : '' }}>
-                                                    <span class="edit-star" data-rating="{{ $i }}" data-review="{{ $review->id }}">{{ $review->rating >= $i ? '★' : '☆' }}</span>
+                                                <label style="cursor:pointer; font-size:1.8em; color:#ddd; transition:color 0.2s ease;">
+                                                    <input type="radio" name="rating" value="{{ $i }}" style="display:none;" onchange="updateEditStars(this)" {{ $review->rating == $i ? 'checked' : '' }}>
+                                                    <span class="edit-star" data-rating="{{ $i }}" data-review="{{ $review->id }}" style="cursor:pointer;">{{ $review->rating >= $i ? '★' : '☆' }}</span>
                                                 </label>
                                             @endfor
                                         </div>
-                                        <label style="display:block; font-weight:600; margin-top:8px;">Comentario</label>
-                                        <textarea name="comment" rows="3" maxlength="500" style="width:100%; padding:8px; border-radius:6px; border:1px solid #dcdcdc; margin-top:6px;">{{ $review->comment }}</textarea>
-                                        @error('comment')
-                                            <div style="color:#d7263d; margin-top:8px;">{{ $message }}</div>
-                                        @enderror
-                                        <div style="margin-top:8px; display:flex; gap:8px;">
-                                            <button type="submit" style="background:#24a148; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer;">Guardar</button>
-                                            <button type="button" class="btn-cancel-edit" data-id="{{ $review->id }}" style="background:#6c757d; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer;">Cancelar</button>
+                                        <label style="display:block; font-weight:600; margin-bottom:8px; color:#2c3e50;">Comentario *</label>
+                                        <textarea name="comment" rows="3" maxlength="500" style="width:100%; padding:10px; border-radius:6px; border:2px solid #e0e0e0; margin-bottom:8px; font-family:inherit; font-size:0.95em;">{{ $review->comment }}</textarea>
+                                        <div style="text-align:right; font-size:0.85rem; color:#999; margin-bottom:12px;">
+                                            <span id="char-count-{{ $review->id }}">{{ strlen($review->comment) }}</span>/500 caracteres
                                         </div>
-                                    </form>
-                                @elseif(auth()->user()->is_admin)
-                                    <form method="POST" action="{{ route('reviews.destroy', $review) }}" style="margin-top:10px;" onsubmit="return confirm('¿Eliminar esta reseña?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" style="background:#d7263d; color:#fff; border:none; padding:5px 15px; border-radius:5px; cursor:pointer; font-size:0.9em;">Eliminar</button>
+                                        @error('comment')
+                                            <div style="color:#d7263d; margin-bottom:8px; font-size:0.9em;">{{ $message }}</div>
+                                        @enderror
+                                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                            <button type="submit" style="background:#27ae60; color:#fff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:600;">
+                                                💾 Guardar cambios
+                                            </button>
+                                            <button type="button" onclick="cancelEdit({{ $review->id }})" style="background:#95a5a6; color:#fff; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:600;">
+                                                ✕ Cancelar
+                                            </button>
+                                        </div>
                                     </form>
                                 @endif
                             @endauth
@@ -372,6 +378,36 @@
             stars.forEach((star, index) => {
                 const starRating = parseInt(star.getAttribute('data-rating'));
                 if (starRating <= rating) {
+                    star.style.color = '#ffc107';
+                } else {
+                    star.style.color = '#ddd';
+                }
+            });
+        }
+
+        // Cancelar edición de reseña
+        function cancelEdit(reviewId) {
+            const form = document.getElementById('edit-form-' + reviewId);
+            if (form) {
+                form.style.display = 'none';
+            }
+        }
+
+        // Actualizar estrellas en formulario de edición
+        function updateEditStars(input) {
+            const rating = parseInt(input.value);
+            const reviewId = input.closest('form').id.replace('edit-form-', '');
+            const form = document.getElementById('edit-form-' + reviewId);
+            const stars = form.querySelectorAll('.edit-star');
+            stars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.style.color = '#ffc107';
+                } else {
+                    star.style.color = '#ddd';
+                }
+            });
+        }
                     star.textContent = '★';
                     star.style.color = '#ffc107';
                 } else {
@@ -432,6 +468,21 @@
                 const id = this.getAttribute('data-id');
                 const form = document.getElementById('edit-form-' + id);
                 if (form) form.style.display = 'none';
+            });
+        });
+
+        // Actualizar contador de caracteres en formularios de edición
+        document.querySelectorAll('form.edit-form textarea[name="comment"]').forEach(textarea => {
+            const form = textarea.closest('form');
+            const reviewId = form.id.replace('edit-form-', '');
+            const charCount = document.getElementById('char-count-' + reviewId);
+            
+            if (charCount) {
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+        });
             });
         });
 
