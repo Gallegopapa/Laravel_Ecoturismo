@@ -696,3 +696,105 @@
     padding: 18px 8px;
   }
 }
+
+/* Updated estilos para Destinos (cards como en la imagen) */
+.destacados {
+  width: 100%;
+  max-width: 1200px;
+  margin: 24px auto 0 auto;
+  text-align: center;
+  padding: 12px 20px 28px 20px;
+}
+.destacados-sub {
+  color: #6b7280;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.destinos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 18px;
+  align-items: start;
+}
+.destino-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  min-height: 360px;
+}
+.destino-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+}
+.destino-img-wrap img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.destino-img-wrap {
+  width: 100%;
+}
+.destino-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.destino-title {
+  color: #164ea6;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  cursor: pointer;
+}
+.destino-country {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.destino-desc {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.destino-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.rating {
+  color: #f59e0b;
+  font-weight: 700;
+}
+.destino-link {
+  background: none;
+  border: none;
+  color: #164ea6;
+  font-weight: 700;
+  cursor: pointer;
+}
+.destino-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .destinos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .destinos-grid { grid-template-columns: 1fr; }
+  .destino-img-wrap img { height: 220px; }
+}
