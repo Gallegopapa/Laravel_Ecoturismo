@@ -498,6 +498,7 @@ export const companyService = {
       const response = await api.get('/company/places');
       return response.data;
     },
+<<<<<<< Updated upstream
 
     getById: async (id) => {
       const response = await api.get(`/company/places/${id}`);
@@ -528,6 +529,8 @@ export const companyService = {
       return response.data;
     },
 
+=======
+>>>>>>> Stashed changes
     schedules: {
       getAll: async (placeId) => {
         const response = await api.get(`/company/places/${placeId}/schedules`);

@@ -24,6 +24,7 @@ const CompanyDashboard = () => {
     hora_fin: '17:00',
     activo: true,
   });
+<<<<<<< Updated upstream
 
   const [placeForm, setPlaceForm] = useState({
     name: '',
@@ -150,6 +151,8 @@ const CompanyDashboard = () => {
     return normalizeImageUrl(finalImage);
   };
 
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     loadReservations();
@@ -167,6 +170,7 @@ const CompanyDashboard = () => {
     }
   }, [selectedPlaceId]);
 
+<<<<<<< Updated upstream
 
   useEffect(() => {
     if (selectedPlaceId) {
@@ -189,6 +193,8 @@ const CompanyDashboard = () => {
   }, [selectedPlaceId]);
 
 
+=======
+>>>>>>> Stashed changes
   const loadReservations = async () => {
     try {
       setLoading(true);
@@ -228,6 +234,7 @@ const CompanyDashboard = () => {
   const loadPlacesManaged = async () => {
     try {
       const data = await companyService.places.getAll();
+<<<<<<< Updated upstream
 
       const list = Array.isArray(data) ? data : [];
       setPlacesManaged(list);
@@ -236,12 +243,18 @@ const CompanyDashboard = () => {
       } else {
         setSelectedPlaceId('');
 
+=======
+      setPlacesManaged(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length > 0) {
+        setSelectedPlaceId(String(data[0].id));
+>>>>>>> Stashed changes
       }
     } catch (error) {
       console.error('Error cargando lugares gestionados:', error);
     }
   };
 
+<<<<<<< Updated upstream
 
   const loadPlaceDetails = async (placeId) => {
     try {
@@ -270,6 +283,8 @@ const CompanyDashboard = () => {
   };
 
 
+=======
+>>>>>>> Stashed changes
   const normalizeTime = (value) => {
     if (!value) return '';
     const timeStr = String(value);
@@ -373,6 +388,7 @@ const CompanyDashboard = () => {
     handleScheduleChange(scheduleId, 'hora_fin', '23:59');
   };
 
+<<<<<<< Updated upstream
 
   const handlePlaceChange = (field, value) => {
     setPlaceForm((prev) => ({ ...prev, [field]: value }));
@@ -432,6 +448,8 @@ const CompanyDashboard = () => {
   };
 
 
+=======
+>>>>>>> Stashed changes
   const showMessage = (msg, type = 'success') => {
     setMessage(msg);
     setMessageType(type);

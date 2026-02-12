@@ -260,6 +260,10 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
                           <div className="place-options">
 
 
+                            <small className="helper-text">
+                              Rol: define permisos dentro del lugar (no es admin del sistema).
+                            </small>
+
                             <label className="principal-label">
                               <input
                                 type="checkbox"

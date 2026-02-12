@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+<<<<<<< Updated upstream
 use App\Models\Place;
 use App\Rules\NoProfanity;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +33,13 @@ class CompanyPlaceController extends Controller
     }
 
 
+=======
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class CompanyPlaceController extends Controller
+{
+>>>>>>> Stashed changes
     /**
      * Listar lugares gestionados por el usuario empresa.
      */
@@ -52,6 +60,7 @@ class CompanyPlaceController extends Controller
 
         return response()->json($places);
     }
+<<<<<<< Updated upstream
 
 
     /**
@@ -157,3 +166,6 @@ class CompanyPlaceController extends Controller
     }
 
 }
+=======
+}
+>>>>>>> Stashed changes

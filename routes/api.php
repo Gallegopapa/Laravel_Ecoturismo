@@ -20,9 +20,12 @@ use App\Http\Controllers\API\CompanyReservationController;
 use App\Http\Controllers\API\RejectionReasonController;
 use App\Http\Controllers\API\CompanyPlaceController;
 use App\Http\Controllers\API\CompanyPlaceScheduleController;
+<<<<<<< Updated upstream
 
 use App\Http\Controllers\API\EcohotelController;
 
+=======
+>>>>>>> Stashed changes
 
 // ============================================
 // RUTAS PÃšBLICAS (sin autenticaciÃ³n)
@@ -114,18 +117,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('company')->group(function () {
         // Lugares gestionados por la empresa
         Route::get('/places', [CompanyPlaceController::class, 'index']);
+<<<<<<< Updated upstream
 
         Route::get('/places/{place}', [CompanyPlaceController::class, 'show']);
         Route::post('/places/{place}', [CompanyPlaceController::class, 'update']); // POST para FormData con _method=PUT
         Route::put('/places/{place}', [CompanyPlaceController::class, 'update']);
         Route::delete('/places/{place}', [CompanyPlaceController::class, 'destroy']);
 
+=======
+>>>>>>> Stashed changes
         Route::get('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'index']);
         Route::post('/places/{place}/schedules', [CompanyPlaceScheduleController::class, 'store']);
         Route::put('/places/{place}/schedules/{schedule}', [CompanyPlaceScheduleController::class, 'update']);
         Route::delete('/places/{place}/schedules/{schedule}', [CompanyPlaceScheduleController::class, 'destroy']);
 
+<<<<<<< Updated upstream
         // GestiÃ³n de reservas desde la perspectiva de la empresa
+=======
+        // Gestión de reservas desde la perspectiva de la empresa
+>>>>>>> Stashed changes
         Route::get('/reservations', [CompanyReservationController::class, 'index']);
         Route::get('/reservations/stats', [CompanyReservationController::class, 'statsSummary']);
         Route::get('/reservations/{companyReservation}', [CompanyReservationController::class, 'show']);

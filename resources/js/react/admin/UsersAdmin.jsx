@@ -289,14 +289,19 @@ const UsersAdmin = () => {
                       </span>
                     </td>
                     {userFilter === 'empresa' && (
+<<<<<<< Updated upstream
 
                       <td style={{padding: '12px'}} data-label="Lugares">
 
+=======
+                      <td style={{padding: '12px'}}>
+>>>>>>> Stashed changes
                         <div style={{fontSize: '0.9em', color: '#666'}}>
                           {getPlaceNames(user)}
                         </div>
                       </td>
                     )}
+<<<<<<< Updated upstream
 
                     <td style={{padding: '12px', textAlign: 'center'}} data-label="Acciones">
                       <button
@@ -310,6 +315,9 @@ const UsersAdmin = () => {
                         Editar permisos
                       </button>
 
+=======
+                    <td style={{padding: '12px', textAlign: 'center'}}>
+>>>>>>> Stashed changes
                       <button
                         onClick={() => handleDelete(user.id)}
                         className="btn-delete"
