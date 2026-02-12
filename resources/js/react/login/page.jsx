@@ -102,10 +102,11 @@ export default function Login() {
         </video>
 
         <header className="header">
-          <h1>Risaralda EcoTurismo</h1>
+          <h1>🌿 Risaralda EcoTurismo</h1>
         </header>
 
-      
+        {/* SECCIÓN DE FORMULARIO - Izquierda */}
+        <div className="login-form-section">
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>{isRegister ? "Registro" : "Iniciar Sesión"}</h2>
           
@@ -117,7 +118,7 @@ export default function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder="Ingresa tu nombre de usuario"
+                placeholder="Tu nombre"
               />
               {errors.name && <p className="error">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
               <label>Email:</label>
@@ -142,7 +143,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={syncEmailFromAutofill}
                 required
-                placeholder="tu@email.com o tu_usuario"
+                placeholder="Email o usuario"
               />
               {(errors.login || errors.email || errors.credentials) && (
                 <p className="error">
@@ -162,7 +163,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              placeholder="Ingresa tu contraseña (6-20 caracteres)"
+              placeholder="Tu contraseña"
             />
             <button
               type="button"
@@ -186,7 +187,7 @@ export default function Login() {
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
                   minLength={6}
-                  placeholder="Confirma tu contraseña (6-20 caracteres)"
+                  placeholder="Confirma contraseña"
                 />
                 <button
                   type="button"
@@ -239,6 +240,22 @@ export default function Login() {
             {loading ? "Procesando..." : isRegister ? "Registrarse" : "Iniciar sesión"}
           </button>
         </form>
+        </div>
+
+        {/* SECCIÓN DE IMAGEN - Derecha */}
+        <div className="login-image-section">
+          <div className="login-image-content">
+            {/* El usuario puede reemplazar esta imagen */}
+            <img src="/imagenes/heroImage.jpg" alt="Risaralda EcoTurismo" style={{display: 'none'}} />
+            
+            <h2>{isRegister ? "Únete a Nosotros" : "Explora la Naturaleza"}</h2>
+            <p>
+              {isRegister 
+                ? "Acceso a reservas exclusivas, recomendaciones personalizadas y una comunidad de viajeros apasionados por la naturaleza."
+                : "Descubre los destinos ecológicos más hermosos de Risaralda. Reserva tu experiencia de ecoturismo hoy mismo."}
+            </p>
+          </div>
+        </div>
 
         <footer className="footer">© 2025 Risaralda EcoTurismo</footer>
       </div>
