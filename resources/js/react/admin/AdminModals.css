@@ -277,8 +277,6 @@
   margin: 4px 0 0 24px;
 }
 
-<<<<<<< Updated upstream
-
 .readonly-field {
   display: flex;
   flex-direction: column;
@@ -291,9 +289,6 @@
   font-size: 0.95rem;
 }
 
-
-=======
->>>>>>> Stashed changes
 .place-options select {
   flex: 1;
   padding: 6px 8px;
