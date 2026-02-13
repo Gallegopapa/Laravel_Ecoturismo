@@ -472,7 +472,7 @@
   z-index: 1;
 }
 .cta-final .btn-primary:hover {
-  background: rgba(10, 10, 10, 0.95);
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   color: #ffffff;
   transform: translateY(-3px);
 }
@@ -852,9 +852,13 @@
   color:  #2ecc71;
   font-weight: 700;
   cursor: pointer;
+  
 }
 .destino-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
+}
+.destino-link:hover {
+  transform: translatex(-5px);
 }
 
 @media (max-width: 1024px) {
