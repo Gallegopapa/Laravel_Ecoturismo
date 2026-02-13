@@ -96,7 +96,7 @@ export default function Login() {
   return (
     <>
 
-      <div className="login-page-container">
+      <div className={`login-page-container ${isRegister ? 'register-layout' : 'login-layout'}`}> 
         <video id="bg-video" autoPlay loop muted>
           <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
         </video>
@@ -105,7 +105,7 @@ export default function Login() {
           <h1>🌿 Risaralda EcoTurismo</h1>
         </header>
 
-        {/* SECCIÓN DE FORMULARIO - Izquierda */}
+        {/* SECCIÓN DE FORMULARIO - Izquierda o Derecha según tipo */}
         <div className="login-form-section">
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>{isRegister ? "Registro" : "Iniciar Sesión"}</h2>
@@ -242,7 +242,7 @@ export default function Login() {
         </form>
         </div>
 
-        {/* SECCIÓN DE IMAGEN - Derecha */}
+        {/* SECCIÓN DE IMAGEN - Derecha o Izquierda según tipo */}
         <div className="login-image-section">
           <div className="login-image-content">
             {/* El usuario puede reemplazar esta imagen */}

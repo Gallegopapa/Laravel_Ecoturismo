@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
 import { useTranslation } from '../../i18n/useTranslation';
 import './AccessibilityPanel.css';
+import FAQFloatingButton from '../FAQFloatingButton/FAQFloatingButton.jsx';
 
 /**
  * AccessibilityPanel
@@ -172,265 +173,245 @@ const AccessibilityPanel = () => {
 
   return (
     <>
-      {/* Botón flotante fijo en esquina inferior derecha */}
+      {/* Botón flotante de accesibilidad */}
       <button
-        ref={buttonRef}
         className="accessibility-floating-button"
+        ref={buttonRef}
         onClick={togglePanel}
-        aria-label={t('openAccessibilityPanel')}
-        aria-expanded={isOpen}
-        aria-controls="accessibility-panel"
-        title={t('accessibility')}
+        aria-label={t('accessibilityPanel')}
+        title={t('accessibilityPanel')}
       >
-        {/* Icono de accesibilidad (persona con círculo) */}
-        <svg 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2"
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <circle cx="12" cy="8" r="2" />
-          <path d="M12 14v6M8 18l4-4 4 4" />
+        {/* Icono de accesibilidad */}
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" fill="#2ecc71" />
+          <path d="M12 7v4m0 0l3 3m-3-3l-3 3" stroke="#fff" strokeWidth="2" />
         </svg>
       </button>
-
-      {/* Overlay (fondo oscuro) cuando el panel está abierto */}
+      {/* Botón flotante de FAQ */}
+      <FAQFloatingButton />
+      {/* Panel lateral de accesibilidad */}
       {isOpen && (
-        <div 
-          className="accessibility-overlay"
-          onClick={closePanel}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Panel lateral */}
-      <aside
-        ref={panelRef}
-        id="accessibility-panel"
-        className={`accessibility-panel ${isOpen ? 'open' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="accessibility-panel-title"
-      >
-        {/* Encabezado del panel */}
-        <header className="panel-header">
-          <h2 id="accessibility-panel-title" className="panel-title">
-            {t('accessibilityOptions')}
-          </h2>
-          <button
-            className="panel-close-button"
-            onClick={closePanel}
-            aria-label={t('closePanel')}
-            title={t('closePanel')}
-          >
-            <svg 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </header>
-
-        {/* Contenido del panel */}
-        <div className="panel-content">
-          
-          {/* Sección: Tamaño de texto */}
-          <section className="panel-section">
-            <h3 className="section-title">{t('fontSizeDescription')}</h3>
-            <div className="font-size-controls">
-              <div className="font-size-display">
-                <span className="current-size-label">{getFontSizeLabel()}</span>
-              </div>
-              <div className="font-size-buttons">
-                <button
-                  ref={firstFocusableRef}
-                  className="control-button"
-                  onClick={decreaseFontSize}
-                  disabled={fontSize === 'normal'}
-                  aria-label={t('decreaseFontSize')}
-                  title={t('decreaseFontSize')}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <text x="2" y="20" fontSize="20" fontWeight="bold">A-</text>
-                  </svg>
-                  <span>{t('decreaseFontSize')}</span>
-                </button>
-                <button
-                  className="control-button"
-                  onClick={increaseFontSize}
-                  disabled={fontSize === 'extra-large'}
-                  aria-label={t('increaseFontSize')}
-                  title={t('increaseFontSize')}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <text x="2" y="20" fontSize="20" fontWeight="bold">A+</text>
-                  </svg>
-                  <span>{t('increaseFontSize')}</span>
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Sección: Alto contraste */}
-          <section className="panel-section">
+        <aside
+          className="accessibility-panel open"
+          ref={panelRef}
+          tabIndex={-1}
+          aria-label={t('accessibilityPanel')}
+          role="dialog"
+        >
+          {/* Encabezado del panel */}
+          <header className="panel-header">
+            <h2 id="accessibility-panel-title" className="panel-title">
+              {t('accessibilityOptions')}
+            </h2>
             <button
-              className={`toggle-option ${highContrast ? 'active' : ''}`}
-              onClick={toggleHighContrast}
-              aria-pressed={highContrast}
-              title={t('highContrastDescription')}
+              className="panel-close-button"
+              onClick={closePanel}
+              aria-label={t('closePanel')}
+              title={t('closePanel')}
             >
-              <div className="option-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 2v20" />
-                </svg>
-                <span className="option-label">{t('highContrast')}</span>
-              </div>
-              {renderStatusBadge(highContrast)}
-            </button>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Sección: Subrayar enlaces */}
-          <section className="panel-section">
-            <button
-              className={`toggle-option ${underlineLinks ? 'active' : ''}`}
-              onClick={toggleUnderlineLinks}
-              aria-pressed={underlineLinks}
-              title={t('underlineLinksDescription')}
-            >
-              <div className="option-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3" />
-                  <line x1="4" y1="21" x2="20" y2="21" />
-                </svg>
-                <span className="option-label">{t('underlineLinks')}</span>
-              </div>
-              {renderStatusBadge(underlineLinks)}
-            </button>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Sección: Escala de grises */}
-          <section className="panel-section">
-            <button
-              className={`toggle-option ${grayscale ? 'active' : ''}`}
-              onClick={toggleGrayscale}
-              aria-pressed={grayscale}
-              title={t('grayscaleDescription')}
-            >
-              <div className="option-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10" />
-                  <circle cx="12" cy="12" r="4" />
-                </svg>
-                <span className="option-label">{t('grayscale')}</span>
-              </div>
-              {renderStatusBadge(grayscale)}
-            </button>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Sección: Espaciado de líneas */}
-          <section className="panel-section">
-            <h3 className="section-title">{t('lineSpacingDescription')}</h3>
-            <div className="font-size-controls">
-              <div className="font-size-display">
-                <span className="current-size-label">{getLineSpacingLabel()}</span>
-              </div>
-              <div className="font-size-buttons">
-                <button
-                  className="control-button"
-                  onClick={decreaseLineSpacing}
-                  disabled={lineSpacing === 'normal'}
-                  aria-label={t('decreaseLineSpacing')}
-                  title={t('decreaseLineSpacing')}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <text x="2" y="20" fontSize="20" fontWeight="bold">−</text>
-                  </svg>
-                  <span>{t('decreaseLineSpacing')}</span>
-                </button>
-                <button
-                  className="control-button"
-                  onClick={increaseLineSpacing}
-                  disabled={lineSpacing === 'very-relaxed'}
-                  aria-label={t('increaseLineSpacing')}
-                  title={t('increaseLineSpacing')}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <text x="2" y="20" fontSize="20" fontWeight="bold">+</text>
-                  </svg>
-                  <span>{t('increaseLineSpacing')}</span>
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Sección: Reducir movimiento */}
-          <section className="panel-section">
-            <button
-              className={`toggle-option ${reduceMotion ? 'active' : ''}`}
-              onClick={toggleReduceMotion}
-              aria-pressed={reduceMotion}
-              title={t('reduceMotionDescription')}
-            >
-              <div className="option-info">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M3 12h18" />
-                  <path d="M3 6h18" />
-                  <path d="M3 18h18" />
-                </svg>
-                <span className="option-label">{t('reduceMotion')}</span>
-              </div>
-              {renderStatusBadge(reduceMotion)}
-            </button>
-          </section>
-
-          <hr className="panel-divider" />
-
-          {/* Botón: Restablecer configuración */}
-          <section className="panel-section">
-            <button
-              className="reset-button"
-              onClick={resetSettings}
-              aria-label={t('resetSettings')}
-              title={t('resetDescription')}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                <path d="M21 3v5h-5" />
-                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                <path d="M3 21v-5h5" />
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
-              <span>{t('resetSettings')}</span>
             </button>
-          </section>
+          </header>
 
-        </div>
-      </aside>
+          {/* Contenido del panel */}
+          <div className="panel-content">
+            
+            {/* Sección: Tamaño de texto */}
+            <section className="panel-section">
+              <h3 className="section-title">{t('fontSizeDescription')}</h3>
+              <div className="font-size-controls">
+                <div className="font-size-display">
+                  <span className="current-size-label">{getFontSizeLabel()}</span>
+                </div>
+                <div className="font-size-buttons">
+                  <button
+                    ref={firstFocusableRef}
+                    className="control-button"
+                    onClick={decreaseFontSize}
+                    disabled={fontSize === 'normal'}
+                    aria-label={t('decreaseFontSize')}
+                    title={t('decreaseFontSize')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <text x="2" y="20" fontSize="20" fontWeight="bold">A-</text>
+                    </svg>
+                    <span>{t('decreaseFontSize')}</span>
+                  </button>
+                  <button
+                    className="control-button"
+                    onClick={increaseFontSize}
+                    disabled={fontSize === 'extra-large'}
+                    aria-label={t('increaseFontSize')}
+                    title={t('increaseFontSize')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <text x="2" y="20" fontSize="20" fontWeight="bold">A+</text>
+                    </svg>
+                    <span>{t('increaseFontSize')}</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Sección: Alto contraste */}
+            <section className="panel-section">
+              <button
+                className={`toggle-option ${highContrast ? 'active' : ''}`}
+                onClick={toggleHighContrast}
+                aria-pressed={highContrast}
+                title={t('highContrastDescription')}
+              >
+                <div className="option-info">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2v20" />
+                  </svg>
+                  <span className="option-label">{t('highContrast')}</span>
+                </div>
+                {renderStatusBadge(highContrast)}
+              </button>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Sección: Subrayar enlaces */}
+            <section className="panel-section">
+              <button
+                className={`toggle-option ${underlineLinks ? 'active' : ''}`}
+                onClick={toggleUnderlineLinks}
+                aria-pressed={underlineLinks}
+                title={t('underlineLinksDescription')}
+              >
+                <div className="option-info">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3" />
+                    <line x1="4" y1="21" x2="20" y2="21" />
+                  </svg>
+                  <span className="option-label">{t('underlineLinks')}</span>
+                </div>
+                {renderStatusBadge(underlineLinks)}
+              </button>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Sección: Escala de grises */}
+            <section className="panel-section">
+              <button
+                className={`toggle-option ${grayscale ? 'active' : ''}`}
+                onClick={toggleGrayscale}
+                aria-pressed={grayscale}
+                title={t('grayscaleDescription')}
+              >
+                <div className="option-info">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="4" />
+                  </svg>
+                  <span className="option-label">{t('grayscale')}</span>
+                </div>
+                {renderStatusBadge(grayscale)}
+              </button>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Sección: Espaciado de líneas */}
+            <section className="panel-section">
+              <h3 className="section-title">{t('lineSpacingDescription')}</h3>
+              <div className="font-size-controls">
+                <div className="font-size-display">
+                  <span className="current-size-label">{getLineSpacingLabel()}</span>
+                </div>
+                <div className="font-size-buttons">
+                  <button
+                    className="control-button"
+                    onClick={decreaseLineSpacing}
+                    disabled={lineSpacing === 'normal'}
+                    aria-label={t('decreaseLineSpacing')}
+                    title={t('decreaseLineSpacing')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <text x="2" y="20" fontSize="20" fontWeight="bold">−</text>
+                    </svg>
+                    <span>{t('decreaseLineSpacing')}</span>
+                  </button>
+                  <button
+                    className="control-button"
+                    onClick={increaseLineSpacing}
+                    disabled={lineSpacing === 'very-relaxed'}
+                    aria-label={t('increaseLineSpacing')}
+                    title={t('increaseLineSpacing')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <text x="2" y="20" fontSize="20" fontWeight="bold">+</text>
+                    </svg>
+                    <span>{t('increaseLineSpacing')}</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Sección: Reducir movimiento */}
+            <section className="panel-section">
+              <button
+                className={`toggle-option ${reduceMotion ? 'active' : ''}`}
+                onClick={toggleReduceMotion}
+                aria-pressed={reduceMotion}
+                title={t('reduceMotionDescription')}
+              >
+                <div className="option-info">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M3 12h18" />
+                    <path d="M3 6h18" />
+                    <path d="M3 18h18" />
+                  </svg>
+                  <span className="option-label">{t('reduceMotion')}</span>
+                </div>
+                {renderStatusBadge(reduceMotion)}
+              </button>
+            </section>
+
+            <hr className="panel-divider" />
+
+            {/* Botón: Restablecer configuración */}
+            <section className="panel-section">
+              <button
+                className="reset-button"
+                onClick={resetSettings}
+                aria-label={t('resetSettings')}
+                title={t('resetDescription')}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path d="M3 21v-5h5" />
+                </svg>
+                <span>{t('resetSettings')}</span>
+              </button>
+            </section>
+
+          </div>
+        </aside>
+      )}
     </>
   );
 };

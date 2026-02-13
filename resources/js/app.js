@@ -53,8 +53,7 @@ import EcohotelDetailPage from './react/ecohotels/detail/page.jsx';
 // FAQ
 import FAQPage from './react/faq/page.jsx';
 
-// Chatbot
-import FloatingChatbot from './react/components/FloatingChatbot/FloatingChatbot.jsx';
+// Chatbot eliminado
 
 // COMPONENTE DE PANEL DE ACCESIBILIDAD
 import AccessibilityPanel from './react/components/AccessibilityPanel/AccessibilityPanel.jsx';
@@ -240,7 +239,6 @@ if (rootElement) {
           <AuthProvider>
             <>
               <RouterProvider router={router} />
-              <FloatingChatbot />
               <AccessibilityPanel />
             </>
           </AuthProvider>

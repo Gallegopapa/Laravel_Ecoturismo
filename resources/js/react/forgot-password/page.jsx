@@ -39,47 +39,46 @@ export default function ForgotPasswordPage() {
       <video id="bg-video" autoPlay loop muted>
         <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
       </video>
-
-      <header className="header">
-        <h1>Risaralda EcoTurismo</h1>
-      </header>
-
-      <form className="login-card" onSubmit={handleSubmit}>
-        <h2>Recuperar contrasena</h2>
-
-        <label>Correo electronico:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="tu@email.com"
-        />
-        {errors.email && (
-          <p className="error">
-            {Array.isArray(errors.email) ? errors.email[0] : errors.email}
+      <div className="login-form-section">
+        <form className="login-card" onSubmit={handleSubmit}>
+          <h2>Recuperar contraseña</h2>
+          <label>Correo electrónico:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="tu@email.com"
+          />
+          {errors.email && (
+            <p className="error">
+              {Array.isArray(errors.email) ? errors.email[0] : errors.email}
+            </p>
+          )}
+          {msg && (
+            <p
+              className={`message ${
+                msg.includes("No se pudo") || msg.includes("Error") ? "error" : "success"
+              }`}
+            >
+              {msg}
+            </p>
+          )}
+          <button type="submit" disabled={loading}>
+            {loading ? "Enviando..." : "Enviar enlace"}
+          </button>
+          <p className="register-text">
+            ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
           </p>
-        )}
-
-        {msg && (
-          <p
-            className={`message ${
-              msg.includes("No se pudo") || msg.includes("Error") ? "error" : "success"
-            }`}
-          >
-            {msg}
-          </p>
-        )}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Enviando..." : "Enviar enlace"}
-        </button>
-
-        <p className="register-text">
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesion</Link>
-        </p>
-      </form>
-
+        </form>
+      </div>
+      <div className="login-image-section">
+        <div className="login-image-content">
+          <img src="/imagenes/login-image.png" alt="EcoTurismo" />
+          <h2>Recupera tu acceso</h2>
+          <p>Ingresa tu correo para recibir el enlace de recuperación.</p>
+        </div>
+      </div>
       <footer className="footer">© 2025 Risaralda EcoTurismo</footer>
     </div>
   );
