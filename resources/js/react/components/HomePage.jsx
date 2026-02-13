@@ -100,8 +100,19 @@ const HomePage = ({ loggedIn, user }) => {
                         <p className="hero-initial-sub">
                             Nosotros nos encargamos de llevarte.
                         </p>
-                        {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" class="w-full h-[120px]"><path fill=" #22c55e" fill-opacity="1" d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg> */}
                     </div>
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        viewBox="0 0 1440 320" 
+                        preserveAspectRatio="none" 
+                        className="wave-svg"
+                    >
+                        <path 
+                            fill="#ffffff" 
+                            fillOpacity="1" 
+                            d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+                        </path>
+                    </svg>
                 </section>
                 {/* DESTINOS DESTACADOS */}
                 <section className="destacados section-alt">
