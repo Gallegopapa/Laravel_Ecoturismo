@@ -44,6 +44,15 @@ body,input,textarea{
 
 .contact-form{
     background-color: #27ae60;
+  }
+
+  body.grayscale-mode .contact-form,
+  body.grayscale-mode .circle,
+  body.grayscale-mode .contact-form:before {
+    background-color: #cccccc !important;
+    color: #222 !important;
+    border-color: #888 !important;
+  }
     position: relative;
     
 }

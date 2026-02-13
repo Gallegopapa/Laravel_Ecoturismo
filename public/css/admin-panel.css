@@ -5,6 +5,31 @@ body {
     background: #f6f8fa;
 }
 
+body.high-contrast {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+body.high-contrast .container,
+body.high-contrast .admin-panel {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6,
+body.high-contrast p,
+body.high-contrast span,
+body.high-contrast a {
+    color: #000000 !important;
+}
+}
+
 h1 {
     margin-top: 0;
 }

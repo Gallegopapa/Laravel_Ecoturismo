@@ -13,6 +13,47 @@ body {
     line-height: 1.6;
 }
 
+body.grayscale-mode {
+    background-color: #cccccc !important;
+    color: #222 !important;
+}
+
+body.grayscale-mode .informacion,
+body.grayscale-mode .header-lugar,
+body.grayscale-mode .botones,
+body.grayscale-mode .boton-volver {
+    background-color: #eeeeee !important;
+    color: #222 !important;
+    border-color: #888 !important;
+}
+
+body.grayscale-mode .boton-volver {
+    background-color: #bbbbbb !important;
+    color: #222 !important;
+    border-color: #888 !important;
+}
+
+body.high-contrast {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+body.high-contrast .informacion,
+body.high-contrast .header-lugar,
+body.high-contrast .botones,
+body.high-contrast .boton-volver {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+body.high-contrast .boton-volver {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+}
+}
+
 .contenedor-detalle {
     max-width: 1200px;
     margin: 0 auto;

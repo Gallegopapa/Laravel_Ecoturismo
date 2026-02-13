@@ -5,6 +5,45 @@ body{
     background-image: url(../imagenes/paisaje3.jpg);
     background-size: cover;
     background-repeat: no-repeat;
+}
+
+body.grayscale-mode {
+    background-color: #cccccc !important;
+    color: #222 !important;
+    background-image: none !important;
+}
+
+body.grayscale-mode form,
+body.grayscale-mode header {
+    background-color: #eeeeee !important;
+    color: #222 !important;
+    border-color: #888 !important;
+}
+
+body.grayscale-mode #btn {
+    background: #bbbbbb !important;
+    color: #222 !important;
+    border-color: #888 !important;
+}
+
+body.high-contrast {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    background-image: none !important;
+}
+
+body.high-contrast form,
+body.high-contrast header {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+body.high-contrast #btn {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+}
     /* background-attachment: fixed; */
     /* background-position: center; */
     /* background-image: url(../imagenes/paisaje.jpg);

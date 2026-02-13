@@ -28,9 +28,10 @@ export const useAccessibility = () => {
 export const AccessibilityProvider = ({ children }) => {
   // Estados para cada opción de accesibilidad
   const [fontSize, setFontSize] = useState('normal'); // 'normal' | 'large' | 'extra-large'
-  const [highContrast, setHighContrast] = useState(false);
+  // Eliminado highContrast
   const [underlineLinks, setUnderlineLinks] = useState(false);
   const [grayscale, setGrayscale] = useState(false);
+  const [dyslexiaFont, setDyslexiaFont] = useState(false);
   const [lineSpacing, setLineSpacing] = useState('normal'); // 'normal' | 'relaxed' | 'very-relaxed'
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -63,8 +64,9 @@ export const AccessibilityProvider = ({ children }) => {
           if (settings.fontSize && ['normal', 'large', 'extra-large'].includes(settings.fontSize)) {
             setFontSize(settings.fontSize);
           }
-          if (typeof settings.highContrast === 'boolean') {
-            setHighContrast(settings.highContrast);
+          // Eliminado highContrast del loader
+          if (typeof settings.dyslexiaFont === 'boolean') {
+            setDyslexiaFont(settings.dyslexiaFont);
           }
           if (typeof settings.underlineLinks === 'boolean') {
             setUnderlineLinks(settings.underlineLinks);
@@ -100,9 +102,10 @@ export const AccessibilityProvider = ({ children }) => {
   useEffect(() => {
     const settings = {
       fontSize,
-      highContrast,
+      // highContrast,
       underlineLinks,
       grayscale,
+      dyslexiaFont,
       lineSpacing,
       reduceMotion
     };
@@ -112,7 +115,7 @@ export const AccessibilityProvider = ({ children }) => {
     } catch (error) {
       console.error('Error al guardar configuraciones de accesibilidad:', error);
     }
-  }, [fontSize, highContrast, underlineLinks, grayscale, lineSpacing, reduceMotion]);
+  }, [fontSize, underlineLinks, grayscale, dyslexiaFont, lineSpacing, reduceMotion]);
 
   /**
    * Efecto: Aplicar clases CSS al <body> según configuraciones activas
@@ -123,8 +126,8 @@ export const AccessibilityProvider = ({ children }) => {
 
     // Limpiar todas las clases de accesibilidad previas
     body.classList.remove('font-large', 'font-extra-large', 'high-contrast', 
-                           'underline-links', 'grayscale-mode', 'line-spacing-relaxed',
-                           'line-spacing-very-relaxed', 'reduce-motion');
+                 'underline-links', 'grayscale-mode', 'line-spacing-relaxed',
+                 'line-spacing-very-relaxed', 'reduce-motion', 'font-dyslexia');
 
     // Aplicar clases según configuraciones activas
     if (fontSize === 'large') {
@@ -133,8 +136,11 @@ export const AccessibilityProvider = ({ children }) => {
       body.classList.add('font-extra-large');
     }
 
-    if (highContrast) {
-      body.classList.add('high-contrast');
+    // if (highContrast) {
+    //   body.classList.add('high-contrast');
+    // }
+    if (dyslexiaFont) {
+      body.classList.add('font-dyslexia');
     }
 
     if (underlineLinks) {
@@ -154,7 +160,7 @@ export const AccessibilityProvider = ({ children }) => {
     if (reduceMotion) {
       body.classList.add('reduce-motion');
     }
-  }, [fontSize, highContrast, underlineLinks, grayscale, lineSpacing, reduceMotion]);
+  }, [fontSize, underlineLinks, grayscale, dyslexiaFont, lineSpacing, reduceMotion]);
 
   /**
    * Aumentar el tamaño de texto
@@ -185,8 +191,11 @@ export const AccessibilityProvider = ({ children }) => {
   /**
    * Alternar alto contraste
    */
-  const toggleHighContrast = () => {
-    setHighContrast(prev => !prev);
+  // const toggleHighContrast = () => {
+  //   setHighContrast(prev => !prev);
+  // };
+  const toggleDyslexiaFont = () => {
+    setDyslexiaFont(prev => !prev);
   };
 
   /**
@@ -237,7 +246,8 @@ export const AccessibilityProvider = ({ children }) => {
    */
   const resetSettings = () => {
     setFontSize('normal');
-    setHighContrast(false);
+    // Eliminado setHighContrast del reset
+    setDyslexiaFont(false);
     setUnderlineLinks(false);
     setGrayscale(false);
     setLineSpacing('normal');
@@ -248,18 +258,20 @@ export const AccessibilityProvider = ({ children }) => {
   const value = {
     // Estados
     fontSize,
-    highContrast,
+    // Eliminado highContrast del value
     underlineLinks,
     grayscale,
+    dyslexiaFont,
     lineSpacing,
     reduceMotion,
     
     // Funciones
     increaseFontSize,
     decreaseFontSize,
-    toggleHighContrast,
+    // Eliminado toggleHighContrast del value
     toggleUnderlineLinks,
     toggleGrayscale,
+    toggleDyslexiaFont,
     increaseLineSpacing,
     decreaseLineSpacing,
     toggleReduceMotion,

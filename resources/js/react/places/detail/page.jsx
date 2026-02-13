@@ -368,31 +368,32 @@ const PlaceDetailPage = () => {
     return (
       <div className="page-layout">
         {isAuthenticated && user ? <Header2 /> : <Header />}
-        <div className="page-content" style={{ 
-          marginTop: '100px',
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          flexDirection: 'column',
-          gap: '20px',
-          padding: '20px'
-        }}>
-          <p style={{ color: '#e74c3c', fontSize: '18px' }}>
-            {error || 'Lugar no encontrado'}
-          </p>
-          <Link 
-            to="/lugares"
-            style={{
-              padding: '10px 20px',
-              background: '#2ecc71',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '6px',
-              fontSize: '16px'
-            }}
-          >
-            Volver a Lugares
-          </Link>
+        <div className="page-content" style={{ marginTop: '100px' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            gap: '20px',
+            padding: '20px'
+          }}>
+            <p style={{ color: '#e74c3c', fontSize: '18px' }}>
+              {error || 'Lugar no encontrado'}
+            </p>
+            <Link
+              to="/lugares"
+              style={{
+                padding: '10px 20px',
+                background: '#2ecc71',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontSize: '16px'
+              }}
+            >
+              Volver a Lugares
+            </Link>
+          </div>
         </div>
         <Footer />
       </div>
@@ -663,12 +664,14 @@ const PlaceDetailPage = () => {
           </div>
 
           {/* Formulario para agregar reseña */}
-          <ReviewForm
-            placeId={place.id}
-            user={user}
-            isAuthenticated={isAuthenticated}
-            onReviewAdded={() => loadReviews(place.id)}
-          />
+          <div id="review-form-section">
+            <ReviewForm
+              placeId={place.id}
+              user={user}
+              isAuthenticated={isAuthenticated}
+              onReviewAdded={() => loadReviews(place.id)}
+            />
+          </div>
 
           {/* Sección de Reseñas */}
           <div className="place-reviews-section">
@@ -677,9 +680,28 @@ const PlaceDetailPage = () => {
               <div className="no-reviews">
                 <p>No hay reseñas aún. ¡Sé el primero en comentar!</p>
                 {isAuthenticated && (
-                  <Link to="/comentarios2" className="add-review-link">
+                  <button
+                    className="add-review-link"
+                    onClick={() => {
+                      const form = document.getElementById('review-form-section');
+                      if (form) {
+                        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        form.querySelector('textarea, input, select')?.focus();
+                      }
+                    }}
+                    style={{
+                      background: '#3498db',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '10px 20px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      marginTop: '10px'
+                    }}
+                  >
                     Agregar Reseña
-                  </Link>
+                  </button>
                 )}
               </div>
             ) : (

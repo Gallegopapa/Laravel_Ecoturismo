@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useAccessibility } from '../../contexts/AccessibilityContext';
 import { useTranslation } from '../../i18n/useTranslation';
 import './AccessibilityPanel.css';
+import '../../styles/accessibility-clean.css';
+import '../../styles/dyslexia.css';
 import FAQFloatingButton from '../FAQFloatingButton/FAQFloatingButton.jsx';
 
 /**
@@ -26,16 +28,18 @@ const AccessibilityPanel = () => {
   // Contextos
   const {
     fontSize,
-    highContrast,
+    // highContrast,
     underlineLinks,
     grayscale,
+    dyslexiaFont,
     lineSpacing,
     reduceMotion,
     increaseFontSize,
     decreaseFontSize,
-    toggleHighContrast,
+    // toggleHighContrast,
     toggleUnderlineLinks,
     toggleGrayscale,
+    toggleDyslexiaFont,
     increaseLineSpacing,
     decreaseLineSpacing,
     toggleReduceMotion,
@@ -268,22 +272,21 @@ const AccessibilityPanel = () => {
 
             <hr className="panel-divider" />
 
-            {/* Sección: Alto contraste */}
+            {/* Sección: Fuente Dislexia */}
             <section className="panel-section">
               <button
-                className={`toggle-option ${highContrast ? 'active' : ''}`}
-                onClick={toggleHighContrast}
-                aria-pressed={highContrast}
-                title={t('highContrastDescription')}
+                className={`toggle-option ${dyslexiaFont ? 'active' : ''}`}
+                onClick={toggleDyslexiaFont}
+                aria-pressed={dyslexiaFont}
+                title="Fuente especial para dislexia: OpenDyslexic"
               >
                 <div className="option-info">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2v20" />
+                    <text x="2" y="18" fontSize="16" fontWeight="bold">Dys</text>
                   </svg>
-                  <span className="option-label">{t('highContrast')}</span>
+                  <span className="option-label">Fuente Dislexia</span>
                 </div>
-                {renderStatusBadge(highContrast)}
+                {renderStatusBadge(dyslexiaFont)}
               </button>
             </section>
 
