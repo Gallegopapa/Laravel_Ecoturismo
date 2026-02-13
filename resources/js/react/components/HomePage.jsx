@@ -77,7 +77,7 @@ const HomePage = ({ loggedIn, user }) => {
     // Funciones de navegación
     const goEcohoteles = () => navigate("/ecohoteles");
     const goLogin = () => navigate("/login");
-    const goRegister = () => navigate("/registro");
+    const goRegister = () => navigate("/register");
     const goPlaceDetail = (id) => navigate(`/lugares/${id}`); // Ahora usa el id real
     const goReservas = () => navigate("/reservas");
     const goPerfil = () => navigate("/perfil");
@@ -86,7 +86,22 @@ const HomePage = ({ loggedIn, user }) => {
     if (!loggedIn) {
         return (
             <div className="homepage">
-                <Slider />
+                <section className="hero-initial">
+                    <img
+                        src="/imagenes/slideone.jpg"
+                        alt="Playa"
+                        className="hero-initial-bg"
+                    />
+                    <div className="hero-initial-overlay"></div>
+                    <div className="hero-initial-content">
+                        <h2 className="hero-initial-title">
+                            Bienvenidos a RisaraldaEcoturismo
+                        </h2>
+                        <p className="hero-initial-sub">
+                            Nosotros nos encargamos de llevarte.
+                        </p>
+                    </div>
+                </section>
                 {/* DESTINOS DESTACADOS */}
                 <section className="destacados section-alt">
                     <h2>Destinos populares</h2>
