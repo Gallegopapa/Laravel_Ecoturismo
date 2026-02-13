@@ -496,11 +496,11 @@
 .hero-initial {
   position: relative;
   width: 100%;
-  min-height: 92vh;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 .hero-initial-bg {
   position: absolute;

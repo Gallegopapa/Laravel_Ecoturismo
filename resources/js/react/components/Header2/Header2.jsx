@@ -66,8 +66,12 @@ const Header2 = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
-    navigate("/", { replace: true });
+    try {
+      await logout();
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   };
 
   return (
