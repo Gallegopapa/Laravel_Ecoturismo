@@ -22,6 +22,28 @@ const PlacesPage = () => {
   const [updatingFavorites, setUpdatingFavorites] = useState({});
   const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
 
+  const formatRating = (value) => {
+    const ratingValue = Number(value ?? 0);
+    return Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : "0.0";
+  };
+
+  const getPlaceRatingText = (lugar) => {
+    const reviews = Array.isArray(lugar?.reviews) ? lugar.reviews : [];
+    const countFromApi = Number(lugar?.reviews_count ?? lugar?.reviewsCount ?? 0);
+
+    if (reviews.length > 0) {
+      const total = reviews.reduce((sum, review) => sum + (Number(review?.rating) || 0), 0);
+      return `★ ${formatRating(total / reviews.length)}`;
+    }
+
+    if (countFromApi > 0) {
+      const ratingValue = Number(lugar?.average_rating ?? lugar?.averageRating ?? 0);
+      return `★ ${formatRating(ratingValue)}`;
+    }
+
+    return "★ 0.0";
+  };
+
   // Mapeo determinístico: nombre exacto -> imagen local
   // Este mapeo garantiza que siempre se asigne la misma imagen al mismo lugar
   const mapeoImagenesDeterministico = {
@@ -537,6 +559,9 @@ const PlacesPage = () => {
                         />
                         <h4>{lugar.name}</h4>
                         <p className="ubicacion-text">{lugar.location}</p>
+                        <p style={{ color: "#f59e0b", fontWeight: 600, margin: "6px 15px 0" }}>
+                          {getPlaceRatingText(lugar)}
+                        </p>
                         <p className="descripcion">
                           {lugar.description 
                             ? (lugar.description.length > 150 
@@ -602,6 +627,9 @@ const PlacesPage = () => {
                       />
                       <h4>{lugar.name}</h4>
                       <p className="ubicacion-text">{lugar.location}</p>
+                      <p style={{ color: "#f59e0b", fontWeight: 600, margin: "6px 15px 0" }}>
+                        {getPlaceRatingText(lugar)}
+                      </p>
                       <p className="descripcion">
                         {lugar.description 
                           ? (lugar.description.length > 150 

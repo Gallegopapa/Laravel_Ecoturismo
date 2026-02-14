@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 import Slider from "@/react/components/slider/Slider";
@@ -30,39 +30,39 @@ const beneficios = [
 
 const destinos = [
     {
-        id: 101,
+        id: 12,
         img: "/imagenes/farallones.jpeg",
-        title: "Farallones de Risaralda",
+        title: "Balneario Los Farallones",
         desc: "Montañas, senderos y biodiversidad única.",
     },
     {
-        id: 102,
+        id: 10,
         img: "/imagenes/termales.jpg",
-        title: "Termales Santa Rosa",
+        title: "Termales de Santa Rosa",
         desc: "Relájate en aguas termales rodeado de naturaleza.",
     },
     {
-        id: 103,
-        img: "/imagenes/ukumari.jpg",
-        title: "Parque Natural Ucumari",
+        id: 1,
+        img: "/imagenes/tatama.jpg",
+        title: "Parque Nacional Natural Tatamá",
         desc: "Explora la fauna y flora de la región.",
     },
     {
-        id: 104,
+        id: 17,
         img: "/imagenes/mirador.jpg",
-        title: "Mirador de la Divisa",
+        title: "La Divisa De Don Juan",
         desc: "Vistas panorámicas y paisajes verdes.",
     },
     {
-        id: 105,
+        id: 8,
         img: "/imagenes/laguna.jpg",
-        title: "Laguna del otun",
+        title: "La Laguna Del Otún",
         desc: "Laguna natural con aguas cristalinas y biodiversidad única.",
     },
     {
-        id: 106,
+        id: 15,
         img: "/imagenes/nudo.jpg",
-        title: "Alto del nudo",
+        title: "Alto Del Nudo",
         desc: "Punto elevado con vistas espectaculares y senderos naturales.",
     },
 ];
@@ -75,6 +75,7 @@ const estadisticas = [
 
 const PagLogueados = ({ loggedIn, user }) => {
     const navigate = useNavigate();
+    const [destinoRatings, setDestinoRatings] = useState({});
 
     // Funciones de navegación
     const goEcohoteles = () => navigate("/ecohoteles");
@@ -84,6 +85,88 @@ const PagLogueados = ({ loggedIn, user }) => {
     const goReservas = () => navigate("/reservas");
     const goPerfil = () => navigate("/perfil");
     const goEmpresa = () => navigate("/company/dashboard");
+
+    useEffect(() => {
+        let isActive = true;
+
+        const normalizeName = (value) => {
+            if (!value) {
+                return "";
+            }
+
+            return value
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        };
+
+        const getAverageFromPlace = (place) => {
+            if (!place) {
+                return 0;
+            }
+
+            const reviews = Array.isArray(place.reviews) ? place.reviews : [];
+            if (reviews.length > 0) {
+                const total = reviews.reduce((sum, review) => sum + (Number(review?.rating) || 0), 0);
+                return total / reviews.length;
+            }
+
+            const ratingValue = Number(place.average_rating ?? place.averageRating ?? 0);
+            return Number.isFinite(ratingValue) ? ratingValue : 0;
+        };
+
+        const loadRatings = async () => {
+            try {
+                const response = await fetch("/api/places");
+                if (!response.ok) {
+                    throw new Error("No ratings");
+                }
+                const data = await response.json();
+                const places = Array.isArray(data) ? data : [];
+                const placesByName = new Map();
+
+                places.forEach((place) => {
+                    const key = normalizeName(place?.name);
+                    if (key) {
+                        placesByName.set(key, place);
+                    }
+                });
+
+                const entries = destinos.map((destino) => {
+                    const place = placesByName.get(normalizeName(destino.title));
+                    const count = Number(place?.reviews_count ?? place?.reviewsCount ?? (Array.isArray(place?.reviews) ? place.reviews.length : 0));
+                    const average = count > 0 ? getAverageFromPlace(place) : 0;
+                    return [destino.id, average];
+                });
+
+                if (isActive) {
+                    setDestinoRatings(Object.fromEntries(entries));
+                }
+            } catch (error) {
+                if (isActive) {
+                    const fallback = destinos.reduce((acc, destino) => {
+                        acc[destino.id] = 0;
+                        return acc;
+                    }, {});
+                    setDestinoRatings(fallback);
+                }
+            }
+        };
+
+        loadRatings();
+
+        return () => {
+            isActive = false;
+        };
+    }, []);
+
+    const renderDestinoRating = (destinoId) => {
+        const ratingValue = Number(destinoRatings[destinoId] ?? 0);
+        const displayRating = Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : "0.0";
+        return <span className="rating">★ {displayRating}</span>;
+    };
 
     if (!loggedIn) {
         return (
@@ -145,7 +228,7 @@ const PagLogueados = ({ loggedIn, user }) => {
                                         </span>
                                         <p className="destino-desc">{d.desc}</p>
                                         <div className="destino-footer">
-                                            <div className="rating">★ 4.5</div>
+                                            <div>{renderDestinoRating(d.id)}</div>
                                             <button
                                                 className="destino-link"
                                                 onClick={() => goPlaceDetail(d.id)}
@@ -322,7 +405,7 @@ const PagLogueados = ({ loggedIn, user }) => {
                                     </span>
                                     <p className="destino-desc">{d.desc}</p>
                                     <div className="destino-footer">
-                                        <div className="rating">★ 4.5</div>
+                                        <div>{renderDestinoRating(d.id)}</div>
                                         <button
                                             className="destino-link"
                                             onClick={() => goPlaceDetail(d.id)}
