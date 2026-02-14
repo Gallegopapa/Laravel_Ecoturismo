@@ -68,11 +68,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
     setGeneratedPassword('');
 
     // Validar que usuario empresa tenga al menos un lugar asignado
-    console.log('Tipo usuario:', formData.tipo_usuario);
-    console.log('Lugares:', formData.lugares);
-    
     if (formData.tipo_usuario === 'empresa' && (!formData.lugares || formData.lugares.length === 0)) {
-      console.log('ValidaciÃ³n fallÃ³ - no hay lugares asignados');
       setErrors({ lugares: ['Debe asignar al menos un lugar para usuario empresa'] });
       setMessage('Error: Usuario empresa debe tener al menos un lugar asignado');
       return;

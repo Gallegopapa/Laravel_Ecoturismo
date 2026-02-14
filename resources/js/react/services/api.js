@@ -51,17 +51,13 @@ api.interceptors.response.use(
       }
     }
     
-    // Log de errores para debugging
-    if (error.response) {
-      console.error('Error de API:', {
-        status: error.response.status,
-        data: error.response.data,
-        url: error.config?.url
-      });
-    } else if (error.request) {
-      console.error('Error de red:', error.request);
-    } else {
-      console.error('Error:', error.message);
+    // Los errores se manejan en la respuesta sin loguear datos sensibles
+    // En producción, registrar solo códigos de error sin datos sensibles
+    if (process.env.NODE_ENV === 'development') {
+      // Solo en desarrollo, loguear información de debugging sin datos personales
+      if (error.response) {
+        console.debug('API Error:', error.response.status, error.config?.url);
+      }
     }
     
     return Promise.reject(error);
@@ -87,7 +83,7 @@ export const authService = {
     try {
       await api.post('/logout');
     } catch (error) {
-      console.error('Error al cerrar sesiÃ³n:', error);
+      // Error silencioso - no es crítico para logout
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

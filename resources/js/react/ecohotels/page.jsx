@@ -6,10 +6,7 @@ import Header2 from "../components/Header2/Header2";
 import Footer from "../components/Footer/Footer";
 import "./page.css";
 
-console.log('🏨🏨🏨 ARCHIVO ECOHOTELS PAGE IMPORTADO 🏨🏨🏨');
-
 const EcohotelsPage = () => {
-  console.log('🏨 EcohotelsPage component loaded!');
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const [ecohotels, setEcohotels] = useState([]);
