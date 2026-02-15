@@ -451,10 +451,38 @@ const PlaceDetailPage = () => {
             <div className="place-info-section">
               <h1 className="place-title">{place.name}</h1>
               
+
               {place.location && (
                 <div className="place-location">
                   <span className="location-icon">📍</span>
                   <span>{place.location}</span>
+                </div>
+              )}
+
+              {/* Mapa y botón Cómo llegar */}
+              {place.latitude && place.longitude && (
+                <div className="place-map-section" style={{ margin: '18px 0 0 0' }}>
+                  <div style={{ borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(44,95,45,0.08)', marginBottom: 10 }}>
+                    <iframe
+                      src={`https://www.google.com/maps?q=${place.latitude},${place.longitude}&z=15&output=embed`}
+                      width="100%"
+                      height="260"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Mapa del lugar"
+                    />
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link-button"
+                    style={{ display: 'inline-block', background: '#24a148', color: '#fff', padding: '10px 22px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', marginTop: 2 }}
+                  >
+                    🚗 Cómo llegar
+                  </a>
                 </div>
               )}
 
@@ -693,6 +721,33 @@ const PlaceDetailPage = () => {
                   </div>
                 )}
               </div>
+
+              {/* Mapa y botón Cómo llegar - debajo de horarios y disponibilidad */}
+              {place.latitude && place.longitude && (
+                <div className="place-map-section" style={{ margin: '28px 0 0 0' }}>
+                  <div style={{ borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(44,95,45,0.08)', marginBottom: 10 }}>
+                    <iframe
+                      src={`https://www.google.com/maps?q=${place.latitude},${place.longitude}&z=15&output=embed`}
+                      width="100%"
+                      height="260"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Mapa del lugar"
+                    />
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link-button"
+                    style={{ display: 'inline-block', background: '#24a148', color: '#fff', padding: '10px 22px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', marginTop: 2 }}
+                  >
+                    🚗 Cómo llegar
+                  </a>
+                </div>
+              )}
 
               <div className="place-actions">
                 <button 
