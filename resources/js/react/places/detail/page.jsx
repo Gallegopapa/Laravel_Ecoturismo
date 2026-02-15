@@ -412,7 +412,7 @@ const PlaceDetailPage = () => {
 
         <div className="place-detail-header">
           <Link to="/lugares" className="back-button">
-            ← Volver a Lugares
+            ← Explorar más Lugares
           </Link>
           <div className="place-header-actions">
             {isAuthenticated && (
@@ -458,14 +458,30 @@ const PlaceDetailPage = () => {
                 </div>
               )}
 
-              {place.latitude && place.longitude && (
-                <div className="place-coordinates">
-                  <span className="coords-label">Coordenadas:</span>
-                  <span className="coords-value">
-                    {parseFloat(place.latitude).toFixed(6)}, {parseFloat(place.longitude).toFixed(6)}
-                  </span>
-                </div>
-              )}
+              {/* Bloque de reseñas debajo de ubicación */}
+              <div className="place-reviews-summary" style={{ margin: '12px 0 8px 0', fontSize: '1.05em', color: '#888', textAlign: 'left', paddingLeft: 0 }}>
+                {reviews && reviews.length > 0 ? (
+                  (() => {
+                    const avg = reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / reviews.length;
+                    return (
+                      <span style={{ cursor: 'pointer', display: 'inline-block' }}
+                        onClick={() => {
+                          const section = document.getElementById('place-reviews-section');
+                          if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }}
+                        title="Ver reseñas"
+                      >
+                        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                        <span style={{ color: '#222', fontWeight: 'bold', fontSize: '1.15em' }}>{avg.toFixed(1)}</span>
+                        {" "}
+                        <span style={{ fontSize: '0.95em', color: '#888' }}>({reviews.length} reseña{reviews.length === 1 ? '' : 's'})</span>
+                      </span>
+                    );
+                  })()
+                ) : (
+                  <span>Sin reseñas</span>
+                )}
+              </div>
 
               {place.categories && place.categories.length > 0 && (
                 <div className="place-categories">
@@ -674,8 +690,19 @@ const PlaceDetailPage = () => {
           </div>
 
           {/* Sección de Reseñas */}
-          <div className="place-reviews-section">
-            <h2>Reseñas y Comentarios</h2>
+          <div className="place-reviews-section" id="place-reviews-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 18 }}>
+              {reviews && reviews.length > 0 && (
+                <div style={{ fontSize: '2.7em', fontWeight: 700, color: '#222', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ color: '#ffc107', fontSize: '1.1em', marginRight: 6 }}>★</span>
+                  {(() => {
+                    const avg = reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / reviews.length;
+                    return avg.toFixed(1);
+                  })()}
+                </div>
+              )}
+              <h2 style={{ margin: 0 }}>Reseñas y Comentarios</h2>
+            </div>
             {reviews.length === 0 ? (
               <div className="no-reviews">
                 <p>No hay reseñas aún. ¡Sé el primero en comentar!</p>

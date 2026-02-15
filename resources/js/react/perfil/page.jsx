@@ -19,6 +19,21 @@ const PerfilPage = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
+  const handleDeleteAccount = async () => {
+    setDeleteMessage("");
+    try {
+      await profileService.deleteAccount();
+      setDeleteMessage("Cuenta eliminada exitosamente. Redirigiendo...");
+      setTimeout(() => {
+        logout();
+        window.location.href = "/";
+      }, 2000);
+    } catch (error) {
+      setDeleteMessage(error.response?.data?.message || error.message || "Error al eliminar la cuenta");
+    }
+  };
 
   // Validar que el usuario esté autenticado y cargar datos del perfil
   useEffect(() => {
@@ -269,7 +284,39 @@ const PerfilPage = () => {
               >
                 Cerrar Sesión
               </button>
+
+              <button
+                type="button"
+                className="btn-delete"
+                style={{ background: '#e53935', color: '#fff', marginLeft: 8 }}
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Eliminar cuenta
+              </button>
             </div>
+
+            {showDeleteConfirm && (
+              <div className="delete-confirm-modal" style={{ background: '#fff', border: '1px solid #e53935', padding: 20, marginTop: 16, borderRadius: 8 }}>
+                <p style={{ color: '#e53935', fontWeight: 'bold' }}>¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.</p>
+                <button
+                  type="button"
+                  style={{ background: '#e53935', color: '#fff', marginRight: 8 }}
+                  onClick={handleDeleteAccount}
+                >
+                  Sí, eliminar definitivamente
+                </button>
+                <button
+                  type="button"
+                  style={{ background: '#ccc', color: '#222' }}
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Cancelar
+                </button>
+                {deleteMessage && (
+                  <p style={{ marginTop: 10, color: deleteMessage.includes('exitosamente') ? '#388e3c' : '#e53935' }}>{deleteMessage}</p>
+                )}
+              </div>
+            )}
           </form>
         </div>
       </div>

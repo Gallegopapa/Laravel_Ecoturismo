@@ -549,7 +549,7 @@ const PlacesPage = () => {
                   </h2>
                   <div className="cards">
                     {data.lugares.map((lugar) => (
-                      <div className="card" key={lugar.id}>
+                        <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
                         <img 
                           src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
                           alt={lugar.name}
@@ -558,10 +558,24 @@ const PlacesPage = () => {
                           }}
                         />
                         <h4>{lugar.name}</h4>
+                        {/* Rating debajo del título, pequeño y alineado */}
+                        <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                          {typeof lugar.average_rating !== 'undefined' && typeof lugar.reviews_count !== 'undefined' ? (
+                            lugar.reviews_count === 0 || lugar.average_rating === 0 || lugar.average_rating === null ? (
+                              <span>Sin reseñas</span>
+                            ) : (
+                              <span>
+                                <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(lugar.average_rating).toFixed(1)}</span>
+                                {" "}
+                                <span style={{ fontSize: '0.95em', color: '#888' }}>({lugar.reviews_count} reseña{lugar.reviews_count === 1 ? '' : 's'})</span>
+                              </span>
+                            )
+                          ) : (
+                            <span>Sin reseñas</span>
+                          )}
+                        </div>
                         <p className="ubicacion-text">{lugar.location}</p>
-                        <p style={{ color: "#f59e0b", fontWeight: 600, margin: "6px 15px 0" }}>
-                          {getPlaceRatingText(lugar)}
-                        </p>
                         <p className="descripcion">
                           {lugar.description 
                             ? (lugar.description.length > 150 
@@ -617,7 +631,7 @@ const PlacesPage = () => {
               <div className="contenedor">
                 <div className="cards">
                   {lugares.map((lugar) => (
-                    <div className="card" key={lugar.id}>
+                      <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
                       <img 
                         src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
                         alt={lugar.name}
@@ -627,9 +641,23 @@ const PlacesPage = () => {
                       />
                       <h4>{lugar.name}</h4>
                       <p className="ubicacion-text">{lugar.location}</p>
-                      <p style={{ color: "#f59e0b", fontWeight: 600, margin: "6px 15px 0" }}>
-                        {getPlaceRatingText(lugar)}
-                      </p>
+                      {/* Rating debajo del título, pequeño y alineado (categoría filtrada) */}
+                      <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                        {typeof lugar.average_rating !== 'undefined' && typeof lugar.reviews_count !== 'undefined' ? (
+                          lugar.reviews_count === 0 || lugar.average_rating === 0 || lugar.average_rating === null ? (
+                            <span>Sin reseñas</span>
+                          ) : (
+                            <span>
+                              <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                              <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(lugar.average_rating).toFixed(1)}</span>
+                              {" "}
+                              <span style={{ fontSize: '0.95em', color: '#888' }}>({lugar.reviews_count} reseña{lugar.reviews_count === 1 ? '' : 's'})</span>
+                            </span>
+                          )
+                        ) : (
+                          <span>Sin reseñas</span>
+                        )}
+                      </div>
                       <p className="descripcion">
                         {lugar.description 
                           ? (lugar.description.length > 150 
@@ -650,13 +678,7 @@ const PlacesPage = () => {
                             </svg>
                             <span>Mapa</span>
                           </a>
-                          <Link 
-                            to={`/lugares/${lugar.id}`}
-                            className="info-button"
-                            style={{ textDecoration: 'none', display: 'inline-block' }}
-                          >
-                            Ver Detalles
-                          </Link>
+                            {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                         </div>
                         {isAuthenticated && (
                           <button 

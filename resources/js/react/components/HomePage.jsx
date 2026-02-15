@@ -205,32 +205,25 @@ const HomePage = ({ loggedIn, user }) => {
                     </p>
                     <div className="destinos-grid">
                         {destinos.map((d) => (
-                            <div className="destino-card" key={d.id}>
-                                <div
-                                    className="destino-img-wrap"
-                                    onClick={() => goPlaceDetail(d.id)}
-                                >
+                            <div className="destino-card" key={d.id} onClick={() => goPlaceDetail(d.id)} style={{ cursor: 'pointer' }}>
+                                <div className="destino-img-wrap">
                                     <img src={d.img} alt={d.title} />
                                 </div>
                                 <div className="destino-body">
-                                    <h3
-                                        className="destino-title"
-                                        onClick={() => goPlaceDetail(d.id)}
-                                    >
-                                        {d.title}
-                                    </h3>
-                                    <span className="destino-country">
-                                        Colombia
-                                    </span>
+                                    <h3 className="destino-title">{d.title}</h3>
+                                    <span className="destino-country">Colombia</span>
                                     <p className="destino-desc">{d.desc}</p>
                                     <div className="destino-footer">
-                                        <div>{renderDestinoRating(d.id)}</div>
-                                        <button
-                                            className="destino-link"
-                                            onClick={() => goPlaceDetail(d.id)}
-                                        >
-                                            Ver más 
-                                        </button>
+                                        <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 0', textAlign: 'left', width: 'auto' }}>
+                                          {Number(destinoRatings[d.id] ?? 0) > 0 ? (
+                                            <span>
+                                              <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                              <span style={{ color: '#222', fontWeight: 'bold' }}>{Number(destinoRatings[d.id]).toFixed(1)}</span>
+                                            </span>
+                                          ) : (
+                                            <span>Sin reseñas</span>
+                                          )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
