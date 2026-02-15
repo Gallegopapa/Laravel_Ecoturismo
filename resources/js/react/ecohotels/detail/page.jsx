@@ -10,6 +10,54 @@ import "../../places/page.css";
 import "./detail.css";
 
 const EcohotelDetailPage = () => {
+    // --- Handlers para editar y eliminar reseñas ---
+    const [submittingEdit, setSubmittingEdit] = useState(false);
+
+    // Iniciar edición
+    const startEditReview = (review) => {
+      setEditingReviewId(review.id);
+      setEditForm({ rating: review.rating, comment: review.comment });
+    };
+
+    // Cambios en el formulario de edición
+    const handleEditReviewChange = (e) => {
+      const { name, value } = e.target;
+      setEditForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    // Cancelar edición
+    const cancelEditReview = () => {
+      setEditingReviewId(null);
+      setEditForm({ rating: 0, comment: "" });
+    };
+
+    // Guardar cambios de edición
+    const submitEditReview = async (reviewId) => {
+      setSubmittingEdit(true);
+      try {
+        await reviewsService.update(reviewId, {
+          rating: editForm.rating,
+          comment: editForm.comment,
+        });
+        await loadReviews();
+        setEditingReviewId(null);
+        setEditForm({ rating: 0, comment: "" });
+      } catch (e) {
+        alert("Error al actualizar la reseña");
+      }
+      setSubmittingEdit(false);
+    };
+
+    // Eliminar reseña
+    const handleDeleteReview = async (reviewId) => {
+      if (!window.confirm("¿Seguro que quieres eliminar esta reseña?")) return;
+      try {
+        await reviewsService.delete(reviewId);
+        await loadReviews();
+      } catch (e) {
+        alert("Error al eliminar la reseña");
+      }
+    };
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -18,6 +66,9 @@ const EcohotelDetailPage = () => {
   const [error, setError] = useState("");
   const [reviews, setReviews] = useState([]);
   const [reviewStats, setReviewStats] = useState({ average: null, count: 0 });
+  // Estado para edición de reseñas
+  const [editingReviewId, setEditingReviewId] = useState(null);
+  const [editForm, setEditForm] = useState({ rating: 0, comment: "" });
 
   console.log('🏨 Cargando ecohotel con ID:', id);
 
@@ -159,6 +210,134 @@ const EcohotelDetailPage = () => {
                             ))}
                           </div>
                           <div style={{ fontSize: 15, color: '#222', marginBottom: 4 }}>{review.comment}</div>
+                          {/* Botones de editar y eliminar */}
+                          {isAuthenticated && user && (user.id === review.usuario?.id || user.is_admin) && (
+                            <div style={{ marginTop: '12px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                              {user.id === review.usuario?.id && (
+                                editingReviewId === review.id ? (
+                                  <div style={{ marginTop: '15px', padding: '15px', background: '#f9f9f9', borderRadius: '8px', borderLeft: '4px solid #3498db' }}>
+                                    <h4 style={{ marginTop: 0, color: '#2c3e50' }}>Editar tu reseña</h4>
+                                    {/* Estrellas */}
+                                    <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#2c3e50' }}>
+                                      Calificación *
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+                                      {[1, 2, 3, 4, 5].map(n => (
+                                        <button
+                                          key={n}
+                                          type="button"
+                                          onClick={() => setEditForm(prev => ({ ...prev, rating: n }))}
+                                          style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            fontSize: '1.5rem',
+                                            color: editForm.rating >= n ? '#ffc107' : '#ddd',
+                                            padding: '0',
+                                            marginRight: '4px',
+                                            transition: 'color 0.2s'
+                                          }}
+                                        >
+                                          ★
+                                        </button>
+                                      ))}
+                                    </div>
+                                    {/* Comentario */}
+                                    <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#2c3e50' }}>
+                                      Comentario *
+                                    </label>
+                                    <textarea
+                                      name="comment"
+                                      value={editForm.comment}
+                                      onChange={handleEditReviewChange}
+                                      maxLength={500}
+                                      rows={3}
+                                      style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        border: '2px solid #e0e0e0',
+                                        borderRadius: '6px',
+                                        fontFamily: 'inherit',
+                                        fontSize: '0.95rem',
+                                        marginBottom: '8px',
+                                        boxSizing: 'border-box'
+                                      }}
+                                    />
+                                    <div style={{ textAlign: 'right', fontSize: '0.85rem', color: '#999', marginBottom: '12px' }}>
+                                      {editForm.comment.length}/500 caracteres
+                                    </div>
+                                    {/* Botones */}
+                                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                      <button
+                                        onClick={() => submitEditReview(review.id)}
+                                        disabled={submittingEdit}
+                                        style={{
+                                          padding: '10px 20px',
+                                          background: '#27ae60',
+                                          color: 'white',
+                                          border: 'none',
+                                          borderRadius: '6px',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          opacity: submittingEdit ? 0.6 : 1
+                                        }}
+                                      >
+                                        Guardar cambios
+                                      </button>
+                                      <button
+                                        onClick={cancelEditReview}
+                                        disabled={submittingEdit}
+                                        style={{
+                                          padding: '10px 20px',
+                                          background: '#95a5a6',
+                                          color: 'white',
+                                          border: 'none',
+                                          borderRadius: '6px',
+                                          cursor: 'pointer',
+                                          fontWeight: 600
+                                        }}
+                                      >
+                                        Cancelar
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => startEditReview(review)}
+                                    style={{
+                                      padding: '8px 16px',
+                                      background: '#3498db',
+                                      color: 'white',
+                                      border: 'none',
+                                      borderRadius: '6px',
+                                      fontSize: '0.9rem',
+                                      fontWeight: 600,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    Editar
+                                  </button>
+                                )
+                              )}
+                              {(user.id === review.usuario?.id || user.is_admin) && (
+                                <button
+                                  onClick={() => handleDeleteReview(review.id)}
+                                  style={{
+                                    padding: '8px 16px',
+                                    background: '#e74c3c',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  Eliminar
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
