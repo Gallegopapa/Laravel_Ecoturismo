@@ -178,15 +178,24 @@ export const reservationsService = {
 
 // Servicios de reseÃ±as
 export const reviewsService = {
+    // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
   getAll: async () => {
     const response = await api.get('/reviews/all');
     return response.data;
   },
 
+
   getByPlace: async (placeId) => {
     const response = await api.get(`/places/${placeId}/reviews`);
     return response.data;
   },
+
+  getByEcohotel: async (ecohotelId) => {
+    const response = await api.get(`/ecohotels/${ecohotelId}/reviews`);
+    return response.data;
+  },
+
+  // createForEcohotel eliminado: usar create con ecohotel_id
 
   create: async (reviewData) => {
     const response = await api.post('/reviews', reviewData);

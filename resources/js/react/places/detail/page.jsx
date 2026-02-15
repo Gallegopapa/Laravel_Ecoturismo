@@ -16,6 +16,7 @@ const PlaceDetailPage = () => {
   const { isAuthenticated, user } = useAuth();
   const [place, setPlace] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ average: null, count: 0 });
   const [schedules, setSchedules] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -236,9 +237,11 @@ const PlaceDetailPage = () => {
   const loadReviews = async (placeId) => {
     try {
       const data = await reviewsService.getByPlace(placeId);
-      setReviews(Array.isArray(data) ? data : []);
+      setReviews(Array.isArray(data.reviews) ? data.reviews : []);
+      setReviewStats({ average: data.average, count: data.count });
     } catch (err) {
       console.error('Error al cargar reseñas:', err);
+      setReviewStats({ average: null, count: 0 });
     }
   };
 
@@ -459,53 +462,21 @@ const PlaceDetailPage = () => {
                 </div>
               )}
 
-              {/* Mapa y botón Cómo llegar */}
-              {place.latitude && place.longitude && (
-                <div className="place-map-section" style={{ margin: '18px 0 0 0' }}>
-                  <div style={{ borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(44,95,45,0.08)', marginBottom: 10 }}>
-                    <iframe
-                      src={`https://www.google.com/maps?q=${place.latitude},${place.longitude}&z=15&output=embed`}
-                      width="100%"
-                      height="260"
-                      style={{ border: 0 }}
-                      allowFullScreen=""
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Mapa del lugar"
-                    />
-                  </div>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="map-link-button"
-                    style={{ display: 'inline-block', background: '#24a148', color: '#fff', padding: '10px 22px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', marginTop: 2 }}
-                  >
-                    🚗 Cómo llegar
-                  </a>
-                </div>
-              )}
-
               {/* Bloque de reseñas debajo de ubicación */}
               <div className="place-reviews-summary" style={{ margin: '12px 0 8px 0', fontSize: '1.05em', color: '#888', textAlign: 'left', paddingLeft: 0 }}>
-                {reviews && reviews.length > 0 ? (
-                  (() => {
-                    const avg = reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / reviews.length;
-                    return (
-                      <span style={{ cursor: 'pointer', display: 'inline-block' }}
-                        onClick={() => {
-                          const section = document.getElementById('place-reviews-section');
-                          if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }}
-                        title="Ver reseñas"
-                      >
-                        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
-                        <span style={{ color: '#222', fontWeight: 'bold', fontSize: '1.15em' }}>{avg.toFixed(1)}</span>
-                        {" "}
-                        <span style={{ fontSize: '0.95em', color: '#888' }}>({reviews.length} reseña{reviews.length === 1 ? '' : 's'})</span>
-                      </span>
-                    );
-                  })()
+                {reviewStats.count > 0 ? (
+                  <span style={{ cursor: 'pointer', display: 'inline-block' }}
+                    onClick={() => {
+                      const section = document.getElementById('place-reviews-section');
+                      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }}
+                    title="Ver reseñas"
+                  >
+                    <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                    <span style={{ color: '#222', fontWeight: 'bold', fontSize: '1.15em' }}>{reviewStats.average?.toFixed(1)}</span>
+                    {" "}
+                    <span style={{ fontSize: '0.95em', color: '#888' }}>({reviewStats.count} reseña{reviewStats.count === 1 ? '' : 's'})</span>
+                  </span>
                 ) : (
                   <span>Sin reseñas</span>
                 )}
@@ -780,13 +751,10 @@ const PlaceDetailPage = () => {
           {/* Sección de Reseñas */}
           <div className="place-reviews-section" id="place-reviews-section">
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 18 }}>
-              {reviews && reviews.length > 0 && (
+              {reviewStats.count > 0 && (
                 <div style={{ fontSize: '2.7em', fontWeight: 700, color: '#222', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ color: '#ffc107', fontSize: '1.1em', marginRight: 6 }}>★</span>
-                  {(() => {
-                    const avg = reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / reviews.length;
-                    return avg.toFixed(1);
-                  })()}
+                  {reviewStats.average?.toFixed(1)}
                 </div>
               )}
               <h2 style={{ margin: 0 }}>Reseñas y Comentarios</h2>

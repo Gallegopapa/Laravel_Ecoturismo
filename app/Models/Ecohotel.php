@@ -9,6 +9,14 @@ class Ecohotel extends Model
 {
     use HasFactory;
 
+    /**
+     * Reseñas polimórficas
+     */
+    public function reviews()
+    {
+        return $this->morphMany(\App\Models\Review::class, 'reviewable');
+    }
+
     protected $fillable = [
         'name',
         'description',

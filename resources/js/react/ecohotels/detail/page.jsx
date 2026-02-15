@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ReviewForm from "../../components/ReviewForm/ReviewForm";
+import { reviewsService } from "../../services/api";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Header from "../../components/Header/Header";
@@ -14,12 +16,27 @@ const EcohotelDetailPage = () => {
   const [ecohotel, setEcohotel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ average: null, count: 0 });
 
   console.log('🏨 Cargando ecohotel con ID:', id);
 
+
   useEffect(() => {
     loadEcohotelDetail();
+    loadReviews();
   }, [id]);
+
+  const loadReviews = async () => {
+    try {
+      const res = await reviewsService.getByEcohotel(id);
+      setReviews(res.reviews || []);
+      setReviewStats({ average: res.average, count: res.count });
+    } catch (e) {
+      setReviews([]);
+      setReviewStats({ average: null, count: 0 });
+    }
+  };
 
   const loadEcohotelDetail = async () => {
     try {
@@ -101,6 +118,52 @@ const EcohotelDetailPage = () => {
             </div>
             <div className="ecohotel-detail-right">
               <div className="detail-info">
+                {/* Reseñas y promedio */}
+                <div className="info-section" style={{ marginBottom: 32 }}>
+                  <h2 style={{ marginBottom: 12 }}>Reseñas de visitantes</h2>
+                  {reviewStats.count > 0 ? (
+                    <div style={{ marginBottom: 10 }}>
+                      <span style={{ fontSize: 22, color: '#ffc107', fontWeight: 700 }}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <span key={i}>{i < Math.round(reviewStats.average) ? '★' : '☆'}</span>
+                        ))}
+                      </span>
+                      <span style={{ marginLeft: 12, color: '#333', fontWeight: 500 }}>
+                        {reviewStats.average?.toFixed(1)} / 5 &nbsp;·&nbsp; {reviewStats.count} reseña{reviewStats.count !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  ) : (
+                    <div style={{ color: '#888', fontStyle: 'italic' }}>Aún no hay reseñas para este ecohotel.</div>
+                  )}
+                  <ReviewForm
+                    ecohotelId={id}
+                    user={user}
+                    isAuthenticated={isAuthenticated}
+                    onReviewAdded={loadReviews}
+                  />
+                  {/* Lista de reseñas */}
+                  {reviews.length > 0 && (
+                    <div style={{ marginTop: 24 }}>
+                      {reviews.map((review) => (
+                        <div key={review.id} style={{ borderBottom: '1px solid #eee', padding: '14px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <img src={review.usuario?.foto_perfil || '/imagenes/usuario.jpg'} alt="avatar" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                            <div>
+                              <strong>{review.usuario?.name || 'Usuario'}</strong>
+                              <div style={{ fontSize: 13, color: '#888' }}>{review.fecha_comentario ? new Date(review.fecha_comentario).toLocaleDateString() : ''}</div>
+                            </div>
+                          </div>
+                          <div style={{ marginTop: 6, marginBottom: 4, color: '#ffc107', fontSize: 18 }}>
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <span key={i}>{i < review.rating ? '★' : '☆'}</span>
+                            ))}
+                          </div>
+                          <div style={{ fontSize: 15, color: '#222', marginBottom: 4 }}>{review.comment}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="info-section">
                   <h2>Información General</h2>
                   {ecohotel.description && (

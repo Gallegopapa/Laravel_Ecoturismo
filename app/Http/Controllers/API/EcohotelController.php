@@ -21,6 +21,19 @@ class EcohotelController extends Controller
     }
 
     /**
+     * Eliminar un ecohotel
+     */
+    public function destroy($id): \Illuminate\Http\JsonResponse
+    {
+        $ecohotel = Ecohotel::find($id);
+        if (!$ecohotel) {
+            return response()->json(['message' => 'Ecohotel no encontrado'], 404);
+        }
+        $ecohotel->delete();
+        return response()->json(['message' => 'Ecohotel eliminado correctamente.']);
+    }
+
+    /**
      * Crear un nuevo ecohotel
      */
     public function store(Request $request): JsonResponse

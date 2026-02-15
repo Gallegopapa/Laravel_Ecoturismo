@@ -3,7 +3,7 @@ import { reviewsService } from '@/react/services/api';
 import usuarioImg from '@/react/components/imagenes/usuario.jpg';
 import './ReviewForm.css';
 
-const ReviewForm = ({ placeId, user, isAuthenticated, onReviewAdded }) => {
+const ReviewForm = ({ placeId, ecohotelId, user, isAuthenticated, onReviewAdded }) => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,9 +13,9 @@ const ReviewForm = ({ placeId, user, isAuthenticated, onReviewAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!placeId) {
-      setError('Error: No se pudo identificar el lugar');
+
+    if (!placeId && !ecohotelId) {
+      setError('Error: No se pudo identificar el destino de la reseña');
       return;
     }
 
@@ -34,18 +34,21 @@ const ReviewForm = ({ placeId, user, isAuthenticated, onReviewAdded }) => {
     setSuccess('');
 
     try {
-      const reviewData = {
-        place_id: placeId,
+      let reviewData = {
         rating: parseInt(rating),
-        comment: comment.trim()
+        comment: comment.trim(),
       };
-
+      if (placeId) {
+        reviewData.place_id = placeId;
+      } else if (ecohotelId) {
+        reviewData.ecohotel_id = ecohotelId;
+      }
       await reviewsService.create(reviewData);
-      
+
       setComment('');
       setRating(5);
       setSuccess('¡Reseña agregada exitosamente!');
-      
+
       // Llamar callback para refrescar la lista
       if (onReviewAdded) {
         onReviewAdded();

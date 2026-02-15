@@ -12,6 +12,7 @@ class Review extends Model
     protected $fillable = [
         'user_id',
         'place_id',
+        'ecohotel_id',
         'rating',
         'comment',
         'fecha_comentario',
@@ -30,5 +31,10 @@ class Review extends Model
     public function place()
     {
         return $this->belongsTo(Place::class, 'place_id');
+    }
+
+    public function ecohotel()
+    {
+        return $this->belongsTo(Ecohotel::class, 'ecohotel_id');
     }
 }
