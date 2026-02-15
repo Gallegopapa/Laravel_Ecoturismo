@@ -174,43 +174,72 @@ class EcohotelController extends Controller
         \Log::info('UPDATE - Campo places recibido', ['places' => $places]);
         unset($data['categories'], $data['places']);
 
-        $ecohotel->update($data);
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', new NoProfanity()],
+            'description' => ['nullable', 'string', new NoProfanity()],
+            'location' => ['required', 'string', 'max:255', new NoProfanity()],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
+            'email' => 'nullable|email|max:255',
+            'sitio_web' => 'nullable|url|max:255',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
+            'places' => 'nullable|array',
+            'places.*' => 'exists:places,id',
+        ], [
+            'name.required' => 'El nombre del ecohotel es requerido.',
+            'location.required' => 'La ubicación es requerida.',
+            'latitude.required' => 'La latitud es requerida.',
+            'latitude.numeric' => 'La latitud debe ser un número.',
+            'latitude.between' => 'La latitud debe estar entre -90 y 90.',
+            'longitude.required' => 'La longitud es requerida.',
+            'longitude.numeric' => 'La longitud debe ser un número.',
+            'longitude.between' => 'La longitud debe estar entre -180 y 180.',
+            'image.image' => 'El archivo debe ser una imagen.',
+            'image.max' => 'La imagen no puede exceder 5MB.',
+            'email.email' => 'El email debe ser válido.',
+            'sitio_web.url' => 'El sitio web debe ser una URL válida.',
+            'categories.array' => 'Las categorías deben ser un array.',
+            'categories.*.exists' => 'Una o más categorías no existen.',
+            'places.array' => 'Los lugares deben ser un array.',
+            'places.*.exists' => 'Uno o más lugares no existen.',
+        ]);
 
+        // Manejar actualización de imagen
+        if ($request->hasFile('image')) {
+            // Eliminar imagen anterior
+            if ($ecohotel->image) {
+                $oldFileName = basename(parse_url($ecohotel->image, PHP_URL_PATH));
+                if ($oldFileName && Storage::disk('public')->exists('ecohotels/' . $oldFileName)) {
+                    Storage::disk('public')->delete('ecohotels/' . $oldFileName);
+                }
+            }
+            $image = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('ecohotels', $filename, 'public');
+            $validated['image'] = '/storage/' . $path;
+        }
+
+        $categories = $validated['categories'] ?? null;
+
+        // Actualizar datos principales
+        $ecohotel->update(collect($validated)->except(['categories', 'places'])->toArray());
+
+        // Sincronizar categorías si se proporcionan
         if ($categories !== null) {
             $ecohotel->categories()->sync($categories);
         }
-        \Log::info('UPDATE - Antes de sync', ['places' => $places]);
-        if ($places !== null) {
-            $ecohotel->places()->sync($places);
-        }
-        \Log::info('UPDATE - Después de sync', ['ecohotel_places' => $ecohotel->places()->pluck('places.id')->toArray()]);
+
+        // Sincronizar lugares SIEMPRE (array o vacío)
+        $ecohotel->places()->sync($validated['places'] ?? []);
 
         $ecohotel->load(['categories', 'places']);
 
         return response()->json([
             'message' => 'Ecohotel actualizado correctamente.',
             'ecohotel' => $ecohotel
-        ]);
-    }
-
-    /**
-     * Eliminar un ecohotel
-     */
-    public function destroy(Ecohotel $ecohotel): JsonResponse
-    {
-        // Eliminar imagen si existe
-        if ($ecohotel->image && strpos($ecohotel->image, 'storage/ecohotels/') !== false) {
-            $imagePath = str_replace(asset(''), '', $ecohotel->image);
-            $imagePath = str_replace('storage/', '', $imagePath);
-            if (Storage::disk('public')->exists('ecohotels/' . basename($imagePath))) {
-                Storage::disk('public')->delete('ecohotels/' . basename($imagePath));
-            }
-        }
-
-        $ecohotel->delete();
-
-        return response()->json([
-            'message' => 'Ecohotel eliminado correctamente.'
         ]);
     }
 }
