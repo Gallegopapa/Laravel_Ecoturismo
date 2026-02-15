@@ -33,4 +33,12 @@ class Ecohotel extends Model
     {
         return $this->belongsToMany(Category::class, 'category_ecohotel');
     }
+
+    /**
+     * Relación muchos a muchos con lugares turísticos
+     */
+    public function places()
+    {
+        return $this->belongsToMany(Place::class, 'ecohotel_place');
+    }
 }

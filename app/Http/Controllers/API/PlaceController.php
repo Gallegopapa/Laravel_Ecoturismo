@@ -156,21 +156,32 @@ class PlaceController extends Controller
             'image' => 'nullable|string|max:500',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'ecohoteles' => 'nullable|array',
+            'ecohoteles.*' => 'exists:ecohotels,id',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'categories.array' => 'Las categorías deben ser un array.',
             'categories.*.exists' => 'Una o más categorías no existen.',
+            'ecohoteles.array' => 'Los ecohoteles deben ser un array.',
+            'ecohoteles.*.exists' => 'Uno o más ecohoteles no existen.',
         ]);
 
+        $ecohoteles = $data['ecohoteles'] ?? null;
+        unset($data['ecohoteles']);
+
         $place = Place::create($data);
-        
+
         // Asociar categorías si se proporcionan
         if (isset($data['categories'])) {
             $place->categories()->sync($data['categories']);
         }
-        
-        $place->load('categories');
-        
+        // Asociar ecohoteles si se proporcionan
+        if ($ecohoteles !== null) {
+            $place->ecohoteles()->sync($ecohoteles);
+        }
+
+        $place->load(['categories', 'ecohoteles']);
+
         return response()->json([
             'message' => 'Lugar creado correctamente.',
             'place' => $place
@@ -184,8 +195,9 @@ class PlaceController extends Controller
     {
         // Cargar relaciones necesarias
         $place->load([
-            'reviews.usuario:id,name,foto_perfil', 
-            'categories', 
+            'reviews.usuario:id,name,foto_perfil',
+            'categories',
+            'ecohoteles',
             'schedules' => function($query) {
                 $query->where('activo', true)
                       ->orderByRaw("
@@ -202,11 +214,11 @@ class PlaceController extends Controller
                       ->orderBy('hora_inicio');
             }
         ]);
-        
+
         // Calcular rating promedio
         $averageRating = $place->reviews->avg('rating') ?? 0;
         $reviewsCount = $place->reviews->count();
-        
+
         // Cargar TODAS las reservas futuras del lugar para mostrar horarios ocupados (público)
         $futureReservations = \App\Models\Reservation::where('place_id', $place->id)
             ->where('fecha_visita', '>=', now()->toDateString())
@@ -223,7 +235,7 @@ class PlaceController extends Controller
                     // Si viene como "HH:MM:SS", tomar solo "HH:MM"
                     $horaVisita = substr($horaVisita, 0, 5);
                 }
-                
+
                 return [
                     'id' => $reservation->id,
                     'fecha_visita' => $reservation->fecha_visita->format('Y-m-d'),
@@ -232,12 +244,13 @@ class PlaceController extends Controller
                     'estado' => $reservation->estado,
                 ];
             });
-        
+
         return response()->json([
             'place' => $place,
             'average_rating' => round($averageRating, 1),
             'reviews_count' => $reviewsCount,
             'future_reservations' => $futureReservations,
+            'ecohoteles' => $place->ecohoteles,
         ]);
     }
 
@@ -253,20 +266,31 @@ class PlaceController extends Controller
             'image' => 'nullable|string|max:500',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'ecohoteles' => 'nullable|array',
+            'ecohoteles.*' => 'exists:ecohotels,id',
         ], [
             'categories.array' => 'Las categorías deben ser un array.',
             'categories.*.exists' => 'Una o más categorías no existen.',
+            'ecohoteles.array' => 'Los ecohoteles deben ser un array.',
+            'ecohoteles.*.exists' => 'Uno o más ecohoteles no existen.',
         ]);
 
+        $ecohoteles = $data['ecohoteles'] ?? null;
+        unset($data['ecohoteles']);
+
         $place->update($data);
-        
+
         // Actualizar categorías si se proporcionan
         if (isset($data['categories'])) {
             $place->categories()->sync($data['categories']);
         }
-        
-        $place->load('categories');
-        
+        // Actualizar ecohoteles si se proporcionan
+        if ($ecohoteles !== null) {
+            $place->ecohoteles()->sync($ecohoteles);
+        }
+
+        $place->load(['categories', 'ecohoteles']);
+
         return response()->json([
             'message' => 'Lugar actualizado correctamente.',
             'place' => $place

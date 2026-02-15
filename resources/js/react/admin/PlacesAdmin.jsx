@@ -6,6 +6,7 @@ import './admin.css';
 const PlacesAdmin = () => {
   const [places, setPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [ecohotels, setEcohotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingPlace, setEditingPlace] = useState(null);
@@ -18,6 +19,7 @@ const PlacesAdmin = () => {
     latitude: '',
     longitude: '',
     categories: [],
+    ecohoteles: [],
   });
 
   // Mapeo determinístico: nombre exacto -> imagen local
@@ -96,7 +98,17 @@ const PlacesAdmin = () => {
   useEffect(() => {
     loadPlaces();
     loadCategories();
+    loadEcohotels();
   }, []);
+
+  const loadEcohotels = async () => {
+    try {
+      const data = await adminService.ecohotels.getAll();
+      setEcohotels(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar ecohoteles:', error);
+    }
+  };
 
   const loadCategories = async () => {
     try {
@@ -205,6 +217,7 @@ const PlacesAdmin = () => {
         longitude: placeData.longitude || '',
         image: null,
         categories: placeData.categories ? placeData.categories.map(cat => cat.id) : [],
+        ecohoteles: placeData.ecohoteles ? placeData.ecohoteles.map(e => e.id) : [],
       });
       // Scroll al formulario
       document.querySelector('.admin-form-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -239,6 +252,7 @@ const PlacesAdmin = () => {
       latitude: '',
       longitude: '',
       categories: [],
+      ecohoteles: [],
     });
     // Reset file input
     const fileInput = document.getElementById('place-image');
@@ -250,8 +264,7 @@ const PlacesAdmin = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value, files, type, checked } = e.target;
-    
+    const { name, value, files, type, checked, multiple, options } = e.target;
     if (type === 'checkbox' && name === 'categories') {
       // Manejar checkboxes de categorías
       const categoryId = parseInt(value);
@@ -269,6 +282,13 @@ const PlacesAdmin = () => {
           };
         }
       });
+    } else if (name === 'ecohoteles') {
+      // Manejar select múltiple de ecohoteles
+      const selected = Array.from(options).filter(o => o.selected).map(o => parseInt(o.value));
+      setFormData((prev) => ({
+        ...prev,
+        ecohoteles: selected,
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -377,6 +397,7 @@ const PlacesAdmin = () => {
             </label>
           </div>
 
+
           <div className="form-group">
             <label>
               Categorías
@@ -401,6 +422,33 @@ const PlacesAdmin = () => {
                   ))
                 )}
               </div>
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Ecohoteles relacionados
+              <select
+                name="ecohoteles"
+                multiple
+                value={formData.ecohoteles}
+                onChange={handleInputChange}
+                className="ecohoteles-multiselect"
+                style={{ minHeight: '80px', width: '100%' }}
+              >
+                {ecohotels.length === 0 ? (
+                  <option value="" disabled>No hay ecohoteles disponibles</option>
+                ) : (
+                  ecohotels.map((ecohotel) => (
+                    <option key={ecohotel.id} value={ecohotel.id}>
+                      {ecohotel.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                Puedes asociar uno o varios ecohoteles a este lugar.
+              </small>
             </label>
           </div>
 

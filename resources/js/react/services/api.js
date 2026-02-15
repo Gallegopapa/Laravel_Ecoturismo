@@ -326,13 +326,18 @@ export const adminService = {
       if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (placeData.categories && Array.isArray(placeData.categories) && placeData.categories.length > 0) {
         placeData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
         });
       }
-      
+      // Agregar ecohoteles como array
+      if (placeData.ecohoteles && Array.isArray(placeData.ecohoteles) && placeData.ecohoteles.length > 0) {
+        placeData.ecohoteles.forEach((ecohotelId) => {
+          formData.append('ecohoteles[]', ecohotelId);
+        });
+      }
       const response = await api.post('/admin/places', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -350,19 +355,29 @@ export const adminService = {
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorÃ­as como array (incluso si estÃ¡ vacÃ­o para sincronizar)
+      // Agregar categorías como array (incluso si está vacío para sincronizar)
       if (placeData.categories !== undefined) {
         if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
           placeData.categories.forEach((categoryId) => {
             formData.append('categories[]', categoryId);
           });
         } else {
-          // Si estÃ¡ vacÃ­o, enviar array vacÃ­o para desasociar todas las categorÃ­as
+          // Si está vacío, enviar array vacío para desasociar todas las categorías
           formData.append('categories[]', '');
         }
       }
-      
-      // Usar POST con _method=PUT para FormData (mÃ¡s compatible)
+      // Agregar ecohoteles como array (incluso si está vacío para sincronizar)
+      if (placeData.ecohoteles !== undefined) {
+        if (Array.isArray(placeData.ecohoteles) && placeData.ecohoteles.length > 0) {
+          placeData.ecohoteles.forEach((ecohotelId) => {
+            formData.append('ecohoteles[]', ecohotelId);
+          });
+        } else {
+          // Si está vacío, enviar array vacío para desasociar todos los ecohoteles
+          formData.append('ecohoteles[]', '');
+        }
+      }
+      // Usar POST con _method=PUT para FormData (más compatible)
       const response = await api.post(`/admin/places/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

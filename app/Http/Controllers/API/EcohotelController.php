@@ -16,8 +16,7 @@ class EcohotelController extends Controller
      */
     public function index(): JsonResponse
     {
-        $ecohotels = Ecohotel::with('categories')->orderBy('created_at', 'desc')->get();
-        
+        $ecohotels = Ecohotel::with(['categories', 'places'])->orderBy('created_at', 'desc')->get();
         return response()->json($ecohotels);
     }
 
@@ -38,6 +37,8 @@ class EcohotelController extends Controller
             'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'places' => 'nullable|array',
+            'places.*' => 'exists:places,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
             'location.required' => 'La ubicación es requerida.',
@@ -53,6 +54,8 @@ class EcohotelController extends Controller
             'sitio_web.url' => 'El sitio web debe ser una URL válida.',
             'categories.array' => 'Las categorías deben ser un array.',
             'categories.*.exists' => 'Una o más categorías no existen.',
+            'places.array' => 'Los lugares deben ser un array.',
+            'places.*.exists' => 'Uno o más lugares no existen.',
         ]);
 
         // Manejar subida de imagen
@@ -64,17 +67,22 @@ class EcohotelController extends Controller
         }
 
         $categories = $data['categories'] ?? null;
-        unset($data['categories']);
+        $places = $data['places'] ?? null;
+        unset($data['categories'], $data['places']);
 
         $ecohotel = Ecohotel::create($data);
-        
+
         // Asociar categorías si se proporcionan
         if ($categories !== null) {
             $ecohotel->categories()->sync($categories);
         }
-        
-        $ecohotel->load('categories');
-        
+        // Asociar lugares si se proporcionan
+        if ($places !== null) {
+            $ecohotel->places()->sync($places);
+        }
+
+        $ecohotel->load(['categories', 'places']);
+
         return response()->json([
             'message' => 'Ecohotel creado correctamente.',
             'ecohotel' => $ecohotel
@@ -87,7 +95,7 @@ class EcohotelController extends Controller
     public function show($id): JsonResponse
     {
         try {
-            $ecohotel = Ecohotel::with('categories')->findOrFail($id);
+            $ecohotel = Ecohotel::with(['categories', 'places'])->findOrFail($id);
             return response()->json($ecohotel);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
@@ -119,6 +127,8 @@ class EcohotelController extends Controller
             'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'places' => 'nullable|array',
+            'places.*' => 'exists:places,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
             'location.required' => 'La ubicación es requerida.',
@@ -134,6 +144,8 @@ class EcohotelController extends Controller
             'sitio_web.url' => 'El sitio web debe ser una URL válida.',
             'categories.array' => 'Las categorías deben ser un array.',
             'categories.*.exists' => 'Una o más categorías no existen.',
+            'places.array' => 'Los lugares deben ser un array.',
+            'places.*.exists' => 'Uno o más lugares no existen.',
         ]);
 
         // Manejar actualización de imagen
@@ -153,15 +165,19 @@ class EcohotelController extends Controller
         }
 
         $categories = $data['categories'] ?? null;
-        unset($data['categories']);
+        $places = $data['places'] ?? null;
+        unset($data['categories'], $data['places']);
 
         $ecohotel->update($data);
 
         if ($categories !== null) {
             $ecohotel->categories()->sync($categories);
         }
+        if ($places !== null) {
+            $ecohotel->places()->sync($places);
+        }
 
-        $ecohotel->load('categories');
+        $ecohotel->load(['categories', 'places']);
 
         return response()->json([
             'message' => 'Ecohotel actualizado correctamente.',
