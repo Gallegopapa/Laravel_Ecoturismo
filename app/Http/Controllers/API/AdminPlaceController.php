@@ -25,7 +25,7 @@ class AdminPlaceController extends Controller
      */
     public function show(Place $place): JsonResponse
     {
-        $place->load(['categories', 'schedules']);
+        $place->load(['categories', 'schedules', 'ecohoteles']);
         return response()->json($place);
     }
 
@@ -91,65 +91,24 @@ class AdminPlaceController extends Controller
      */
     public function update(Request $request, Place $place): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', new NoProfanity()],
-            'description' => ['nullable', 'string', new NoProfanity()],
-            'location' => ['nullable', 'string', 'max:255', new NoProfanity()],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
-            'email' => 'nullable|email|max:255',
-            'sitio_web' => 'nullable|url|max:255',
-            'categories' => 'nullable|array',
-            'categories.*' => 'exists:categories,id',
-        ], [
-            'name.required' => 'El nombre del lugar es requerido.',
-            'image.image' => 'El archivo debe ser una imagen.',
-            'image.max' => 'La imagen no puede exceder 5MB.',
-            'latitude.numeric' => 'La latitud debe ser un número.',
-            'latitude.between' => 'La latitud debe estar entre -90 y 90.',
-            'longitude.numeric' => 'La longitud debe ser un número.',
-            'longitude.between' => 'La longitud debe estar entre -180 y 180.',
-            'categories.array' => 'Las categorías deben ser un array.',
-            'categories.*.exists' => 'Una o más categorías no existen.',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'image' => 'nullable|string|max:500',
+            'ecohoteles' => 'array',
+            'ecohoteles.*' => 'exists:ecohotels,id',
         ]);
 
-        // Manejar subida de nueva imagen
-        if ($request->hasFile('image')) {
-            // Eliminar imagen anterior si existe
-            if ($place->image) {
-                $oldFileName = basename(parse_url($place->image, PHP_URL_PATH));
-                if ($oldFileName && Storage::disk('public')->exists('places/' . $oldFileName)) {
-                    Storage::disk('public')->delete('places/' . $oldFileName);
-                }
-            }
+        $ecohoteles = $request->input('ecohoteles', []);
 
-            // Subir nueva imagen
-            $image = $request->file('image');
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('places', $filename, 'public');
-            $data['image'] = '/storage/' . $path;
-        }
+        $place->update(collect($validated)->except('ecohoteles')->toArray());
 
-        // Extraer categorías antes de actualizar el lugar
-        $categories = $data['categories'] ?? null;
-        unset($data['categories']);
+        $place->ecohoteles()->sync((array) $ecohoteles);
 
-        $place->update($data);
-
-        // Actualizar categorías si se proporcionan (incluso si es array vacío)
-        if ($categories !== null) {
-            // Si es array vacío, desasociar todas las categorías
-            $place->categories()->sync($categories ?: []);
-        }
-
-        $place->load('categories');
-
-        return response()->json([
-            'message' => 'Lugar actualizado correctamente.',
-            'place' => $place
-        ]);
+        return response()->json(
+            $place->load('ecohoteles')
+        );
     }
 
     /**

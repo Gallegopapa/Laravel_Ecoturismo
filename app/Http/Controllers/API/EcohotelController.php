@@ -124,16 +124,16 @@ class EcohotelController extends Controller
             'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'description' => ['nullable', 'string', new NoProfanity()],
             'location' => ['required', 'string', 'max:255', new NoProfanity()],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image' => 'nullable',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
-            'categories.*' => 'exists:categories,id',
+            'categories.*' => 'nullable|exists:categories,id',
             'places' => 'nullable|array',
-            'places.*' => 'exists:places,id',
+            'places.*' => 'nullable|exists:places,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
             'location.required' => 'La ubicación es requerida.',
@@ -184,10 +184,10 @@ class EcohotelController extends Controller
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
-            'categories' => 'nullable|array',
-            'categories.*' => 'exists:categories,id',
-            'places' => 'nullable|array',
-            'places.*' => 'exists:places,id',
+            'categories' => 'array',
+            'categories.*' => 'nullable|exists:categories,id',
+            'places' => 'array',
+            'places.*' => 'nullable|exists:places,id',
         ], [
             'name.required' => 'El nombre del ecohotel es requerido.',
             'location.required' => 'La ubicación es requerida.',
@@ -222,18 +222,19 @@ class EcohotelController extends Controller
             $validated['image'] = '/storage/' . $path;
         }
 
-        $categories = $validated['categories'] ?? null;
 
         // Actualizar datos principales
         $ecohotel->update(collect($validated)->except(['categories', 'places'])->toArray());
 
-        // Sincronizar categorías si se proporcionan
-        if ($categories !== null) {
-            $ecohotel->categories()->sync($categories);
-        }
+        // Filtrar ids vacíos o nulos
+        $categoriesSync = array_filter($validated['categories'] ?? [], fn($id) => $id !== null && $id !== '' && is_numeric($id));
+        $placesSync = array_filter($validated['places'] ?? [], fn($id) => $id !== null && $id !== '' && is_numeric($id));
 
-        // Sincronizar lugares SIEMPRE (array o vacío)
-        $ecohotel->places()->sync($validated['places'] ?? []);
+        // Sincronizar categorías (array vacío = sin categorías)
+        $ecohotel->categories()->sync($categoriesSync);
+
+        // Sincronizar lugares (array vacío = sin lugares)
+        $ecohotel->places()->sync($placesSync);
 
         $ecohotel->load(['categories', 'places']);
 
