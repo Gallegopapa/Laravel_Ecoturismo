@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [ProfileController::class, 'update']); // POST para FormData con imagen
     Route::put('/profile', [ProfileController::class, 'update']); // PUT para JSON sin imagen
     Route::put('/profile/password', [ProfileController::class, 'changePassword']);
+    Route::delete('/profile', [ProfileController::class, 'destroy']); // Eliminar cuenta
     
     // Rutas de lugares (CRUD completo - solo admin)
     Route::post('/places', [PlaceController::class, 'store'])->middleware('admin');

@@ -272,6 +272,11 @@ export const profileService = {
     const response = await api.put('/profile/password', passwordData);
     return response.data;
   },
+    
+  deleteAccount: async () => {
+    const response = await api.delete('/profile');
+    return response.data;
+  },
 };
 
 // Servicios de mensajes

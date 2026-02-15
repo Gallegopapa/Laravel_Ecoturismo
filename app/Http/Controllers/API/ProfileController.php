@@ -7,12 +7,24 @@ use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    /**
+     * Eliminar la cuenta del usuario autenticado
+     */
+    public function destroy(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->delete();
+        return response()->json([
+            'message' => 'Cuenta eliminada exitosamente.'
+        ]);
+    }
     /**
      * Obtener información del perfil del usuario autenticado
      */
