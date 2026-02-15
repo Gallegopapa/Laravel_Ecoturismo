@@ -78,22 +78,19 @@ class PlaceController extends Controller
         // Obtener reservas existentes para esa fecha
         $reservasExistentes = \App\Models\Reservation::where('place_id', $place->id)
             ->where('fecha_visita', $fecha)
-            ->where('estado', '!=', 'cancelada')
             ->pluck('hora_visita')
             ->toArray();
 
-        // Filtrar horarios disponibles (excluir los que ya tienen reserva)
         $horariosDisponibles = [];
         foreach ($schedules as $schedule) {
-            // Convertir horas HH:mm a segundos desde medianoche
             $horaInicioSegundos = $this->timeToSeconds($schedule->hora_inicio);
             $horaFinSegundos = $this->timeToSeconds($schedule->hora_fin);
-            
+
             // Generar horarios cada 30 minutos dentro del rango
             $horaActualSegundos = $horaInicioSegundos;
             while ($horaActualSegundos <= $horaFinSegundos) {
                 $horaFormato = $this->secondsToTime($horaActualSegundos);
-                
+
                 // Verificar que no esté ya reservada
                 if (!in_array($horaFormato, $reservasExistentes)) {
                     $horariosDisponibles[] = [
@@ -101,7 +98,7 @@ class PlaceController extends Controller
                         'hora_display' => $this->formatTimeDisplay($horaActualSegundos),
                     ];
                 }
-                
+
                 $horaActualSegundos += 1800; // Sumar 30 minutos (1800 segundos)
             }
         }
@@ -245,12 +242,13 @@ class PlaceController extends Controller
                 ];
             });
 
+        $place->load('ecohoteles');
         return response()->json([
             'place' => $place,
             'average_rating' => round($averageRating, 1),
             'reviews_count' => $reviewsCount,
             'future_reservations' => $futureReservations,
-            'ecohoteles' => $place->ecohoteles,
+            'ecohotels' => $place->ecohoteles,
         ]);
     }
 
@@ -259,6 +257,8 @@ class PlaceController extends Controller
      */
     public function update(Request $request, Place $place): JsonResponse
     {
+        dd($request->all());
+
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255', new NoProfanity()],
             'description' => ['nullable', 'string', new NoProfanity()],
@@ -275,7 +275,7 @@ class PlaceController extends Controller
             'ecohoteles.*.exists' => 'Uno o más ecohoteles no existen.',
         ]);
 
-        $ecohoteles = $data['ecohoteles'] ?? null;
+        $ecohoteles = $data['ecohoteles'] ?? [];
         unset($data['ecohoteles']);
 
         $place->update($data);
@@ -284,10 +284,8 @@ class PlaceController extends Controller
         if (isset($data['categories'])) {
             $place->categories()->sync($data['categories']);
         }
-        // Actualizar ecohoteles si se proporcionan
-        if ($ecohoteles !== null) {
-            $place->ecohoteles()->sync($ecohoteles);
-        }
+        // Sincronizar ecohoteles SIEMPRE (array o vacío)
+        $place->ecohotels()->sync($ecohoteles);
 
         $place->load(['categories', 'ecohoteles']);
 
