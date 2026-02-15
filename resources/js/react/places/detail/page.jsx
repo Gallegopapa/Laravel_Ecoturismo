@@ -117,16 +117,21 @@ const PlaceDetailPage = () => {
       const response = await placesService.getById(id);
       // El API puede devolver { place: {...} } o directamente el lugar
       let placeData = response.place || response;
-      
+
+      // Si la respuesta trae ecohotels enriquecidos, sobrescribir en el objeto place
+      if (response.ecohotels) {
+        placeData.ecohoteles = response.ecohotels;
+      }
+
       // Si hay reservas futuras en la respuesta, cargarlas
       if (response.future_reservations) {
         setReservations(response.future_reservations);
       }
-      
+
       // Priorizar imágenes locales sobre imágenes de API
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
-      
+
       // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
       const imagenSubida = placeData.image && (
         placeData.image.includes('/storage/places/') || 
@@ -134,19 +139,19 @@ const PlaceDetailPage = () => {
         placeData.image.includes('storage/places') ||
         (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
       ) ? placeData.image : null;
-      
+
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
       let imagenLocal = null;
       if (!imagenSubida) {
         // Buscar en mapeo determinístico por nombre original
         imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-        
+
         // Si no se encontró, buscar en mapeo normalizado
         if (!imagenLocal) {
           imagenLocal = mapeoImagenesLocales[nombreLugar];
         }
       }
-      
+
       // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder
       placeData = {
         ...placeData,
@@ -154,7 +159,7 @@ const PlaceDetailPage = () => {
         // Mantener image solo si es una imagen subida válida
         image: imagenSubida || null,
       };
-      
+
       setPlace(placeData);
       await loadReviews(placeData.id);
       

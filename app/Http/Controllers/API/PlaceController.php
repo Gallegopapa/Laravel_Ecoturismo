@@ -250,7 +250,15 @@ class PlaceController extends Controller
                 ];
             });
 
-        $place->load('ecohoteles');
+        $place->load(['ecohoteles.reviews']);
+        // Enriquecer ecohoteles relacionados con promedio y cantidad de reseñas
+        if ($place->ecohoteles) {
+            $place->ecohoteles->transform(function($ecohotel) {
+                $ecohotel->average_rating = round($ecohotel->reviews->avg('rating') ?? 0, 1);
+                $ecohotel->reviews_count = $ecohotel->reviews->count();
+                return $ecohotel;
+            });
+        }
         return response()->json([
             'place' => $place,
             'average_rating' => round($averageRating, 1),
