@@ -25,6 +25,7 @@ class EcohotelController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        \Log::info('REQUEST COMPLETO STORE', ['all' => $request->all()]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'description' => ['nullable', 'string', new NoProfanity()],
@@ -68,6 +69,7 @@ class EcohotelController extends Controller
 
         $categories = $data['categories'] ?? null;
         $places = $data['places'] ?? null;
+        \Log::info('STORE - Campo places recibido', ['places' => $places]);
         unset($data['categories'], $data['places']);
 
         $ecohotel = Ecohotel::create($data);
@@ -77,9 +79,11 @@ class EcohotelController extends Controller
             $ecohotel->categories()->sync($categories);
         }
         // Asociar lugares si se proporcionan
+        \Log::info('STORE - Antes de sync', ['places' => $places]);
         if ($places !== null) {
             $ecohotel->places()->sync($places);
         }
+        \Log::info('STORE - Después de sync', ['ecohotel_places' => $ecohotel->places()->pluck('places.id')->toArray()]);
 
         $ecohotel->load(['categories', 'places']);
 
@@ -115,6 +119,7 @@ class EcohotelController extends Controller
      */
     public function update(Request $request, Ecohotel $ecohotel): JsonResponse
     {
+        \Log::info('REQUEST COMPLETO UPDATE', ['all' => $request->all()]);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'description' => ['nullable', 'string', new NoProfanity()],
@@ -166,6 +171,7 @@ class EcohotelController extends Controller
 
         $categories = $data['categories'] ?? null;
         $places = $data['places'] ?? null;
+        \Log::info('UPDATE - Campo places recibido', ['places' => $places]);
         unset($data['categories'], $data['places']);
 
         $ecohotel->update($data);
@@ -173,9 +179,11 @@ class EcohotelController extends Controller
         if ($categories !== null) {
             $ecohotel->categories()->sync($categories);
         }
+        \Log::info('UPDATE - Antes de sync', ['places' => $places]);
         if ($places !== null) {
             $ecohotel->places()->sync($places);
         }
+        \Log::info('UPDATE - Después de sync', ['ecohotel_places' => $ecohotel->places()->pluck('places.id')->toArray()]);
 
         $ecohotel->load(['categories', 'places']);
 

@@ -5,6 +5,7 @@ import './admin.css';
 const EcohotelsAdmin = () => {
   const [ecohotels, setEcohotels] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingEcohotel, setEditingEcohotel] = useState(null);
@@ -21,12 +22,23 @@ const EcohotelsAdmin = () => {
     email: '',
     sitio_web: '',
     categories: [],
+    places: [],
   });
 
   useEffect(() => {
     loadEcohotels();
     loadCategories();
+    loadPlaces();
   }, []);
+
+  const loadPlaces = async () => {
+    try {
+      const data = await adminService.places.getAll();
+      setPlaces(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar lugares:', error);
+    }
+  };
 
   const loadCategories = async () => {
     try {
@@ -134,6 +146,7 @@ const EcohotelsAdmin = () => {
       email: ecohotel.email || '',
       sitio_web: ecohotel.sitio_web || '',
       categories: ecohotel.categories ? ecohotel.categories.map((cat) => cat.id) : [],
+      places: ecohotel.places ? ecohotel.places.map((p) => p.id) : [],
     });
   };
 
@@ -153,6 +166,7 @@ const EcohotelsAdmin = () => {
       email: '',
       sitio_web: '',
       categories: [],
+      places: [],
     });
   };
 
@@ -419,6 +433,57 @@ const EcohotelsAdmin = () => {
                   ))}
                 </div>
               </div> */}
+
+              {/* SECCIÓN: Lugares relacionados */}
+              <div className="form-section">
+                <div className="form-section-title">
+                  <div className="form-section-icon">6</div>
+                  Lugares relacionados
+                </div>
+                <div className="places-checkboxes" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '8px' }}>
+                  {places.length === 0 ? (
+                    <span style={{ color: '#888' }}>No hay lugares disponibles.</span>
+                  ) : (
+                    places.map((place) => (
+                      <label key={place.id} className="place-checkbox-label" style={{ display: 'flex', alignItems: 'center', minWidth: '220px', background: '#f8f8f8', borderRadius: '6px', padding: '6px 10px', boxShadow: '0 1px 2px #0001' }}>
+                        <input
+                          type="checkbox"
+                          name="places"
+                          value={place.id}
+                          checked={formData.places?.includes(place.id) || false}
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            setFormData(prev => {
+                              const current = prev.places || [];
+                              return {
+                                ...prev,
+                                places: checked
+                                  ? [...current, place.id]
+                                  : current.filter(id => id !== place.id)
+                              };
+                            });
+                          }}
+                          style={{ marginRight: '8px' }}
+                        />
+                        {place.image || place.imagen ? (
+                          <img
+                            src={place.image || place.imagen}
+                            alt={place.name}
+                            style={{ width: 32, height: 32, objectFit: 'cover', borderRadius: '4px', marginRight: '10px', background: '#eee' }}
+                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                          />
+                        ) : (
+                          <span style={{ width: 32, height: 32, display: 'inline-block', background: '#eee', borderRadius: '4px', marginRight: '10px' }} />
+                        )}
+                        <span style={{ fontWeight: 500, color: '#222', fontSize: '1rem' }}>{place.name}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
+                <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                  Puedes asociar uno o varios lugares a este ecohotel.
+                </small>
+              </div>
 
               {/* BOTONES DE ACCIÓN */}
               <div className="modal-actions">

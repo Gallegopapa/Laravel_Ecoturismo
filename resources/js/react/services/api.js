@@ -431,13 +431,18 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (ecohotelData.categories && Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
         ecohotelData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
         });
       }
-      
+      // Agregar lugares como array
+      if (ecohotelData.places && Array.isArray(ecohotelData.places) && ecohotelData.places.length > 0) {
+        ecohotelData.places.forEach((placeId) => {
+          formData.append('places[]', placeId);
+        });
+      }
       const response = await api.post('/admin/ecohotels', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -458,7 +463,7 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (ecohotelData.categories !== undefined) {
         if (Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
           ecohotelData.categories.forEach((categoryId) => {
@@ -468,7 +473,16 @@ export const adminService = {
           formData.append('categories[]', '');
         }
       }
-      
+      // Agregar lugares como array (incluso si está vacío para sincronizar)
+      if (ecohotelData.places !== undefined) {
+        if (Array.isArray(ecohotelData.places) && ecohotelData.places.length > 0) {
+          ecohotelData.places.forEach((placeId) => {
+            formData.append('places[]', placeId);
+          });
+        } else {
+          formData.append('places[]', '');
+        }
+      }
       const response = await api.post(`/admin/ecohotels/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
