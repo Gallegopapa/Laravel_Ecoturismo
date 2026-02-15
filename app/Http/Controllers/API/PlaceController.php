@@ -194,7 +194,7 @@ class PlaceController extends Controller
         $place->load([
             'reviews.usuario:id,name,foto_perfil',
             'categories',
-            'ecohoteles',
+            'ecohoteles.reviews',
             'schedules' => function($query) {
                 $query->where('activo', true)
                       ->orderByRaw("
@@ -211,6 +211,14 @@ class PlaceController extends Controller
                       ->orderBy('hora_inicio');
             }
         ]);
+        // Agregar promedio y cantidad de reseñas a cada ecohotel relacionado
+        if ($place->ecohoteles) {
+            $place->ecohoteles->transform(function($ecohotel) {
+                $ecohotel->average_rating = round($ecohotel->reviews->avg('rating') ?? 0, 1);
+                $ecohotel->reviews_count = $ecohotel->reviews->count();
+                return $ecohotel;
+            });
+        }
 
         // Calcular rating promedio
         $averageRating = $place->reviews->avg('rating') ?? 0;

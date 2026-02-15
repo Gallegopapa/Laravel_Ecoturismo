@@ -302,39 +302,41 @@ const EcohotelDetailPage = () => {
                                     </div>
                                   </div>
                                 ) : (
-                                  <button
-                                    onClick={() => startEditReview(review)}
-                                    style={{
-                                      padding: '8px 16px',
-                                      background: '#3498db',
-                                      color: 'white',
-                                      border: 'none',
-                                      borderRadius: '6px',
-                                      fontSize: '0.9rem',
-                                      fontWeight: 600,
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    Editar
-                                  </button>
+                                  <>
+                                    <button
+                                      onClick={() => startEditReview(review)}
+                                      style={{
+                                        padding: '8px 16px',
+                                        background: '#3498db',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      Editar
+                                    </button>
+                                    {(user.id === review.usuario?.id || user.is_admin) && (
+                                      <button
+                                        onClick={() => handleDeleteReview(review.id)}
+                                        style={{
+                                          padding: '8px 16px',
+                                          background: '#e74c3c',
+                                          color: 'white',
+                                          border: 'none',
+                                          borderRadius: '6px',
+                                          fontSize: '0.9rem',
+                                          fontWeight: '600',
+                                          cursor: 'pointer'
+                                        }}
+                                      >
+                                        Eliminar
+                                      </button>
+                                    )}
+                                  </>
                                 )
-                              )}
-                              {(user.id === review.usuario?.id || user.is_admin) && (
-                                <button
-                                  onClick={() => handleDeleteReview(review.id)}
-                                  style={{
-                                    padding: '8px 16px',
-                                    background: '#e74c3c',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer'
-                                  }}
-                                >
-                                  Eliminar
-                                </button>
                               )}
                             </div>
                           )}
@@ -460,6 +462,22 @@ const EcohotelDetailPage = () => {
                             />
                           </div>
                           <div className="related-card-title">{place.name}</div>
+                          <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                            {typeof place.average_rating !== 'undefined' && typeof place.reviews_count !== 'undefined' ? (
+                              place.reviews_count === 0 || place.average_rating === 0 || place.average_rating === null ? (
+                                <span>Sin reseñas</span>
+                              ) : (
+                                <span>
+                                  <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                  <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(place.average_rating).toFixed(1)}</span>
+                                  {" "}
+                                  <span style={{ fontSize: '0.95em', color: '#888' }}>({place.reviews_count} reseña{place.reviews_count === 1 ? '' : 's'})</span>
+                                </span>
+                              )
+                            ) : (
+                              <span>Sin reseñas</span>
+                            )}
+                          </div>
                         </Link>
                       ))}
                     </div>

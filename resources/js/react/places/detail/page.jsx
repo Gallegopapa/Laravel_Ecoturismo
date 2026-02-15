@@ -522,6 +522,22 @@ const PlaceDetailPage = () => {
                           />
                         </div>
                         <div className="related-card-title">{ecohotel.name}</div>
+                        <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                          {typeof ecohotel.average_rating !== 'undefined' && typeof ecohotel.reviews_count !== 'undefined' ? (
+                            ecohotel.reviews_count === 0 || ecohotel.average_rating === 0 || ecohotel.average_rating === null ? (
+                              <span>Sin reseñas</span>
+                            ) : (
+                              <span>
+                                <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(ecohotel.average_rating).toFixed(1)}</span>
+                                {" "}
+                                <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews_count} reseña{ecohotel.reviews_count === 1 ? '' : 's'})</span>
+                              </span>
+                            )
+                          ) : (
+                            <span>Sin reseñas</span>
+                          )}
+                        </div>
                       </Link>
                     ))}
                   </div>
