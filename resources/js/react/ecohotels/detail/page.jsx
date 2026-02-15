@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import Header from "../../components/Header/Header";
 import Header2 from "../../components/Header2/Header2";
 import Footer from "../../components/Footer/Footer";
+import "../../places/page.css";
 import "./detail.css";
 
 const EcohotelDetailPage = () => {
@@ -99,6 +100,34 @@ const EcohotelDetailPage = () => {
               />
             </div>
 
+            {/* Lugares relacionados */}
+            {ecohotel.places && ecohotel.places.length > 0 && (
+              <div className="related-section">
+                <h2 style={{ marginTop: 40, marginBottom: 20, color: '#1c1c1a', borderBottom: '2px solid #24a148', paddingBottom: 10 }}>
+                  🌄 Lugares cercanos
+                </h2>
+                <div className="related-cards-grid">
+                  {ecohotel.places.map(place => (
+                    <Link
+                      to={`/lugares/${place.id}`}
+                      key={place.id}
+                      className="related-card"
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <div className="related-card-image-wrapper">
+                        <img
+                          src={place.image || '/imagenes/placeholder.jpg'}
+                          alt={place.name}
+                          className="related-card-image"
+                          onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                        />
+                      </div>
+                      <div className="related-card-title">{place.name}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="detail-info">
               <div className="info-section">
                 <h2>Información General</h2>

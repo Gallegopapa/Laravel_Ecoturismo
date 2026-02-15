@@ -1,3 +1,89 @@
+/* Layout grid para detalle de lugar */
+.place-detail-content-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+}
+.place-detail-left {
+  flex: 1 1 350px;
+  min-width: 320px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.place-detail-right {
+  flex: 1 1 320px;
+  min-width: 260px;
+  max-width: 400px;
+  position: relative;
+}
+@media (max-width: 900px) {
+  .place-detail-content-grid {
+    flex-direction: column;
+  }
+  .place-detail-right {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+/* Tarjetas de relacionados (eco-hoteles y lugares) */
+.related-section {
+  margin-top: 40px;
+}
+
+.related-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+  margin-top: 18px;
+}
+
+.related-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44, 95, 45, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 260px;
+}
+.related-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(44, 95, 45, 0.13);
+}
+.related-card-image-wrapper {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background: #f5f6fa;
+}
+.related-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.related-card:hover .related-card-image {
+  transform: scale(1.06);
+}
+.related-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c5f2d;
+  padding: 16px 14px 12px 14px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .related-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 * {

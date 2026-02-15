@@ -500,6 +500,39 @@ const PlaceDetailPage = () => {
                 </div>
               )}
 
+              {/* Sección de Ecohoteles Cercanos */}
+              <div className="related-ecohotels-section" style={{ margin: '32px 0 0 0' }}>
+                <h2 style={{ color: '#1c1c1a', marginBottom: 18, borderBottom: '2px solid #24a148', paddingBottom: 8 }}>
+                  🏨 Ecohoteles cercanos
+                </h2>
+                {(place.ecohoteles && place.ecohoteles.length > 0) ? (
+                  <div className="related-cards-grid">
+                    {place.ecohoteles.map(ecohotel => (
+                      <Link
+                        to={`/ecohoteles/${ecohotel.id}`}
+                        key={ecohotel.id}
+                        className="related-card"
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div className="related-card-image-wrapper">
+                          <img
+                            src={ecohotel.image || '/imagenes/placeholder.jpg'}
+                            alt={ecohotel.name}
+                            className="related-card-image"
+                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                          />
+                        </div>
+                        <div className="related-card-title">{ecohotel.name}</div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#888', fontSize: '1.1em', padding: '18px 0' }}>
+                    No hay ecohoteles cercanos registrados hasta el momento.
+                  </div>
+                )}
+              </div>
+
               {/* Información de Contacto */}
               {(place.telefono || place.email || place.sitio_web) && (
                 <div className="place-contact" style={{ marginTop: '25px', padding: '20px', background: '#f9f9f9', borderRadius: '10px' }}>
