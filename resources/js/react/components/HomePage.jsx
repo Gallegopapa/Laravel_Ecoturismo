@@ -107,11 +107,16 @@ const HomePage = ({ loggedIn, user }) => {
 
             const reviews = Array.isArray(place.reviews) ? place.reviews : [];
             if (reviews.length > 0) {
-                const total = reviews.reduce((sum, review) => sum + (Number(review?.rating) || 0), 0);
+                const total = reviews.reduce(
+                    (sum, review) => sum + (Number(review?.rating) || 0),
+                    0,
+                );
                 return total / reviews.length;
             }
 
-            const ratingValue = Number(place.average_rating ?? place.averageRating ?? 0);
+            const ratingValue = Number(
+                place.average_rating ?? place.averageRating ?? 0,
+            );
             return Number.isFinite(ratingValue) ? ratingValue : 0;
         };
 
@@ -133,8 +138,16 @@ const HomePage = ({ loggedIn, user }) => {
                 });
 
                 const entries = destinos.map((destino) => {
-                    const place = placesByName.get(normalizeName(destino.title));
-                    const count = Number(place?.reviews_count ?? place?.reviewsCount ?? (Array.isArray(place?.reviews) ? place.reviews.length : 0));
+                    const place = placesByName.get(
+                        normalizeName(destino.title),
+                    );
+                    const count = Number(
+                        place?.reviews_count ??
+                            place?.reviewsCount ??
+                            (Array.isArray(place?.reviews)
+                                ? place.reviews.length
+                                : 0),
+                    );
                     const average = count > 0 ? getAverageFromPlace(place) : 0;
                     return [destino.id, average];
                 });
@@ -162,7 +175,9 @@ const HomePage = ({ loggedIn, user }) => {
 
     const renderDestinoRating = (destinoId) => {
         const ratingValue = Number(destinoRatings[destinoId] ?? 0);
-        const displayRating = Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : "0.0";
+        const displayRating = Number.isFinite(ratingValue)
+            ? ratingValue.toFixed(1)
+            : "0.0";
         return <span className="rating">★ {displayRating}</span>;
     };
 
@@ -184,18 +199,19 @@ const HomePage = ({ loggedIn, user }) => {
                             Nosotros nos encargamos de llevarte.
                         </p>
                     </div>
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        viewBox="0 0 1440 320" 
-                        preserveAspectRatio="none" 
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 320"
+                        preserveAspectRatio="none"
                         className="wave-svg"
                     >
-                        <path 
-                            fill="whitesmoke" 
-                            fillOpacity="1" 
-                            d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
-                        </path>
+                        <path
+                            fill="whitesmoke"
+                            fillOpacity="1"
+                            d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                        ></path>
                     </svg>
+                    <div className="scroll-indicator"></div>
                 </section>
                 {/* DESTINOS DESTACADOS */}
                 <section className="destacados section-alt">
@@ -229,7 +245,7 @@ const HomePage = ({ loggedIn, user }) => {
                                             className="destino-link"
                                             onClick={() => goPlaceDetail(d.id)}
                                         >
-                                            Ver más 
+                                            Ver más
                                         </button>
                                     </div>
                                 </div>

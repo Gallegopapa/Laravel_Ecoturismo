@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
+import "@/react/components/HomePage.css";
 import Slider from "@/react/components/slider/Slider";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
@@ -109,11 +110,16 @@ const PagLogueados = ({ loggedIn, user }) => {
 
             const reviews = Array.isArray(place.reviews) ? place.reviews : [];
             if (reviews.length > 0) {
-                const total = reviews.reduce((sum, review) => sum + (Number(review?.rating) || 0), 0);
+                const total = reviews.reduce(
+                    (sum, review) => sum + (Number(review?.rating) || 0),
+                    0,
+                );
                 return total / reviews.length;
             }
 
-            const ratingValue = Number(place.average_rating ?? place.averageRating ?? 0);
+            const ratingValue = Number(
+                place.average_rating ?? place.averageRating ?? 0,
+            );
             return Number.isFinite(ratingValue) ? ratingValue : 0;
         };
 
@@ -135,8 +141,16 @@ const PagLogueados = ({ loggedIn, user }) => {
                 });
 
                 const entries = destinos.map((destino) => {
-                    const place = placesByName.get(normalizeName(destino.title));
-                    const count = Number(place?.reviews_count ?? place?.reviewsCount ?? (Array.isArray(place?.reviews) ? place.reviews.length : 0));
+                    const place = placesByName.get(
+                        normalizeName(destino.title),
+                    );
+                    const count = Number(
+                        place?.reviews_count ??
+                            place?.reviewsCount ??
+                            (Array.isArray(place?.reviews)
+                                ? place.reviews.length
+                                : 0),
+                    );
                     const average = count > 0 ? getAverageFromPlace(place) : 0;
                     return [destino.id, average];
                 });
@@ -164,7 +178,9 @@ const PagLogueados = ({ loggedIn, user }) => {
 
     const renderDestinoRating = (destinoId) => {
         const ratingValue = Number(destinoRatings[destinoId] ?? 0);
-        const displayRating = Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : "0.0";
+        const displayRating = Number.isFinite(ratingValue)
+            ? ratingValue.toFixed(1)
+            : "0.0";
         return <span className="rating">★ {displayRating}</span>;
     };
 
@@ -188,18 +204,19 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 Nosotros nos encargamos de llevarte.
                             </p>
                         </div>
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            viewBox="0 0 1440 320" 
-                            preserveAspectRatio="none" 
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 1440 320"
+                            preserveAspectRatio="none"
                             className="wave-svg"
                         >
-                            <path 
-                                fill="whitesmoke" 
-                                fillOpacity="1" 
-                                d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
-                            </path>
+                            <path
+                                fill="whitesmoke"
+                                fillOpacity="1"
+                                d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                            ></path>
                         </svg>
+                        <div className="scroll-indicator"></div>
                     </section>
                     {/* DESTINOS DESTACADOS */}
                     <section className="destacados section-alt">
@@ -228,10 +245,14 @@ const PagLogueados = ({ loggedIn, user }) => {
                                         </span>
                                         <p className="destino-desc">{d.desc}</p>
                                         <div className="destino-footer">
-                                            <div>{renderDestinoRating(d.id)}</div>
+                                            <div>
+                                                {renderDestinoRating(d.id)}
+                                            </div>
                                             <button
                                                 className="destino-link"
-                                                onClick={() => goPlaceDetail(d.id)}
+                                                onClick={() =>
+                                                    goPlaceDetail(d.id)
+                                                }
                                             >
                                                 Ver más
                                             </button>
@@ -250,8 +271,8 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 <span className="icon-caracteristica">🗓️</span>
                                 <h3>Sistema de reservas</h3>
                                 <p>
-                                    Gestiona tus viajes y ecohoteles de forma fácil
-                                    y segura.
+                                    Gestiona tus viajes y ecohoteles de forma
+                                    fácil y segura.
                                 </p>
                                 <div className="caracteristica-btn-container">
                                     <button
@@ -266,7 +287,8 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 <span className="icon-caracteristica">🌳</span>
                                 <h3>Turismo sostenible</h3>
                                 <p>
-                                    Contribuye a la conservación y desarrollo local.
+                                    Contribuye a la conservación y desarrollo
+                                    local.
                                 </p>
                                 <div className="caracteristica-btn-container">
                                     <button
@@ -281,7 +303,8 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 <span className="icon-caracteristica">🏢</span>
                                 <h3>Empresas registradas</h3>
                                 <p>
-                                    Accede a servicios de operadores certificados.
+                                    Accede a servicios de operadores
+                                    certificados.
                                 </p>
                                 <div className="caracteristica-btn-container">
                                     <button
@@ -333,7 +356,10 @@ const PagLogueados = ({ loggedIn, user }) => {
                             funciones exclusivas.
                         </p>
                         <div className="hero-btns">
-                            <button className="btn-primary" onClick={goReservas}>
+                            <button
+                                className="btn-primary"
+                                onClick={goReservas}
+                            >
                                 Mis reservas
                             </button>
                             <button
@@ -342,7 +368,10 @@ const PagLogueados = ({ loggedIn, user }) => {
                             >
                                 Explorar ecohoteles
                             </button>
-                            <button className="btn-terciary" onClick={goEmpresa}>
+                            <button
+                                className="btn-terciary"
+                                onClick={goEmpresa}
+                            >
                                 Registrar empresa
                             </button>
                             <button className="btn-terciary" onClick={goPerfil}>
@@ -350,32 +379,32 @@ const PagLogueados = ({ loggedIn, user }) => {
                             </button>
                         </div>
                     </div>
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        viewBox="0 0 1440 320" 
-                        preserveAspectRatio="none" 
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 320"
+                        preserveAspectRatio="none"
                         className="wave-svg"
                     >
-                        <path 
-                            fill="#ffffff" 
-                            fillOpacity="1" 
-                            d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
-                        </path>
+                        <path
+                            fill="#ffffff"
+                            fillOpacity="1"
+                            d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                        ></path>
                     </svg>
                 </section>
 
                 <Slider />
-                <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 1440 320" 
-                    preserveAspectRatio="none" 
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 1440 320"
+                    preserveAspectRatio="none"
                     className="wave-svg"
                 >
-                    <path 
-                        fill="whitesmoke" 
-                        fillOpacity="1" 
-                        d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
-                    </path>
+                    <path
+                        fill="whitesmoke"
+                        fillOpacity="1"
+                        d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                    ></path>
                 </svg>
 
                 {/* DESTINOS DESTACADOS */}
@@ -490,4 +519,3 @@ const PagLogueados = ({ loggedIn, user }) => {
 };
 
 export default PagLogueados;
-
