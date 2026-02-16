@@ -8,22 +8,22 @@ import Footer from "@/react/components/Footer/Footer";
 
 const beneficios = [
     {
-        icon: "🌱",
+        icon: "/imagenes/planet-earth.png",
         title: "Turismo sostenible",
         desc: "Promovemos experiencias responsables y ecológicas.",
     },
     {
-        icon: "🏨",
+        icon: "/imagenes/location.png",
         title: "Reserva fácil",
         desc: "Ecohoteles y destinos con gestión directa y segura.",
     },
     {
-        icon: "💼",
+        icon: "/imagenes/entrepreneur.png",
         title: "Empresas registradas",
         desc: "Conecta con operadores locales y apoya la economía.",
     },
     {
-        icon: "🔒",
+        icon: "/imagenes/verified.png",
         title: "Acceso exclusivo",
         desc: "Funciones avanzadas para usuarios registrados.",
     },
@@ -214,7 +214,23 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
                             ></path>
                         </svg>
-                        <div className="scroll-indicator"></div>
+                        <div
+                            className="scroll-indicator"
+                            onClick={() => {
+                                const target = document.querySelector('.destacados');
+                                if (target) {
+                                    const offset = 40; // ajuste para quedar antes del título (baja un poco más)
+                                    const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                                    window.scrollTo({ top, behavior: 'smooth' });
+                                } else {
+                                    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+                                }
+                            }}
+                            aria-label="Ir al contenido"
+                            role="button"
+                        >
+                            <span className="scroll-indicator-wheel"></span>
+                        </div>
                     </section>
                     {/* DESTINOS DESTACADOS */}
                     <section className="destacados section-alt">
@@ -261,12 +277,34 @@ const PagLogueados = ({ loggedIn, user }) => {
                         </div>
                     </section>
 
+                    {/* BENEFICIOS */}
+                    <section className="beneficios section-alt">
+                        <h2>Beneficios de registrarse</h2>
+                        <div className="beneficios-cards">
+                            {beneficios.map((b, idx) => (
+                                <div className="beneficio-card" key={idx}>
+                                    {b.icon.includes("/") || b.icon.includes(".") ? (
+                                        <img src={b.icon} alt={b.title} className="icon-beneficio-img" />
+                                    ) : (
+                                        <span className="icon-beneficio">{b.icon}</span>
+                                    )}
+                                    <h3>{b.title}</h3>
+                                    <p>{b.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
                     {/* CARACTERÍSTICAS */}
                     <section className="caracteristicas section-white">
                         <h2>Características principales</h2>
                         <div className="caracteristicas-grid">
                             <div className="caracteristica-card">
-                                <span className="icon-caracteristica">🗓️</span>
+                                <img
+                                    src="/imagenes/calendar.png"
+                                    alt="Sistema de reservas"
+                                    className="icon-caracteristica-img"
+                                />
                                 <h3>Sistema de reservas</h3>
                                 <p>
                                     Gestiona tus viajes y ecohoteles de forma
@@ -282,7 +320,11 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 </div>
                             </div>
                             <div className="caracteristica-card">
-                                <span className="icon-caracteristica">🌳</span>
+                                <img
+                                    src="/imagenes/plant.png"
+                                    alt="Turismo sostenible"
+                                    className="icon-caracteristica-img"
+                                />
                                 <h3>Turismo sostenible</h3>
                                 <p>
                                     Contribuye a la conservación y desarrollo
@@ -298,7 +340,11 @@ const PagLogueados = ({ loggedIn, user }) => {
                                 </div>
                             </div>
                             <div className="caracteristica-card">
-                                <span className="icon-caracteristica">🏢</span>
+                                <img
+                                    src="/imagenes/building-insurance.png"
+                                    alt="Empresas registradas"
+                                    className="icon-caracteristica-img"
+                                />
                                 <h3>Empresas registradas</h3>
                                 <p>
                                     Accede a servicios de operadores
@@ -316,17 +362,7 @@ const PagLogueados = ({ loggedIn, user }) => {
                         </div>
                     </section>
 
-                    {/* CTA FINAL */}
-                    <section className="cta-final section-alt">
-                        <h2>¿Listo para vivir la experiencia?</h2>
-                        <p>
-                            Regístrate gratis y comienza a explorar los mejores
-                            destinos de ecoturismo en Risaralda.
-                        </p>
-                        <button className="btn-primary" onClick={goRegister}>
-                            Comenzar ahora
-                        </button>
-                    </section>
+                    {/* Sección CTA eliminada */}
                 </main>
                 <Footer />
             </div>
@@ -437,7 +473,11 @@ const PagLogueados = ({ loggedIn, user }) => {
                     <h2>Características principales</h2>
                     <div className="caracteristicas-grid">
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🗓️</span>
+                            <img
+                                src="/imagenes/calendar.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Sistema de reservas</h3>
                             <p>
                                 Gestiona tus viajes y ecohoteles de forma fácil
@@ -453,7 +493,11 @@ const PagLogueados = ({ loggedIn, user }) => {
                             </div>
                         </div>
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🌳</span>
+                            <img
+                                src="/imagenes/plant.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Turismo sostenible</h3>
                             <p>
                                 Contribuye a la conservación y desarrollo local.
@@ -468,7 +512,11 @@ const PagLogueados = ({ loggedIn, user }) => {
                             </div>
                         </div>
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🏢</span>
+                            <img
+                                src="/imagenes/building-insurance.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Empresas registradas</h3>
                             <p>
                                 Accede a servicios de operadores certificados.
@@ -486,7 +534,7 @@ const PagLogueados = ({ loggedIn, user }) => {
                 </section>
 
                 {/* CTA FINAL */}
-                <section className="cta-final section-alt">
+                {/* <section className="cta-final section-alt">
                     <h2>¿Listo para vivir la experiencia?</h2>
                     <p>
                         Accede a tus reservas y explora los mejores destinos de
@@ -495,7 +543,7 @@ const PagLogueados = ({ loggedIn, user }) => {
                     <button className="btn-primary" onClick={goEcohoteles}>
                         Explorar destinos
                     </button>
-                </section>
+                </section> */}
             </main>
             <Footer />
         </div>

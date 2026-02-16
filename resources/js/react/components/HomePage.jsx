@@ -201,12 +201,16 @@ const HomePage = ({ loggedIn, user }) => {
                     </div>
                     <div
                         className="scroll-indicator"
-                        onClick={() =>
-                            window.scrollTo({
-                                top: window.innerHeight,
-                                behavior: "smooth",
-                            })
-                        }
+                        onClick={() => {
+                            const target = document.querySelector('.destacados');
+                            if (target) {
+                                const offset = 40; // queda un poco antes del título
+                                const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                                window.scrollTo({ top, behavior: 'smooth' });
+                            } else {
+                                window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+                            }
+                        }}
                         aria-label="Ir al contenido"
                         role="button"
                     >
@@ -370,17 +374,7 @@ const HomePage = ({ loggedIn, user }) => {
                     </div>
                 </section> */}
 
-                {/* CTA FINAL */}
-                <section className="cta-final section-alt">
-                    <h2>¿Listo para vivir la experiencia?</h2>
-                    <p>
-                        Regístrate gratis y comienza a explorar los mejores
-                        destinos de ecoturismo en Risaralda.
-                    </p>
-                    <button className="btn-primary" onClick={goRegister}>
-                        Comenzar ahora
-                    </button>
-                </section>
+                {/* Sección CTA eliminada */}
             </div>
         );
     }
