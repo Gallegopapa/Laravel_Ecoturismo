@@ -176,32 +176,8 @@ const PagLogueados = () => {
                         <p className="hero-initial-sub">
                             Nosotros nos encargamos de llevarte.
                         </p>
-                        
-                        <div
-                        className="scroll-indicator"
-                        onClick={() => {
-                            const target = document.querySelector('.destacados');
-                            if (target) {
-                                const offset = 40; // queda un poco antes del título
-                                const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-                                window.scrollTo({ top, behavior: 'smooth' });
-                            } else {
-                                window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-                            }
-                        }}
-                        aria-label="Ir al contenido"
-                        role="button"
-                        >
                     </div>
-                        <div className="hero-btns">
-                            <button className="btn-terciary" onClick={goEmpresa}>
-                                Registrar empresa
-                            </button>
-                            <button className="btn-terciary" onClick={goPerfil}>
-                                Mi perfil
-                            </button>
-                        </div>
-                        <div
+                    <div
                         className="scroll-indicator"
                         onClick={() => {
                             const target = document.querySelector('.destacados');
@@ -218,7 +194,6 @@ const PagLogueados = () => {
                     >
                         <span className="scroll-indicator-wheel"></span>
                     </div>
-                    </div>       
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1440 320"
