@@ -80,6 +80,17 @@ body.font-extra-large .nav-link {
   color: #fff;
 }
 
+/* Botón de Login */
+.navbar a.login-btn {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.navbar a.login-btn:hover {
+  background-color: #27ae60;
+  color: #fff;
+}
+
 /* Botón hamburguesa */
 .mobile-menu-toggle {
   display: none;

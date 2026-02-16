@@ -5,22 +5,22 @@ import Slider from "./slider/Slider";
 
 const beneficios = [
     {
-        icon: "🌱",
+        icon: "/imagenes/planet-earth.png",
         title: "Turismo sostenible",
         desc: "Promovemos experiencias responsables y ecológicas.",
     },
     {
-        icon: "🏨",
+        icon: "/imagenes/location.png",
         title: "Reserva fácil",
         desc: "Ecohoteles y destinos con gestión directa y segura.",
     },
     {
-        icon: "💼",
+        icon: "/imagenes/entrepreneur.png",
         title: "Empresas registradas",
         desc: "Conecta con operadores locales y apoya la economía.",
     },
     {
-        icon: "🔒",
+        icon: "/imagenes/verified.png",
         title: "Acceso exclusivo",
         desc: "Funciones avanzadas para usuarios registrados.",
     },
@@ -31,7 +31,7 @@ const destinos = [
         id: 12,
         img: "/imagenes/farallones.jpeg",
         title: "Balneario Los Farallones",
-        desc: "Montañas, senderos y biodiversidad única.",
+        desc: " ideal para disfrutar con la familia y amigos. Se caracteriza por su ambiente familia.",
     },
     {
         id: 10,
@@ -202,7 +202,10 @@ const HomePage = ({ loggedIn, user }) => {
                     <div
                         className="scroll-indicator"
                         onClick={() =>
-                            window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
+                            window.scrollTo({
+                                top: window.innerHeight,
+                                behavior: "smooth",
+                            })
                         }
                         aria-label="Ir al contenido"
                         role="button"
@@ -266,7 +269,18 @@ const HomePage = ({ loggedIn, user }) => {
                     <div className="beneficios-cards">
                         {beneficios.map((b, idx) => (
                             <div className="beneficio-card" key={idx}>
-                                <span className="icon-beneficio">{b.icon}</span>
+                                {b.icon.includes("/") ||
+                                b.icon.includes(".") ? (
+                                    <img
+                                        src={b.icon}
+                                        alt={b.title}
+                                        className="icon-beneficio-img"
+                                    />
+                                ) : (
+                                    <span className="icon-beneficio">
+                                        {b.icon}
+                                    </span>
+                                )}
                                 <h3>{b.title}</h3>
                                 <p>{b.desc}</p>
                             </div>
@@ -279,7 +293,11 @@ const HomePage = ({ loggedIn, user }) => {
                     <h2>Características principales</h2>
                     <div className="caracteristicas-grid">
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🗓️</span>
+                            <img
+                                src="/imagenes/calendar.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Sistema de reservas</h3>
                             <p>
                                 Gestiona tus viajes y ecohoteles de forma fácil
@@ -295,7 +313,11 @@ const HomePage = ({ loggedIn, user }) => {
                             </div>
                         </div>
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🌳</span>
+                            <img
+                                src="/imagenes/plant.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Turismo sostenible</h3>
                             <p>
                                 Contribuye a la conservación y desarrollo local.
@@ -310,7 +332,11 @@ const HomePage = ({ loggedIn, user }) => {
                             </div>
                         </div>
                         <div className="caracteristica-card">
-                            <span className="icon-caracteristica">🏢</span>
+                            <img
+                                src="/imagenes/building-insurance.png"
+                                alt="Sistema de reservas"
+                                className="icon-caracteristica-img"
+                            />
                             <h3>Empresas registradas</h3>
                             <p>
                                 Accede a servicios de operadores certificados.

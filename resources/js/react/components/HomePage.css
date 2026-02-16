@@ -235,6 +235,13 @@
   color: #22c55e;
   animation: float 3s ease-in-out infinite;
 }
+.icon-beneficio-img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  object-fit: contain;
+  animation: float 3s ease-in-out infinite;
+}
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -306,6 +313,13 @@
   color: #22c55e;
   animation: float 3s ease-in-out infinite;
 }
+.icon-caracteristica-img {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 16px;
+  object-fit: contain;
+  animation: float 3s ease-in-out infinite;
+}
 .caracteristica-card h3 {
   font-size: 1.3rem;
   font-weight: 700;
@@ -351,7 +365,7 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  min-height: 380px;
+  height: 420px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -568,7 +582,7 @@
 
 .scroll-indicator {
   position: absolute;
-  bottom: 16px;
+  bottom: -36px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 12;
@@ -866,7 +880,7 @@
   flex-direction: column;
   overflow: hidden;
   transition: transform 0.28s ease, box-shadow 0.28s ease;
-  min-height: 360px;
+  height: 430px;
 }
 .destino-card:hover {
   transform: translateY(-8px);
@@ -908,6 +922,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 3.99rem;
 }
 .destino-footer {
   margin-top: auto;
