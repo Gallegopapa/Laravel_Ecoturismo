@@ -199,6 +199,16 @@ const HomePage = ({ loggedIn, user }) => {
                             Nosotros nos encargamos de llevarte.
                         </p>
                     </div>
+                    <div
+                        className="scroll-indicator"
+                        onClick={() =>
+                            window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
+                        }
+                        aria-label="Ir al contenido"
+                        role="button"
+                    >
+                        <span className="scroll-indicator-wheel"></span>
+                    </div>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1440 320"
@@ -211,7 +221,6 @@ const HomePage = ({ loggedIn, user }) => {
                             d="M0,160L60,144C120,128,240,96,360,101.3C480,107,600,149,720,154.7C840,160,960,128,1080,106.7C1200,85,1320,75,1380,69.3L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
                         ></path>
                     </svg>
-                    <div className="scroll-indicator"></div>
                 </section>
                 {/* DESTINOS DESTACADOS */}
                 <section className="destacados section-alt">
@@ -221,20 +230,17 @@ const HomePage = ({ loggedIn, user }) => {
                     </p>
                     <div className="destinos-grid">
                         {destinos.map((d) => (
-                            <div className="destino-card" key={d.id}>
-                                <div
-                                    className="destino-img-wrap"
-                                    onClick={() => goPlaceDetail(d.id)}
-                                >
+                            <div
+                                className="destino-card"
+                                key={d.id}
+                                onClick={() => goPlaceDetail(d.id)}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <div className="destino-img-wrap">
                                     <img src={d.img} alt={d.title} />
                                 </div>
                                 <div className="destino-body">
-                                    <h3
-                                        className="destino-title"
-                                        onClick={() => goPlaceDetail(d.id)}
-                                    >
-                                        {d.title}
-                                    </h3>
+                                    <h3 className="destino-title">{d.title}</h3>
                                     <span className="destino-country">
                                         Colombia
                                     </span>

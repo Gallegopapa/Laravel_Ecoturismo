@@ -6,6 +6,7 @@ import './admin.css';
 const PlacesAdmin = () => {
   const [places, setPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [ecohotels, setEcohotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingPlace, setEditingPlace] = useState(null);
@@ -18,6 +19,7 @@ const PlacesAdmin = () => {
     latitude: '',
     longitude: '',
     categories: [],
+    ecohoteles: [],
   });
 
   // Mapeo determinístico: nombre exacto -> imagen local
@@ -96,7 +98,17 @@ const PlacesAdmin = () => {
   useEffect(() => {
     loadPlaces();
     loadCategories();
+    loadEcohotels();
   }, []);
+
+  const loadEcohotels = async () => {
+    try {
+      const data = await adminService.ecohotels.getAll();
+      setEcohotels(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error al cargar ecohoteles:', error);
+    }
+  };
 
   const loadCategories = async () => {
     try {
@@ -205,6 +217,7 @@ const PlacesAdmin = () => {
         longitude: placeData.longitude || '',
         image: null,
         categories: placeData.categories ? placeData.categories.map(cat => cat.id) : [],
+        ecohoteles: placeData.ecohoteles ? placeData.ecohoteles.map(e => e.id) : [],
       });
       // Scroll al formulario
       document.querySelector('.admin-form-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -239,6 +252,7 @@ const PlacesAdmin = () => {
       latitude: '',
       longitude: '',
       categories: [],
+      ecohoteles: [],
     });
     // Reset file input
     const fileInput = document.getElementById('place-image');
@@ -250,8 +264,7 @@ const PlacesAdmin = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value, files, type, checked } = e.target;
-    
+    const { name, value, files, type, checked, multiple, options } = e.target;
     if (type === 'checkbox' && name === 'categories') {
       // Manejar checkboxes de categorías
       const categoryId = parseInt(value);
@@ -269,6 +282,13 @@ const PlacesAdmin = () => {
           };
         }
       });
+    } else if (name === 'ecohoteles') {
+      // Manejar select múltiple de ecohoteles
+      const selected = Array.from(options).filter(o => o.selected).map(o => parseInt(o.value));
+      setFormData((prev) => ({
+        ...prev,
+        ecohoteles: selected,
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -377,6 +397,7 @@ const PlacesAdmin = () => {
             </label>
           </div>
 
+
           <div className="form-group">
             <label>
               Categorías
@@ -401,6 +422,55 @@ const PlacesAdmin = () => {
                   ))
                 )}
               </div>
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              Ecohoteles relacionados
+              <div className="ecohoteles-checkboxes" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '8px' }}>
+                {ecohotels.length === 0 ? (
+                  <span style={{ color: '#888' }}>No hay ecohoteles disponibles.</span>
+                ) : (
+                  ecohotels.map((ecohotel) => (
+                    <label key={ecohotel.id} className="ecohotel-checkbox-label" style={{ display: 'flex', alignItems: 'center', minWidth: '220px', background: '#f8f8f8', borderRadius: '6px', padding: '6px 10px', boxShadow: '0 1px 2px #0001' }}>
+                      <input
+                        type="checkbox"
+                        name="ecohoteles"
+                        value={ecohotel.id}
+                        checked={formData.ecohoteles?.includes(ecohotel.id) || false}
+                        onChange={e => {
+                          const checked = e.target.checked;
+                          setFormData(prev => {
+                            const current = prev.ecohoteles || [];
+                            return {
+                              ...prev,
+                              ecohoteles: checked
+                                ? [...current, ecohotel.id]
+                                : current.filter(id => id !== ecohotel.id)
+                            };
+                          });
+                        }}
+                        style={{ marginRight: '8px' }}
+                      />
+                      {ecohotel.image || ecohotel.imagen ? (
+                        <img
+                          src={ecohotel.image || ecohotel.imagen}
+                          alt={ecohotel.name}
+                          style={{ width: 32, height: 32, objectFit: 'cover', borderRadius: '4px', marginRight: '10px', background: '#eee' }}
+                          onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                        />
+                      ) : (
+                        <span style={{ width: 32, height: 32, display: 'inline-block', background: '#eee', borderRadius: '4px', marginRight: '10px' }} />
+                      )}
+                      <span style={{ fontWeight: 500, color: '#222', fontSize: '1rem' }}>{ecohotel.name}</span>
+                    </label>
+                  ))
+                )}
+              </div>
+              <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                Puedes asociar uno o varios ecohoteles a este lugar.
+              </small>
             </label>
           </div>
 

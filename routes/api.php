@@ -46,7 +46,12 @@ Route::get('/categories/{category}', [CategoryController::class, 'show']);
 
 // Rutas pÃºblicas de reseÃ±as
 Route::get('/reviews/all', [ReviewController::class, 'all']);
-Route::get('/places/{placeId}/reviews', [ReviewController::class, 'index']);
+Route::get('/places/{id}/reviews', function($id, \Illuminate\Http\Request $request) {
+    return app(\App\Http\Controllers\API\ReviewController::class)->index($request, 'place', $id);
+});
+Route::get('/ecohotels/{id}/reviews', function($id, \Illuminate\Http\Request $request) {
+    return app(\App\Http\Controllers\API\ReviewController::class)->index($request, 'ecohotel', $id);
+});
 
 // Rutas pÃºblicas de razones de rechazo
 Route::get('/rejection-reasons', [RejectionReasonController::class, 'index']);
@@ -72,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [ProfileController::class, 'update']); // POST para FormData con imagen
     Route::put('/profile', [ProfileController::class, 'update']); // PUT para JSON sin imagen
     Route::put('/profile/password', [ProfileController::class, 'changePassword']);
+    Route::delete('/profile', [ProfileController::class, 'destroy']); // Eliminar cuenta
     
     // Rutas de lugares (CRUD completo - solo admin)
     Route::post('/places', [PlaceController::class, 'store'])->middleware('admin');

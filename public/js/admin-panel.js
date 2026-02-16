@@ -69,7 +69,6 @@ async function fetchPlaces() {
         const list = Array.isArray(data) ? data : (data.places || data.data || [])
         renderPlaces(list)
     } catch (error) {
-        console.error('Error:', error)
         showMessage('Error al cargar lugares', 'error')
     }
 }
@@ -142,7 +141,6 @@ placeForm.addEventListener('submit', async (e) => {
         resetPlaceForm()
         fetchPlaces()
     } catch (error) {
-        console.error('Error:', error)
         showMessage(error.message || 'Error al guardar lugar', 'error')
     }
 })
@@ -173,7 +171,6 @@ placesTbody.addEventListener('click', async (e) => {
             showMessage('Lugar eliminado correctamente')
             fetchPlaces()
         } catch (error) {
-            console.error('Error:', error)
             showMessage('Error al eliminar lugar', 'error')
         }
     }
@@ -200,7 +197,6 @@ placesTbody.addEventListener('click', async (e) => {
             $('description').value = p.description || ''
             $('form-title').textContent = 'Editar lugar'
         } catch (error) {
-            console.error('Error:', error)
             showMessage('Error al cargar lugar', 'error')
         }
     }
@@ -240,7 +236,6 @@ async function loadUsers() {
         const list = Array.isArray(data) ? data : (data.users || data.data || [])
         renderUsers(list)
     } catch (error) {
-        console.error('Error:', error)
         showMessage('Error al cargar usuarios', 'error')
     }
 }
@@ -323,7 +318,6 @@ userForm.addEventListener('submit', async (e) => {
         resetUserForm()
         loadUsers()
     } catch (error) {
-        console.error('Error:', error)
         showMessage(error.message || 'Error al guardar usuario', 'error')
     }
 })
@@ -354,7 +348,6 @@ usersTbody.addEventListener('click', async (e) => {
             showMessage('Usuario eliminado correctamente')
             loadUsers()
         } catch (error) {
-            console.error('Error:', error)
             showMessage('Error al eliminar usuario', 'error')
         }
     }
@@ -387,7 +380,6 @@ usersTbody.addEventListener('click', async (e) => {
                 passwordLabel.style.display = 'block'
             }
         } catch (error) {
-            console.error('Error:', error)
             showMessage('Error al cargar usuario', 'error')
         }
     }

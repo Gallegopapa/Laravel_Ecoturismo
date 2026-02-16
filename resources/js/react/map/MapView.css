@@ -1,11 +1,11 @@
 .map-view-container {
   position: relative;
-  height: calc(100vh - 200px);
-  min-height: 600px;
+  height: 500px;
+  min-height: 500px;
   width: 100%;
   margin-top: 0;
   overflow: hidden;
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 .map-controls {

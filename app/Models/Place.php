@@ -78,6 +78,14 @@ class Place extends Model
     /**
      * Relación: Un lugar puede ser favorito de muchos usuarios
      */
+
+    /**
+     * Relación muchos a muchos con ecohoteles
+     */
+    public function ecohoteles()
+    {
+        return $this->belongsToMany(Ecohotel::class, 'ecohotel_place');
+    }
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'place_id');

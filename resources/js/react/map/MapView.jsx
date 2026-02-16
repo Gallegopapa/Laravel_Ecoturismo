@@ -117,28 +117,22 @@ export default function MapView({ locations }) {
     return Array.from(setCat);
   }, [locations]);
 
-  // Bloquear scroll en el contenedor del mapa
+  // Permitir zoom con scroll en el mapa
   useEffect(() => {
     const container = mapContainerRef.current;
     if (!container) return;
 
-    const handleWheel = (e) => {
-      e.preventDefault();
-    };
-
     const handleTouchMove = (e) => {
-      // Permitir zoom con dos dedos pero no movimiento
+      // Permitir zoom con dos dedos pero no movimiento con un dedo
       if (e.touches.length === 2) return;
       if (e.touches.length === 1) {
         e.preventDefault();
       }
     };
 
-    container.addEventListener('wheel', handleWheel, { passive: false });
     container.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
-      container.removeEventListener('wheel', handleWheel);
       container.removeEventListener('touchmove', handleTouchMove);
     };
   }, []);

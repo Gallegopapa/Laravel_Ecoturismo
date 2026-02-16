@@ -19,6 +19,21 @@ const PerfilPage = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState("");
+  const handleDeleteAccount = async () => {
+    setDeleteMessage("");
+    try {
+      await profileService.deleteAccount();
+      setDeleteMessage("Cuenta eliminada exitosamente. Redirigiendo...");
+      setTimeout(() => {
+        logout();
+        window.location.href = "/";
+      }, 2000);
+    } catch (error) {
+      setDeleteMessage(error.response?.data?.message || error.message || "Error al eliminar la cuenta");
+    }
+  };
 
   // Validar que el usuario esté autenticado y cargar datos del perfil
   useEffect(() => {
@@ -253,7 +268,7 @@ const PerfilPage = () => {
               />
             </div>
 
-            <div className="form-buttons">
+            <div className="form-buttons" style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -270,6 +285,101 @@ const PerfilPage = () => {
                 Cerrar Sesión
               </button>
             </div>
+
+            <hr style={{ margin: '32px 0 16px 0', border: 'none', borderTop: '1px solid #eee' }} />
+            <div className="danger-zone" style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontWeight: 'bold', fontSize: '1.1em', marginBottom: '8px' }}>Zona peligrosa</h3>
+              <p style={{ color: '#888', fontSize: '0.95em', marginBottom: '12px' }}>
+                Esta acción eliminará tu cuenta y todos tus datos de forma permanente. No se puede deshacer.
+              </p>
+              <button
+                type="button"
+                className="btn-delete"
+                style={{ background: '#e53935', color: '#fff', width: '100%', maxWidth: '220px', marginTop: '8px', fontWeight: 'bold', fontSize: '1em', padding: '10px 0', borderRadius: '6px', boxShadow: '0 2px 8px rgba(229,57,53,0.08)' }}
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Eliminar cuenta
+              </button>
+            </div>
+
+            {/* Modal de confirmación de eliminación de cuenta */}
+            {showDeleteConfirm && (
+              <div>
+                <div
+                  className="modal-overlay"
+                  style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    background: 'rgba(0,0,0,0.35)',
+                    zIndex: 1000,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    animation: 'fadeIn 0.2s',
+                    overflowY: 'auto',
+                  }}
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  <div
+                    className="modal-content"
+                    style={{
+                      background: '#fff',
+                      borderRadius: '16px',
+                      boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+                      padding: '24px 16px',
+                      minWidth: '280px',
+                      maxWidth: '95vw',
+                      width: '100%',
+                      zIndex: 1001,
+                      position: 'relative',
+                      animation: 'scaleIn 0.2s',
+                      margin: '0 auto',
+                      maxHeight: '90vh',
+                      overflowY: 'auto',
+                    }}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <h2 style={{ fontWeight: 'bold', fontSize: '1.25em', marginBottom: '12px', color: '#222' }}>¿Eliminar cuenta?</h2>
+                    <p style={{ color: '#888', fontSize: '1em', marginBottom: '24px' }}>
+                      Esta acción eliminará permanentemente tu cuenta y todos tus datos. No se puede deshacer.
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '8px' }}>
+                      <button
+                        type="button"
+                        style={{ background: '#e53935', color: '#fff', fontWeight: 'bold', borderRadius: '6px', padding: '10px 24px', fontSize: '1em', boxShadow: '0 2px 8px rgba(229,57,53,0.08)' }}
+                        onClick={handleDeleteAccount}
+                      >
+                        Confirmar eliminación
+                      </button>
+                      <button
+                        type="button"
+                        style={{ background: '#eee', color: '#222', borderRadius: '6px', padding: '10px 24px', fontSize: '1em', fontWeight: 'bold' }}
+                        onClick={() => setShowDeleteConfirm(false)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                    {deleteMessage && (
+                      <p style={{ marginTop: 10, color: deleteMessage.includes('exitosamente') ? '#388e3c' : '#e53935' }}>{deleteMessage}</p>
+                    )}
+                  </div>
+                </div>
+                {/* Animaciones CSS */}
+                <style>{`
+                  @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                  }
+                  @keyframes scaleIn {
+                    from { transform: scale(0.95); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                  }
+                `}</style>
+              </div>
+            )}
           </form>
         </div>
       </div>

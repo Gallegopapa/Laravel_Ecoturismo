@@ -9,6 +9,14 @@ class Ecohotel extends Model
 {
     use HasFactory;
 
+    /**
+     * Reseñas directas de ecohotel
+     */
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class, 'ecohotel_id');
+    }
+
     protected $fillable = [
         'name',
         'description',
@@ -32,5 +40,13 @@ class Ecohotel extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_ecohotel');
+    }
+
+    /**
+     * Relación muchos a muchos con lugares turísticos
+     */
+    public function places()
+    {
+        return $this->belongsToMany(Place::class, 'ecohotel_place');
     }
 }

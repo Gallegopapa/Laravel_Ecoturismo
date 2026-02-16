@@ -61,7 +61,7 @@ class CompanyPlaceController extends Controller
             return $response;
         }
 
-        $place->load(['categories', 'schedules']);
+        $place->load(['categories', 'schedules', 'ecohoteles']);
 
         return response()->json($place);
     }
@@ -87,6 +87,8 @@ class CompanyPlaceController extends Controller
             'sitio_web' => 'nullable|url|max:255',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'ecohoteles' => 'array',
+            'ecohoteles.*' => 'nullable|exists:ecohotels,id',
         ], [
             'name.required' => 'El nombre del lugar es requerido.',
             'image.image' => 'El archivo debe ser una imagen.',
@@ -114,15 +116,18 @@ class CompanyPlaceController extends Controller
         }
 
         $categories = $data['categories'] ?? null;
-        unset($data['categories']);
+        $ecohoteles = $data['ecohoteles'] ?? [];
+        unset($data['categories'], $data['ecohoteles']);
 
         $place->update($data);
 
         if ($categories !== null) {
             $place->categories()->sync($categories ?: []);
         }
+        // Sincronizar ecohoteles (array vacío = sin ecohoteles)
+        $place->ecohoteles()->sync($ecohoteles);
 
-        $place->load('categories');
+        $place->load(['categories', 'ecohoteles']);
 
         return response()->json([
             'message' => 'Lugar actualizado correctamente.',

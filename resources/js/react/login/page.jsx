@@ -87,7 +87,7 @@ export default function Login() {
         setLoading(false);
       }
     } catch (error) {
-      console.error("Error inesperado:", error);
+      // Error inesperado - no loguear detalles
       setMsg("Error inesperado. Por favor, intenta de nuevo.");
       setLoading(false);
     }

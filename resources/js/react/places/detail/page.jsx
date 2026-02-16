@@ -16,6 +16,7 @@ const PlaceDetailPage = () => {
   const { isAuthenticated, user } = useAuth();
   const [place, setPlace] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ average: null, count: 0 });
   const [schedules, setSchedules] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -116,16 +117,21 @@ const PlaceDetailPage = () => {
       const response = await placesService.getById(id);
       // El API puede devolver { place: {...} } o directamente el lugar
       let placeData = response.place || response;
-      
+
+      // Si la respuesta trae ecohotels enriquecidos, sobrescribir en el objeto place
+      if (response.ecohotels) {
+        placeData.ecohoteles = response.ecohotels;
+      }
+
       // Si hay reservas futuras en la respuesta, cargarlas
       if (response.future_reservations) {
         setReservations(response.future_reservations);
       }
-      
+
       // Priorizar imágenes locales sobre imágenes de API
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
-      
+
       // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
       const imagenSubida = placeData.image && (
         placeData.image.includes('/storage/places/') || 
@@ -133,19 +139,19 @@ const PlaceDetailPage = () => {
         placeData.image.includes('storage/places') ||
         (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
       ) ? placeData.image : null;
-      
+
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
       let imagenLocal = null;
       if (!imagenSubida) {
         // Buscar en mapeo determinístico por nombre original
         imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-        
+
         // Si no se encontró, buscar en mapeo normalizado
         if (!imagenLocal) {
           imagenLocal = mapeoImagenesLocales[nombreLugar];
         }
       }
-      
+
       // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder
       placeData = {
         ...placeData,
@@ -153,7 +159,7 @@ const PlaceDetailPage = () => {
         // Mantener image solo si es una imagen subida válida
         image: imagenSubida || null,
       };
-      
+
       setPlace(placeData);
       await loadReviews(placeData.id);
       
@@ -236,9 +242,11 @@ const PlaceDetailPage = () => {
   const loadReviews = async (placeId) => {
     try {
       const data = await reviewsService.getByPlace(placeId);
-      setReviews(Array.isArray(data) ? data : []);
+      setReviews(Array.isArray(data.reviews) ? data.reviews : []);
+      setReviewStats({ average: data.average, count: data.count });
     } catch (err) {
       console.error('Error al cargar reseñas:', err);
+      setReviewStats({ average: null, count: 0 });
     }
   };
 
@@ -412,7 +420,7 @@ const PlaceDetailPage = () => {
 
         <div className="place-detail-header">
           <Link to="/lugares" className="back-button">
-            ← Volver a Lugares
+            ← Explorar más Lugares
           </Link>
           <div className="place-header-actions">
             {isAuthenticated && (
@@ -451,6 +459,7 @@ const PlaceDetailPage = () => {
             <div className="place-info-section">
               <h1 className="place-title">{place.name}</h1>
               
+
               {place.location && (
                 <div className="place-location">
                   <span className="location-icon">📍</span>
@@ -458,14 +467,25 @@ const PlaceDetailPage = () => {
                 </div>
               )}
 
-              {place.latitude && place.longitude && (
-                <div className="place-coordinates">
-                  <span className="coords-label">Coordenadas:</span>
-                  <span className="coords-value">
-                    {parseFloat(place.latitude).toFixed(6)}, {parseFloat(place.longitude).toFixed(6)}
+              {/* Bloque de reseñas debajo de ubicación */}
+              <div className="place-reviews-summary" style={{ margin: '12px 0 8px 0', fontSize: '1.05em', color: '#888', textAlign: 'left', paddingLeft: 0 }}>
+                {reviewStats.count > 0 ? (
+                  <span style={{ cursor: 'pointer', display: 'inline-block' }}
+                    onClick={() => {
+                      const section = document.getElementById('place-reviews-section');
+                      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }}
+                    title="Ver reseñas"
+                  >
+                    <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                    <span style={{ color: '#222', fontWeight: 'bold', fontSize: '1.15em' }}>{reviewStats.average?.toFixed(1)}</span>
+                    {" "}
+                    <span style={{ fontSize: '0.95em', color: '#888' }}>({reviewStats.count} reseña{reviewStats.count === 1 ? '' : 's'})</span>
                   </span>
-                </div>
-              )}
+                ) : (
+                  <span>Sin reseñas</span>
+                )}
+              </div>
 
               {place.categories && place.categories.length > 0 && (
                 <div className="place-categories">
@@ -483,6 +503,55 @@ const PlaceDetailPage = () => {
                   <p>{place.description}</p>
                 </div>
               )}
+
+              {/* Sección de Ecohoteles Cercanos */}
+              <div className="related-ecohotels-section" style={{ margin: '32px 0 0 0' }}>
+                <h2 style={{ color: '#1c1c1a', marginBottom: 18, borderBottom: '2px solid #24a148', paddingBottom: 8 }}>
+                  🏨 Ecohoteles cercanos
+                </h2>
+                {(place.ecohoteles && place.ecohoteles.length > 0) ? (
+                  <div className="related-cards-grid">
+                    {place.ecohoteles.map(ecohotel => (
+                      <Link
+                        to={`/ecohoteles/${ecohotel.id}`}
+                        key={ecohotel.id}
+                        className="related-card"
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div className="related-card-image-wrapper">
+                          <img
+                            src={ecohotel.image || '/imagenes/placeholder.jpg'}
+                            alt={ecohotel.name}
+                            className="related-card-image"
+                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                          />
+                        </div>
+                        <div className="related-card-title">{ecohotel.name}</div>
+                        <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                          {typeof ecohotel.average_rating !== 'undefined' && typeof ecohotel.reviews_count !== 'undefined' ? (
+                            ecohotel.reviews_count === 0 || ecohotel.average_rating === 0 || ecohotel.average_rating === null ? (
+                              <span>Sin reseñas</span>
+                            ) : (
+                              <span>
+                                <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(ecohotel.average_rating).toFixed(1)}</span>
+                                {" "}
+                                <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews_count} reseña{ecohotel.reviews_count === 1 ? '' : 's'})</span>
+                              </span>
+                            )
+                          ) : (
+                            <span>Sin reseñas</span>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ color: '#888', fontSize: '1.1em', padding: '18px 0' }}>
+                    No hay ecohoteles cercanos registrados hasta el momento.
+                  </div>
+                )}
+              </div>
 
               {/* Información de Contacto */}
               {(place.telefono || place.email || place.sitio_web) && (
@@ -645,6 +714,33 @@ const PlaceDetailPage = () => {
                 )}
               </div>
 
+              {/* Mapa y botón Cómo llegar - debajo de horarios y disponibilidad */}
+              {place.latitude && place.longitude && (
+                <div className="place-map-section" style={{ margin: '28px 0 0 0' }}>
+                  <div style={{ borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(44,95,45,0.08)', marginBottom: 10 }}>
+                    <iframe
+                      src={`https://www.google.com/maps?q=${place.latitude},${place.longitude}&z=15&output=embed`}
+                      width="100%"
+                      height="260"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Mapa del lugar"
+                    />
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link-button"
+                    style={{ display: 'inline-block', background: '#24a148', color: '#fff', padding: '10px 22px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', marginTop: 2 }}
+                  >
+                    🚗 Cómo llegar
+                  </a>
+                </div>
+              )}
+
               <div className="place-actions">
                 <button 
                   onClick={() => {
@@ -674,8 +770,16 @@ const PlaceDetailPage = () => {
           </div>
 
           {/* Sección de Reseñas */}
-          <div className="place-reviews-section">
-            <h2>Reseñas y Comentarios</h2>
+          <div className="place-reviews-section" id="place-reviews-section">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 18 }}>
+              {reviewStats.count > 0 && (
+                <div style={{ fontSize: '2.7em', fontWeight: 700, color: '#222', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ color: '#ffc107', fontSize: '1.1em', marginRight: 6 }}>★</span>
+                  {reviewStats.average?.toFixed(1)}
+                </div>
+              )}
+              <h2 style={{ margin: 0 }}>Reseñas y Comentarios</h2>
+            </div>
             {reviews.length === 0 ? (
               <div className="no-reviews">
                 <p>No hay reseñas aún. ¡Sé el primero en comentar!</p>

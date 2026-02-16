@@ -201,10 +201,13 @@ POST   /mensajes           → Enviar mensaje
 const user = window.Laravel?.user;
 const isAdmin = window.Laravel?.isAdmin;
 
+// IMPORTANTE: Nunca loguear datos del usuario en la consola
+// Usa el AuthContext en su lugar
 if (user) {
-  console.log('Usuario autenticado:', user.name);
-  console.log('Email:', user.email);
-  console.log('Es admin:', isAdmin);
+  // BIEN: Usar el contexto
+  const { user, isAuthenticated } = useAuth();
+  // NO BIEN: No loguear datos sensibles
+  // console.log('Usuario:', user); ← ¡NUNCA HACER ESTO!
 }
 ```
 

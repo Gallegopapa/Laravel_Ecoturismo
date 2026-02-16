@@ -51,17 +51,13 @@ api.interceptors.response.use(
       }
     }
     
-    // Log de errores para debugging
-    if (error.response) {
-      console.error('Error de API:', {
-        status: error.response.status,
-        data: error.response.data,
-        url: error.config?.url
-      });
-    } else if (error.request) {
-      console.error('Error de red:', error.request);
-    } else {
-      console.error('Error:', error.message);
+    // Los errores se manejan en la respuesta sin loguear datos sensibles
+    // En producción, registrar solo códigos de error sin datos sensibles
+    if (process.env.NODE_ENV === 'development') {
+      // Solo en desarrollo, loguear información de debugging sin datos personales
+      if (error.response) {
+        console.debug('API Error:', error.response.status, error.config?.url);
+      }
     }
     
     return Promise.reject(error);
@@ -87,7 +83,7 @@ export const authService = {
     try {
       await api.post('/logout');
     } catch (error) {
-      console.error('Error al cerrar sesiÃ³n:', error);
+      // Error silencioso - no es crítico para logout
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -182,15 +178,24 @@ export const reservationsService = {
 
 // Servicios de reseÃ±as
 export const reviewsService = {
+    // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
   getAll: async () => {
     const response = await api.get('/reviews/all');
     return response.data;
   },
 
+
   getByPlace: async (placeId) => {
     const response = await api.get(`/places/${placeId}/reviews`);
     return response.data;
   },
+
+  getByEcohotel: async (ecohotelId) => {
+    const response = await api.get(`/ecohotels/${ecohotelId}/reviews`);
+    return response.data;
+  },
+
+  // createForEcohotel eliminado: usar create con ecohotel_id
 
   create: async (reviewData) => {
     const response = await api.post('/reviews', reviewData);
@@ -276,6 +281,11 @@ export const profileService = {
     const response = await api.put('/profile/password', passwordData);
     return response.data;
   },
+    
+  deleteAccount: async () => {
+    const response = await api.delete('/profile');
+    return response.data;
+  },
 };
 
 // Servicios de mensajes
@@ -325,13 +335,18 @@ export const adminService = {
       if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (placeData.categories && Array.isArray(placeData.categories) && placeData.categories.length > 0) {
         placeData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
         });
       }
-      
+      // Agregar ecohoteles como array
+      if (placeData.ecohoteles && Array.isArray(placeData.ecohoteles) && placeData.ecohoteles.length > 0) {
+        placeData.ecohoteles.forEach((ecohotelId) => {
+          formData.append('ecohoteles[]', ecohotelId);
+        });
+      }
       const response = await api.post('/admin/places', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -349,19 +364,29 @@ export const adminService = {
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
       
-      // Agregar categorÃ­as como array (incluso si estÃ¡ vacÃ­o para sincronizar)
+      // Agregar categorías como array (incluso si está vacío para sincronizar)
       if (placeData.categories !== undefined) {
         if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
           placeData.categories.forEach((categoryId) => {
             formData.append('categories[]', categoryId);
           });
         } else {
-          // Si estÃ¡ vacÃ­o, enviar array vacÃ­o para desasociar todas las categorÃ­as
+          // Si está vacío, enviar array vacío para desasociar todas las categorías
           formData.append('categories[]', '');
         }
       }
-      
-      // Usar POST con _method=PUT para FormData (mÃ¡s compatible)
+      // Agregar ecohoteles como array (incluso si está vacío para sincronizar)
+      if (placeData.ecohoteles !== undefined) {
+        if (Array.isArray(placeData.ecohoteles) && placeData.ecohoteles.length > 0) {
+          placeData.ecohoteles.forEach((ecohotelId) => {
+            formData.append('ecohoteles[]', ecohotelId);
+          });
+        } else {
+          // Si está vacío, enviar array vacío para desasociar todos los ecohoteles
+          formData.append('ecohoteles[]', '');
+        }
+      }
+      // Usar POST con _method=PUT para FormData (más compatible)
       const response = await api.post(`/admin/places/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -415,13 +440,18 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (ecohotelData.categories && Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
         ecohotelData.categories.forEach((categoryId) => {
           formData.append('categories[]', categoryId);
         });
       }
-      
+      // Agregar lugares como array
+      if (ecohotelData.places && Array.isArray(ecohotelData.places) && ecohotelData.places.length > 0) {
+        ecohotelData.places.forEach((placeId) => {
+          formData.append('places[]', placeId);
+        });
+      }
       const response = await api.post('/admin/ecohotels', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -442,7 +472,7 @@ export const adminService = {
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
       
-      // Agregar categorÃ­as como array
+      // Agregar categorías como array
       if (ecohotelData.categories !== undefined) {
         if (Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
           ecohotelData.categories.forEach((categoryId) => {
@@ -452,7 +482,16 @@ export const adminService = {
           formData.append('categories[]', '');
         }
       }
-      
+      // Agregar lugares como array (incluso si está vacío para sincronizar)
+      if (ecohotelData.places !== undefined) {
+        if (Array.isArray(ecohotelData.places) && ecohotelData.places.length > 0) {
+          ecohotelData.places.forEach((placeId) => {
+            formData.append('places[]', placeId);
+          });
+        } else {
+          formData.append('places[]', '');
+        }
+      }
       const response = await api.post(`/admin/ecohotels/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

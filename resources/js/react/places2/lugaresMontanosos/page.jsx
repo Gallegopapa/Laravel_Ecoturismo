@@ -254,9 +254,26 @@ export default function LugaresMontanososPage() {
         <div className="contenedor">
           <div className="cards">
             {lugares.map((lugar) => (
-              <div className="card" key={lugar.id}>
+              <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
                 <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.titulo} onError={(e) => { e.target.src = "/imagenes/placeholder.jpg"; }} />
                 <h4>{lugar.name || lugar.titulo}</h4>
+                {/* Rating debajo del título, pequeño y centrado */}
+                <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                  {typeof lugar.average_rating !== 'undefined' && typeof lugar.reviews_count !== 'undefined' ? (
+                    lugar.reviews_count === 0 || lugar.average_rating === 0 || lugar.average_rating === null ? (
+                      <span>Sin reseñas</span>
+                    ) : (
+                      <span>
+                        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                        <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(lugar.average_rating).toFixed(1)}</span>
+                        {" "}
+                        <span style={{ fontSize: '0.95em', color: '#888' }}>({lugar.reviews_count} reseña{lugar.reviews_count === 1 ? '' : 's'})</span>
+                      </span>
+                    )
+                  ) : (
+                    <span>Sin reseñas</span>
+                  )}
+                </div>
                 <p className="ubicacion-text">{lugar.location || lugar.ubicacion}</p>
                 <p className="descripcion">{lugar.description || lugar.descripcion}</p>
 
@@ -272,13 +289,7 @@ export default function LugaresMontanososPage() {
                       </svg>
                       <span>Mapa</span>
                     </a>
-                    <Link 
-                      to={`/lugares/${lugar.id}`}
-                      className="info-button"
-                      style={{ textDecoration: 'none', display: 'inline-block' }}
-                    >
-                      Ver Detalles
-                    </Link>
+                    {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                   </div>
                   <button 
                     className="favorito" 

@@ -13,64 +13,90 @@ class ReviewController extends Controller
     /**
      * Obtener todas las reseñas (público)
      */
+
+    // Obtener todas las reseñas (público)
     public function all(): JsonResponse
     {
-        $reviews = Review::with(['usuario:id,name,foto_perfil', 'place:id,name,location'])
+        $reviews = Review::with(['usuario:id,name,foto_perfil', 'place', 'ecohotel'])
             ->orderBy('fecha_comentario', 'desc')
             ->get();
-
         return response()->json($reviews);
     }
 
-    public function index(Request $request, $placeId): JsonResponse
+    // Obtener reseñas de un lugar o ecohotel
+    public function index(Request $request, $type, $id): JsonResponse
     {
-        $reviews = Review::where('place_id', $placeId)
-            ->with('usuario:id,name,foto_perfil')
-            ->orderBy('fecha_comentario', 'desc')
-            ->get();
-
-        return response()->json($reviews);
+        if ($type === 'place') {
+            $reviews = Review::where('place_id', $id)
+                ->with('usuario:id,name,foto_perfil')
+                ->orderBy('fecha_comentario', 'desc')
+                ->get();
+        } elseif ($type === 'ecohotel') {
+            $reviews = Review::where('ecohotel_id', $id)
+                ->with('usuario:id,name,foto_perfil')
+                ->orderBy('fecha_comentario', 'desc')
+                ->get();
+        } else {
+            return response()->json(['message' => 'Tipo inválido'], 400);
+        }
+        $avg = $reviews->avg('rating');
+        $count = $reviews->count();
+        return response()->json([
+            'reviews' => $reviews,
+            'average' => $avg,
+            'count' => $count
+        ]);
     }
 
+
+    // Crear reseña para lugar o ecohotel
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        // Verificar que el usuario no haya comentado antes este lugar
-        $existingReview = Review::where('user_id', $user->id)
-            ->where('place_id', $request->place_id)
-            ->first();
-
-        if ($existingReview) {
-            return response()->json([
-                'message' => 'Ya has comentado este lugar. Solo puedes comentar una vez por lugar.'
-            ], 422);
-        }
-
         $messages = [
             'comment.max' => 'El comentario no puede exceder los 500 caracteres.',
             'rating.required' => 'La calificación es obligatoria.',
             'rating.integer' => 'La calificación debe ser un número.',
             'rating.min' => 'La calificación mínima es 1.',
             'rating.max' => 'La calificación máxima es 5.',
+            'place_id.required_without' => 'El lugar es obligatorio si no se especifica ecohotel.',
+            'ecohotel_id.required_without' => 'El ecohotel es obligatorio si no se especifica lugar.',
         ];
-
         $data = $request->validate([
-            'place_id' => 'required|exists:places,id',
+            'place_id' => 'required_without:ecohotel_id|nullable|exists:places,id',
+            'ecohotel_id' => 'required_without:place_id|nullable|exists:ecohotels,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => ['nullable', 'string', 'max:500', new NoProfanity()],
         ], $messages);
-
+        if ($data['place_id'] ?? false) {
+            $existingReview = Review::where('user_id', $user->id)
+                ->where('place_id', $data['place_id'])
+                ->first();
+            if ($existingReview) {
+                return response()->json([
+                    'message' => 'Ya has comentado este lugar. Solo puedes comentar una vez por lugar.'
+                ], 422);
+            }
+        }
+        if ($data['ecohotel_id'] ?? false) {
+            $existingReview = Review::where('user_id', $user->id)
+                ->where('ecohotel_id', $data['ecohotel_id'])
+                ->first();
+            if ($existingReview) {
+                return response()->json([
+                    'message' => 'Ya has comentado este ecohotel. Solo puedes comentar una vez por ecohotel.'
+                ], 422);
+            }
+        }
         $review = Review::create([
             'user_id' => $user->id,
-            'place_id' => $data['place_id'],
+            'place_id' => $data['place_id'] ?? null,
+            'ecohotel_id' => $data['ecohotel_id'] ?? null,
             'rating' => $data['rating'],
             'comment' => $data['comment'] ?? null,
             'fecha_comentario' => now(),
         ]);
-
         $review->load('usuario:id,name,foto_perfil');
-
         return response()->json($review, 201);
     }
 

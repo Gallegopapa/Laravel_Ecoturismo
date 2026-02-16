@@ -1,3 +1,34 @@
+// Utilidad para mostrar el promedio y cantidad de reseñas igual que en lugares
+const renderEcohotelRating = (ecohotel) => {
+  // Si hay array de reseñas, calcular promedio y cantidad
+  if (Array.isArray(ecohotel.reviews) && ecohotel.reviews.length > 0) {
+    const total = ecohotel.reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0);
+    const avg = total / ecohotel.reviews.length;
+    return (
+      <span>
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+        <span style={{ color: '#222', fontWeight: 'bold' }}>{avg.toFixed(1)}</span>
+        {" "}
+        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews.length} reseña{ecohotel.reviews.length === 1 ? '' : 's'})</span>
+      </span>
+    );
+  }
+  // Si existen los campos del backend, usarlos
+  if (typeof ecohotel.average_rating !== 'undefined' && typeof ecohotel.reviews_count !== 'undefined') {
+    if (ecohotel.reviews_count === 0 || ecohotel.average_rating === 0 || ecohotel.average_rating === null) {
+      return <span>Sin reseñas</span>;
+    }
+    return (
+      <span>
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+        <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(ecohotel.average_rating).toFixed(1)}</span>
+        {" "}
+        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews_count} reseña{ecohotel.reviews_count === 1 ? '' : 's'})</span>
+      </span>
+    );
+  }
+  return <span>Sin reseñas</span>;
+};
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -6,10 +37,7 @@ import Header2 from "../components/Header2/Header2";
 import Footer from "../components/Footer/Footer";
 import "./page.css";
 
-console.log('🏨🏨🏨 ARCHIVO ECOHOTELS PAGE IMPORTADO 🏨🏨🏨');
-
 const EcohotelsPage = () => {
-  console.log('🏨 EcohotelsPage component loaded!');
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const [ecohotels, setEcohotels] = useState([]);
@@ -126,6 +154,10 @@ const EcohotelsPage = () => {
                     </div>
                     <div className="lugar-info">
                       <h3>{ecohotel.name}</h3>
+                      {/* Promedio de reseñas igual que en lugares */}
+                      <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
+                        {renderEcohotelRating(ecohotel)}
+                      </div>
                       {ecohotel.location && (
                         <p className="lugar-location">📍 {ecohotel.location}</p>
                       )}

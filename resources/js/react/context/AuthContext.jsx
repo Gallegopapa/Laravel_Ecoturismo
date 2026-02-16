@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error('Error al cargar usuario:', error);
+      // Error al cargar usuario - limpiar sesión silenciosamente
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     } finally {

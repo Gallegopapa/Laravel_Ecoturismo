@@ -324,6 +324,8 @@
   text-align: center;
   padding-top: 120px !important;
   margin-top: 60px;
+  position: relative;
+  bottom: -20px;
 }
 .destacados h2 {
   font-size: 2.8rem;
@@ -498,23 +500,24 @@
 .hero-initial {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
-  padding-bottom: 60px;
-  box-sizing: border-box;
 }
 .hero-initial-bg {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  left: 50%;
+  width: 113%;
+  height: 113%;
+  transform: translateX(-50%) scale(1.14);
   object-fit: cover;
-  filter: brightness(0.45) saturate(1.05);
+  object-position: center top;
+  filter: brightness(0.44) saturate(1.05);
   z-index: 1;
+  transition: transform 0.6s ease;
 }
 .hero-initial-overlay {
   position: absolute;
@@ -553,56 +556,67 @@
 
 .wave-svg {
   position: absolute;
-  bottom: -2px;
+  bottom: -137px;
   left: 0;
   width: 100%;
-  height: 120px;
+  height: 160px;
   z-index: 5;
   display: block;
 }
 
 /* Animación de scroll indicador */
-@keyframes scroll-indicator {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  50% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(20px);
-  }
-}
 
 .scroll-indicator {
   position: absolute;
-  bottom: 80px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 48px;
-  height: 72px;
-  border: 3px solid rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  z-index: 20;
+  z-index: 12;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 12px;
-  animation: scroll-indicator 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), 0 0 60px rgba(34, 197, 94, 0.3);
-  pointer-events: none;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  box-shadow: 0 6px 18px rgba(2,6,23,0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
-
+.scroll-indicator:hover {
+  transform: translateX(-50%) translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 28px rgba(2,6,23,0.28);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+}
 .scroll-indicator::after {
   content: '';
-  width: 6px;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 3px;
-  animation: scroll-indicator 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
+.scroll-indicator-wheel {
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0 2px 6px rgba(2,6,23,0.25);
+  animation: scroll-wheel 1.2s infinite ease-in-out;
+}
+@keyframes scroll-wheel {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(10px); opacity: 0.6; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@media (max-width: 700px) {
+  .scroll-indicator { bottom: -22px; width:44px; height:44px; }
+  .scroll-indicator-wheel { width:6px; height:6px; }
+}
+
 
 @media (max-width: 1100px) {
   .hero-initial-title { font-size: 3.2rem; }
@@ -860,7 +874,7 @@
 }
 .destino-img-wrap img {
   width: 100%;
-  height: 280px;
+  height: 200px;
   object-fit: cover;
   display: block;
 }
