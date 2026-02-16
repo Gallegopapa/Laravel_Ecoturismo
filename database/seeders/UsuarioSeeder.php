@@ -88,6 +88,32 @@ class UsuarioSeeder extends Seeder
     'fecha_registro' => '2026-02-11 00:49:07',
     'remember_token' => NULL,
   ),
+  6 => 
+  array (
+    'id' => 10,
+    'name' => 'rodrigoserrano',
+    'email' => 'roro@gmail.com',
+    'telefono' => NULL,
+    'foto_perfil' => NULL,
+    'password' => '$2y$12$ajTSdA2C4fPL7f5tiB9uS.Wyv9e7AkmtZ4pvW6tIM2DEk525UaGgC',
+    'is_admin' => 0,
+    'tipo_usuario' => 'normal',
+    'fecha_registro' => '2026-02-12 15:09:41',
+    'remember_token' => NULL,
+  ),
+  7 => 
+  array (
+    'id' => 11,
+    'name' => 'ejemplo',
+    'email' => 'ejemplo@gmail.com',
+    'telefono' => NULL,
+    'foto_perfil' => NULL,
+    'password' => '$2y$12$fag5gAy/KsxwtI7fpNdx5uy41lySno/4PiQC00/OpT2L2C2f/dPIO',
+    'is_admin' => 0,
+    'tipo_usuario' => 'normal',
+    'fecha_registro' => '2026-02-12 18:58:53',
+    'remember_token' => NULL,
+  ),
 ));
     }
 }
