@@ -37,7 +37,23 @@ export default function CopyrightTotal() {
       {
         title: "Reserva Natural DMI Agualinda",
         url: "https://www.tripadvisor.com/"
-      }
+      },
+      {
+        title: "Piedras Marcadas",
+        url: "https://www.colparques.net/"
+      },
+      { 
+        title: "Cascada Lagrimas Del Indio",
+        url: "https://es.wikiloc.com/"
+      },
+      { 
+        title: "Santuario Otún Quimbaya",
+        url: "https://old.parquesnacionales.gov.co/"
+      },
+      { 
+        title: "Barbas Bremen",
+        url: "https://www.ruraladventure.co/"
+      },
     ],
     paraisosAcuaticos: [
       {
@@ -67,7 +83,15 @@ export default function CopyrightTotal() {
       { 
         title: "Termales de Santa Rosa",
         url: "https://www.booking.com/"
-      }
+      },
+      { 
+        title: "Cascada Lagrimas Del Indio",
+        url: "https://es.wikiloc.com/"
+      },
+      { 
+        title: "Termales de San Vicente",
+        url: "https://www.parquesdeleje.com/"
+      },
     ],
     parquesYMas: [
       {
@@ -94,13 +118,28 @@ export default function CopyrightTotal() {
         title: "Parque Regional Natural Cuchilla de San Juan",
         url: "https://www.parquesnacionales.gov.co/",
       },
+      {
+        title: "Parque Bioflora en Finca Turistica Los Rosales",
+        url: "https://co.hoteles.com/",
+      },
+      {
+        title: "Bioparque Mariposario Bonita Farm",
+        url: "https://www.recreatur.co/",
+      },
+    ],
+    ecohoteles: [
+      {
+        title: "EcoHotel Paraíso Real",
+        url: "https://eco-paraiso-real.hotelesejecafetero.net/"
+      },
     ]
   };
 
   const sections = [
     { key: "lugaresMontanosos", title: "Copyright Lugares Montañosos" },
     { key: "paraisosAcuaticos", title: "Copyright Paraisos Acuaticos" },
-    { key: "parquesYMas", title: "Copyright Parques y Más" }
+    { key: "parquesYMas", title: "Copyright Parques y Más" },
+    { key: "ecohoteles", title: "Copyright Ecohoteles" }
   ];
 
   return (
