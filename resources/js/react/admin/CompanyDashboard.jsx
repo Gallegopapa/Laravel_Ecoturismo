@@ -1061,7 +1061,7 @@ const CompanyDashboard = () => {
                                 />
                             </label>
                             <label>
-                                UbicaciÃ³n
+                                Ubicación
                                 <input
                                     type="text"
                                     value={placeForm.location}
@@ -1075,7 +1075,7 @@ const CompanyDashboard = () => {
                                 />
                             </label>
                             <label className="place-form-full">
-                                DescripciÃ³n
+                                Descripción
                                 <textarea
                                     value={placeForm.description}
                                     onChange={(event) =>
@@ -1119,7 +1119,7 @@ const CompanyDashboard = () => {
                                 />
                             </label>
                             <label>
-                                TelÃ©fono
+                                Teléfono
                                 <input
                                     type="text"
                                     value={placeForm.telefono}

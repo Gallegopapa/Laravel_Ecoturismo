@@ -14,6 +14,13 @@
   overflow-y: auto;
 }
 
+/* Asegurar box-sizing para todos los elementos del modal */
+.modal-overlay *,
+.modal-overlay *::before,
+.modal-overlay *::after {
+  box-sizing: border-box;
+}
+
 .modal-content {
   background: white;
   border-radius: 8px;
@@ -21,8 +28,10 @@
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   animation: slideIn 0.3s ease-out;
+  overflow: hidden;
 }
 
 @keyframes slideIn {
@@ -43,11 +52,10 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
   background: linear-gradient(135deg, #2c5f2d 0%, #3a7d3e 100%);
-  z-index: 1;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  z-index: 1;
 }
 
 .modal-header h2 {
@@ -84,24 +92,65 @@
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
+/* Modal Body Wrapper - Contenedor con scroll */
+.modal-body-wrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #2c5f2d #f0f0f0;
+}
+
+.modal-body-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body-wrapper::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.modal-body-wrapper::-webkit-scrollbar-thumb {
+  background: #2c5f2d;
+  border-radius: 4px;
+}
+
+.modal-body-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #234a24;
+}
+
 /* Form Styles */
 .user-form {
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .form-group label {
   font-weight: 600;
   color: #333;
   font-size: 0.95rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .form-group input,
@@ -113,6 +162,9 @@
   font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.2s;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -132,6 +184,9 @@
 .form-group small {
   color: #666;
   font-size: 0.85rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .form-group .error-text {
@@ -148,13 +203,17 @@
 .alert {
   padding: 14px 18px;
   border-radius: 8px;
-  margin: 0 20px 15px 20px;
+  margin: 20px 20px 15px 20px;
   font-size: 0.95rem;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: calc(100% - 40px);
 }
 
 .alert::before {
@@ -198,6 +257,9 @@
   background-color: #f0f4ff;
   border: 1px solid #4169e1;
   border-radius: 4px;
+  flex-shrink: 0;
+  max-width: calc(100% - 40px);
+  box-sizing: border-box;
 }
 
 .generated-password-box strong {
@@ -210,6 +272,8 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .password-display code {
@@ -222,6 +286,8 @@
   font-size: 0.9rem;
   word-break: break-all;
   color: #333;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .btn-copy {
@@ -265,8 +331,11 @@
   border-radius: 8px;
   max-height: 320px;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: #fafafa;
   margin-top: 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .place-item {
@@ -276,6 +345,8 @@
   flex-direction: column;
   gap: 10px;
   transition: background-color 0.2s;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .place-item:hover {
@@ -295,6 +366,9 @@
   margin: 0;
   color: #333;
   transition: color 0.2s;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .checkbox-label:hover {
@@ -317,6 +391,8 @@
   background-color: #e8f5e9;
   border-radius: 6px;
   border: 1px solid #c8e6c9;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .helper-text {
@@ -325,6 +401,9 @@
   color: #666;
   margin: 4px 0 0 28px;
   font-style: italic;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .readonly-field {
@@ -380,6 +459,8 @@
   padding: 20px;
   border-top: 1px solid #eee;
   background-color: #f9f9f9;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .btn {
@@ -421,10 +502,16 @@
 
 /* Responsive */
 @media (max-width: 600px) {
+  .modal-overlay {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
   .modal-content {
     max-width: 100%;
-    border-radius: 8px 8px 0 0;
-    margin-top: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+    max-height: calc(100vh - 20px);
   }
 
   .modal-header {
@@ -445,6 +532,7 @@
 
   .modal-actions {
     flex-direction: column;
+    padding: 15px;
   }
 
   .btn {

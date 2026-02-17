@@ -84,7 +84,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         is_admin: formData.tipo_usuario === 'admin',
       };
 
-      // Agregar contraseÃ±a solo si se proporcionÃ³
+      // Agregar contraseña solo si se proporcionó
       if (formData.password) {
         userData.password = formData.password;
       }
@@ -98,7 +98,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
 
       if (response.generated_password) {
         setGeneratedPassword(response.generated_password);
-        setMessage('Usuario creado. ContraseÃ±a generada automÃ¡ticamente.');
+        setMessage('Usuario creado. Contraseña generada automáticamente.');
       } else {
         setMessage('Usuario creado correctamente');
       }
@@ -117,7 +117,7 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
         onUserCreated(response);
       }
 
-      // Cerrar modal despuÃ©s de 1.5 segundos
+      // Cerrar modal después de 1.5 segundos
       setTimeout(() => {
         onClose();
       }, 1500);
@@ -144,29 +144,30 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
 
-        {message && (
-          <div className={`alert alert-${message.includes('Error') ? 'error' : generatedPassword ? 'warning' : 'success'}`}>
-            {message}
-          </div>
-        )}
-
-        {generatedPassword && (
-          <div className="generated-password-box">
-            <strong>ContraseÃ±a generada:</strong>
-            <div className="password-display">
-              <code>{generatedPassword}</code>
-              <button
-                type="button"
-                className="btn-copy"
-                onClick={() => navigator.clipboard.writeText(generatedPassword)}
-              >
-                Copiar
-              </button>
+        <div className="modal-body-wrapper">
+          {message && (
+            <div className={`alert alert-${message.includes('Error') ? 'error' : generatedPassword ? 'warning' : 'success'}`}>
+              {message}
             </div>
-          </div>
-        )}
+          )}
 
-        <form onSubmit={handleSubmit} className="user-form">
+          {generatedPassword && (
+            <div className="generated-password-box">
+              <strong>Contraseña generada:</strong>
+              <div className="password-display">
+                <code>{generatedPassword}</code>
+                <button
+                  type="button"
+                  className="btn-copy"
+                  onClick={() => navigator.clipboard.writeText(generatedPassword)}
+                >
+                  Copiar
+                </button>
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="user-form" id="user-form">
           {/* Nombre de usuario */}
           <div className="form-group">
             <label htmlFor="name">Nombre de Usuario *</label>
@@ -215,19 +216,19 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
             </select>
           </div>
 
-          {/* ContraseÃ±a */}
+          {/* Contraseña */}
           <div className="form-group">
-            <label htmlFor="password">ContraseÃ±a (opcional)</label>
+            <label htmlFor="password">Contraseña (opcional)</label>
             <input
               type={showPassword ? 'text' : 'password'}
               id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Dejar vacÃ­o para generar automÃ¡ticamente"
+              placeholder="Dejar vacío para generar automáticamente"
               disabled={loading}
             />
-            <small>Si deja vacÃ­o, se generarÃ¡ una contraseÃ±a segura automÃ¡ticamente.</small>
+            <small>Si deja vacío, se generará una contraseña segura automáticamente.</small>
           </div>
 
           {/* Lugares - Solo para usuarios empresa */}
@@ -284,26 +285,28 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
               {errors.lugares && <small className="error-text">{errors.lugares[0]}</small>}
             </div>
           )}
-
-          {/* Botones */}
-          <div className="modal-actions">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading}
-            >
-              {loading ? 'Creando...' : 'Crear Usuario'}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
-          </div>
         </form>
+        </div>
+
+        {/* Botones fuera del formulario */}
+        <div className="modal-actions">
+          <button
+            type="submit"
+            form="user-form"
+            className="btn btn-primary"
+            disabled={loading}
+          >
+            {loading ? 'Creando...' : 'Crear Usuario'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
   );

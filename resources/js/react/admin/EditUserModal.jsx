@@ -164,13 +164,14 @@ const EditUserModal = ({ isOpen, onClose, userId, user, places = [], onUpdated }
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
 
-        {message && (
-          <div className={`alert alert-${message.includes('Error') ? 'error' : 'success'}`}>
-            {message}
-          </div>
-        )}
+        <div className="modal-body-wrapper">
+          {message && (
+            <div className={`alert alert-${message.includes('Error') ? 'error' : 'success'}`}>
+              {message}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="user-form">
+          <form onSubmit={handleSubmit} className="user-form" id="edit-user-form">
           <div className="form-group">
             <label>Usuario</label>
             <div className="readonly-field">
@@ -262,16 +263,28 @@ const EditUserModal = ({ isOpen, onClose, userId, user, places = [], onUpdated }
               </div>
             </div>
           )}
-
-          <div className="modal-actions">
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Guardando...' : 'Guardar cambios'}
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
-              Cancelar
-            </button>
-          </div>
         </form>
+        </div>
+
+        {/* Botones fuera del formulario */}
+        <div className="modal-actions">
+          <button 
+            type="submit" 
+            form="edit-user-form"
+            className="btn btn-primary" 
+            disabled={loading}
+          >
+            {loading ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={onClose} 
+            disabled={loading}
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
   );
