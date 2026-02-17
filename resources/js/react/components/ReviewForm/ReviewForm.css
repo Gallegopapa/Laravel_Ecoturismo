@@ -111,6 +111,16 @@ textarea::placeholder {
   border: 1px solid #cfc;
 }
 
+.alert-info {
+  background-color: #e3f2fd;
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+}
+
+.alert-info p {
+  margin: 8px 0;
+}
+
 .submit-btn {
   background-color: #27ae60;
   color: white;
