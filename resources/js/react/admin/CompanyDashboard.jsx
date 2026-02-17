@@ -179,6 +179,7 @@ const CompanyDashboard = () => {
     useEffect(() => {
         if (selectedPlaceId) {
             loadSchedules(selectedPlaceId);
+            loadPlaceDetails(selectedPlaceId);
         }
     }, [selectedPlaceId]);
 
