@@ -254,7 +254,23 @@ const CommentsPage = () => {
                     <div style={{display:'flex',alignItems:'center',marginBottom:'1rem',gap:'1rem'}}>
                       <img src={imagenLugar || '/imagenes/placeholder.jpg'} alt={nombreLugar} style={{width:60,height:60,objectFit:'cover',borderRadius:'50%',border:'2px solid #eee',background:'#fafafa'}} onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }} />
                       <div>
-                        <div style={{fontWeight:700,fontSize:'1.1rem',color:'#222',marginBottom:'2px'}}>{nombreLugar || <span style={{color:'#bbb'}}>Sin lugar</span>}</div>
+                        <div style={{fontWeight:700,fontSize:'1.1rem',color:'#222',marginBottom:'2px'}}>
+                          {(() => {
+                            if (review.place || (review.reviewable && review.reviewable_type === 'App\\Models\\Place')) {
+                              const place = review.place || (review.reviewable_type === 'App\\Models\\Place' ? review.reviewable : null);
+                              return place ? (
+                                <Link to={`/lugares/${place.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{nombreLugar}</Link>
+                              ) : <span style={{color:'#bbb'}}>Sin lugar</span>;
+                            } else if (review.ecohotel || (review.reviewable && review.reviewable_type === 'App\\Models\\Ecohotel')) {
+                              const ecohotel = review.ecohotel || (review.reviewable_type === 'App\\Models\\Ecohotel' ? review.reviewable : null);
+                              return ecohotel ? (
+                                <Link to={`/ecohoteles/${ecohotel.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{nombreLugar}</Link>
+                              ) : <span style={{color:'#bbb'}}>Sin ecohotel</span>;
+                            } else {
+                              return <span style={{color:'#bbb'}}>Sin lugar</span>;
+                            }
+                          })()}
+                        </div>
                         {ubicacionLugar && (
                           <div style={{fontSize:'0.95rem',color:'#43a047',marginBottom:'2px'}}>
                             <span role="img" aria-label="ubicación">📍</span> {ubicacionLugar}

@@ -263,29 +263,36 @@ const Comments2Page = () => {
           ) : (
             reviews.map((review) => (
               <div className="box" key={review.id}>
-                {/* Título con el comentario */}
-                <h3 style={{ 
-                  margin: "0 0 8px 0", 
-                  color: "#333",
-                  fontSize: "1.1rem",
-                  fontWeight: "600"
-                }}>
-                  {review.comment || "Sin comentario"}
-                </h3>
-                
-                {/* Ubicación del lugar */}
+                {/* Título: nombre del lugar/ecohotel, clickeable */}
                 {review.place && (
-                  <p style={{ 
-                    fontSize: "0.85rem", 
-                    color: "#2ecc71", 
-                    marginBottom: "12px",
-                    fontWeight: "500",
-                    margin: "0 0 12px 0"
+                  <h3 style={{
+                    margin: "0 0 8px 0",
+                    color: "#1976d2",
+                    fontSize: "1.15rem",
+                    fontWeight: "700",
+                    textDecoration: 'underline',
                   }}>
-                    📍 {review.place.name}
-                    {review.place.location && ` - ${review.place.location}`}
-                  </p>
+                    <Link to={`/lugares/${review.place.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.place.name}</Link>
+                    {review.place.location && (
+                      <span style={{color:'#2ecc71',fontWeight:500,fontSize:'0.95rem'}}> - {review.place.location}</span>
+                    )}
+                  </h3>
                 )}
+                {review.ecohotel && (
+                  <h3 style={{
+                    margin: "0 0 8px 0",
+                    color: "#1976d2",
+                    fontSize: "1.15rem",
+                    fontWeight: "700",
+                    textDecoration: 'underline',
+                  }}>
+                    <Link to={`/ecohoteles/${review.ecohotel.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.ecohotel.name}</Link>
+                  </h3>
+                )}
+                {/* Comentario debajo del título */}
+                <div style={{color:'#333',fontSize:'1.05rem',marginBottom:'8px',marginTop:'-2px',fontWeight:500}}>
+                  {review.comment || "Sin comentario"}
+                </div>
                 
                 {/* Información del usuario */}
                 <div className="in-box">
