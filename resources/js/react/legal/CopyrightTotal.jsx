@@ -132,6 +132,10 @@ export default function CopyrightTotal() {
         title: "EcoHotel Paraíso Real",
         url: "https://eco-paraiso-real.hotelesejecafetero.net/"
       },
+      {
+        title: "Finca Catedral Santa Rosa De Cabal RDA",
+        url: "https://mapcarta.com/"
+      },
     ]
   };
 
