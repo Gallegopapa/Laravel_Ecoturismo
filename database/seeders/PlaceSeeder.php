@@ -445,6 +445,21 @@ class PlaceSeeder extends Seeder
     'created_at' => '2026-02-11 05:08:53',
     'updated_at' => '2026-02-11 20:46:09',
   ),
+  29 => 
+  array (
+    'id' => 31,
+    'name' => 'Piedras marcadas',
+    'description' => 'Las Piedras Marcadas en Dosquebradas son un conjunto de petroglifos que han sido marcados por tribus descendientes de los Quimbayas, una de las etnias más reconocidas de Colombia que habitaron la región hacia el año 1530.',
+    'location' => 'Dosquebradas,pereira',
+    'telefono' => NULL,
+    'email' => NULL,
+    'sitio_web' => NULL,
+    'latitude' => '4.81614435',
+    'longitude' => '-76.62819588',
+    'image' => '/storage/places/1771331244_69945eacd5166.jpg',
+    'created_at' => '2026-02-17 12:27:24',
+    'updated_at' => '2026-02-17 12:27:24',
+  ),
 ));
     }
 }
