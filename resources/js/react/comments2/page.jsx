@@ -287,12 +287,11 @@ const Comments2Page = () => {
                     textDecoration: 'underline',
                   }}>
                     <Link to={`/ecohoteles/${review.ecohotel.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.ecohotel.name}</Link>
+                    {review.ecohotel.location && (
+                      <span style={{color:'#2ecc71',fontWeight:500,fontSize:'0.95rem'}}> - {review.ecohotel.location}</span>
+                    )}
                   </h3>
                 )}
-                {/* Comentario debajo del título */}
-                <div style={{color:'#333',fontSize:'1.05rem',marginBottom:'8px',marginTop:'-2px',fontWeight:500}}>
-                  {review.comment || "Sin comentario"}
-                </div>
                 
                 {/* Información del usuario */}
                 <div className="in-box">
@@ -306,10 +305,10 @@ const Comments2Page = () => {
                     />
                   </div>
                   <div className="bxx-text">
-                    <h4>{review.usuario?.name || "Usuario"}</h4>
-                    <h5 style={{ color: "#666", fontWeight: "400" }}>
+                    <h4 style={{ fontWeight: 700 }}>{review.usuario?.name || "Usuario"}</h4>
+                    <div style={{ color: "#333", fontWeight: 400, fontSize: "1.05rem", margin: "2px 0 6px 0" }}>
                       {review.comment || "Sin comentario"}
-                    </h5>
+                    </div>
                     <div className="ratings">
                       {renderStars(review.rating)}
                     </div>
