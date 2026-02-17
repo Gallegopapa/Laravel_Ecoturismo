@@ -1,4 +1,8 @@
 /* Estilos para la página de ecohoteles */
+.root-vars{ }
+:root{
+  --header-offset: 86px; /* altura aproximada del header fijo; ajustar si es necesario */
+}
 .page-layout {
   display: flex;
   flex-direction: column;
@@ -13,6 +17,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: calc(var(--header-offset,86px) + 1rem); /* empuja contenido debajo del header */
 }
 
 .lugares-header {
