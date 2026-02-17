@@ -171,7 +171,7 @@ const UsersAdmin = () => {
           flexWrap: 'wrap',
           gap: '10px'
         }}>
-          <h2 style={{margin: 0}}>GestiÃ³n de Usuarios</h2>
+          <h2 style={{margin: 0}}>Gestion de Usuarios</h2>
           <button
             onClick={() => setShowCreateModal(true)}
             className="btn-primary"
@@ -354,13 +354,13 @@ const UsersAdmin = () => {
         borderLeft: '4px solid #0d6efd',
         borderRadius: '4px'
       }}>
-        <h3 style={{marginTop: 0, color: '#0d6efd'}}>ðŸ’¡ CÃ³mo crear un usuario Empresa</h3>
+        <h3 style={{marginTop: 0, color: '#0d6efd'}}>Como crear un usuario Empresa</h3>
         <ol style={{marginBottom: 0, lineHeight: '1.8'}}>
-          <li><strong>Haz clic</strong> en el botÃ³n "Crear Usuario Empresa" arriba</li>
-          <li><strong>Rellena el formulario:</strong> Nombre, email, telÃ©fono, etc.</li>
-          <li><strong>Selecciona el LUGAR</strong> para el cual trabajarÃ¡ esta empresa</li>
+          <li><strong>Haz clic</strong> en el boton "Crear Usuario Empresa" arriba</li>
+          <li><strong>Rellena el formulario:</strong> Nombre, email, telefono, etc.</li>
+          <li><strong>Selecciona el LUGAR</strong> para el cual trabaja esta empresa</li>
           <li><strong>Marca como "Principal"</strong> si es el contacto principal del lugar</li>
-          <li><strong>Copia la contraseÃ±a generada</strong> y compÃ¡rtela con la empresa</li>
+          <li><strong>Copia la contraseña generada</strong> y compartela con la empresa</li>
         </ol>
         <p style={{
           marginTop: '15px',
@@ -369,8 +369,8 @@ const UsersAdmin = () => {
           borderRadius: '4px',
           marginBottom: 0
         }}>
-          <strong>âš ï¸ Importante:</strong> Cada usuario empresa verÃ¡ SOLO las reservas del lugar asignado. 
-          Si un lugar tiene mÃºltiples usuarios, todos verÃ¡n las mismas reservas.
+          <strong>asi de Importante:</strong> Cada usuario empresa vera SOLO las reservas del lugar asignado. 
+          Si un lugar tiene multiples usuarios, todos veran las mismas reservas.
         </p>
       </div>
     </div>
