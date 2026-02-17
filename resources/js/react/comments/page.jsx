@@ -8,6 +8,69 @@ import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import usuarioImg from "@/react/components/imagenes/usuario.jpg";
 
+// Mapeo determinístico y local igual que en places/page.jsx
+const mapeoImagenesDeterministico = {
+  'Lago De La Pradera': '/imagenes/Lago.jpeg',
+  'La Laguna Del Otún': '/imagenes/laguna.jpg',
+  'Laguna Del Otún': '/imagenes/laguna.jpg',
+  'Chorros De Don Lolo': '/imagenes/lolo-2.jpg',
+  'Termales de Santa Rosa': '/imagenes/termaales.jpg',
+  'Parque Acuático Consota': '/imagenes/consota.jpg',
+  'Balneario Los Farallones': '/imagenes/farallones.jpeg',
+  'Cascada Los Frailes': '/imagenes/frailes3.jpg',
+  'Río San José': '/imagenes/sanjose3.jpg',
+  'Rio San Jose': '/imagenes/sanjose3.jpg',
+  'Alto Del Nudo': '/imagenes/nudo.jpg',
+  'Alto Del Toro': '/imagenes/toro.jpg',
+  'La Divisa De Don Juan': '/imagenes/divisa3.jpeg',
+  'Cerro Batero': '/imagenes/batero.jpg',
+  'Reserva Forestal La Nona': '/imagenes/lanona5.jpg',
+  'Reserva Natural Cerro Gobia': '/imagenes/gobia.jpg',
+  'Kaukitá Bosque Reserva': '/imagenes/kaukita3.jpg',
+  'Kaukita Bosque Reserva': '/imagenes/kaukita3.jpg',
+  'Reserva Natural DMI Agualinda': '/imagenes/distritomanejo8.jpg',
+  'Parque Nacional Natural Tatamá': '/imagenes/tatama.jpg',
+  'Parque Nacional Natural Tatama': '/imagenes/tatama.jpg',
+  'Parque Las Araucarias': '/imagenes/araucarias.jpg',
+  'Parque Regional Natural Cuchilla de San Juan': '/imagenes/cuchilla.jpg',
+  'Parque Natural Regional Santa Emilia': '/imagenes/santaemilia2.jpg',
+  'Jardín Botánico UTP': '/imagenes/jardin.jpeg',
+  'Jardin Botanico UTP': '/imagenes/jardin.jpeg',
+  'Jardín Botánico De Marsella': '/imagenes/jardinmarsella2.jpg',
+  'Jardin Botanico De Marsella': '/imagenes/jardinmarsella2.jpg',
+};
+
+const mapeoImagenesLocales = {
+  'lago de la pradera': '/imagenes/Lago.jpeg',
+  'la laguna del otún': '/imagenes/laguna.jpg',
+  'laguna del otún': '/imagenes/laguna.jpg',
+  'chorros de don lolo': '/imagenes/lolo-2.jpg',
+  'termales de santa rosa': '/imagenes/termaales.jpg',
+  'parque acuático consota': '/imagenes/consota.jpg',
+  'balneario los farallones': '/imagenes/farallones.jpeg',
+  'cascada los frailes': '/imagenes/frailes3.jpg',
+  'río san josé': '/imagenes/sanjose3.jpg',
+  'rio san jose': '/imagenes/sanjose3.jpg',
+  'alto del nudo': '/imagenes/nudo.jpg',
+  'alto del toro': '/imagenes/toro.jpg',
+  'la divisa de don juan': '/imagenes/divisa3.jpeg',
+  'cerro batero': '/imagenes/batero.jpg',
+  'reserva forestal la nona': '/imagenes/lanona5.jpg',
+  'reserva natural cerro gobia': '/imagenes/gobia.jpg',
+  'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
+  'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
+  'reserva natural dmi agualinda': '/imagenes/distritomanejo8.jpg',
+  'parque nacional natural tatamá': '/imagenes/tatama.jpg',
+  'parque nacional natural tatama': '/imagenes/tatama.jpg',
+  'parque las araucarias': '/imagenes/araucarias.jpg',
+  'parque regional natural cuchilla de san juan': '/imagenes/cuchilla.jpg',
+  'parque natural regional santa emilia': '/imagenes/santaemilia2.jpg',
+  'jardín botánico utp': '/imagenes/jardin.jpeg',
+  'jardin botanico utp': '/imagenes/jardin.jpeg',
+  'jardín botánico de marsella': '/imagenes/jardinmarsella2.jpg',
+  'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
+};
+
 const CommentsPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
@@ -135,83 +198,128 @@ const CommentsPage = () => {
           </div>
         )}
 
-        {/* Sección de reseñas */}
+        {/* Sección de reseñas separadas */}
         <section className="review-content">
-          {loading ? (
-            <div style={{ 
-              gridColumn: "1 / -1", 
-              textAlign: "center", 
-              padding: "40px",
-              color: "#666"
-            }}>
-              <p>Cargando reseñas...</p>
-            </div>
-          ) : reviews.length === 0 ? (
-            <div style={{ 
-              gridColumn: "1 / -1", 
-              textAlign: "center", 
-              padding: "40px",
-              color: "#666"
-            }}>
-              <p style={{ fontSize: "1.2em" }}>Aún no hay reseñas. ¡Sé el primero en comentar!</p>
-            </div>
-          ) : (
-            reviews.map((review) => (
-              <div className="box" key={review.id}>
-                <p>
-                  {review.comment || "Sin comentario"}
-                </p>
-                {review.place && (
-                  <p style={{ 
-                    fontSize: "0.85rem", 
-                    color: "#2ecc71", 
-                    marginBottom: "10px",
-                    fontWeight: "500"
-                  }}>
-                    📍 {review.place.name}
-                    {review.place.location && ` - ${review.place.location}`}
-                  </p>
-                )}
-                <div className="in-box">
-                  <div className="bx-img">
-                    <img 
-                      src={review.usuario?.foto_perfil || usuarioImg} 
-                      alt={review.usuario?.name || "Usuario"}
-                      onError={(e) => {
-                        e.target.src = usuarioImg;
-                      }}
-                    />
-                  </div>
-                  <div className="bxx-text">
-                    <h4>{review.usuario?.name || "Usuario"}</h4>
-                    <h5>
-                      {review.comment 
-                        ? (review.comment.length > 60 
-                            ? review.comment.substring(0, 60) + "..." 
-                            : review.comment)
-                        : "Sin comentario"}
-                    </h5>
-                    <div className="ratings">
-                      {renderStars(review.rating)}
-                    </div>
-                    {review.fecha_comentario && (
-                      <p style={{ 
-                        fontSize: "0.75rem", 
-                        color: "#999", 
-                        marginTop: "5px" 
-                      }}>
-                        {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
-                    )}
-                  </div>
-                </div>
+          {/* Reseñas de Lugares */}
+          <div style={{background:'#e8f5e9',borderRadius:'18px',padding:'2.5rem 1.5rem 2rem 1.5rem',margin:'2rem 0 2.5rem 0',boxShadow:'0 6px 32px #2c5f2d22'}}>
+            <h2 style={{color:'#2c5f2d',fontWeight:800,letterSpacing:1.2,fontSize:'2.1rem',marginBottom:'1.5rem',textAlign:'center',textShadow:'0 2px 8px #2c5f2d11'}}>🌿 Reseñas de Lugares</h2>
+            <div style={{display:'flex',flexWrap:'wrap',gap:'2.5rem',justifyContent:'center'}}>
+            {reviews.filter(r => r.place || (r.reviewable && r.reviewable_type === 'App\\Models\\Place')).length === 0 ? (
+              <div style={{textAlign: "center", padding: "20px", color: "#666"}}>
+                <p>No hay reseñas de lugares.</p>
               </div>
-            ))
-          )}
+            ) : (
+              reviews.filter(r => r.place || (r.reviewable && r.reviewable_type === 'App\\Models\\Place')).map((review) => {
+                const place = review.place || (review.reviewable_type === 'App\\Models\\Place' ? review.reviewable : null);
+                if (!place) return null;
+                // Normalizar nombre para buscar en mapeos
+                const normalizarNombre = (str) => {
+                  if (!str) return '';
+                  return str
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                };
+                const nombreOriginal = place.name || '';
+                const nombreLugar = normalizarNombre(nombreOriginal);
+                // Prioridad: imagen subida (storage), luego mapeo determinístico, luego mapeo local, luego placeholder
+                let imagenSrc = null;
+                if (place.image && (
+                  place.image.includes('/storage/places/') ||
+                  place.image.startsWith('/storage/') ||
+                  place.image.includes('storage/places') ||
+                  (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+                )) {
+                  imagenSrc = place.image;
+                } else {
+                  imagenSrc = mapeoImagenesDeterministico[nombreOriginal]
+                    || mapeoImagenesLocales[nombreLugar]
+                    || '/imagenes/placeholder.jpg';
+                }
+                return (
+                  <div className="box" key={review.id} style={{background:'#fff',borderRadius:14,boxShadow:'0 4px 24px #0001',padding:'1.5rem',width:320,maxWidth:'90vw',transition:'transform 0.2s',border:'1.5px solid #c8e6c9'}}>
+                    <Link to={`/lugares/${place.id}`} style={{display:'block',marginBottom:'10px',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 8px #0002'}}>
+                      <img
+                        src={imagenSrc}
+                        alt={place.name}
+                        style={{width: '100%', height: 140, objectFit: 'cover', borderRadius: 10,transition:'transform 0.2s'}}
+                        onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                      />
+                    </Link>
+                    <p style={{fontWeight:700, color:'#2c5f2d', margin:'8px 0 4px 0',fontSize:'1.15rem'}}>{place.name}</p>
+                    <p style={{fontSize:'0.98rem', color:'#888', marginBottom:8}}>{place.location}</p>
+                    <p style={{margin:'10px 0',fontSize:'1.05rem',color:'#222'}}>{review.comment || "Sin comentario"}</p>
+                    <div className="in-box" style={{marginTop:10}}>
+                      <div className="bx-img">
+                        <img 
+                          src={review.usuario?.foto_perfil || usuarioImg} 
+                          alt={review.usuario?.name || "Usuario"}
+                          onError={(e) => { e.target.src = usuarioImg; }}
+                        />
+                      </div>
+                      <div className="bxx-text">
+                        <h4 style={{fontWeight:600}}>{review.usuario?.name || "Usuario"}</h4>
+                        <div className="ratings">{renderStars(review.rating)}</div>
+                        {review.fecha_comentario && (
+                          <p style={{fontSize: "0.75rem", color: "#999", marginTop: "5px"}}>
+                            {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            </div>
+          </div>
+
+          {/* Reseñas de Ecohoteles */}
+          <div style={{background:'#e3f2fd',borderRadius:'18px',padding:'2.5rem 1.5rem 2rem 1.5rem',margin:'2rem 0 2.5rem 0',boxShadow:'0 6px 32px #1976d222'}}>
+            <h2 style={{color:'#1976d2',fontWeight:800,letterSpacing:1.2,fontSize:'2.1rem',marginBottom:'1.5rem',textAlign:'center',textShadow:'0 2px 8px #1976d211'}}>🏨 Reseñas de Ecohoteles</h2>
+            <div style={{display:'flex',flexWrap:'wrap',gap:'2.5rem',justifyContent:'center'}}>
+            {reviews.filter(r => r.ecohotel || (r.reviewable && r.reviewable_type === 'App\\Models\\Ecohotel')).length === 0 ? (
+              <div style={{textAlign: "center", padding: "20px", color: "#666"}}>
+                <p>No hay reseñas de ecohoteles.</p>
+              </div>
+            ) : (
+              reviews.filter(r => r.ecohotel || (r.reviewable && r.reviewable_type === 'App\\Models\\Ecohotel')).map((review) => {
+                const ecohotel = review.ecohotel || (review.reviewable_type === 'App\\Models\\Ecohotel' ? review.reviewable : null);
+                if (!ecohotel) return null;
+                return (
+                  <div className="box" key={review.id} style={{background:'#fff',borderRadius:14,boxShadow:'0 4px 24px #0001',padding:'1.5rem',width:320,maxWidth:'90vw',transition:'transform 0.2s',border:'1.5px solid #90caf9'}}>
+                    <Link to={`/ecohoteles/${ecohotel.id}`} style={{display:'block',marginBottom:'10px',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 8px #0002'}}>
+                      <img src={ecohotel.image || '/imagenes/placeholder.jpg'} alt={ecohotel.name} style={{width: '100%', height: 140, objectFit: 'cover', borderRadius: 10,transition:'transform 0.2s'}} />
+                    </Link>
+                    <p style={{fontWeight:700, color:'#1976d2', margin:'8px 0 4px 0',fontSize:'1.15rem'}}>{ecohotel.name}</p>
+                    <p style={{fontSize:'0.98rem', color:'#888', marginBottom:8}}>{ecohotel.location}</p>
+                    <p style={{margin:'10px 0',fontSize:'1.05rem',color:'#222'}}>{review.comment || "Sin comentario"}</p>
+                    <div className="in-box" style={{marginTop:10}}>
+                      <div className="bx-img">
+                        <img 
+                          src={review.usuario?.foto_perfil || usuarioImg} 
+                          alt={review.usuario?.name || "Usuario"}
+                          onError={(e) => { e.target.src = usuarioImg; }}
+                        />
+                      </div>
+                      <div className="bxx-text">
+                        <h4 style={{fontWeight:600}}>{review.usuario?.name || "Usuario"}</h4>
+                        <div className="ratings">{renderStars(review.rating)}</div>
+                        {review.fecha_comentario && (
+                          <p style={{fontSize: "0.75rem", color: "#999", marginTop: "5px"}}>
+                            {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            </div>
+          </div>
         </section>
 
         {/* Formulario de comentarios */}
