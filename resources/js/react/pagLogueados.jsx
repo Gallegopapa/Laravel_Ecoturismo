@@ -148,9 +148,10 @@ const PagLogueados = () => {
 
     const renderDestinoRating = (destinoId) => {
         const ratingValue = Number(destinoRatings[destinoId] ?? 0);
-        const displayRating = Number.isFinite(ratingValue)
-            ? ratingValue.toFixed(1)
-            : "0.0";
+        if (!Number.isFinite(ratingValue) || ratingValue === 0) {
+            return <span className="rating" style={{ color: '#888' }}>Sin reseñas</span>;
+        }
+        const displayRating = ratingValue.toFixed(1);
         return <span className="rating">★ {displayRating}</span>;
     };
 
