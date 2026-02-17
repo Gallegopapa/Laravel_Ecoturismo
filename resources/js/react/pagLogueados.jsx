@@ -266,14 +266,7 @@ const PagLogueados = () => {
                                 Gestiona tus viajes y ecohoteles de forma facil
                                 y segura.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEcohoteles}
-                                >
-                                    Ver ecohoteles
-                                </button>
-                            </div>
+                            
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -285,14 +278,7 @@ const PagLogueados = () => {
                             <p>
                                 Contribuye a la conservacion y desarrollo local.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEcohoteles}
-                                >
-                                    Ver destinos
-                                </button>
-                            </div>
+                            
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -304,14 +290,7 @@ const PagLogueados = () => {
                             <p>
                                 Accede a servicios de operadores certificados.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEmpresa}
-                                >
-                                    Ver empresas
-                                </button>
-                            </div>
+                            
                         </div>
                     </div>
                 </section>

@@ -307,14 +307,7 @@ const HomePage = ({ loggedIn, user }) => {
                                 Gestiona tus viajes y ecohoteles de forma fácil
                                 y segura.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEcohoteles}
-                                >
-                                    Ver ecohoteles
-                                </button>
-                            </div>
+                            
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -326,14 +319,7 @@ const HomePage = ({ loggedIn, user }) => {
                             <p>
                                 Contribuye a la conservación y desarrollo local.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEcohoteles}
-                                >
-                                    Ver destinos
-                                </button>
-                            </div>
+                            
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -345,14 +331,7 @@ const HomePage = ({ loggedIn, user }) => {
                             <p>
                                 Accede a servicios de operadores certificados.
                             </p>
-                            <div className="caracteristica-btn-container">
-                                <button
-                                    className="btn-terciary"
-                                    onClick={goEmpresa}
-                                >
-                                    Ver empresas
-                                </button>
-                            </div>
+                            
                         </div>
                     </div>
                 </section>
