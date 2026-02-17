@@ -94,15 +94,16 @@
 
 .lugar-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  position: relative;
+  width: 100%;
 }
 
 .lugar-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
 }
 
 .lugar-card a {
@@ -118,13 +119,8 @@
 
 .lugar-image img {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.lugar-card:hover .lugar-image img {
-  transform: scale(1.05);
 }
 
 .lugar-info {
@@ -132,23 +128,21 @@
 }
 
 .lugar-info h3 {
-  font-size: 1.5rem;
-  color: #2c5f2d;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #2d3436;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  /* -webkit-line-clamp: 2; */
   -webkit-box-orient: vertical;
   word-break: break-word;
-  min-height: 3.2em;
 }
 
 .lugar-location,
 .lugar-phone {
-  font-size: 0.95rem;
-  color: #666;
-  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #636e72;
+  margin: 0;
 }
 
 .lugar-categories {
@@ -159,12 +153,13 @@
 }
 
 .category-tag {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   background-color: #e8f5e9;
   color: #2c5f2d;
-  border-radius: 15px;
-  font-size: 0.85rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   border: 1px solid #c8e6c9;
+  font-weight: 500;
 }
 
 .no-results {
