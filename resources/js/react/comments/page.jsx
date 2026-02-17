@@ -198,127 +198,99 @@ const CommentsPage = () => {
           </div>
         )}
 
-        {/* Sección de reseñas separadas */}
-        <section className="review-content">
-          {/* Reseñas de Lugares */}
-          <div style={{background:'#e8f5e9',borderRadius:'18px',padding:'2.5rem 1.5rem 2rem 1.5rem',margin:'2rem 0 2.5rem 0',boxShadow:'0 6px 32px #2c5f2d22'}}>
-            <h2 style={{color:'#2c5f2d',fontWeight:800,letterSpacing:1.2,fontSize:'2.1rem',marginBottom:'1.5rem',textAlign:'center',textShadow:'0 2px 8px #2c5f2d11'}}>🌿 Reseñas de Lugares</h2>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'2.5rem',justifyContent:'center'}}>
-            {reviews.filter(r => r.place || (r.reviewable && r.reviewable_type === 'App\\Models\\Place')).length === 0 ? (
+        {/* Tarjetas de comentarios en un solo bloque */}
+        <section className="review-content" style={{padding: '2rem 0'}}>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'2.5rem',justifyContent:'flex-start'}}>
+            {reviews.length === 0 ? (
               <div style={{textAlign: "center", padding: "20px", color: "#666"}}>
-                <p>No hay reseñas de lugares.</p>
+                <p>No hay reseñas.</p>
               </div>
             ) : (
-              reviews.filter(r => r.place || (r.reviewable && r.reviewable_type === 'App\\Models\\Place')).map((review) => {
-                const place = review.place || (review.reviewable_type === 'App\\Models\\Place' ? review.reviewable : null);
-                if (!place) return null;
-                // Normalizar nombre para buscar en mapeos
-                const normalizarNombre = (str) => {
-                  if (!str) return '';
-                  return str
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-                };
-                const nombreOriginal = place.name || '';
-                const nombreLugar = normalizarNombre(nombreOriginal);
-                // Prioridad: imagen subida (storage), luego mapeo determinístico, luego mapeo local, luego placeholder
-                let imagenSrc = null;
-                if (place.image && (
-                  place.image.includes('/storage/places/') ||
-                  place.image.startsWith('/storage/') ||
-                  place.image.includes('storage/places') ||
-                  (place.image.startsWith('http') && place.image.includes('/storage/places/'))
-                )) {
-                  imagenSrc = place.image;
-                } else {
-                  imagenSrc = mapeoImagenesDeterministico[nombreOriginal]
-                    || mapeoImagenesLocales[nombreLugar]
-                    || '/imagenes/placeholder.jpg';
+              reviews.map((review) => {
+                // Determinar el nombre y ubicación del lugar/ecohotel si existe
+                let nombreLugar = '';
+                let ubicacionLugar = '';
+                let imagenLugar = '';
+                if (review.place || (review.reviewable && review.reviewable_type === 'App\\Models\\Place')) {
+                  const place = review.place || (review.reviewable_type === 'App\\Models\\Place' ? review.reviewable : null);
+                  if (place) {
+                    nombreLugar = place.name || '';
+                    ubicacionLugar = place.location || '';
+                    // Imagen lógica igual que antes
+                    const normalizarNombre = (str) => {
+                      if (!str) return '';
+                      return str
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                    };
+                    const nombreOriginal = place.name || '';
+                    const nombreLugarNorm = normalizarNombre(nombreOriginal);
+                    if (place.image && (
+                      place.image.includes('/storage/places/') ||
+                      place.image.startsWith('/storage/') ||
+                      place.image.includes('storage/places') ||
+                      (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+                    )) {
+                      imagenLugar = place.image;
+                    } else {
+                      imagenLugar = mapeoImagenesDeterministico[nombreOriginal]
+                        || mapeoImagenesLocales[nombreLugarNorm]
+                        || '/imagenes/placeholder.jpg';
+                    }
+                  }
+                } else if (review.ecohotel || (review.reviewable && review.reviewable_type === 'App\\Models\\Ecohotel')) {
+                  const ecohotel = review.ecohotel || (review.reviewable_type === 'App\\Models\\Ecohotel' ? review.reviewable : null);
+                  if (ecohotel) {
+                    nombreLugar = ecohotel.name || '';
+                    ubicacionLugar = ecohotel.location || '';
+                    imagenLugar = ecohotel.image || '/imagenes/placeholder.jpg';
+                  }
                 }
                 return (
-                  <div className="box" key={review.id} style={{background:'#fff',borderRadius:14,boxShadow:'0 4px 24px #0001',padding:'1.5rem',width:320,maxWidth:'90vw',transition:'transform 0.2s',border:'1.5px solid #c8e6c9'}}>
-                    <Link to={`/lugares/${place.id}`} style={{display:'block',marginBottom:'10px',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 8px #0002'}}>
-                      <img
-                        src={imagenSrc}
-                        alt={place.name}
-                        style={{width: '100%', height: 140, objectFit: 'cover', borderRadius: 10,transition:'transform 0.2s'}}
-                        onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
-                      />
-                    </Link>
-                    <p style={{fontWeight:700, color:'#2c5f2d', margin:'8px 0 4px 0',fontSize:'1.15rem'}}>{place.name}</p>
-                    <p style={{fontSize:'0.98rem', color:'#888', marginBottom:8}}>{place.location}</p>
-                    <p style={{margin:'10px 0',fontSize:'1.05rem',color:'#222'}}>{review.comment || "Sin comentario"}</p>
-                    <div className="in-box" style={{marginTop:10}}>
-                      <div className="bx-img">
-                        <img 
-                          src={review.usuario?.foto_perfil || usuarioImg} 
-                          alt={review.usuario?.name || "Usuario"}
-                          onError={(e) => { e.target.src = usuarioImg; }}
-                        />
-                      </div>
-                      <div className="bxx-text">
-                        <h4 style={{fontWeight:600}}>{review.usuario?.name || "Usuario"}</h4>
-                        <div className="ratings">{renderStars(review.rating)}</div>
-                        {review.fecha_comentario && (
-                          <p style={{fontSize: "0.75rem", color: "#999", marginTop: "5px"}}>
-                            {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}
-                          </p>
+                  <div key={review.id} style={{background:'#fff',borderRadius:'18px',boxShadow:'0 2px 12px #0001',padding:'2rem 1.5rem 1.5rem 1.5rem',width:340,maxWidth:'95vw',marginBottom:'1.5rem',display:'flex',flexDirection:'column',alignItems:'flex-start',position:'relative'}}>
+                    <div style={{display:'flex',alignItems:'center',marginBottom:'1rem',gap:'1rem'}}>
+                      <img src={imagenLugar || '/imagenes/placeholder.jpg'} alt={nombreLugar} style={{width:60,height:60,objectFit:'cover',borderRadius:'50%',border:'2px solid #eee',background:'#fafafa'}} onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }} />
+                      <div>
+                        <div style={{fontWeight:700,fontSize:'1.1rem',color:'#222',marginBottom:'2px'}}>{nombreLugar || <span style={{color:'#bbb'}}>Sin lugar</span>}</div>
+                        {ubicacionLugar && (
+                          <div style={{fontSize:'0.95rem',color:'#43a047',marginBottom:'2px'}}>
+                            <span role="img" aria-label="ubicación">📍</span> {ubicacionLugar}
+                          </div>
                         )}
                       </div>
                     </div>
+                    <div style={{display:'flex',alignItems:'center',gap:'1rem',marginBottom:'0.5rem'}}>
+                      <img src={review.usuario?.foto_perfil || usuarioImg} alt={review.usuario?.name || "Usuario"} style={{width:48,height:48,borderRadius:'50%',border:'2px solid #e0e0e0',background:'#f5f5f5'}} onError={e => { e.target.src = usuarioImg; }} />
+                      <div>
+                        <div style={{fontWeight:600,fontSize:'1rem',color:'#222'}}>{review.usuario?.name || "Usuario"}</div>
+                        <div style={{fontSize:'0.98rem',color:'#888'}}>{review.comment || "Sin comentario"}</div>
+                      </div>
+                    </div>
+                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.5rem'}}>
+                      <div>{renderStars(review.rating)}</div>
+                      {review.fecha_comentario && (
+                        <span style={{fontSize:'0.92rem',color:'#888',marginLeft:'0.5rem'}}>
+                          {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}
+                        </span>
+                      )}
+                    </div>
+                    {isAuthenticated && user && review.usuario && review.usuario.id === user.id && (
+                      <div style={{display:'flex',gap:'0.5rem',marginTop:'0.5rem'}}>
+                        <button style={{background:'#1976d2',color:'#fff',border:'none',borderRadius:'6px',padding:'8px 18px',fontWeight:600,cursor:'pointer',fontSize:'1rem'}}>
+                          Editar
+                        </button>
+                        <button style={{background:'#e53935',color:'#fff',border:'none',borderRadius:'6px',padding:'8px 18px',fontWeight:600,cursor:'pointer',fontSize:'1rem'}}>
+                          Eliminar
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })
             )}
-            </div>
-          </div>
-
-          {/* Reseñas de Ecohoteles */}
-          <div style={{background:'#e3f2fd',borderRadius:'18px',padding:'2.5rem 1.5rem 2rem 1.5rem',margin:'2rem 0 2.5rem 0',boxShadow:'0 6px 32px #1976d222'}}>
-            <h2 style={{color:'#1976d2',fontWeight:800,letterSpacing:1.2,fontSize:'2.1rem',marginBottom:'1.5rem',textAlign:'center',textShadow:'0 2px 8px #1976d211'}}>🏨 Reseñas de Ecohoteles</h2>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'2.5rem',justifyContent:'center'}}>
-            {reviews.filter(r => r.ecohotel || (r.reviewable && r.reviewable_type === 'App\\Models\\Ecohotel')).length === 0 ? (
-              <div style={{textAlign: "center", padding: "20px", color: "#666"}}>
-                <p>No hay reseñas de ecohoteles.</p>
-              </div>
-            ) : (
-              reviews.filter(r => r.ecohotel || (r.reviewable && r.reviewable_type === 'App\\Models\\Ecohotel')).map((review) => {
-                const ecohotel = review.ecohotel || (review.reviewable_type === 'App\\Models\\Ecohotel' ? review.reviewable : null);
-                if (!ecohotel) return null;
-                return (
-                  <div className="box" key={review.id} style={{background:'#fff',borderRadius:14,boxShadow:'0 4px 24px #0001',padding:'1.5rem',width:320,maxWidth:'90vw',transition:'transform 0.2s',border:'1.5px solid #90caf9'}}>
-                    <Link to={`/ecohoteles/${ecohotel.id}`} style={{display:'block',marginBottom:'10px',borderRadius:10,overflow:'hidden',boxShadow:'0 2px 8px #0002'}}>
-                      <img src={ecohotel.image || '/imagenes/placeholder.jpg'} alt={ecohotel.name} style={{width: '100%', height: 140, objectFit: 'cover', borderRadius: 10,transition:'transform 0.2s'}} />
-                    </Link>
-                    <p style={{fontWeight:700, color:'#1976d2', margin:'8px 0 4px 0',fontSize:'1.15rem'}}>{ecohotel.name}</p>
-                    <p style={{fontSize:'0.98rem', color:'#888', marginBottom:8}}>{ecohotel.location}</p>
-                    <p style={{margin:'10px 0',fontSize:'1.05rem',color:'#222'}}>{review.comment || "Sin comentario"}</p>
-                    <div className="in-box" style={{marginTop:10}}>
-                      <div className="bx-img">
-                        <img 
-                          src={review.usuario?.foto_perfil || usuarioImg} 
-                          alt={review.usuario?.name || "Usuario"}
-                          onError={(e) => { e.target.src = usuarioImg; }}
-                        />
-                      </div>
-                      <div className="bxx-text">
-                        <h4 style={{fontWeight:600}}>{review.usuario?.name || "Usuario"}</h4>
-                        <div className="ratings">{renderStars(review.rating)}</div>
-                        {review.fecha_comentario && (
-                          <p style={{fontSize: "0.75rem", color: "#999", marginTop: "5px"}}>
-                            {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-            </div>
           </div>
         </section>
 
