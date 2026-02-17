@@ -44,8 +44,8 @@ body {
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
     margin: 0 auto;
     padding: 20px 0;
 }
@@ -68,7 +68,7 @@ body {
 
 .card-image{
     width: 100%;
-    height: 240px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,15 +87,15 @@ body {
 .card:hover .card-image img{ transform: scale(1.02); }
 
 .card-body{
-    padding: 14px 16px 10px 16px;
+    padding: 10px 12px 8px 12px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
 }
 
 .card h4 {
     margin: 0;
-    font-size: 1.18rem;
+    font-size: 1.12rem;
     color: #243238;
     font-weight: 700;
     text-align: left;
@@ -103,28 +103,27 @@ body {
 
 .ubicacion-text {
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     font-weight: 600;
     text-align: left;
 }
 
 .descripcion {
-    margin-top: 8px;
+    margin-top: 5px;
     color: var(--muted);
-    font-size: 0.92rem;
-    line-height: 1.45;
+    font-size: 0.85rem;
+    line-height: 1.4;
     flex-grow: 1;
     text-align: left;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-height: 140px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 /* Ensure all cards have same minimum height and footer sticks to bottom */
 .card{
-    min-height: 520px;
+    min-height: auto;
+    height: 100%;
 }
 
 .card .card-body{ flex: 1 1 auto; }
@@ -137,26 +136,7 @@ body {
 }
 
 /* Place favorito inside footer rather than absolute overlay */
-.favorito{
-    position: relative;
-    top: 0;
-    right: 0;
-    margin-left: auto;
-    background: transparent;
-    border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: none;
-    width: 42px;
-    height: 42px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 20px;
-}
 
-.favorito:hover{ transform: scale(1.05); background: rgba(46,204,113,0.06); }
-
-.favorito.active{ background: linear-gradient(180deg,#ff8a65,#ff5c3c); color:#fff; border:none; }
 
 /* Optional overlay link that covers most of the card but leaves footer clickable.
    If you want the whole card to link to the info page, wrap card content (except footer)
@@ -178,41 +158,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 12px 14px;
     border-top: 1px solid #e0e0e0;
     margin-top: auto;
-    gap: 12px;
+    gap: 10px;
 }
-
-/* Position favorite heart as overlay */
-.favorito{
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 4;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: var(--shadow-1);
-    cursor: pointer;
-    transition: transform 0.16s ease, background 0.16s ease;
-    font-size: 20px;
-}
-
-.favorito:hover{ transform: scale(1.06); background: rgba(46,204,113,0.08); }
-
-.favorito.active{
-    background: linear-gradient(180deg,#ff8a65,#ff5c3c);
-    color: #fff;
-    border: none;
-}
-
-.favorito svg{ pointer-events: none; }
 
 .action-buttons {
     display: flex;

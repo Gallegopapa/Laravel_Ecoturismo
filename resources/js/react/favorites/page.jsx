@@ -247,11 +247,7 @@ const FavoritesPage = () => {
                     <h4>{place.name || "Lugar sin nombre"}</h4>
                     <p className="ubicacion-text">{place.location || "Sin ubicación"}</p>
                     <p className="descripcion">
-                      {place.description 
-                        ? (place.description.length > 150 
-                            ? place.description.substring(0, 150) + "..." 
-                            : place.description)
-                        : "Sin descripción disponible"}
+                      {place.description ? place.description : "Sin descripción disponible"}
                     </p>
 
                     <div className="card-actions">
@@ -266,16 +262,9 @@ const FavoritesPage = () => {
                           </svg>
                           <span>Mapa</span>
                         </a>
-                        <Link 
-                          to={`/lugares/${place.id}`}
-                          className="info-button"
-                          style={{ textDecoration: 'none', display: 'inline-block' }}
-                        >
-                          Ver Detalles
-                        </Link>
                       </div>
                       <button 
-                        className="favorito favorito-active" 
+                        className="favorito" 
                         onClick={() => handleRemove(favorite.id, place.id || favorite.place_id)}
                         title="Quitar de favoritos"
                       >
@@ -315,4 +304,3 @@ const FavoritesPage = () => {
 };
 
 export default FavoritesPage;
-

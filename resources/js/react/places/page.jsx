@@ -596,13 +596,7 @@ const PlacesPage = () => {
                               </svg>
                               <span>Mapa</span>
                             </a>
-                            <Link 
-                              to={`/lugares/${lugar.id}`}
-                              className="info-button"
-                              style={{ textDecoration: 'none', display: 'inline-block' }}
-                            >
-                              Ver Detalles
-                            </Link>
+                            {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                           </div>
                           {isAuthenticated && (
                             <button 
@@ -617,7 +611,7 @@ const PlacesPage = () => {
                                 transform: updatingFavorites[lugar.id] ? "scale(0.9)" : "scale(1)"
                               }}
                             >
-                              {updatingFavorites[lugar.id] ? "..." : (isFavorite(lugar.id) ? "♥" : "♡")}
+                              {updatingFavorites[lugar.id] ? "⏳" : (isFavorite(lugar.id) ? "❤️" : "🤍")}
                             </button>
                           )}
                         </div>
@@ -693,7 +687,7 @@ const PlacesPage = () => {
                               transform: updatingFavorites[lugar.id] ? "scale(0.9)" : "scale(1)"
                             }}
                           >
-                            {updatingFavorites[lugar.id] ? "..." : (isFavorite(lugar.id) ? "♥" : "♡")}
+                            {updatingFavorites[lugar.id] ? "⏳" : (isFavorite(lugar.id) ? "❤️" : "🤍")}
                           </button>
                         )}
                       </div>

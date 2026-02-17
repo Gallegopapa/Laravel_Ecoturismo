@@ -131,7 +131,9 @@ body {
   transition: transform 0.3s ease;
   position: relative;
   width: 100%;
-  height: 400px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
@@ -154,6 +156,19 @@ body {
   color: #636e72;
   text-align: start;
   font-size: 0.9em;
+}
+
+/* Description block inside cards: limit height and add scroll to avoid enlarging cards */
+.descripcion {
+  color: #636e72;
+  text-align: start;
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin: 0 15px 12px 15px;
+  flex: 1 1 auto;
+  max-height: 140px;
+  overflow-y: auto;
+  padding-right: 6px; /* space for scrollbar */
 }
 
 /* Button Styles */

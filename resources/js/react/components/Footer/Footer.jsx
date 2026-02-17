@@ -16,7 +16,7 @@ const Footer = () => {
                 <span className="sep">|</span>
                 <Link to="/politica-de-privacidad">Política de privacidad</Link>
                 <span className="sep">|</span>
-                <Link to="/CopyrightTotal">Copyright-EcoTurismo</Link>
+                <Link to="/CopyrightTotal">Copyright EcoTurismo</Link>
               </p>
             </div>
           </footer>
