@@ -362,7 +362,11 @@ export const adminService = {
       if (placeData.description) formData.append('description', placeData.description);
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
-      if (placeData.image) formData.append('image', placeData.image);
+      
+      // Solo agregar imagen si es un File object (nueva imagen)
+      if (placeData.image instanceof File) {
+        formData.append('image', placeData.image);
+      }
       
       // Agregar categorías como array (incluso si está vacío para sincronizar)
       if (placeData.categories !== undefined) {
