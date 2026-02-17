@@ -55,7 +55,6 @@ class AdminUserController extends Controller
                 return [
                     'id' => $place->id,
                     'name' => $place->name,
-                    'rol' => $place->pivot->rol,
                     'es_principal' => $place->pivot->es_principal,
                 ];
             });
@@ -77,7 +76,6 @@ class AdminUserController extends Controller
             'tipo_usuario' => 'required|in:normal,empresa,admin',
             'lugares' => 'nullable|array',
             'lugares.*.place_id' => 'required_with:lugares|integer|exists:places,id',
-            'lugares.*.rol' => 'required_with:lugares|in:gerente,recepcionista,admin',
             'lugares.*.es_principal' => 'nullable|boolean',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
@@ -162,7 +160,6 @@ class AdminUserController extends Controller
             'tipo_usuario' => 'sometimes|required|in:normal,empresa,admin',
             'lugares' => 'nullable|array',
             'lugares.*.place_id' => 'required_with:lugares|integer|exists:places,id',
-            'lugares.*.rol' => 'required_with:lugares|in:gerente,recepcionista,admin',
             'lugares.*.es_principal' => 'nullable|boolean',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
@@ -252,7 +249,6 @@ class AdminUserController extends Controller
         
         foreach ($lugares as $lugar) {
             $placeAssignments[$lugar['place_id']] = [
-                'rol' => $lugar['rol'] ?? 'gerente',
                 'es_principal' => $lugar['es_principal'] ?? false,
                 'created_at' => now(),
                 'updated_at' => now(),
