@@ -152,7 +152,7 @@ body {
 
 .card p {
   color: #636e72;
-  margin: 0 15px;
+  text-align: start;
   font-size: 0.9em;
 }
 
