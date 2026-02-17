@@ -105,7 +105,7 @@ class Place extends Model
     public function companyUsers()
     {
         return $this->belongsToMany(Usuarios::class, 'place_company_users', 'place_id', 'company_user_id')
-                    ->withPivot('rol', 'es_principal')
+                    ->withPivot('es_principal')
                     ->withTimestamps();
     }
 

@@ -110,7 +110,7 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
     public function placesManaged()
     {
         return $this->belongsToMany(Place::class, 'place_company_users', 'company_user_id', 'place_id')
-                    ->withPivot('rol', 'es_principal')
+                    ->withPivot('es_principal')
                     ->withTimestamps();
     }
 
