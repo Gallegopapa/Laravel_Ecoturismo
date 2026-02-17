@@ -43,23 +43,11 @@ const EcohotelsPage = () => {
   const [ecohotels, setEcohotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
-  const [categorias, setCategorias] = useState([]);
+  // Eliminado filtro de categorías
 
   useEffect(() => {
     loadEcohotels();
-    loadCategories();
   }, []);
-
-  const loadCategories = async () => {
-    try {
-      const response = await fetch("/api/categories");
-      const data = await response.json();
-      setCategorias(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error al cargar categorías:", error);
-    }
-  };
 
   const loadEcohotels = async () => {
     try {
@@ -75,15 +63,8 @@ const EcohotelsPage = () => {
     }
   };
 
-  const handleCategoryFilter = (categoria) => {
-    setCategoriaFiltro(categoria);
-  };
-
-  const ecohotelesFiltrados = categoriaFiltro === "todas"
-    ? ecohotels
-    : ecohotels.filter((ecohotel) =>
-        ecohotel.categories?.some((cat) => cat.id === categoriaFiltro)
-      );
+  // Eliminado filtro de categorías, mostrar todos los ecohoteles
+  const ecohotelesFiltrados = ecohotels;
 
   if (loading) {
     return (
@@ -114,24 +95,7 @@ const EcohotelsPage = () => {
             </div>
           )}
 
-          {/* Filtros por categoría */}
-          <div className="filtros-container">
-            <button
-              className={`filtro-btn ${categoriaFiltro === "todas" ? "active" : ""}`}
-              onClick={() => handleCategoryFilter("todas")}
-            >
-              Todas
-            </button>
-            {categorias.map((categoria) => (
-              <button
-                key={categoria.id}
-                className={`filtro-btn ${categoriaFiltro === categoria.id ? "active" : ""}`}
-                onClick={() => handleCategoryFilter(categoria.id)}
-              >
-                {categoria.name}
-              </button>
-            ))}
-          </div>
+          {/* Filtros por categoría eliminados */}
 
           {/* Grid de ecohoteles */}
           <div className="lugares-grid">
