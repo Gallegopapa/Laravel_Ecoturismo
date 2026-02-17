@@ -29,7 +29,7 @@ const destinos = [
     },
     {
         id: 17,
-        img: "/imagenes/mirador.jpg",
+        img: "/imagenes/divisa.jpg",
         title: "La Divisa De Don Juan",
         desc: "combinando belleza natural, cultura local y hospitalidad campesina.",
     },
