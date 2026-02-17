@@ -270,9 +270,8 @@ const Comments2Page = () => {
                     color: "#1976d2",
                     fontSize: "1.15rem",
                     fontWeight: "700",
-                    textDecoration: 'underline',
                   }}>
-                    <Link to={`/lugares/${review.place.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.place.name}</Link>
+                    <Link to={`/lugares/${review.place.id}`} style={{color:'#1976d2',textDecoration:'none',cursor:'pointer'}}>{review.place.name}</Link>
                     {review.place.location && (
                       <span style={{color:'#2ecc71',fontWeight:500,fontSize:'0.95rem'}}> - {review.place.location}</span>
                     )}
@@ -284,9 +283,8 @@ const Comments2Page = () => {
                     color: "#1976d2",
                     fontSize: "1.15rem",
                     fontWeight: "700",
-                    textDecoration: 'underline',
                   }}>
-                    <Link to={`/ecohoteles/${review.ecohotel.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.ecohotel.name}</Link>
+                    <Link to={`/ecohoteles/${review.ecohotel.id}`} style={{color:'#1976d2',textDecoration:'none',cursor:'pointer'}}>{review.ecohotel.name}</Link>
                   </h3>
                 )}
                 {/* Comentario debajo del título */}
