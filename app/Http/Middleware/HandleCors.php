@@ -13,20 +13,26 @@ class HandleCors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Orígenes permitidos
-        $allowedOrigins = [
+        $configuredOrigins = array_filter(array_map('trim', explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))));
+
+        // Orígenes permitidos (desarrollo + configurables por entorno)
+        $allowedOrigins = array_unique(array_filter([
+            ...$configuredOrigins,
+            rtrim((string) env('FRONTEND_URL', ''), '/'),
+            rtrim((string) config('app.url', ''), '/'),
             'http://localhost:8000',
             'http://127.0.0.1:8000',
             'http://localhost:5173',
             'http://127.0.0.1:5173',
             'http://localhost:3000',
             'http://127.0.0.1:3000',
-        ];
+        ]));
 
         $origin = $request->headers->get('Origin');
 
-        // Si el origen está permitido, usarlo; si no, usar el primero
-        $allowedOrigin = in_array($origin, $allowedOrigins) ? $origin : $allowedOrigins[0];
+        // Si el origen está permitido, usarlo; si no, usar APP_URL/FRONTEND_URL como fallback
+        $fallbackOrigin = rtrim((string) env('FRONTEND_URL', config('app.url', 'http://localhost:8000')), '/');
+        $allowedOrigin = in_array($origin, $allowedOrigins, true) ? $origin : $fallbackOrigin;
 
         // Manejar preflight requests
         if ($request->getMethod() === 'OPTIONS') {

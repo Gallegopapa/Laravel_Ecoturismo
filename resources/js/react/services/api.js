@@ -2,7 +2,11 @@
 
 // Configurar la URL base de la API
 // Usar URL relativa si estÃ¡ en el mismo dominio, o absoluta si es necesario
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || '/api';
+const isLocalHost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_URL = !isLocalHost && typeof rawApiUrl === 'string' && rawApiUrl.includes('localhost')
+  ? '/api'
+  : rawApiUrl;
 
 // Crear instancia de axios
 const api = axios.create({
