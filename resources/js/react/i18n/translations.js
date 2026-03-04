@@ -34,6 +34,7 @@ export const translations = {
     spanish: 'Español',
     english: 'Inglés',
     closePanel: 'Cerrar panel',
+    accessibilityPanel: 'Panel de accesibilidad',
     openAccessibilityPanel: 'Abrir panel de accesibilidad',
     
     // Estados de configuración
@@ -120,6 +121,7 @@ export const translations = {
     spanish: 'Spanish',
     english: 'English',
     closePanel: 'Close panel',
+    accessibilityPanel: 'Accessibility panel',
     openAccessibilityPanel: 'Open accessibility panel',
     
     // Configuration states

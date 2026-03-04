@@ -123,7 +123,21 @@ export const authService = {
 export const placesService = {
   getAll: async (params = {}) => {
     const response = await api.get('/places', { params });
-    return response.data;
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.places)) {
+      return payload.places;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
   getById: async (id) => {
@@ -185,7 +199,21 @@ export const reviewsService = {
     // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
   getAll: async () => {
     const response = await api.get('/reviews/all');
-    return response.data;
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.reviews)) {
+      return payload.reviews;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
 

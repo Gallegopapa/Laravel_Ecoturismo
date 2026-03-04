@@ -17,13 +17,6 @@ const Header2 = () => {
   // Verificar si es usuario empresa
   const isCompanyUser = user?.tipo_usuario === 'empresa';
 
-  // DEBUG: Mostrar datos del usuario en consola
-  useEffect(() => {
-    console.log('👤 User data:', user);
-    console.log('🏢 isCompanyUser:', isCompanyUser);
-    console.log('🏢 user?.tipo_usuario:', user?.tipo_usuario);
-  }, [user, isCompanyUser]);
-
   const togglePlacesMenu = () => {
     setOpenPlacesMenu((prev) => !prev);
     setOpenUserMenu(false); // Cerrar el otro menú
