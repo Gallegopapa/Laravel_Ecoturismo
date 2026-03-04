@@ -217,7 +217,21 @@ export const reviewsService = {
 export const favoritesService = {
   getAll: async () => {
     const response = await api.get('/favorites');
-    return response.data.favorites || response.data || [];
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.favorites)) {
+      return payload.favorites;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
   check: async (placeId) => {
