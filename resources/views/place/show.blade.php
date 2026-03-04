@@ -192,7 +192,7 @@
             <div style="margin:30px 0; padding:20px; background:#f9f9f9; border-radius:10px;">
                 <h3>Acciones</h3>
                 <div style="display:flex; gap:15px; flex-wrap:wrap; margin-top:15px;">
-                    <a href="{{ route('reservations.create', $place) }}" style="background:#24a148; color:#fff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:600;">Reservar Ahora</a>
+                    <a href="{{ route('web.reservations.create', $place) }}" style="background:#24a148; color:#fff; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:600;">Reservar Ahora</a>
                     <button id="btn-favorite" style="background:#ffc107; color:#1c1c1a; padding:12px 24px; border-radius:8px; border:none; cursor:pointer; font-weight:600;">⭐ Agregar a Favoritos</button>
                 </div>
             </div>

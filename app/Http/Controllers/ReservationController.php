@@ -168,7 +168,7 @@ class ReservationController extends Controller
             'estado' => 'pendiente',
         ]);
 
-        return redirect()->route('reservations.index')->with('status', 'Reserva creada correctamente.');
+        return redirect()->route('web.reservations.index')->with('status', 'Reserva creada correctamente.');
     }
 
     public function destroy(Reservation $reservation)
@@ -178,6 +178,6 @@ class ReservationController extends Controller
         }
 
         $reservation->delete();
-        return redirect()->route('reservations.index')->with('status', 'Reserva cancelada.');
+        return redirect()->route('web.reservations.index')->with('status', 'Reserva cancelada.');
     }
 }
