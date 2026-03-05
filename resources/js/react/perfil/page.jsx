@@ -28,54 +28,33 @@ const PerfilPage = () => {
       return usuarioImg;
     }
 
-    // Normaliza URLs antiguas guardadas con localhost a ruta relativa.
-    try {
-      if (/^https?:\/\//i.test(rawUrl)) {
-        const parsed = new URL(rawUrl);
-        if (parsed.pathname && parsed.pathname.startsWith('/storage/')) {
-          return `${parsed.pathname}?t=${Date.now()}`;
-        }
-      }
-    } catch (error) {
-      // Si no se puede parsear, usamos la URL tal cual.
+    // Si es URL absoluta (completa con https://), devolverla tal cual
+    if (/^https?:\/\//i.test(rawUrl)) {
+      return `${rawUrl}?t=${Date.now()}`;
     }
 
-    return rawUrl.includes('?') ? `${rawUrl}&t=${Date.now()}` : `${rawUrl}?t=${Date.now()}`;
+    // Si es ruta relativa (/storage/...), devolverla con cache buster
+    if (rawUrl.startsWith('/')) {
+      return `${rawUrl}?t=${Date.now()}`;
+    }
+
+    // Fallback: agregar /storage/ si falta
+    return `/storage/${rawUrl}?t=${Date.now()}`;
   };
 
   useEffect(() => {
-    const candidate = previewImage || usuarioImg;
-
-    if (candidate === usuarioImg) {
-      console.log('Usando imagen por defecto');
+    if (previewImage) {
+      // Si hay preview local (FileReader DataURL), usar directamente
+      if (previewImage.startsWith('data:')) {
+        setDisplayImage(previewImage);
+      } else {
+        // Si es URL del servidor, resolver y mostrar
+        setDisplayImage(resolveProfileImageUrl(previewImage));
+      }
+    } else {
+      // Sin preview, usar la foto actual del usuario
       setDisplayImage(usuarioImg);
-      return;
     }
-
-    let cancelled = false;
-    const tester = new Image();
-
-    tester.onload = () => {
-      console.log('✅ Imagen cargada correctamente:', candidate);
-      if (!cancelled) {
-        setDisplayImage(candidate);
-      }
-    };
-
-    tester.onerror = () => {
-      console.error('❌ Error al cargar imagen:', candidate);
-      if (!cancelled) {
-        console.log('⚠️ Fallback a imagen por defecto');
-        setDisplayImage(usuarioImg);
-      }
-    };
-
-    console.log('🔍 Validando imagen:', candidate);
-    tester.src = candidate;
-
-    return () => {
-      cancelled = true;
-    };
   }, [previewImage]);
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
@@ -107,7 +86,7 @@ const PerfilPage = () => {
           telefono: user.telefono || "",
           foto_perfil: null,
         });
-        setPreviewImage(resolveProfileImageUrl(user.foto_perfil));
+        setPreviewImage(user.foto_perfil || null);
 
         // Refresca desde API para evitar URLs antiguas en localStorage/contexto.
         try {
@@ -120,7 +99,7 @@ const PerfilPage = () => {
               telefono: response.user.telefono || "",
               foto_perfil: null,
             });
-            setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
+            setPreviewImage(response.user.foto_perfil || null);
           }
         } catch (error) {
           console.error("Error al refrescar perfil:", error);
@@ -136,7 +115,7 @@ const PerfilPage = () => {
               telefono: response.user.telefono || "",
               foto_perfil: null,
             });
-            setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
+            setPreviewImage(response.user.foto_perfil || null);
           }
         } catch (error) {
           console.error("Error al cargar perfil:", error);
@@ -215,14 +194,13 @@ const PerfilPage = () => {
         console.log('👤 Usuario actualizado:', response.user);
         updateUser(response.user);
         
-        // Actualizar preview si se subió nueva imagen - usar la URL del servidor
+        // Actualizar preview - pasar la URL del servidor tal cual al useEffect
         if (response.user.foto_perfil) {
-          const resolvedUrl = resolveProfileImageUrl(response.user.foto_perfil);
-          console.log('🖼️ URL original:', response.user.foto_perfil);
-          console.log('🖼️ URL resuelta:', resolvedUrl);
-          setPreviewImage(resolvedUrl);
+          console.log('🖼️ URL del servidor:', response.user.foto_perfil);
+          setPreviewImage(response.user.foto_perfil);
         } else {
           console.warn('⚠️ No hay foto_perfil en la respuesta del servidor');
+          setPreviewImage(null);
         }
       } else {
         console.warn('⚠️ No hay usuario en la respuesta del servidor');
