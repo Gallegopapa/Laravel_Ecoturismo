@@ -19,14 +19,19 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        $payload = [
-            'name' => trim((string) $request->input('name', '')),
-            'email' => strtolower(trim((string) $request->input('email', ''))),
-            'password' => (string) $request->input('password', ''),
-            'password_confirmation' => (string) $request->input('password_confirmation', ''),
-        ];
+        // Preparar datos de entrada
+        $username = trim((string) $request->input('name', ''));
+        $email = strtolower(trim((string) $request->input('email', '')));
+        $password = (string) $request->input('password', '');
+        $passwordConfirmation = (string) $request->input('password_confirmation', '');
 
-        $validator = Validator::make($payload, [
+        // Validar datos
+        $validator = Validator::make([
+            'name' => $username,
+            'email' => $email,
+            'password' => $password,
+            'password_confirmation' => $passwordConfirmation,
+        ], [
             'name' => [
                 'required',
                 'string',
@@ -35,7 +40,14 @@ class AuthController extends Controller
                 'regex:/^[a-zA-Z0-9_]+$/',
                 Rule::unique('usuarios', 'name'),
             ],
-            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Z0-9._%+-]+@gmail\.com$/i', Rule::unique('usuarios', 'email')],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc',
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|es|co|org|net|info|biz|edu|gov|io|app|dev|uk|de|fr|it|mx|br|ar|cl|pe|co\.uk|com\.mx|com\.ar|com\.br)$/i',
+                Rule::unique('usuarios', 'email'),
+            ],
             'password' => 'required|string|min:8|max:72|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
@@ -45,7 +57,7 @@ class AuthController extends Controller
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.required' => 'El email es requerido.',
             'email.email' => 'El email debe ser una dirección válida.',
-            'email.regex' => 'Solo se permiten correos con dominio @gmail.com.',
+            'email.regex' => 'El email debe ser válido con un dominio real (ej: gmail.com, hotmail.es, empresa.com).',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
@@ -53,12 +65,12 @@ class AuthController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        $validator->after(function ($validator) use ($payload) {
-            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($payload['name'])])->exists()) {
+        $validator->after(function ($validator) use ($username, $email) {
+            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso.');
             }
 
-            if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$payload['email']])->exists()) {
+            if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$email])->exists()) {
                 $validator->errors()->add('email', 'Este email ya está registrado.');
             }
         });

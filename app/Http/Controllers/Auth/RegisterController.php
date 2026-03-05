@@ -18,16 +18,28 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        $payload = [
-            'name' => trim((string) $request->input('name', '')),
-            'email' => strtolower(trim((string) $request->input('email', ''))),
-            'password' => (string) $request->input('password', ''),
-            'password_confirmation' => (string) $request->input('password_confirmation', ''),
-        ];
+        // Preparar datos de entrada
+        $username = trim((string) $request->input('name', ''));
+        $email = strtolower(trim((string) $request->input('email', '')));
+        $password = (string) $request->input('password', '');
+        $passwordConfirmation = (string) $request->input('password_confirmation', '');
 
-        $validator = Validator::make($payload, [
+        // Validar datos
+        $validator = Validator::make([
+            'name' => $username,
+            'email' => $email,
+            'password' => $password,
+            'password_confirmation' => $passwordConfirmation,
+        ], [
             'name' => ['required', 'string', 'max:255', Rule::unique('usuarios', 'name')],
-            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Z0-9._%+-]+@gmail\\.com$/i', Rule::unique('usuarios', 'email')],
+            'email' => [
+                'required',
+                'string',
+                'email:rfc',
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|es|co|org|net|info|biz|edu|gov|io|app|dev|uk|de|fr|it|mx|br|ar|cl|pe|co\.uk|com\.mx|com\.ar|com\.br)$/i',
+                Rule::unique('usuarios', 'email'),
+            ],
             'password' => 'required|string|min:8|max:72|confirmed',
         ], [
             // Mensajes para el campo name
@@ -39,7 +51,7 @@ class RegisterController extends Controller
             // Mensajes para el campo email
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'Debes proporcionar un correo electrónico válido.',
-            'email.regex' => 'Solo se permiten correos con dominio @gmail.com.',
+            'email.regex' => 'El correo debe ser válido con un dominio real (ej: gmail.com, hotmail.es, empresa.com).',
             'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
             'email.unique' => 'Este correo electrónico ya está registrado. Intenta iniciar sesión.',
             
@@ -51,12 +63,12 @@ class RegisterController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden. Por favor verifica.',
         ]);
 
-        $validator->after(function ($validator) use ($payload) {
-            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($payload['name'])])->exists()) {
+        $validator->after(function ($validator) use ($username, $email) {
+            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso. Por favor elige otro.');
             }
 
-            if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$payload['email']])->exists()) {
+            if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$email])->exists()) {
                 $validator->errors()->add('email', 'Este correo electrónico ya está registrado. Intenta iniciar sesión.');
             }
         });
