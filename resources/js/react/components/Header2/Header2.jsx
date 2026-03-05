@@ -92,7 +92,13 @@ const Header2 = () => {
         </button>
 
         <nav className={`navbar ${mobileMenuOpen ? "mobile-open" : ""}`}>
-          <Link to="/comentarios2" className="nav-link">Reseñas</Link>
+          <Link 
+            to="/comentarios2" 
+            className="nav-link"
+            onClick={handleLinkClick}
+          >
+            Reseñas
+          </Link>
 
           {/* Menú desplegable de Lugares */}
           <div className="dropdown" ref={placesDropdownRef}>
