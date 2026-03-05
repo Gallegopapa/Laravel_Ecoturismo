@@ -97,9 +97,9 @@ export default function Login() {
     <>
 
       <div className={`login-page-container ${isRegister ? 'register-layout' : 'login-layout'}`}> 
-        <video id="bg-video" autoPlay loop muted>
+        {/* <video id="bg-video" autoPlay loop muted>
           <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
-        </video>
+        </video> */}
 
         <header className="header">
           <h1>🌿 Risaralda EcoTurismo</h1>
