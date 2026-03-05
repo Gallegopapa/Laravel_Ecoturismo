@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Rules\AllowedEmailDomain;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -32,7 +33,7 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:usuarios,name,' . $user->id],
-            'email' => ['required', 'email', 'max:255', 'unique:usuarios,email,' . $user->id],
+            'email' => ['required', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email,' . $user->id],
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.unique' => 'Este nombre de usuario ya está en uso.',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuarios;
+use App\Rules\AllowedEmailDomain;
 use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -70,7 +71,7 @@ class AdminUserController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name', 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
-            'email' => 'nullable|email|max:255|unique:usuarios,email',
+            'email' => ['nullable', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email'],
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',
             'tipo_usuario' => 'required|in:normal,empresa,admin',
@@ -154,7 +155,7 @@ class AdminUserController extends Controller
     {
         $data = $request->validate([
             'name' => ['sometimes', 'required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
-            'email' => 'nullable|email|max:255|unique:usuarios,email,' . $user->id,
+            'email' => ['nullable', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email,' . $user->id],
             'password' => 'nullable|string|min:6',
             'is_admin' => 'nullable|boolean',
             'tipo_usuario' => 'sometimes|required|in:normal,empresa,admin',

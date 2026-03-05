@@ -14,21 +14,20 @@ class AllowedEmailDomain implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // Dominios permitidos
-        $allowedDomains = ['gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com'];
-        
+        $normalizedEmail = strtolower(trim((string) $value));
+
         // Extraer el dominio del email
-        $emailParts = explode('@', strtolower($value));
-        
+        $emailParts = explode('@', $normalizedEmail);
+
         // Validar que tenga exactamente 2 partes (usuario@dominio)
-        if (count($emailParts) !== 2) {
-            $fail('El correo electrónico debe contener un @ válido.');
+        if (count($emailParts) !== 2 || $emailParts[0] === '' || $emailParts[1] === '') {
+            $fail('El correo electrónico debe ser válido.');
             return;
         }
-        
-        // Validar que el dominio esté en la lista de permitidos
-        if (!in_array($emailParts[1], $allowedDomains)) {
-            $fail('Solo se permiten correos de Gmail (@gmail.com), Hotmail (@hotmail.com o @hotmail.es) u Outlook (@outlook.com).');
+
+        // Validar que el dominio sea exclusivamente gmail.com
+        if ($emailParts[1] !== 'gmail.com') {
+            $fail('Solo se permiten correos con dominio @gmail.com.');
         }
     }
 }
