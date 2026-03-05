@@ -8,6 +8,7 @@ use App\Models\Usuarios;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Rules\AllowedEmailDomain;
 
 class RegisterController extends Controller
 {
@@ -36,6 +37,7 @@ class RegisterController extends Controller
                 'required',
                 'string',
                 'max:255',
+                new AllowedEmailDomain(),
                 Rule::unique('usuarios', 'email'),
             ],
             'password' => 'required|string|min:8|max:72|confirmed',
@@ -48,8 +50,6 @@ class RegisterController extends Controller
             
             // Mensajes para el campo email
             'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'Debes proporcionar un correo electrónico válido.',
-            'email.regex' => 'Solo se permiten correos de Gmail o Hotmail (gmail.com, hotmail.com, hotmail.es, outlook.com).',
             'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
             'email.unique' => 'Este correo electrónico ya está registrado. Intenta iniciar sesión.',
             
@@ -62,14 +62,6 @@ class RegisterController extends Controller
         ]);
 
         $validator->after(function ($validator) use ($username, $email) {
-            // Validar que el email sea exactamente de los dominios permitidos
-            $allowedEmails = ['gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com'];
-            $emailParts = explode('@', $email);
-            
-            if (count($emailParts) !== 2 || !in_array($emailParts[1], $allowedEmails)) {
-                $validator->errors()->add('email', 'Solo se permiten correos de Gmail (@gmail.com), Hotmail (@hotmail.com o @hotmail.es) u Outlook (@outlook.com).');
-            }
-
             if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso. Por favor elige otro.');
             }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use App\Rules\AllowedEmailDomain;
 
 class AuthController extends Controller
 {
@@ -44,6 +45,7 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'max:255',
+                new AllowedEmailDomain(),
                 Rule::unique('usuarios', 'email'),
             ],
             'password' => 'required|string|min:8|max:72|confirmed',
@@ -54,8 +56,6 @@ class AuthController extends Controller
             'name.unique' => 'Este nombre de usuario ya está en uso.',
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.required' => 'El email es requerido.',
-            'email.email' => 'El email debe ser una dirección válida.',
-            'email.regex' => 'Solo se permiten correos de Gmail o Hotmail (gmail.com, hotmail.com, hotmail.es, outlook.com).',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
@@ -64,14 +64,6 @@ class AuthController extends Controller
         ]);
 
         $validator->after(function ($validator) use ($username, $email) {
-            // Validar que el email sea exactamente de los dominios permitidos
-            $allowedEmails = ['gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com'];
-            $emailParts = explode('@', $email);
-            
-            if (count($emailParts) !== 2 || !in_array($emailParts[1], $allowedEmails)) {
-                $validator->errors()->add('email', 'Solo se permiten correos de Gmail (@gmail.com), Hotmail (@hotmail.com o @hotmail.es) u Outlook (@outlook.com).');
-            }
-
             if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso.');
             }
