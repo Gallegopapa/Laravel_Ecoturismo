@@ -23,9 +23,16 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
+        $email = mb_strtolower(trim((string) $request->input('email', '')));
+        $password = (string) $request->input('password', '');
+        $request->merge([
+            'email' => $email,
+            'password' => $password,
+        ]);
+
         // Validar campos requeridos (usamos email para login)
         $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string'],
         ], [
             'email.required' => 'El correo es requerido.',
@@ -33,11 +40,8 @@ class LoginController extends Controller
             'password.required' => 'La contraseña es requerida.',
         ]);
 
-        $email = $request->input('email');
-        $password = $request->input('password');
-
         // Buscar usuario por email
-        $user = Usuarios::where('email', $email)->first();
+        $user = Usuarios::query()->whereRaw('LOWER(email) = ?', [$email])->first();
 
         // Validar credenciales
         if (!$user) {

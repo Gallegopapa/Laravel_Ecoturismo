@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -17,10 +19,24 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|min:3|unique:usuarios,name|regex:/^[a-zA-Z0-9_]+$/',
-            'email' => 'required|email|max:255|unique:usuarios,email',
-            'password' => 'required|string|min:6|max:20|confirmed',
+        $payload = [
+            'name' => trim((string) $request->input('name', '')),
+            'email' => mb_strtolower(trim((string) $request->input('email', ''))),
+            'password' => (string) $request->input('password', ''),
+            'password_confirmation' => (string) $request->input('password_confirmation', ''),
+        ];
+
+        $validator = Validator::make($payload, [
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                'regex:/^[a-zA-Z0-9_]+$/',
+                Rule::unique('usuarios', 'name'),
+            ],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('usuarios', 'email')],
+            'password' => 'required|string|min:8|max:72|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
@@ -31,10 +47,29 @@ class AuthController extends Controller
             'email.email' => 'El email debe ser una dirección válida.',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
-            'password.max' => 'La contraseña no puede tener más de 20 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 72 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
+
+        $validator->after(function ($validator) use ($payload) {
+            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($payload['name'])])->exists()) {
+                $validator->errors()->add('name', 'Este nombre de usuario ya está en uso.');
+            }
+
+            if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$payload['email']])->exists()) {
+                $validator->errors()->add('email', 'Este email ya está registrado.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $data = $validator->validated();
 
         $user = Usuarios::create([
             'name' => $data['name'],
@@ -69,19 +104,26 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $forgotPasswordUrl = rtrim(env('FRONTEND_URL', config('app.url')), '/') . '/forgot-password';
-        $request->merge([
-            'login' => $request->input('login', $request->input('email')),
-        ]);
+
+        $loginValue = trim((string) $request->input('login', $request->input('email', '')));
+        $password = (string) $request->input('password', '');
 
         try {
-            $request->validate([
+            $validator = Validator::make([
+                'login' => $loginValue,
+                'password' => $password,
+            ], [
                 'login' => 'required|string|max:255',
                 'password' => 'required|string|min:1',
             ], [
                 'login.required' => 'El correo o usuario es requerido.',
                 'password.required' => 'La contraseña es requerida.',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            if ($validator->fails()) {
+                throw ValidationException::withMessages($validator->errors()->toArray());
+            }
+        } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Error de validación',
                 'errors' => $e->errors(),
@@ -90,11 +132,12 @@ class AuthController extends Controller
         }
 
         try {
-            $loginValue = $request->input('login');
+            $normalizedLogin = mb_strtolower($loginValue);
 
             // Buscar usuario por correo o nombre de usuario
-            $user = Usuarios::where('email', $loginValue)
-                ->orWhere('name', $loginValue)
+            $user = Usuarios::query()
+                ->whereRaw('LOWER(email) = ?', [$normalizedLogin])
+                ->orWhereRaw('LOWER(name) = ?', [$normalizedLogin])
                 ->first();
 
             // Validar que el usuario exista
@@ -112,7 +155,7 @@ class AuthController extends Controller
             }
 
             // Validar contraseña
-            if (!Hash::check($request->password, $user->password)) {
+            if (!Hash::check($password, $user->password)) {
                 Log::warning('Intento de login fallido - Contraseña incorrecta', [
                     'user_id' => $user->id,
                     'user_name' => $user->name,
