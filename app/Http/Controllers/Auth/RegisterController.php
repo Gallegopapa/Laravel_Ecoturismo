@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Rules\AllowedEmailDomain;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -42,18 +43,15 @@ class RegisterController extends Controller
             ],
             'password' => 'required|string|min:8|max:72|confirmed',
         ], [
-            // Mensajes para el campo name
             'name.required' => 'El nombre de usuario es obligatorio.',
             'name.string' => 'El nombre de usuario debe ser texto.',
             'name.max' => 'El nombre de usuario no puede tener más de 255 caracteres.',
             'name.unique' => 'Este nombre de usuario ya está en uso. Por favor elige otro.',
-            
-            // Mensajes para el campo email
+
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
             'email.unique' => 'Este correo electrónico ya está registrado. Intenta iniciar sesión.',
-            
-            // Mensajes para el campo password
+
             'password.required' => 'La contraseña es obligatoria.',
             'password.string' => 'La contraseña debe ser texto.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
@@ -62,6 +60,7 @@ class RegisterController extends Controller
         ]);
 
         $validator->after(function ($validator) use ($username, $email) {
+
             if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso. Por favor elige otro.');
             }
@@ -69,17 +68,27 @@ class RegisterController extends Controller
             if (Usuarios::query()->whereRaw('LOWER(email) = ?', [$email])->exists()) {
                 $validator->errors()->add('email', 'Este correo electrónico ya está registrado. Intenta iniciar sesión.');
             }
+
         });
 
         $data = $validator->validate();
 
+        // Crear usuario con los mismos campos que el seeder
         $user = Usuarios::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'telefono' => null,
+            'foto_perfil' => null,
             'password' => Hash::make($data['password']),
+            'is_admin' => 0,
+            'tipo_usuario' => 'normal',
             'fecha_registro' => now(),
         ]);
 
-        return redirect()->route('login')->with('status', 'Registro exitoso. Puedes iniciar sesión.');
+        // Iniciar sesión automáticamente
+        Auth::login($user);
+
+        // Redirigir al dashboard
+        return redirect()->route('dashboard')->with('status', 'Registro exitoso.');
     }
 }

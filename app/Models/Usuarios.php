@@ -16,6 +16,9 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
 
     protected $table = 'usuarios';
 
+    // CLAVE PRIMARIA (muy importante)
+    protected $primaryKey = 'id';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -45,102 +48,83 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
     }
 
     /**
-     * Accessor para foto_perfil - Asegura que siempre devuelva una URL completa
+     * Accessor para foto_perfil
      */
     public function getFotoPerfilAttribute($value)
     {
         if (!$value) {
             return null;
         }
-        
-        // Si ya es una URL completa (http/https), devolverla tal cual
+
         if (preg_match('/^https?:\/\//', $value)) {
             return $value;
         }
-        
-        // Si comienza con /storage/, devolver URL completa
+
         if (strpos($value, '/storage/') === 0) {
             return url($value);
         }
-        
-        // Si es solo el nombre del archivo, construir la ruta completa
+
         if (strpos($value, 'storage/') === 0) {
             return url('/' . $value);
         }
-        
-        // Por defecto, asumir que está en storage/profiles/
+
         return url('/storage/profiles/' . $value);
     }
 
     /**
-     * Relación: Un usuario tiene muchas reservas
+     * RELACIONES
      */
+
     public function reservations()
     {
-        return $this->hasMany(Reservation::class, 'user_id');
+        return $this->hasMany(Reservation::class, 'user_id', 'id');
     }
 
-    /**
-     * Relación: Un usuario tiene muchas reseñas
-     */
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'user_id');
+        return $this->hasMany(Review::class, 'user_id', 'id');
     }
 
-    /**
-     * Relación: Un usuario tiene muchos favoritos
-     */
     public function favorites()
     {
-        return $this->hasMany(Favorite::class, 'user_id');
+        return $this->hasMany(Favorite::class, 'user_id', 'id');
     }
 
-    /**
-     * Relación: Un usuario tiene muchos pagos
-     */
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'user_id');
+        return $this->hasMany(Payment::class, 'user_id', 'id');
     }
 
-    /**
-     * Relación: Un usuario empresa puede gestionar múltiples lugares
-     */
     public function placesManaged()
     {
-        return $this->belongsToMany(Place::class, 'place_company_users', 'company_user_id', 'place_id')
-                    ->withPivot('es_principal')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            Place::class,
+            'place_company_users',
+            'company_user_id',
+            'place_id'
+        )->withPivot('es_principal')
+         ->withTimestamps();
     }
 
-    /**
-     * Relación: Un usuario empresa tiene muchas respuestas a reservas
-     */
     public function companyReservations()
     {
-        return $this->hasMany(CompanyReservation::class, 'company_user_id');
+        return $this->hasMany(CompanyReservation::class, 'company_user_id', 'id');
     }
 
-    /**
-     * Relación: Un usuario empresa tiene muchas asignaciones a lugares
-     */
     public function placeAssignments()
     {
-        return $this->hasMany(PlaceCompanyUser::class, 'company_user_id');
+        return $this->hasMany(PlaceCompanyUser::class, 'company_user_id', 'id');
     }
 
     /**
-     * Verificar si el usuario es de tipo empresa
+     * Helpers
      */
+
     public function isCompanyUser(): bool
     {
         return $this->tipo_usuario === 'empresa';
     }
 
-    /**
-     * Verificar si el usuario es administrador
-     */
     public function isAdmin(): bool
     {
         return $this->is_admin || $this->tipo_usuario === 'admin';
