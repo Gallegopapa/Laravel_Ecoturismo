@@ -24,7 +24,8 @@ class Place extends Model
     ];
 
     /**
-     * Accessor para image - devuelve siempre una URL accesible
+     * Accessor para image - devuelve ruta relativa (independiente de APP_URL)
+     * El frontend puede construir la URL completa si la necesita
      */
     public function getImageAttribute($value)
     {
@@ -32,33 +33,28 @@ class Place extends Model
             return null;
         }
 
-        // Si ya es una URL completa, devolverla
-        if (preg_match('/^https?:\/\//', $value)) {
+        // Si ya es una URL completa (legacy), extraer solo la ruta
+        if (preg_match('/^https?:\/\/[^\/]+(.*)$/', $value, $matches)) {
+            $value = $matches[1];
+        }
+
+        // Si comienza con /imagenes/ o /storage/, devolver tal cual
+        if (strpos($value, '/imagenes/') === 0 || strpos($value, '/storage/') === 0) {
             return $value;
-        }
-
-        // Si comienza con /imagenes/, es una ruta pública relativa
-        if (strpos($value, '/imagenes/') === 0) {
-            return url($value);
-        }
-
-        // Si comienza con /storage/, construir URL completa
-        if (strpos($value, '/storage/') === 0) {
-            return url($value);
         }
 
         // Si comienza con imagenes/ sin la barra inicial
         if (strpos($value, 'imagenes/') === 0) {
-            return url('/' . $value);
+            return '/' . $value;
         }
 
         // Si comienza con storage/ sin la barra inicial
         if (strpos($value, 'storage/') === 0) {
-            return url('/' . $value);
+            return '/' . $value;
         }
 
         // Por defecto, asumir que es una ruta en /imagenes/
-        return url('/imagenes/' . ltrim($value, '/'));
+        return '/imagenes/' . ltrim($value, '/');
     }
 
     /**
