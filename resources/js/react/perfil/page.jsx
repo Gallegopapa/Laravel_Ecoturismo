@@ -21,6 +21,26 @@ const PerfilPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
+
+  const resolveProfileImageUrl = (rawUrl) => {
+    if (!rawUrl) {
+      return usuarioImg;
+    }
+
+    // Normaliza URLs antiguas guardadas con localhost a ruta relativa.
+    try {
+      if (/^https?:\/\//i.test(rawUrl)) {
+        const parsed = new URL(rawUrl);
+        if (parsed.pathname && parsed.pathname.startsWith('/storage/')) {
+          return `${parsed.pathname}?t=${Date.now()}`;
+        }
+      }
+    } catch (error) {
+      // Si no se puede parsear, usamos la URL tal cual.
+    }
+
+    return rawUrl.includes('?') ? `${rawUrl}&t=${Date.now()}` : `${rawUrl}?t=${Date.now()}`;
+  };
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
     try {
@@ -51,13 +71,24 @@ const PerfilPage = () => {
           telefono: user.telefono || "",
           foto_perfil: null,
         });
-        // Agregar timestamp a la URL de foto para evitar caché
-        const fotoUrl = user.foto_perfil 
-          ? (user.foto_perfil.includes('?') 
-              ? `${user.foto_perfil}&t=${Date.now()}`
-              : `${user.foto_perfil}?t=${Date.now()}`)
-          : usuarioImg;
-        setPreviewImage(fotoUrl);
+        setPreviewImage(resolveProfileImageUrl(user.foto_perfil));
+
+        // Refresca desde API para evitar URLs antiguas en localStorage/contexto.
+        try {
+          const response = await profileService.get();
+          if (response.user) {
+            updateUser(response.user);
+            setFormData({
+              name: response.user.name || "",
+              email: response.user.email || "",
+              telefono: response.user.telefono || "",
+              foto_perfil: null,
+            });
+            setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
+          }
+        } catch (error) {
+          console.error("Error al refrescar perfil:", error);
+        }
       } else if (isAuthenticated) {
         // Si hay token pero no hay usuario en el contexto, cargar desde la API
         try {
@@ -69,13 +100,7 @@ const PerfilPage = () => {
               telefono: response.user.telefono || "",
               foto_perfil: null,
             });
-            // Agregar timestamp a la URL de foto para evitar caché
-            const fotoUrl = response.user.foto_perfil 
-              ? (response.user.foto_perfil.includes('?') 
-                  ? `${response.user.foto_perfil}&t=${Date.now()}`
-                  : `${response.user.foto_perfil}?t=${Date.now()}`)
-              : usuarioImg;
-            setPreviewImage(fotoUrl);
+            setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
           }
         } catch (error) {
           console.error("Error al cargar perfil:", error);
@@ -152,11 +177,7 @@ const PerfilPage = () => {
         updateUser(response.user);
         // Actualizar preview si se subió nueva imagen - usar la URL del servidor
         if (response.user.foto_perfil) {
-          // Agregar timestamp para asegurar que se recarga la imagen (evitar caché)
-          const fotoUrl = response.user.foto_perfil.includes('?') 
-            ? `${response.user.foto_perfil}&t=${Date.now()}`
-            : `${response.user.foto_perfil}?t=${Date.now()}`;
-          setPreviewImage(fotoUrl);
+          setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
         }
       }
       
@@ -208,6 +229,9 @@ const PerfilPage = () => {
                 src={previewImage || usuarioImg} 
                 alt="Foto de perfil" 
                 className="profile-photo"
+                onError={(e) => {
+                  e.currentTarget.src = usuarioImg;
+                }}
               />
             </div>
             <label htmlFor="foto_perfil" className="photo-upload-btn">
