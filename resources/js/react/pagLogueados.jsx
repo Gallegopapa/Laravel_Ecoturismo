@@ -116,10 +116,10 @@ const PagLogueados = () => {
                     );
                     const count = Number(
                         place?.reviews_count ??
-                            place?.reviewsCount ??
-                            (Array.isArray(place?.reviews)
-                                ? place.reviews.length
-                                : 0),
+                        place?.reviewsCount ??
+                        (Array.isArray(place?.reviews)
+                            ? place.reviews.length
+                            : 0),
                     );
                     const average = count > 0 ? getAverageFromPlace(place) : 0;
                     return [destino.id, average];
@@ -267,7 +267,7 @@ const PagLogueados = () => {
                                 Gestiona tus viajes y ecohoteles de forma facil
                                 y segura.
                             </p>
-                            
+
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -279,7 +279,7 @@ const PagLogueados = () => {
                             <p>
                                 Contribuye a la conservacion y desarrollo local.
                             </p>
-                            
+
                         </div>
                         <div className="caracteristica-card">
                             <img
@@ -291,7 +291,7 @@ const PagLogueados = () => {
                             <p>
                                 Accede a servicios de operadores certificados.
                             </p>
-                            
+
                         </div>
                     </div>
                 </section>
