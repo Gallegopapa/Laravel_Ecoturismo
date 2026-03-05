@@ -81,6 +81,10 @@ class AuthController extends Controller
             'fecha_registro' => now()
         ]);
 
+        // Forza a Eloquent a recargar la instancia de usuario desde la BD
+        // garantizando que se traiga el ID en caso de que la BD de produccion no lo retorne en el insert.
+        $user = $user->fresh();
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
