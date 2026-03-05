@@ -128,6 +128,14 @@ export const AuthProvider = ({ children }) => {
       }
 
       const response = await authService.register(userData);
+
+      // Igual que en login, evitamos sesión inválida si backend no trae usuario/token completos.
+      if (!response.token || !response.user || !response.user.id) {
+        return {
+          success: false,
+          error: 'Respuesta inválida del servidor al registrar. Intenta de nuevo.',
+        };
+      }
       
       // Guardar token y usuario
       localStorage.setItem('token', response.token);
