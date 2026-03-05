@@ -57,18 +57,23 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
         }
 
         if (preg_match('/^https?:\/\//', $value)) {
+            $path = parse_url($value, PHP_URL_PATH);
+            if ($path && strpos($path, '/storage/') === 0) {
+                return $path;
+            }
+
             return $value;
         }
 
         if (strpos($value, '/storage/') === 0) {
-            return url($value);
+            return $value;
         }
 
         if (strpos($value, 'storage/') === 0) {
-            return url('/' . $value);
+            return '/' . ltrim($value, '/');
         }
 
-        return url('/storage/profiles/' . $value);
+        return '/storage/profiles/' . ltrim($value, '/');
     }
 
     /**
