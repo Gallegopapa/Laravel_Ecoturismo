@@ -1,9 +1,12 @@
 import React from "react";
+import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { useAuth } from "@/react/context/AuthContext";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
+  const { isAuthenticated } = useAuth();
   const items = {
     lugaresMontanosos: [
       {
@@ -148,7 +151,7 @@ export default function CopyrightTotal() {
 
   return (
     <div className="page-layout">
-      <Header2 />
+      {isAuthenticated ? <Header2 /> : <Header />}
       <div className="page-content contenedorTodo" style={{ marginTop: "100px" }}>
         <h1 style={{
           fontSize: "40px",
