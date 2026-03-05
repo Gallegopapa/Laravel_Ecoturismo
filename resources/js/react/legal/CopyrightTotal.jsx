@@ -2,11 +2,10 @@ import React from "react";
 import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
-import { useAuth } from "@/react/context/AuthContext";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = !!localStorage.getItem('token') || !!localStorage.getItem('user');
   const items = {
     lugaresMontanosos: [
       {
