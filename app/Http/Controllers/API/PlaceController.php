@@ -12,6 +12,19 @@ use App\Models\Category;
 class PlaceController extends Controller
 {
     /**
+     * Obtener opciones mínimas de lugares para selects.
+     */
+    public function options(): JsonResponse
+    {
+        $places = Place::query()
+            ->select(['id', 'name', 'location'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return response()->json($places);
+    }
+
+    /**
      * Obtener todos los lugares (público)
      */
     public function index(Request $request): JsonResponse

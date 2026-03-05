@@ -117,6 +117,30 @@ export const authService = {
 
 // Servicios de lugares
 export const placesService = {
+  getOptions: async () => {
+    try {
+      const response = await api.get('/places/options');
+      const payload = response.data;
+
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+
+      if (Array.isArray(payload?.places)) {
+        return payload.places;
+      }
+
+      if (Array.isArray(payload?.data)) {
+        return payload.data;
+      }
+
+      return [];
+    } catch (_) {
+      // Compatibilidad con despliegues que aún no tengan la ruta nueva.
+      return placesService.getAll();
+    }
+  },
+
   getAll: async (params = {}) => {
     const response = await api.get('/places', { params });
     const payload = response.data;

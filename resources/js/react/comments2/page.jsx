@@ -47,7 +47,7 @@ const Comments2Page = () => {
       setLoading(true);
       const [reviewsResult, placesResult] = await Promise.allSettled([
         reviewsService.getAll(),
-        placesService.getAll(),
+        placesService.getOptions(),
       ]);
 
       const nextReviews =
@@ -469,6 +469,11 @@ const Comments2Page = () => {
               }}
             >
               <option value="">-- Selecciona un lugar --</option>
+              {places.length === 0 && (
+                <option value="" disabled>
+                  No hay lugares disponibles
+                </option>
+              )}
               {places.map(place => (
                 <option key={place.id} value={place.id}>
                   {place.name} {place.location ? `- ${place.location}` : ''}
