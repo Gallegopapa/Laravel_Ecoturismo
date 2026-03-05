@@ -1,8 +1,8 @@
 ﻿import axios from 'axios';
 
 // Configurar la URL base de la API
-// Usar URL relativa si estÃ¡ en el mismo dominio, o absoluta si es necesario
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Usar URL relativa siempre para que funcione en cualquier dominio
+const API_URL = '/api';
 
 // Crear instancia de axios
 const api = axios.create({
