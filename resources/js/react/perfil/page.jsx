@@ -17,13 +17,14 @@ const PerfilPage = () => {
     foto_perfil: null,
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [displayImage, setDisplayImage] = useState(usuarioImg);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
 
   const resolveProfileImageUrl = (rawUrl) => {
-    if (!rawUrl) {
+    if (!rawUrl || rawUrl === "null" || rawUrl === "undefined") {
       return usuarioImg;
     }
 
@@ -41,6 +42,36 @@ const PerfilPage = () => {
 
     return rawUrl.includes('?') ? `${rawUrl}&t=${Date.now()}` : `${rawUrl}?t=${Date.now()}`;
   };
+
+  useEffect(() => {
+    const candidate = previewImage || usuarioImg;
+
+    if (candidate === usuarioImg) {
+      setDisplayImage(usuarioImg);
+      return;
+    }
+
+    let cancelled = false;
+    const tester = new Image();
+
+    tester.onload = () => {
+      if (!cancelled) {
+        setDisplayImage(candidate);
+      }
+    };
+
+    tester.onerror = () => {
+      if (!cancelled) {
+        setDisplayImage(usuarioImg);
+      }
+    };
+
+    tester.src = candidate;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [previewImage]);
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
     try {
@@ -226,11 +257,12 @@ const PerfilPage = () => {
           <div className="profile-photo-section">
             <div className="photo-preview">
               <img 
-                src={previewImage || usuarioImg} 
+                src={displayImage} 
                 alt="Foto de perfil" 
                 className="profile-photo"
                 onError={(e) => {
                   e.currentTarget.src = usuarioImg;
+                  setDisplayImage(usuarioImg);
                 }}
               />
             </div>
