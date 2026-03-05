@@ -10,6 +10,10 @@ export default defineConfig({
         hmr: {
             host: '127.0.0.1',
         },
+        proxy: {
+            '/api': 'http://localhost:8000',
+            '/storage': 'http://localhost:8000',
+        },
     },
     plugins: [
         laravel({

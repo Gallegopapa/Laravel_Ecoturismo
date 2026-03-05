@@ -47,6 +47,7 @@ const PerfilPage = () => {
     const candidate = previewImage || usuarioImg;
 
     if (candidate === usuarioImg) {
+      console.log('Usando imagen por defecto');
       setDisplayImage(usuarioImg);
       return;
     }
@@ -55,17 +56,21 @@ const PerfilPage = () => {
     const tester = new Image();
 
     tester.onload = () => {
+      console.log('✅ Imagen cargada correctamente:', candidate);
       if (!cancelled) {
         setDisplayImage(candidate);
       }
     };
 
     tester.onerror = () => {
+      console.error('❌ Error al cargar imagen:', candidate);
       if (!cancelled) {
+        console.log('⚠️ Fallback a imagen por defecto');
         setDisplayImage(usuarioImg);
       }
     };
 
+    console.log('🔍 Validando imagen:', candidate);
     tester.src = candidate;
 
     return () => {
@@ -192,7 +197,7 @@ const PerfilPage = () => {
 
     try {
       // Log para debugging
-      console.log('Enviando datos:', {
+      console.log('🚀 Enviando datos:', {
         name: formData.name,
         email: formData.email,
         telefono: formData.telefono,
@@ -201,15 +206,26 @@ const PerfilPage = () => {
       });
 
       const response = await profileService.update(formData);
+      console.log('✅ Respuesta del servidor:', response);
+      
       setMessage(response.message || "Perfil actualizado exitosamente");
       
       // Actualizar el usuario en el contexto
       if (response.user) {
+        console.log('👤 Usuario actualizado:', response.user);
         updateUser(response.user);
+        
         // Actualizar preview si se subió nueva imagen - usar la URL del servidor
         if (response.user.foto_perfil) {
-          setPreviewImage(resolveProfileImageUrl(response.user.foto_perfil));
+          const resolvedUrl = resolveProfileImageUrl(response.user.foto_perfil);
+          console.log('🖼️ URL original:', response.user.foto_perfil);
+          console.log('🖼️ URL resuelta:', resolvedUrl);
+          setPreviewImage(resolvedUrl);
+        } else {
+          console.warn('⚠️ No hay foto_perfil en la respuesta del servidor');
         }
+      } else {
+        console.warn('⚠️ No hay usuario en la respuesta del servidor');
       }
       
       // Limpiar el input de archivo si se guardó correctamente
@@ -220,8 +236,9 @@ const PerfilPage = () => {
       
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('❌ Error al actualizar perfil:', error);
+      console.error('❌ Error response data:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
       setMessage(
         error.response?.data?.message || error.message || "Error al actualizar el perfil"
       );
