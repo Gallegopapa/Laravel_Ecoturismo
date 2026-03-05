@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   const token = localStorage.getItem("token");
   const storedUser = localStorage.getItem("user");
   let parsedUser = null;
