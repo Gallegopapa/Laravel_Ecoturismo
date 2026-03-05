@@ -1,12 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
+  useLayoutEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    scrollToTop();
+    const rafId = requestAnimationFrame(scrollToTop);
+    const timeoutId = setTimeout(scrollToTop, 120);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timeoutId);
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = previousScrollRestoration || "auto";
+      }
+    };
   }, []);
 
   const token = localStorage.getItem("token");
