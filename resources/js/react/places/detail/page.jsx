@@ -101,6 +101,12 @@ const PlaceDetailPage = () => {
     'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
   };
 
+  const esPlaceholderRoto = (ruta) => {
+    if (!ruta) return false;
+    const valor = String(ruta).toLowerCase();
+    return valor.includes('/imagenes/placeholder.jpg') || valor.endsWith('placeholder.jpg');
+  };
+
   useEffect(() => {
     if (id) {
       loadPlace();
@@ -132,17 +138,19 @@ const PlaceDetailPage = () => {
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
 
-      // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
-      const imagenSubida = placeData.image && (
-        placeData.image.includes('/storage/places/') || 
+      // PRIMERO: Usar imagen válida proveniente del API (storage, /imagenes o URL completa)
+      const imagenApiValida = placeData.image && (
         placeData.image.startsWith('/storage/') ||
-        placeData.image.includes('storage/places') ||
-        (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
+        placeData.image.startsWith('storage/') ||
+        placeData.image.startsWith('/imagenes/') ||
+        placeData.image.startsWith('imagenes/') ||
+        placeData.image.startsWith('http://') ||
+        placeData.image.startsWith('https://')
       ) ? placeData.image : null;
 
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
       let imagenLocal = null;
-      if (!imagenSubida) {
+      if (!imagenApiValida) {
         // Buscar en mapeo determinístico por nombre original
         imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
 
@@ -152,12 +160,13 @@ const PlaceDetailPage = () => {
         }
       }
 
-      // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder
+      const imagenLegado = !esPlaceholderRoto(placeData.imagen) ? placeData.imagen : null;
+
+      // PRIORIDAD: imagen del API -> imagen local del mapeo -> imagen legado valida -> fallback existente
       placeData = {
         ...placeData,
-        imagen: imagenSubida || imagenLocal || placeData.imagen || '/imagenes/placeholder.jpg',
-        // Mantener image solo si es una imagen subida válida
-        image: imagenSubida || null,
+        imagen: imagenApiValida || imagenLocal || imagenLegado || '/imagenes/iconoecoturismo.jpg',
+        image: imagenApiValida || placeData.image || null,
       };
 
       setPlace(placeData);
@@ -447,11 +456,11 @@ const PlaceDetailPage = () => {
           <div className="place-detail-main">
             <div className="place-image-section">
               <img 
-                src={place.imagen || place.image || '/imagenes/placeholder.jpg'} 
+                src={place.imagen || place.image || '/imagenes/iconoecoturismo.jpg'} 
                 alt={place.name}
                 className="place-main-image"
                 onError={(e) => {
-                  e.target.src = '/imagenes/placeholder.jpg';
+                  e.target.src = '/imagenes/iconoecoturismo.jpg';
                 }}
               />
             </div>
