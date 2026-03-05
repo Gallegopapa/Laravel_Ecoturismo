@@ -37,7 +37,7 @@ class RegisterController extends Controller
                 'string',
                 'email:rfc',
                 'max:255',
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|es|co|org|net|info|biz|edu|gov|io|app|dev|uk|de|fr|it|mx|br|ar|cl|pe|co\.uk|com\.mx|com\.ar|com\.br)$/i',
+                'regex:/^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.es|outlook\.com)$/i',
                 Rule::unique('usuarios', 'email'),
             ],
             'password' => 'required|string|min:8|max:72|confirmed',
@@ -51,7 +51,7 @@ class RegisterController extends Controller
             // Mensajes para el campo email
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'Debes proporcionar un correo electrónico válido.',
-            'email.regex' => 'El correo debe ser válido con un dominio real (ej: gmail.com, hotmail.es, empresa.com).',
+            'email.regex' => 'Solo se permiten correos de Gmail o Hotmail (gmail.com, hotmail.com, hotmail.es, outlook.com).',
             'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
             'email.unique' => 'Este correo electrónico ya está registrado. Intenta iniciar sesión.',
             
