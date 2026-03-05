@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Poblar lugares base para que funcionalidades como reseñas tengan place_id válido.
+        $this->call(PlaceSeeder::class);
+
         // Crear usuario de prueba
         Usuarios::create([
             'name' => 'TestUser',
