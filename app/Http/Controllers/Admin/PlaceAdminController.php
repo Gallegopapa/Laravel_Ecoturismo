@@ -39,7 +39,8 @@ class PlaceAdminController extends Controller
             $image = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('places', $filename, 'public');
-            $url = asset('storage/' . $path);
+            // Guardar como ruta relativa (independiente de APP_URL)
+            $url = '/storage/' . $path;
 
             return response()->json([
                 'success' => true,

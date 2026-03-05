@@ -1,5 +1,4 @@
 /* Dislexia: fuente OpenDyslexic (puedes cambiar por otra si prefieres) */
-@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap');
 
 body.font-dyslexia, body.font-dyslexia * {
   font-family: 'OpenDyslexic', 'Arial', sans-serif !important;

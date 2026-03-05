@@ -4,8 +4,6 @@ import Footer from "@/react/components/Footer/Footer";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
-  // al montar la página, desplazarse hacia arriba para que el usuario
-  // vea el encabezado y pueda bajar con scroll correctamente
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);

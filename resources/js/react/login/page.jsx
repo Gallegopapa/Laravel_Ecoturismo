@@ -20,16 +20,17 @@ export default function Login() {
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Sincronizar valor de autocompletado del navegador con el estado (evita que se vea en blanco)
   const syncEmailFromAutofill = () => {
     if (emailInputRef.current && emailInputRef.current.value && !email) {
       setEmail(emailInputRef.current.value);
     }
   };
+
   useEffect(() => {
     const t = setTimeout(syncEmailFromAutofill, 100);
     return () => clearTimeout(t);
   }, []);
+
   useEffect(() => {
     if (!isRegister) {
       const t = setTimeout(syncEmailFromAutofill, 300);
@@ -37,7 +38,6 @@ export default function Login() {
     }
   }, [isRegister]);
 
-  // Si ya está autenticado, redirigir a la página de usuarios logueados
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/pagLogueados", { replace: true });
@@ -50,11 +50,18 @@ export default function Login() {
     setMsg("");
     setLoading(true);
 
+    // VALIDACIÓN FRONTEND PARA GMAIL
+    if (isRegister && !email.toLowerCase().endsWith("@gmail.com")) {
+      setErrors({ email: ["Solo se permiten correos @gmail.com"] });
+      setMsg("Solo se permiten correos con dominio @gmail.com");
+      setLoading(false);
+      return;
+    }
+
     try {
       let result;
-      
+
       if (isRegister) {
-        // Registro
         result = await register({
           name: username,
           email,
@@ -62,7 +69,6 @@ export default function Login() {
           password_confirmation: passwordConfirmation,
         });
       } else {
-        // Login por correo o usuario (usar ref si el estado está vacío por autocompletado)
         const loginValue = email || (emailInputRef.current?.value ?? "");
         result = await login({
           login: loginValue,
@@ -71,45 +77,47 @@ export default function Login() {
       }
 
       if (result.success) {
-        // Mostrar mensaje de éxito brevemente
         setMsg("¡Inicio de sesión exitoso! Redirigiendo...");
-        // Pequeño delay para asegurar que el estado se actualice
         setTimeout(() => {
           navigate("/pagLogueados", { replace: true });
         }, 500);
       } else {
-        // Mostrar error específico
-        const errorMsg = result.error || "Error al procesar la solicitud";
-        setMsg(errorMsg);
+        setMsg(result.error || "Error al procesar la solicitud");
         if (result.errors) {
           setErrors(result.errors);
         }
         setLoading(false);
       }
+
     } catch (error) {
-      // Error inesperado - no loguear detalles
-      setMsg("Error inesperado. Por favor, intenta de nuevo.");
+
+      if (error.response && error.response.status === 422) {
+        const backendErrors = error.response.data.errors || {};
+        setErrors(backendErrors);
+
+        if (backendErrors.email) {
+          setMsg(backendErrors.email[0]);
+        }
+
+      } else {
+        setMsg("Error inesperado. Por favor, intenta de nuevo.");
+      }
+
       setLoading(false);
     }
   };
 
   return (
-    <>
+    <div className={`login-page-container ${isRegister ? 'register-layout' : 'login-layout'}`}> 
 
-      <div className={`login-page-container ${isRegister ? 'register-layout' : 'login-layout'}`}> 
-        {/* <video id="bg-video" autoPlay loop muted>
-          <source src="/imagenes/Videofondo4.mp4" type="video/mp4" />
-        </video> */}
+      <header className="header">
+        <h1>🌿 Risaralda EcoTurismo</h1>
+      </header>
 
-        <header className="header">
-          <h1>🌿 Risaralda EcoTurismo</h1>
-        </header>
-
-        {/* SECCIÓN DE FORMULARIO - Izquierda o Derecha según tipo */}
-        <div className="login-form-section">
+      <div className="login-form-section">
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>{isRegister ? "Registro" : "Iniciar Sesión"}</h2>
-          
+
           {isRegister ? (
             <>
               <label>Nombre de usuario:</label>
@@ -120,16 +128,17 @@ export default function Login() {
                 required
                 placeholder="Tu nombre"
               />
-              {errors.name && <p className="error">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>}
+              {errors.name && <p className="error">{errors.name[0]}</p>}
+
               <label>Email:</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="tu@email.com"
+                placeholder="tu@gmail.com"
               />
-              {errors.email && <p className="error">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>}
+              {errors.email && <p className="error">{errors.email[0]}</p>}
             </>
           ) : (
             <>
@@ -147,9 +156,7 @@ export default function Login() {
               />
               {(errors.login || errors.email || errors.credentials) && (
                 <p className="error">
-                  {Array.isArray(errors.login) ? errors.login[0] : errors.login ||
-                   Array.isArray(errors.email) ? errors.email[0] : errors.email ||
-                   Array.isArray(errors.credentials) ? errors.credentials[0] : errors.credentials}
+                  {errors.login?.[0] || errors.email?.[0] || errors.credentials?.[0]}
                 </p>
               )}
             </>
@@ -169,13 +176,11 @@ export default function Login() {
               type="button"
               className="password-toggle"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
-          {errors.password && <p className="error">{Array.isArray(errors.password) ? errors.password[0] : errors.password}</p>}
-
+          {errors.password && <p className="error">{errors.password[0]}</p>}
 
           {isRegister && (
             <>
@@ -193,12 +198,11 @@ export default function Login() {
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
-                  aria-label={showPasswordConfirmation ? "Ocultar contraseña" : "Mostrar contraseña"}
                 >
                   {showPasswordConfirmation ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
-              {errors.password_confirmation && <p className="error">{Array.isArray(errors.password_confirmation) ? errors.password_confirmation[0] : errors.password_confirmation}</p>}
+              {errors.password_confirmation && <p className="error">{errors.password_confirmation[0]}</p>}
             </>
           )}
 
@@ -213,7 +217,7 @@ export default function Login() {
               ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
             </p>
           )}
-  
+
           {!isRegister && (
             <p className="register-text">
               ¿Has olvidado tu contraseña? <Link to="/forgot-password">Recupérala</Link>
@@ -221,17 +225,7 @@ export default function Login() {
           )}
 
           {msg && (
-            <p className={`message ${
-              msg.includes("Error") || 
-              msg.includes("incorrectas") || 
-              msg.includes("incorrecta") || 
-              msg.includes("requerida") ||
-              msg.includes("inválido")
-                ? "error" 
-                : msg.includes("exitoso") || msg.includes("Redirigiendo")
-                ? "success"
-                : ""
-            }`}>
+            <p className={`message ${msg.includes("Error") || msg.includes("inválido") ? "error" : "success"}`}>
               {msg}
             </p>
           )}
@@ -240,25 +234,21 @@ export default function Login() {
             {loading ? "Procesando..." : isRegister ? "Registrarse" : "Iniciar sesión"}
           </button>
         </form>
-        </div>
-
-        {/* SECCIÓN DE IMAGEN - Derecha o Izquierda según tipo */}
-        <div className="login-image-section">
-          <div className="login-image-content">
-            {/* El usuario puede reemplazar esta imagen */}
-            <img src="/imagenes/heroImage.jpg" alt="Risaralda EcoTurismo" style={{display: 'none'}} />
-            
-            <h2>{isRegister ? "Únete a Nosotros" : "Explora la Naturaleza"}</h2>
-            <p>
-              {isRegister 
-                ? "Acceso a reservas exclusivas, recomendaciones personalizadas y una comunidad de viajeros apasionados por la naturaleza."
-                : "Descubre los destinos ecológicos más hermosos de Risaralda. Reserva tu experiencia de ecoturismo hoy mismo."}
-            </p>
-          </div>
-        </div>
-
-        <footer className="footer">© 2025 Risaralda EcoTurismo</footer>
       </div>
-    </>
+
+      <div className="login-image-section">
+        <div className="login-image-content">
+          <h2>{isRegister ? "Únete a Nosotros" : "Explora la Naturaleza"}</h2>
+          <p>
+            {isRegister
+              ? "Acceso a reservas exclusivas, recomendaciones personalizadas y una comunidad de viajeros."
+              : "Descubre los destinos ecológicos más hermosos de Risaralda."}
+          </p>
+        </div>
+      </div>
+
+      <footer className="footer">© 2025 Risaralda EcoTurismo</footer>
+
+    </div>
   );
 }
