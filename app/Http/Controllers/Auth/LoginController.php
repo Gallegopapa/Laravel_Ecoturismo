@@ -23,7 +23,7 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $email = mb_strtolower(trim((string) $request->input('email', '')));
+        $email = strtolower(trim((string) $request->input('email', '')));
         $password = (string) $request->input('password', '');
         $request->merge([
             'email' => $email,

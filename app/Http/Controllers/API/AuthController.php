@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         $payload = [
             'name' => trim((string) $request->input('name', '')),
-            'email' => mb_strtolower(trim((string) $request->input('email', ''))),
+            'email' => strtolower(trim((string) $request->input('email', ''))),
             'password' => (string) $request->input('password', ''),
             'password_confirmation' => (string) $request->input('password_confirmation', ''),
         ];
@@ -54,7 +54,7 @@ class AuthController extends Controller
         ]);
 
         $validator->after(function ($validator) use ($payload) {
-            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($payload['name'])])->exists()) {
+            if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($payload['name'])])->exists()) {
                 $validator->errors()->add('name', 'Este nombre de usuario ya está en uso.');
             }
 
@@ -133,7 +133,7 @@ class AuthController extends Controller
         }
 
         try {
-            $normalizedLogin = mb_strtolower($loginValue);
+            $normalizedLogin = strtolower($loginValue);
 
             // Buscar usuario por correo o nombre de usuario
             $user = Usuarios::query()
