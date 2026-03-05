@@ -16,12 +16,18 @@
         table { width:100%; border-collapse:collapse; }
         th, td { padding:12px; text-align:left; border-bottom:1px solid #ececec; }
         th { background:#f9f9f9; color:#6c6c68; font-weight:600; }
+        .table-wrap { width:100%; overflow-x:auto; }
+        .table-wrap table { min-width:760px; }
         .badge { padding:4px 12px; border-radius:12px; font-size:0.85em; font-weight:600; }
         .badge-pending { background:#fff3cd; color:#856404; }
         .badge-confirmed { background:#d4edda; color:#155724; }
         .badge-cancelled { background:#f8d7da; color:#721c24; }
         .popular-place { display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #ececec; }
         .popular-place:last-child { border-bottom:none; }
+        @media (max-width:768px) {
+            .container { margin:20px auto; padding:0 12px; }
+            .section { padding:16px; }
+        }
     </style>
 </head>
 <body>
@@ -60,32 +66,34 @@
         <div class="section">
             <h2>Reservas Recientes</h2>
             @if($recent_reservations->count() > 0)
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Lugar</th>
-                            <th>Fecha Visita</th>
-                            <th>Personas</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recent_reservations as $reservation)
+                <div class="table-wrap">
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $reservation->usuario->name }}</td>
-                                <td>{{ $reservation->place->name }}</td>
-                                <td>{{ $reservation->fecha_visita ? $reservation->fecha_visita->format('d/m/Y') : ($reservation->fecha ? $reservation->fecha->format('d/m/Y') : 'N/A') }}</td>
-                                <td>{{ $reservation->personas }}</td>
-                                <td>
-                                    <span class="badge badge-{{ $reservation->estado }}">
-                                        {{ ucfirst($reservation->estado) }}
-                                    </span>
-                                </td>
+                                <th>Usuario</th>
+                                <th>Lugar</th>
+                                <th>Fecha Visita</th>
+                                <th>Personas</th>
+                                <th>Estado</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($recent_reservations as $reservation)
+                                <tr>
+                                    <td>{{ $reservation->usuario->name }}</td>
+                                    <td>{{ $reservation->place->name }}</td>
+                                    <td>{{ $reservation->fecha_visita ? $reservation->fecha_visita->format('d/m/Y') : ($reservation->fecha ? $reservation->fecha->format('d/m/Y') : 'N/A') }}</td>
+                                    <td>{{ $reservation->personas }}</td>
+                                    <td>
+                                        <span class="badge badge-{{ $reservation->estado }}">
+                                            {{ ucfirst($reservation->estado) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
                 <p>No hay reservas recientes.</p>
             @endif

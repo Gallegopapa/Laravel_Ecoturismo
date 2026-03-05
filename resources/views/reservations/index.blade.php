@@ -84,7 +84,7 @@
                             </div>
                         @endif
                         @if($reservation->estado == 'pendiente' || $reservation->estado == 'confirmada')
-                            <form method="POST" action="{{ route('reservations.destroy', $reservation) }}" style="margin-top:15px;" onsubmit="return confirm('¿Cancelar esta reserva?');">
+                            <form method="POST" action="{{ route('web.reservations.destroy', $reservation) }}" style="margin-top:15px;" onsubmit="return confirm('¿Cancelar esta reserva?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit">Cancelar Reserva</button>

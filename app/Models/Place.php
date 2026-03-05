@@ -37,9 +37,19 @@ class Place extends Model
             return $value;
         }
 
+        // Si comienza con /imagenes/, es una ruta pública relativa
+        if (strpos($value, '/imagenes/') === 0) {
+            return url($value);
+        }
+
         // Si comienza con /storage/, construir URL completa
         if (strpos($value, '/storage/') === 0) {
             return url($value);
+        }
+
+        // Si comienza con imagenes/ sin la barra inicial
+        if (strpos($value, 'imagenes/') === 0) {
+            return url('/' . $value);
         }
 
         // Si comienza con storage/ sin la barra inicial
@@ -47,8 +57,8 @@ class Place extends Model
             return url('/' . $value);
         }
 
-        // Por defecto, asumir que es solo el nombre de archivo en storage/places
-        return url('/storage/places/' . ltrim($value, '/'));
+        // Por defecto, asumir que es una ruta en /imagenes/
+        return url('/imagenes/' . ltrim($value, '/'));
     }
 
     /**

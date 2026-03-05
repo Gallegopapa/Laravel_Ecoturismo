@@ -44,18 +44,17 @@ body,input,textarea{
 
 .contact-form{
     background-color: #27ae60;
-  }
+    position: relative;
+}
 
-  body.grayscale-mode .contact-form,
-  body.grayscale-mode .circle,
-  body.grayscale-mode .contact-form:before {
+body.grayscale-mode .contact-form,
+body.grayscale-mode .circle,
+body.grayscale-mode .contact-form:before {
     background-color: #cccccc !important;
     color: #222 !important;
     border-color: #888 !important;
-  }
-    position: relative;
-    
 }
+
 .circle{
     border-radius: 50%;
     background:linear-gradient(135deg,transparent 20%,#0f0f0f);
@@ -352,6 +351,9 @@ textarea.input{
   @media (max-width: 480px) {
     .container {
       padding: 1.5rem;
+      min-height: 100vh;
+      max-height: none;
+      overflow-y: auto;
     }
   
     .contact-info:before {
@@ -390,6 +392,12 @@ textarea.input{
   
     .btn {
       padding: 0.45rem 1.2rem;
+    }
+
+    #volver {
+      margin-top: 20px;
+      margin-left: 0;
+      width: 100%;
     }
   }
 @media (min-width: 851px){

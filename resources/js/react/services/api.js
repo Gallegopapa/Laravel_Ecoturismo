@@ -2,7 +2,11 @@
 
 // Configurar la URL base de la API
 // Usar URL relativa si estÃ¡ en el mismo dominio, o absoluta si es necesario
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || '/api';
+const isLocalHost = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_URL = !isLocalHost && typeof rawApiUrl === 'string' && rawApiUrl.includes('localhost')
+  ? '/api'
+  : rawApiUrl;
 
 // Crear instancia de axios
 const api = axios.create({
@@ -119,7 +123,21 @@ export const authService = {
 export const placesService = {
   getAll: async (params = {}) => {
     const response = await api.get('/places', { params });
-    return response.data;
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.places)) {
+      return payload.places;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
   getById: async (id) => {
@@ -181,7 +199,21 @@ export const reviewsService = {
     // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
   getAll: async () => {
     const response = await api.get('/reviews/all');
-    return response.data;
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.reviews)) {
+      return payload.reviews;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
 
@@ -217,7 +249,21 @@ export const reviewsService = {
 export const favoritesService = {
   getAll: async () => {
     const response = await api.get('/favorites');
-    return response.data.favorites || response.data || [];
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+
+    if (Array.isArray(payload?.favorites)) {
+      return payload.favorites;
+    }
+
+    if (Array.isArray(payload?.data)) {
+      return payload.data;
+    }
+
+    return [];
   },
 
   check: async (placeId) => {
@@ -362,7 +408,11 @@ export const adminService = {
       if (placeData.description) formData.append('description', placeData.description);
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
-      if (placeData.image) formData.append('image', placeData.image);
+      
+      // Solo agregar imagen si es un File object (nueva imagen)
+      if (placeData.image instanceof File) {
+        formData.append('image', placeData.image);
+      }
       
       // Agregar categorías como array (incluso si está vacío para sincronizar)
       if (placeData.categories !== undefined) {

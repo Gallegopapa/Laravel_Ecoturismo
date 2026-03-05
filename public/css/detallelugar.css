@@ -52,7 +52,6 @@ body.high-contrast .boton-volver {
     color: #ffffff !important;
     border-color: #000000 !important;
 }
-}
 
 .contenedor-detalle {
     max-width: 1200px;
@@ -247,5 +246,16 @@ body.high-contrast .boton-volver {
     .botones {
         flex-direction: column;
         align-items: center;
+    }
+
+    .tabla-info .fila {
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .boton-volver, .boton-favorito {
+        width: 100%;
+        text-align: center;
     }
 }

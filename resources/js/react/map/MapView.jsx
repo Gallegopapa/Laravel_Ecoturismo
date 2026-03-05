@@ -60,11 +60,11 @@ function MapContent({ locations }) {
               )}
               {(loc.imagen || loc.image) && (
                 <img 
-                  src={loc.imagen || loc.image || '/imagenes/placeholder.jpg'} 
+                  src={loc.imagen || loc.image || '/imagenes/placeholder.svg'} 
                   alt={loc.name} 
                   className="map-popup-image"
                   onError={(e) => {
-                    e.target.src = '/imagenes/placeholder.jpg';
+                    e.target.src = '/imagenes/placeholder.svg';
                   }}
                 />
               )}

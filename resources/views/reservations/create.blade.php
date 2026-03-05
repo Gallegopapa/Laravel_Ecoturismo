@@ -42,7 +42,7 @@
 
             <h1 style="margin-bottom:20px;">Crear Reserva - {{ $place->name }}</h1>
 
-            <form method="POST" action="{{ route('reservations.store') }}">
+            <form method="POST" action="{{ route('web.reservations.store') }}">
                 @csrf
                 <input type="hidden" name="place_id" value="{{ $place->id }}">
 

@@ -394,7 +394,49 @@ const PlacesAdmin = () => {
                 accept="image/*"
                 onChange={handleInputChange}
               />
+              <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                Formatos soportados: JPG, PNG, WebP, GIF (máximo 5MB)
+              </small>
             </label>
+            
+            {/* Preview de la imagen seleccionada o actual */}
+            {formData.image && typeof formData.image === 'object' ? (
+              <div style={{ marginTop: '10px' }}>
+                <p style={{ fontSize: '0.9rem', fontWeight: 500, marginBottom: '5px' }}>Preview (nueva imagen):</p>
+                <img
+                  src={URL.createObjectURL(formData.image)}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '200px',
+                    maxHeight: '150px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    border: '2px solid #27ae60'
+                  }}
+                />
+              </div>
+            ) : editingPlace && editingPlace.image ? (
+              <div style={{ marginTop: '10px' }}>
+                <p style={{ fontSize: '0.9rem', fontWeight: 500, marginBottom: '5px' }}>Imagen actual:</p>
+                <img
+                  src={editingPlace.image}
+                  alt={editingPlace.name}
+                  style={{
+                    maxWidth: '200px',
+                    maxHeight: '150px',
+                    objectFit: 'cover',
+                    borderRadius: '6px',
+                    border: '2px solid #ddd'
+                  }}
+                  onError={(e) => {
+                    e.target.src = '/imagenes/placeholder.svg';
+                  }}
+                />
+                <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '5px' }}>
+                  Sube una nueva imagen para reemplazarla
+                </p>
+              </div>
+            ) : null}
           </div>
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/react/context/AuthContext";
 import { reviewsService, placesService } from "@/react/services/api";
 import "./page.css";
@@ -30,16 +30,17 @@ const Comments2Page = () => {
   const textareaRef = useRef(null);
 
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      navigate('/login', { replace: true });
+    if (authLoading) {
+      return;
     }
-  }, [isAuthenticated, authLoading, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadData();
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
     }
-  }, [isAuthenticated]);
+
+    loadData();
+  }, [isAuthenticated, authLoading]);
 
   const loadData = async () => {
     try {
@@ -202,7 +203,7 @@ const Comments2Page = () => {
     ));
   };
 
-  if (authLoading || loading) {
+  if (authLoading || (isAuthenticated && loading)) {
     return (
       <div className="page-layout">
         <Header2 />
@@ -215,7 +216,7 @@ const Comments2Page = () => {
   }
 
   if (!isAuthenticated || !user) {
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   const activeForm = editingReviewId ? editForm : formData;

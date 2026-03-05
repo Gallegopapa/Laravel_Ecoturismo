@@ -26,17 +26,22 @@ Route::get('/login', function() {
     return view('app');
 })->name('login');
 
+Route::get('/register', function() {
+    return view('app');
+})->name('register');
+
 // Solo manejamos los POST aquí (autenticación actual)
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/registro', [RegisterController::class, 'store'])->name('registro.store');
+Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
 Route::middleware('auth')->group(function () {
     // Rutas de usuarios
-    Route::get('/reservas', [ReservationController::class, 'index'])->name('reservations.index');
-    Route::get('/reservas/crear/{place}', [ReservationController::class, 'create'])->name('reservations.create');
-    Route::post('/reservas', [ReservationController::class, 'store'])->name('reservations.store');
-    Route::delete('/reservas/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+    Route::get('/reservas', [ReservationController::class, 'index'])->name('web.reservations.index');
+    Route::get('/reservas/crear/{place}', [ReservationController::class, 'create'])->name('web.reservations.create');
+    Route::post('/reservas', [ReservationController::class, 'store'])->name('web.reservations.store');
+    Route::delete('/reservas/{reservation}', [ReservationController::class, 'destroy'])->name('web.reservations.destroy');
     Route::get('/favoritos', function() {
         $favorites = \App\Models\Favorite::where('user_id', Auth::id())
             ->with('place')
