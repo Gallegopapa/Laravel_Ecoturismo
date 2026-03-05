@@ -31,10 +31,10 @@ Route::get('/register', function() {
 })->name('register');
 
 // Solo manejamos los POST aquí (autenticación actual)
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::post('/registro', [RegisterController::class, 'store'])->name('registro.store');
-Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+// Route::post('/login', [LoginController::class, 'login']);
+// Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// Route::post('/registro', [RegisterController::class, 'store'])->name('registro.store');
+// Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
 Route::middleware('auth')->group(function () {
     // Rutas de usuarios
