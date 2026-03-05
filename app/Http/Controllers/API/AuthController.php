@@ -35,7 +35,7 @@ class AuthController extends Controller
                 'regex:/^[a-zA-Z0-9_]+$/',
                 Rule::unique('usuarios', 'name'),
             ],
-            'email' => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com', Rule::unique('usuarios', 'email')],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Z0-9._%+-]+@gmail\.com$/i', Rule::unique('usuarios', 'email')],
             'password' => 'required|string|min:8|max:72|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.required' => 'El email es requerido.',
             'email.email' => 'El email debe ser una dirección válida.',
-            'email.ends_with' => 'Solo se permiten correos con dominio @gmail.com.',
+            'email.regex' => 'Solo se permiten correos con dominio @gmail.com.',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es requerida.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
@@ -120,6 +120,12 @@ class AuthController extends Controller
                 'login.required' => 'El correo o usuario es requerido.',
                 'password.required' => 'La contraseña es requerida.',
             ]);
+
+            if (str_contains($loginValue, '@') && !preg_match('/^[A-Z0-9._%+-]+@gmail\.com$/i', $loginValue)) {
+                throw ValidationException::withMessages([
+                    'login' => ['Solo se permiten correos con dominio @gmail.com.'],
+                ]);
+            }
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages($validator->errors()->toArray());

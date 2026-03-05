@@ -32,11 +32,12 @@ class LoginController extends Controller
 
         // Validar campos requeridos (usamos email para login)
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Z0-9._%+-]+@gmail\\.com$/i'],
             'password' => ['required', 'string'],
         ], [
             'email.required' => 'El correo es requerido.',
             'email.email' => 'Introduce un correo válido.',
+            'email.regex' => 'Solo se permiten correos con dominio @gmail.com.',
             'password.required' => 'La contraseña es requerida.',
         ]);
 

@@ -27,7 +27,7 @@ class RegisterController extends Controller
 
         $validator = Validator::make($payload, [
             'name' => ['required', 'string', 'max:255', Rule::unique('usuarios', 'name')],
-            'email' => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com', Rule::unique('usuarios', 'email')],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Z0-9._%+-]+@gmail\\.com$/i', Rule::unique('usuarios', 'email')],
             'password' => 'required|string|min:8|max:72|confirmed',
         ], [
             // Mensajes para el campo name
@@ -39,7 +39,7 @@ class RegisterController extends Controller
             // Mensajes para el campo email
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'Debes proporcionar un correo electrónico válido.',
-            'email.ends_with' => 'Solo se permiten correos con dominio @gmail.com.',
+            'email.regex' => 'Solo se permiten correos con dominio @gmail.com.',
             'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
             'email.unique' => 'Este correo electrónico ya está registrado. Intenta iniciar sesión.',
             
