@@ -44,7 +44,6 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.es|outlook\.com)$/i',
                 Rule::unique('usuarios', 'email'),
             ],
             'password' => 'required|string|min:8|max:72|confirmed',
@@ -65,12 +64,12 @@ class AuthController extends Controller
         ]);
 
         $validator->after(function ($validator) use ($username, $email) {
-            // Validar que el email sea de dominio permitido
-            $allowedDomains = ['gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com'];
-            $emailDomain = substr(strrchr($email, "@"), 1);
+            // Validar que el email sea exactamente de los dominios permitidos
+            $allowedEmails = ['gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com'];
+            $emailParts = explode('@', $email);
             
-            if (!in_array($emailDomain, $allowedDomains)) {
-                $validator->errors()->add('email', 'Solo se permiten correos de Gmail o Hotmail (gmail.com, hotmail.com, hotmail.es, outlook.com).');
+            if (count($emailParts) !== 2 || !in_array($emailParts[1], $allowedEmails)) {
+                $validator->errors()->add('email', 'Solo se permiten correos de Gmail (@gmail.com), Hotmail (@hotmail.com o @hotmail.es) u Outlook (@outlook.com).');
             }
 
             if (Usuarios::query()->whereRaw('LOWER(name) = ?', [strtolower($username)])->exists()) {
