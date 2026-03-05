@@ -20,7 +20,14 @@
         th, td { padding:12px; text-align:left; border-bottom:1px solid #ececec; }
         th { background:#f9f9f9; color:#6c6c68; font-weight:600; }
         .actions { display:flex; gap:10px; }
+        .table-wrap { width:100%; overflow-x:auto; }
+        .table-wrap table { min-width:760px; }
         @media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+        @media (max-width:768px) {
+            .container { margin:20px auto; padding:0 12px; }
+            .card { padding:16px; }
+            .actions { flex-wrap:wrap; }
+        }
     </style>
 </head>
 <body>
@@ -64,44 +71,46 @@
 
         <div class="card">
             <h2>Listado de categorías</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Icono</th>
-                        <th>Nombre</th>
-                        <th>Slug</th>
-                        <th>Lugares</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($categories as $category)
+            <div class="table-wrap">
+                <table>
+                    <thead>
                         <tr>
-                            <td style="font-size:1.5em;">{{ $category->icon ?? '📁' }}</td>
-                            <td><strong>{{ $category->name }}</strong></td>
-                            <td style="color:#6c6c68; font-size:0.9em;">{{ $category->slug }}</td>
-                            <td>{{ $category->places_count }} lugares</td>
-                            <td>
-                                <form method="POST" action="{{ route('admin.categories.update', $category) }}" style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="text" name="name" value="{{ $category->name }}" style="width:150px; margin-right:5px;">
-                                    <button type="submit" class="secondary" style="margin-top:0;">Actualizar</button>
-                                </form>
-                                <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" style="display:inline;" onsubmit="return confirm('¿Eliminar esta categoría?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="danger" style="margin-top:0;">Eliminar</button>
-                                </form>
-                            </td>
+                            <th>Icono</th>
+                            <th>Nombre</th>
+                            <th>Slug</th>
+                            <th>Lugares</th>
+                            <th>Acciones</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" style="text-align:center; padding:40px; color:#6c6c68;">No hay categorías creadas.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($categories as $category)
+                            <tr>
+                                <td style="font-size:1.5em;">{{ $category->icon ?? '📁' }}</td>
+                                <td><strong>{{ $category->name }}</strong></td>
+                                <td style="color:#6c6c68; font-size:0.9em;">{{ $category->slug }}</td>
+                                <td>{{ $category->places_count }} lugares</td>
+                                <td>
+                                    <form method="POST" action="{{ route('admin.categories.update', $category) }}" style="display:inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="text" name="name" value="{{ $category->name }}" style="width:150px; margin-right:5px;">
+                                        <button type="submit" class="secondary" style="margin-top:0;">Actualizar</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" style="display:inline;" onsubmit="return confirm('¿Eliminar esta categoría?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="danger" style="margin-top:0;">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:40px; color:#6c6c68;">No hay categorías creadas.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

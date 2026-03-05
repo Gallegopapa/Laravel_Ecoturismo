@@ -33,8 +33,16 @@
         .dropzone .dz-preview img { max-width:150px; max-height:150px; border-radius:8px; }
         .image-preview { margin-top:10px; }
         .image-preview img { max-width:200px; max-height:200px; border-radius:8px; border:2px solid #ececec; }
+        .table-wrap { width:100%; overflow-x:auto; }
+        .table-wrap table { min-width:780px; }
         @media (max-width:900px) {
             .grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:768px) {
+            body { padding:12px; }
+            .container { padding:16px; }
+            .actions { flex-direction:column; align-items:stretch; }
+            .actions button { width:100%; }
         }
     </style>
 </head>
@@ -110,63 +118,65 @@
         </div>
 
         <h2 style="margin-top:40px;">Listado de lugares</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Detalle</th>
-                    <th style="width:260px;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($places as $place)
+        <div class="table-wrap">
+            <table>
+                <thead>
                     <tr>
-                        <td>
-                            <form id="form-update-{{ $place->id }}" method="POST" action="{{ route('admin.places.update', $place) }}">
-                                @csrf
-                                @method('PUT')
-                                <label>Nombre</label>
-                                <input type="text" name="name" value="{{ $place->name }}" required>
+                        <th>Detalle</th>
+                        <th style="width:260px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($places as $place)
+                        <tr>
+                            <td>
+                                <form id="form-update-{{ $place->id }}" method="POST" action="{{ route('admin.places.update', $place) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <label>Nombre</label>
+                                    <input type="text" name="name" value="{{ $place->name }}" required>
 
-                                <label>Descripción</label>
-                                <textarea name="description">{{ $place->description }}</textarea>
+                                    <label>Descripción</label>
+                                    <textarea name="description">{{ $place->description }}</textarea>
 
-                                <label>Ubicación</label>
-                                <input type="text" name="location" value="{{ $place->location }}">
+                                    <label>Ubicación</label>
+                                    <input type="text" name="location" value="{{ $place->location }}">
 
-                                <label>Imagen</label>
-                                <div id="dropzone-{{ $place->id }}" class="dropzone">
-                                    <div class="dz-message">
-                                        <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
-                                        <p class="dz-message-text">(Formatos: JPG, PNG, GIF - Máx: 5MB)</p>
+                                    <label>Imagen</label>
+                                    <div id="dropzone-{{ $place->id }}" class="dropzone">
+                                        <div class="dz-message">
+                                            <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                                            <p class="dz-message-text">(Formatos: JPG, PNG, GIF - Máx: 5MB)</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <input type="hidden" name="image" id="image-url-{{ $place->id }}" value="{{ $place->image }}">
-                                <div id="image-preview-{{ $place->id }}" class="image-preview">
-                                    @if($place->image)
-                                        <p style="font-size:0.85em; color:#666; margin:5px 0;">Imagen actual:</p>
-                                        <img src="{{ $place->image }}" alt="Imagen actual" style="max-width:200px; max-height:200px; border-radius:8px; border:2px solid #ececec;" onerror="this.style.display='none'">
-                                    @endif
-                                </div>
+                                    <input type="hidden" name="image" id="image-url-{{ $place->id }}" value="{{ $place->image }}">
+                                    <div id="image-preview-{{ $place->id }}" class="image-preview">
+                                        @if($place->image)
+                                            <p style="font-size:0.85em; color:#666; margin:5px 0;">Imagen actual:</p>
+                                            <img src="{{ $place->image }}" alt="Imagen actual" style="max-width:200px; max-height:200px; border-radius:8px; border:2px solid #ececec;" onerror="this.style.display='none'">
+                                        @endif
+                                    </div>
 
-                                <small>Última actualización: {{ $place->updated_at ? $place->updated_at->format('d/m/Y H:i') : 'N/A' }}</small>
-                            </form>
-                        </td>
-                        <td class="actions">
-                            <button form="form-update-{{ $place->id }}" type="submit" class="secondary">Actualizar</button>
-                            <form method="POST" action="{{ route('admin.places.destroy', $place) }}" onsubmit="return confirm('¿Eliminar este lugar?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="danger">Eliminar</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="2">Aún no hay lugares cargados.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                    <small>Última actualización: {{ $place->updated_at ? $place->updated_at->format('d/m/Y H:i') : 'N/A' }}</small>
+                                </form>
+                            </td>
+                            <td class="actions">
+                                <button form="form-update-{{ $place->id }}" type="submit" class="secondary">Actualizar</button>
+                                <form method="POST" action="{{ route('admin.places.destroy', $place) }}" onsubmit="return confirm('¿Eliminar este lugar?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2">Aún no hay lugares cargados.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
     <script>
