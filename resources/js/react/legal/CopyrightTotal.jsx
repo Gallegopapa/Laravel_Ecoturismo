@@ -5,7 +5,17 @@ import Footer from "@/react/components/Footer/Footer";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
-  const isAuthenticated = !!localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+  let parsedUser = null;
+
+  try {
+    parsedUser = storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    parsedUser = null;
+  }
+
+  const isAuthenticated = Boolean(token && parsedUser && (parsedUser.id || parsedUser.name));
 
   const items = {
     lugaresMontanosos: [
