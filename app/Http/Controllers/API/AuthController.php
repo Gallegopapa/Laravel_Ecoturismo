@@ -147,12 +147,13 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
 
-            'login' => 'required|string|max:255',
+            'login' => 'nullable|string|max:255',
+            'email' => 'nullable|string|max:255',
+            'username' => 'nullable|string|max:255',
             'password' => 'required|string'
 
         ], [
 
-            'login.required' => 'El correo o usuario es requerido.',
             'password.required' => 'La contraseña es requerida.'
 
         ]);
@@ -164,7 +165,21 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $login = strtolower(trim($request->login));
+        $rawLogin = $request->input('login')
+            ?? $request->input('email')
+            ?? $request->input('username');
+
+        $login = strtolower(trim((string) $rawLogin));
+
+        if ($login === '') {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => [
+                    'login' => ['El correo o usuario es requerido.']
+                ]
+            ], 422);
+        }
+
         $password = $request->password;
 
         $user = Usuarios::whereRaw('LOWER(email) = ?', [$login])
