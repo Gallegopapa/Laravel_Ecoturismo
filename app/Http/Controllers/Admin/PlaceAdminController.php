@@ -64,19 +64,32 @@ class PlaceAdminController extends Controller
             'image' => 'nullable|string|max:500',
         ]);
 
-        // Si hay una nueva imagen y es diferente a la anterior, eliminar la imagen antigua
-        if (isset($data['image']) && $data['image'] !== $place->image) {
-            // Eliminar imagen anterior si existe y está en storage
+        // Solo actualizar la imagen si se envía una nueva (no null/vacío)
+        if (empty($data['image'])) {
+            unset($data['image']);
+        } elseif ($data['image'] !== $place->image) {
+            // Si la imagen es diferente y existe una anterior, eliminar la anterior
             if ($place->image && strpos($place->image, 'storage/places/') !== false) {
                 $oldImagePath = str_replace(asset(''), '', $place->image);
                 $oldImagePath = str_replace('storage/', '', $oldImagePath);
-                if (Storage::disk('public')->exists('places/' . basename($oldImagePath))) {
-                    Storage::disk('public')->delete('places/' . basename($oldImagePath));
+                if (\Storage::disk('public')->exists('places/' . basename($oldImagePath))) {
+                    \Storage::disk('public')->delete('places/' . basename($oldImagePath));
                 }
             }
         }
 
         $place->update($data);
+
+        // Sincronizar categorías solo si vienen en la request
+        if ($request->has('categories')) {
+            $categories = $request->input('categories', []);
+            // Si es string vacío o array vacío, limpiar relación
+            if (is_array($categories)) {
+                $place->categories()->sync($categories);
+            } elseif ($categories === '' || $categories === null) {
+                $place->categories()->sync([]);
+            }
+        }
 
         return redirect()->route('admin.places.index')->with('status', 'Lugar actualizado correctamente.');
     }
