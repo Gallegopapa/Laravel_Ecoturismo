@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -74,14 +75,47 @@ class AuthController extends Controller
 
         $data = $validator->validated();
 
-        $user = Usuarios::create([
-            'name' => trim($data['name']),
-            'email' => strtolower(trim($data['email'])),
-            'password' => Hash::make($data['password']),
-            'fecha_registro' => now()
-        ]);
+        try {
+            [$user, $token] = DB::transaction(function () use ($data) {
+                $normalizedName = trim($data['name']);
+                $normalizedEmail = strtolower(trim($data['email']));
 
-        $token = $user->createToken('api-token')->plainTextToken;
+                $user = Usuarios::create([
+                    'name' => $normalizedName,
+                    'email' => $normalizedEmail,
+                    'password' => Hash::make($data['password']),
+                    'fecha_registro' => now(),
+                ]);
+
+                // En algunos entornos el ID puede no venir inmediatamente en la instancia creada.
+                $user = $user->fresh() ?? Usuarios::query()->where('email', $normalizedEmail)->first();
+
+                if (!$user || !$user->id) {
+                    throw ValidationException::withMessages([
+                        'register' => ['No se pudo confirmar el ID del usuario creado.'],
+                    ]);
+                }
+
+                $token = $user->createToken('api-token')->plainTextToken;
+
+                return [$user, $token];
+            });
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Error al registrar usuario',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $e) {
+            Log::error('Fallo en registro de usuario', [
+                'message' => $e->getMessage(),
+                'db_connection' => config('database.default'),
+                'exception' => get_class($e),
+            ]);
+
+            return response()->json([
+                'message' => 'No fue posible registrar el usuario en este momento.',
+            ], 500);
+        }
 
         return response()->json([
 

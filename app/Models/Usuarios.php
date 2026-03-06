@@ -52,23 +52,28 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
      */
     public function getFotoPerfilAttribute($value)
     {
-        if (!$value) {
+        if (!$value || $value === "null") {
             return null;
         }
 
+        // Si ya es una URL absoluta válida, devolverla
         if (preg_match('/^https?:\/\//', $value)) {
             return $value;
         }
 
+        // Normalizar rutas relativas a formato limpio
+        $cleanPath = $value;
         if (strpos($value, '/storage/') === 0) {
-            return url($value);
+            $cleanPath = substr($value, 1); // Quitar la barra inicial
+        } elseif (strpos($value, 'storage/') === 0) {
+            // Ya está en formato 'storage/...'
+        } else {
+            // Si es solo el nombre del archivo, agregarle la ruta
+            $cleanPath = 'storage/profiles/' . ltrim($value, '/');
         }
 
-        if (strpos($value, 'storage/') === 0) {
-            return url('/' . $value);
-        }
-
-        return url('/storage/profiles/' . $value);
+        // Usar asset() para generar URL completa con el dominio correcto
+        return asset($cleanPath);
     }
 
     /**

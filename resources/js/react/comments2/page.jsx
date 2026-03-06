@@ -45,12 +45,60 @@ const Comments2Page = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [reviewsData, placesData] = await Promise.all([
+      const [reviewsResult, placesResult] = await Promise.allSettled([
         reviewsService.getAll(),
-        placesService.getAll(),
+        placesService.getOptions(),
       ]);
-      setReviews(reviewsData || []);
-      setPlaces(placesData || []);
+
+      const nextReviews =
+        reviewsResult.status === "fulfilled" && Array.isArray(reviewsResult.value)
+          ? reviewsResult.value
+          : [];
+
+      const rawPlaces =
+        placesResult.status === "fulfilled" && Array.isArray(placesResult.value)
+          ? placesResult.value
+          : [];
+
+      const normalizedPlaces = rawPlaces
+        .map((place) => ({
+          id: place?.id ?? place?.place_id ?? "",
+          name: place?.name ?? place?.nombre ?? "",
+          location: place?.location ?? place?.ubicacion ?? "",
+        }))
+        .filter((place) => place.id && place.name);
+
+      const fallbackPlacesFromReviews = Array.from(
+        new Map(
+          nextReviews
+            .filter((review) => review?.place?.id && review?.place?.name)
+            .map((review) => [
+              review.place.id,
+              {
+                id: review.place.id,
+                name: review.place.name,
+                location: review.place.location ?? "",
+              },
+            ])
+        ).values()
+      );
+
+      setReviews(nextReviews);
+      setPlaces(normalizedPlaces.length > 0 ? normalizedPlaces : fallbackPlacesFromReviews);
+
+      if (placesResult.status === "rejected") {
+        console.error("Error al cargar lugares:", placesResult.reason);
+        setFormError("No se pudieron cargar los lugares. Intenta recargar la página.");
+      }
+
+      if (reviewsResult.status === "rejected") {
+        console.error("Error al cargar reseñas:", reviewsResult.reason);
+        if (placesResult.status !== "rejected") {
+          setMessage("No se pudieron cargar algunas reseñas, pero puedes crear una nueva.");
+        } else {
+          setMessage("Error al cargar las reseñas");
+        }
+      }
     } catch (error) {
       console.error("Error al cargar datos:", error);
       setMessage("Error al cargar las reseñas");
@@ -421,6 +469,11 @@ const Comments2Page = () => {
               }}
             >
               <option value="">-- Selecciona un lugar --</option>
+              {places.length === 0 && (
+                <option value="" disabled>
+                  No hay lugares disponibles
+                </option>
+              )}
               {places.map(place => (
                 <option key={place.id} value={place.id}>
                   {place.name} {place.location ? `- ${place.location}` : ''}

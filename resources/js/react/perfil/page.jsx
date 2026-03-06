@@ -17,10 +17,45 @@ const PerfilPage = () => {
     foto_perfil: null,
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [displayImage, setDisplayImage] = useState(usuarioImg);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
+
+  const resolveProfileImageUrl = (rawUrl) => {
+    if (!rawUrl || rawUrl === "null" || rawUrl === "undefined") {
+      return usuarioImg;
+    }
+
+    // Si es URL absoluta (completa con https://), devolverla tal cual
+    if (/^https?:\/\//i.test(rawUrl)) {
+      return `${rawUrl}?t=${Date.now()}`;
+    }
+
+    // Si es ruta relativa (/storage/...), devolverla con cache buster
+    if (rawUrl.startsWith('/')) {
+      return `${rawUrl}?t=${Date.now()}`;
+    }
+
+    // Fallback: agregar /storage/ si falta
+    return `/storage/${rawUrl}?t=${Date.now()}`;
+  };
+
+  useEffect(() => {
+    if (previewImage) {
+      // Si hay preview local (FileReader DataURL), usar directamente
+      if (previewImage.startsWith('data:')) {
+        setDisplayImage(previewImage);
+      } else {
+        // Si es URL del servidor, resolver y mostrar
+        setDisplayImage(resolveProfileImageUrl(previewImage));
+      }
+    } else {
+      // Sin preview, usar la foto actual del usuario
+      setDisplayImage(usuarioImg);
+    }
+  }, [previewImage]);
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
     try {
@@ -51,13 +86,24 @@ const PerfilPage = () => {
           telefono: user.telefono || "",
           foto_perfil: null,
         });
-        // Agregar timestamp a la URL de foto para evitar caché
-        const fotoUrl = user.foto_perfil 
-          ? (user.foto_perfil.includes('?') 
-              ? `${user.foto_perfil}&t=${Date.now()}`
-              : `${user.foto_perfil}?t=${Date.now()}`)
-          : usuarioImg;
-        setPreviewImage(fotoUrl);
+        setPreviewImage(user.foto_perfil || null);
+
+        // Refresca desde API para evitar URLs antiguas en localStorage/contexto.
+        try {
+          const response = await profileService.get();
+          if (response.user) {
+            updateUser(response.user);
+            setFormData({
+              name: response.user.name || "",
+              email: response.user.email || "",
+              telefono: response.user.telefono || "",
+              foto_perfil: null,
+            });
+            setPreviewImage(response.user.foto_perfil || null);
+          }
+        } catch (error) {
+          console.error("Error al refrescar perfil:", error);
+        }
       } else if (isAuthenticated) {
         // Si hay token pero no hay usuario en el contexto, cargar desde la API
         try {
@@ -69,13 +115,7 @@ const PerfilPage = () => {
               telefono: response.user.telefono || "",
               foto_perfil: null,
             });
-            // Agregar timestamp a la URL de foto para evitar caché
-            const fotoUrl = response.user.foto_perfil 
-              ? (response.user.foto_perfil.includes('?') 
-                  ? `${response.user.foto_perfil}&t=${Date.now()}`
-                  : `${response.user.foto_perfil}?t=${Date.now()}`)
-              : usuarioImg;
-            setPreviewImage(fotoUrl);
+            setPreviewImage(response.user.foto_perfil || null);
           }
         } catch (error) {
           console.error("Error al cargar perfil:", error);
@@ -136,7 +176,7 @@ const PerfilPage = () => {
 
     try {
       // Log para debugging
-      console.log('Enviando datos:', {
+      console.log('🚀 Enviando datos:', {
         name: formData.name,
         email: formData.email,
         telefono: formData.telefono,
@@ -145,19 +185,25 @@ const PerfilPage = () => {
       });
 
       const response = await profileService.update(formData);
+      console.log('✅ Respuesta del servidor:', response);
+      
       setMessage(response.message || "Perfil actualizado exitosamente");
       
       // Actualizar el usuario en el contexto
       if (response.user) {
+        console.log('👤 Usuario actualizado:', response.user);
         updateUser(response.user);
-        // Actualizar preview si se subió nueva imagen - usar la URL del servidor
+        
+        // Actualizar preview - pasar la URL del servidor tal cual al useEffect
         if (response.user.foto_perfil) {
-          // Agregar timestamp para asegurar que se recarga la imagen (evitar caché)
-          const fotoUrl = response.user.foto_perfil.includes('?') 
-            ? `${response.user.foto_perfil}&t=${Date.now()}`
-            : `${response.user.foto_perfil}?t=${Date.now()}`;
-          setPreviewImage(fotoUrl);
+          console.log('🖼️ URL del servidor:', response.user.foto_perfil);
+          setPreviewImage(response.user.foto_perfil);
+        } else {
+          console.warn('⚠️ No hay foto_perfil en la respuesta del servidor');
+          setPreviewImage(null);
         }
+      } else {
+        console.warn('⚠️ No hay usuario en la respuesta del servidor');
       }
       
       // Limpiar el input de archivo si se guardó correctamente
@@ -168,8 +214,9 @@ const PerfilPage = () => {
       
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('❌ Error al actualizar perfil:', error);
+      console.error('❌ Error response data:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
       setMessage(
         error.response?.data?.message || error.message || "Error al actualizar el perfil"
       );
@@ -205,9 +252,13 @@ const PerfilPage = () => {
           <div className="profile-photo-section">
             <div className="photo-preview">
               <img 
-                src={previewImage || usuarioImg} 
+                src={displayImage} 
                 alt="Foto de perfil" 
                 className="profile-photo"
+                onError={(e) => {
+                  e.currentTarget.src = usuarioImg;
+                  setDisplayImage(usuarioImg);
+                }}
               />
             </div>
             <label htmlFor="foto_perfil" className="photo-upload-btn">

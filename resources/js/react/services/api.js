@@ -1,8 +1,8 @@
 ﻿import axios from 'axios';
 
 // Configurar la URL base de la API
-// Usar URL relativa si estÃ¡ en el mismo dominio, o absoluta si es necesario
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Usar URL relativa siempre para que funcione en cualquier dominio
+const API_URL = '/api';
 
 // Crear instancia de axios
 const api = axios.create({
@@ -117,6 +117,30 @@ export const authService = {
 
 // Servicios de lugares
 export const placesService = {
+  getOptions: async () => {
+    try {
+      const response = await api.get('/places/options');
+      const payload = response.data;
+
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+
+      if (Array.isArray(payload?.places)) {
+        return payload.places;
+      }
+
+      if (Array.isArray(payload?.data)) {
+        return payload.data;
+      }
+
+      return [];
+    } catch (_) {
+      // Compatibilidad con despliegues que aún no tengan la ruta nueva.
+      return placesService.getAll();
+    }
+  },
+
   getAll: async (params = {}) => {
     const response = await api.get('/places', { params });
     const payload = response.data;

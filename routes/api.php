@@ -32,6 +32,7 @@ Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']
 
 // Rutas pÃºblicas de lugares
 Route::get('/places', [PlaceController::class, 'index']);
+Route::get('/places/options', [PlaceController::class, 'options']);
 Route::get('/places/{place}', [PlaceController::class, 'show']);
 Route::get('/places/{place}/available-schedules', [PlaceController::class, 'getAvailableSchedules']);
 Route::get('/places/{place}/schedules', [PlaceScheduleController::class, 'index']);
