@@ -1,11 +1,9 @@
-import React, { useLayoutEffect } from "react";
-import Header from "@/react/components/Header/Header";
+import React from "react";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
-<<<<<<< HEAD
     React.useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, []);
@@ -144,179 +142,6 @@ export default function CopyrightTotal() {
             },
         ],
     };
-=======
-  useLayoutEffect(() => {
-    const scrollToTop = () => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-
-    const previousScrollRestoration = window.history.scrollRestoration;
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
-    }
-
-    scrollToTop();
-    const rafId = requestAnimationFrame(scrollToTop);
-    const timeoutId = setTimeout(scrollToTop, 120);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      clearTimeout(timeoutId);
-      if ("scrollRestoration" in window.history) {
-        window.history.scrollRestoration = previousScrollRestoration || "auto";
-      }
-    };
-  }, []);
-
-  const token = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
-  let parsedUser = null;
-
-  try {
-    parsedUser = storedUser ? JSON.parse(storedUser) : null;
-  } catch (error) {
-    parsedUser = null;
-  }
-
-  const isAuthenticated = Boolean(token && parsedUser && (parsedUser.id || parsedUser.name));
-
-  const items = {
-    lugaresMontanosos: [
-      {
-        title: "Alto del Nudo",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Alto del Toro",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Cerro Batero",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Kuakita Bosque Reserva",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Divisa de Don Juan",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Reserva Forestal La Nona",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Reserva Natural Cerro Gobia",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Reserva Natural DMI Agualinda",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Piedras Marcadas",
-        url: "https://www.colparques.net/"
-      },
-      { 
-        title: "Cascada Lagrimas Del Indio",
-        url: "https://es.wikiloc.com/"
-      },
-      { 
-        title: "Santuario Otún Quimbaya",
-        url: "https://old.parquesnacionales.gov.co/"
-      },
-      { 
-        title: "Barbas Bremen",
-        url: "https://www.ruraladventure.co/"
-      },
-    ],
-    paraisosAcuaticos: [
-      {
-        title: "Farallones",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Chorros de don Lolo",
-        url: "https://www.tripadvisor.com/"
-      },
-      {
-        title: "Consota",
-        url: "https://comfamiliar.com/parque-consota/"
-      },
-      {
-        title: "Laguna del Otun",
-        url: "https://www.parquesnacionales.gov.co/"
-      },
-      {
-        title: "Lago de la Pradera",
-        url: "https://caracol.com.co/"
-      },
-      {
-        title: "Rio San Jose",
-        url: "https://territorioexplora.com.co/"
-      },
-      { 
-        title: "Termales de Santa Rosa",
-        url: "https://www.booking.com/"
-      },
-      { 
-        title: "Cascada Lagrimas Del Indio",
-        url: "https://es.wikiloc.com/"
-      },
-      { 
-        title: "Termales de San Vicente",
-        url: "https://www.parquesdeleje.com/"
-      },
-    ],
-    parquesYMas: [
-      {
-        title: "Jardín Botánico Marsella",
-        url: "https://rutasdelpaisajeculturalcafetero.com/",
-      },
-      {
-        title: "Jardín Botánico UTP",
-        url: "https://jardinbotanico.utp.edu.co/",
-      },
-      {
-        title: "Parque Las Araucarias",
-        url: "https://camarasantarosa.org/",
-      },
-      {
-        title: "Parque Nacional Natural Tatamá",
-        url: "https://www.parquesnacionales.gov.co/",
-      },
-      {
-        title: "Parque Natural Regional Santa Emilia",
-        url: "https://www.parquesnacionales.gov.co/",
-      },
-      {
-        title: "Parque Regional Natural Cuchilla de San Juan",
-        url: "https://www.parquesnacionales.gov.co/",
-      },
-      {
-        title: "Parque Bioflora en Finca Turistica Los Rosales",
-        url: "https://co.hoteles.com/",
-      },
-      {
-        title: "Bioparque Mariposario Bonita Farm",
-        url: "https://www.recreatur.co/",
-      },
-    ],
-    ecohoteles: [
-      {
-        title: "EcoHotel Paraíso Real",
-        url: "https://eco-paraiso-real.hotelesejecafetero.net/"
-      },
-      {
-        title: "Finca Catedral Santa Rosa De Cabal RDA",
-        url: "https://mapcarta.com/"
-      },
-    ]
-  };
->>>>>>> 45485318f0ba2d8cde0c2d9b220ac0d9aacc3743
 
     const sections = [
         { key: "lugaresMontanosos", title: "Copyright Lugares Montañosos" },
@@ -325,7 +150,6 @@ export default function CopyrightTotal() {
         { key: "ecohoteles", title: "Copyright Ecohoteles" },
     ];
 
-<<<<<<< HEAD
     return (
         <div className="page-layout">
             <Header2 />
@@ -360,33 +184,6 @@ export default function CopyrightTotal() {
                     originales de las imágenes de todos nuestros hermosos
                     destinos turísticos.
                 </p>
-=======
-  return (
-    <div className="page-layout">
-      {isAuthenticated ? <Header2 /> : <Header />}
-      <div className="page-content contenedorTodo" style={{ marginTop: "100px" }}>
-        <h1 style={{
-          fontSize: "40px",
-          fontWeight: "700",
-          color: "#27ae60",
-          marginBottom: "15px",
-          textAlign: "center",
-          borderBottom: "3px solid #2ecc71",
-          paddingBottom: "20px"
-        }}>
-          ©Copyright De Imagenes
-        </h1>
-        <p style={{
-          fontSize: "16px",
-          color: "#555",
-          textAlign: "center",
-          maxWidth: "650px",
-          margin: "0 auto 70px",
-          lineHeight: "1.6"
-        }}>
-          Aquí encontrarás los créditos y enlaces a las fuentes originales de las imágenes de todos nuestros hermosos destinos turísticos.
-        </p>
->>>>>>> 45485318f0ba2d8cde0c2d9b220ac0d9aacc3743
 
                 {sections.map((section) => (
                     <div key={section.key} style={{ marginBottom: "80px" }}>
