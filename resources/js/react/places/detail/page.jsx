@@ -107,6 +107,42 @@ const PlaceDetailPage = () => {
     return valor.includes('/imagenes/placeholder.jpg') || valor.endsWith('placeholder.jpg');
   };
 
+  const normalizarRutaImagen = (ruta) => {
+    if (!ruta) return null;
+
+    const valor = String(ruta).trim();
+
+    if (!valor) {
+      return null;
+    }
+
+    if (valor.startsWith('http://') || valor.startsWith('https://')) {
+      return valor;
+    }
+
+    if (valor.startsWith('/')) {
+      return valor;
+    }
+
+    if (valor.startsWith('storage/') || valor.startsWith('imagenes/')) {
+      return `/${valor}`;
+    }
+
+    return valor;
+  };
+
+  const esImagenGenerica = (ruta) => {
+    if (!ruta) return true;
+
+    const valor = String(ruta).toLowerCase();
+
+    return (
+      valor.includes('placeholder') ||
+      valor.includes('iconoecoturismo') ||
+      valor.endsWith('/usuario.jpg')
+    );
+  };
+
   useEffect(() => {
     if (id) {
       loadPlace();
@@ -139,14 +175,8 @@ const PlaceDetailPage = () => {
       const nombreLugar = normalizarNombre(nombreOriginal);
 
       // PRIMERO: Usar imagen válida proveniente del API (storage, /imagenes o URL completa)
-      const imagenApiValida = placeData.image && (
-        placeData.image.startsWith('/storage/') ||
-        placeData.image.startsWith('storage/') ||
-        placeData.image.startsWith('/imagenes/') ||
-        placeData.image.startsWith('imagenes/') ||
-        placeData.image.startsWith('http://') ||
-        placeData.image.startsWith('https://')
-      ) ? placeData.image : null;
+      const imagenApiNormalizada = normalizarRutaImagen(placeData.image);
+      const imagenApiValida = imagenApiNormalizada && !esImagenGenerica(imagenApiNormalizada) ? imagenApiNormalizada : null;
 
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
       let imagenLocal = null;
@@ -160,7 +190,10 @@ const PlaceDetailPage = () => {
         }
       }
 
-      const imagenLegado = !esPlaceholderRoto(placeData.imagen) ? placeData.imagen : null;
+      const imagenLegadoNormalizada = normalizarRutaImagen(placeData.imagen);
+      const imagenLegado = imagenLegadoNormalizada && !esPlaceholderRoto(imagenLegadoNormalizada) && !esImagenGenerica(imagenLegadoNormalizada)
+        ? imagenLegadoNormalizada
+        : null;
 
       // PRIORIDAD: imagen del API -> imagen local del mapeo -> imagen legado valida -> fallback existente
       placeData = {
