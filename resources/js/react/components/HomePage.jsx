@@ -91,7 +91,6 @@ const HomePage = ({ loggedIn, user }) => {
             if (!value) {
                 return "";
             }
-
             return value
                 .toLowerCase()
                 .normalize("NFD")
@@ -104,7 +103,6 @@ const HomePage = ({ loggedIn, user }) => {
             if (!place) {
                 return 0;
             }
-
             const reviews = Array.isArray(place.reviews) ? place.reviews : [];
             if (reviews.length > 0) {
                 const total = reviews.reduce(
@@ -113,7 +111,6 @@ const HomePage = ({ loggedIn, user }) => {
                 );
                 return total / reviews.length;
             }
-
             const ratingValue = Number(
                 place.average_rating ?? place.averageRating ?? 0,
             );
@@ -129,14 +126,12 @@ const HomePage = ({ loggedIn, user }) => {
                 const data = await response.json();
                 const places = Array.isArray(data) ? data : [];
                 const placesByName = new Map();
-
                 places.forEach((place) => {
                     const key = normalizeName(place?.name);
                     if (key) {
                         placesByName.set(key, place);
                     }
                 });
-
                 const entries = destinos.map((destino) => {
                     const place = placesByName.get(
                         normalizeName(destino.title),
@@ -151,7 +146,6 @@ const HomePage = ({ loggedIn, user }) => {
                     const average = count > 0 ? getAverageFromPlace(place) : 0;
                     return [destino.id, average];
                 });
-
                 if (isActive) {
                     setDestinoRatings(Object.fromEntries(entries));
                 }
@@ -168,8 +162,15 @@ const HomePage = ({ loggedIn, user }) => {
 
         loadRatings();
 
+        // Escuchar evento global para recargar ratings
+        const handleReviewCreated = () => {
+            loadRatings();
+        };
+        window.addEventListener('review:created', handleReviewCreated);
+
         return () => {
             isActive = false;
+            window.removeEventListener('review:created', handleReviewCreated);
         };
     }, []);
 

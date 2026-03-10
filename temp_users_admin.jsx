@@ -177,7 +177,7 @@ const UsersAdmin = () => {
           flexWrap: 'wrap',
           gap: '10px'
         }}>
-          <h2 style={{margin: 0}}>GestiÃ³n de Usuarios</h2>
+          <h2 style={{margin: 0}}>Gestión de Usuarios</h2>
           <button
             onClick={() => setShowCreateModal(true)}
             className="btn-primary"

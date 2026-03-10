@@ -147,6 +147,8 @@ const CommentsPage = () => {
         comment: "",
       });
       await loadData();
+      // Emitir evento global para que otros componentes recarguen ratings
+      window.dispatchEvent(new Event('review:created'));
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       console.error("Error al crear reseña:", error);
