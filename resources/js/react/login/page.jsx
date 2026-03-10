@@ -111,7 +111,7 @@ export default function Login() {
     <div className={`login-page-container ${isRegister ? 'register-layout' : 'login-layout'}`}> 
 
       <header className="header">
-        <h1>🌿 Risaralda EcoTurismo</h1>
+        <h1> Risaralda EcoTurismo</h1>
       </header>
 
       <div className="login-form-section">

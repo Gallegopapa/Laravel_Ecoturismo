@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.token || !response.user) {
         return { 
           success: false, 
-          error: 'Respuesta inválida del servidor. Por favor, intenta de nuevo.' 
+          error: 'Correo o contraseña incorrectos. Por favor, intenta de nuevo.' 
         };
       }
       

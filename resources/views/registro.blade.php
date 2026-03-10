@@ -13,7 +13,7 @@
     </video>
     
     <header>
-        <h1>🌿 Risaralda EcoTurismo</h1>
+        <h1> Risaralda EcoTurismo</h1>
     </header>
     
     <div class="contenedor">
