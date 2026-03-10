@@ -44,29 +44,23 @@ class PlaceSeeder extends Seeder
         DB::table('places')->insertOrIgnore($lugares);
 
         // Asociar categorías a los lugares según el nombre (después de insertar)
-        $categoriaParques = \App\Models\Category::where('slug', 'parques-y-mas')->first();
-        $categoriaAcuaticos = \App\Models\Category::where('slug', 'paraisos-acuaticos')->first();
-        $categoriaMontanosos = \App\Models\Category::where('slug', 'lugares-montanosos')->first();
-
+        $categorias = \App\Models\Category::all();
         $lugaresDB = \App\Models\Place::all();
         foreach ($lugaresDB as $lugar) {
             $nombre = strtolower($lugar->name);
-            $categorias = [];
-            // Parques y Más
-            if (preg_match('/parque|jard[ií]n|bot[aá]nico/', $nombre)) {
-                if ($categoriaParques) $categorias[] = $categoriaParques->id;
+            $categoriasAsociar = [];
+            foreach ($categorias as $categoria) {
+                // Puedes personalizar los patrones según tus necesidades
+                if (
+                    ($categoria->slug == 'parques-y-mas' && preg_match('/parque|jard[ií]n|bot[aá]nico/', $nombre)) ||
+                    ($categoria->slug == 'paraisos-acuaticos' && preg_match('/lago|laguna|r[ií]o|cascada|balneario|termales|acu[aá]tico/', $nombre)) ||
+                    ($categoria->slug == 'lugares-montanosos' && preg_match('/alto|cerro|reserva|mirador|divisa/', $nombre))
+                ) {
+                    $categoriasAsociar[] = $categoria->id;
+                }
             }
-            // Paraísos Acuáticos
-            if (preg_match('/lago|laguna|r[ií]o|cascada|balneario|termales|acu[aá]tico/', $nombre)) {
-                if ($categoriaAcuaticos) $categorias[] = $categoriaAcuaticos->id;
-            }
-            // Lugares Montañosos
-            if (preg_match('/alto|cerro|reserva|mirador|divisa/', $nombre)) {
-                if ($categoriaMontanosos) $categorias[] = $categoriaMontanosos->id;
-            }
-            // Si no se detecta ninguna, no asocia nada
-            if (!empty($categorias)) {
-                $lugar->categories()->sync($categorias);
+            if (!empty($categoriasAsociar)) {
+                $lugar->categories()->sync($categoriasAsociar);
             }
         }
     }
