@@ -13,24 +13,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // Poblar lugares base para que funcionalidades como reseñas tengan place_id válido.
-        $this->call(PlaceSeeder::class);
-
-        // Crear usuario de prueba
-        Usuarios::create([
-            'name' => 'TestUser',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-            'remember_token' => Str::random(10),
-            'fecha_registro' => now(),
-            'is_admin' => true,
+        $this->call([
+            PlaceSeeder::class,
+            UsuarioSeeder::class, // Poblar todos los usuarios
+            PlaceScheduleSeeder::class,
+            RejectionReasonsSeeder::class,
+            EcohotelSeeder::class, // Poblar los ecohoteles
+            // PlacesSeeder::class, // Descomentar si PlacesSeeder se usa en lugar/adición a PlaceSeeder
         ]);
-
-        // Agregar horarios a lugares que no los tienen
-        // Esto asegura que todos los lugares tengan horarios configurados
-        $this->call(PlaceScheduleSeeder::class);
-
-        // Razones de rechazo base para el panel de empresa
-        $this->call(RejectionReasonsSeeder::class);
     }
 }
