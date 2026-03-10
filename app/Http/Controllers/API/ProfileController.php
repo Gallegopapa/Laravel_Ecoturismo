@@ -68,11 +68,19 @@ class ProfileController extends Controller
             ]);
         }
 
+        $emailRules = ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id];
+
+        // Solo exigir dominio @gmail.com si el usuario intenta cambiar su correo.
+        $incomingEmail = $request->input('email');
+        if ($incomingEmail !== null && strtolower(trim((string) $incomingEmail)) !== strtolower(trim((string) $user->email))) {
+            $emailRules[] = new AllowedEmailDomain();
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
-            'email' => ['nullable', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email,' . $user->id],
+            'email' => $emailRules,
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
-            'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB máximo
+            'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB maximo
         ], [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
