@@ -1,9 +1,13 @@
 import React from "react";
+import Header from "@/react/components/Header/Header";
 import Header2 from "@/react/components/Header2/Header2";
 import Footer from "@/react/components/Footer/Footer";
+import { useAuth } from "@/react/context/AuthContext";
 import "./LegalPage.css";
 
 export default function CopyrightTotal() {
+    const { isAuthenticated, loading } = useAuth();
+
     React.useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, []);
@@ -152,7 +156,7 @@ export default function CopyrightTotal() {
 
     return (
         <div className="page-layout">
-            <Header2 />
+            {isAuthenticated && !loading ? <Header2 /> : <Header />}
             <div
                 className="page-content contenedorTodo"
                 style={{ marginTop: "100px" }}
