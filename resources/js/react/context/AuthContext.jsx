@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
         }
       } else if (error.request) {
         // Error de red
-        errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+        errorMessage = 'Correo o usuario ya existente. Por favor, intenta con otro.';
       } else {
         // Error al configurar la petición
         errorMessage = error.message || errorMessage;
