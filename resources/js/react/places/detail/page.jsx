@@ -101,48 +101,6 @@ const PlaceDetailPage = () => {
     'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
   };
 
-  const esPlaceholderRoto = (ruta) => {
-    if (!ruta) return false;
-    const valor = String(ruta).toLowerCase();
-    return valor.includes('/imagenes/placeholder.jpg') || valor.endsWith('placeholder.jpg');
-  };
-
-  const normalizarRutaImagen = (ruta) => {
-    if (!ruta) return null;
-
-    const valor = String(ruta).trim();
-
-    if (!valor) {
-      return null;
-    }
-
-    if (valor.startsWith('http://') || valor.startsWith('https://')) {
-      return valor;
-    }
-
-    if (valor.startsWith('/')) {
-      return valor;
-    }
-
-    if (valor.startsWith('storage/') || valor.startsWith('imagenes/')) {
-      return `/${valor}`;
-    }
-
-    return valor;
-  };
-
-  const esImagenGenerica = (ruta) => {
-    if (!ruta) return true;
-
-    const valor = String(ruta).toLowerCase();
-
-    return (
-      valor.includes('placeholder') ||
-      valor.includes('iconoecoturismo') ||
-      valor.endsWith('/usuario.jpg')
-    );
-  };
-
   useEffect(() => {
     if (id) {
       loadPlace();
@@ -170,17 +128,21 @@ const PlaceDetailPage = () => {
         setReservations(response.future_reservations);
       }
 
-      // Priorizar imágenes locales sobre imágenes de API
+      // Priorizar imágenes locales sobre imágenes de API (MISMO LOGICA QUE ADMIN)
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
 
-      // PRIMERO: Usar imagen válida proveniente del API (storage, /imagenes o URL completa)
-      const imagenApiNormalizada = normalizarRutaImagen(placeData.image);
-      const imagenApiValida = imagenApiNormalizada && !esImagenGenerica(imagenApiNormalizada) ? imagenApiNormalizada : null;
+      // PRIMERO: Verificar si hay imagen subida (desde storage)
+      const imagenSubida = placeData.image && (
+        placeData.image.includes('/storage/places/') || 
+        placeData.image.startsWith('/storage/') ||
+        placeData.image.includes('storage/places') ||
+        (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
+      ) ? placeData.image : null;
 
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
       let imagenLocal = null;
-      if (!imagenApiValida) {
+      if (!imagenSubida) {
         // Buscar en mapeo determinístico por nombre original
         imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
 
@@ -190,16 +152,11 @@ const PlaceDetailPage = () => {
         }
       }
 
-      const imagenLegadoNormalizada = normalizarRutaImagen(placeData.imagen);
-      const imagenLegado = imagenLegadoNormalizada && !esPlaceholderRoto(imagenLegadoNormalizada) && !esImagenGenerica(imagenLegadoNormalizada)
-        ? imagenLegadoNormalizada
-        : null;
-
-      // PRIORIDAD: imagen del API -> imagen local del mapeo -> imagen legado valida -> fallback existente
+      // PRIORIDAD: imagen subida -> imagen local del mapeo -> fallback (NUNCA imagen genérica del API)
       placeData = {
         ...placeData,
-        imagen: imagenApiValida || imagenLocal || imagenLegado || '/imagenes/iconoecoturismo.jpg',
-        image: imagenApiValida || placeData.image || null,
+        imagen: imagenSubida || imagenLocal || '/imagenes/iconoecoturismo.jpg',
+        image: imagenSubida || null,
       };
 
       setPlace(placeData);
