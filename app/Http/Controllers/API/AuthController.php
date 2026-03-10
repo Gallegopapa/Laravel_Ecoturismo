@@ -45,7 +45,7 @@ class AuthController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'max:72',
+                'max:15',
                 'confirmed'
             ]
 
@@ -62,6 +62,7 @@ class AuthController extends Controller
 
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 15 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.'
 
         ]);

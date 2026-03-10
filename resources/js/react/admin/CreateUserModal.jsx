@@ -226,9 +226,11 @@ const CreateUserModal = ({ isOpen, onClose, onUserCreated, places = [] }) => {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Dejar vacío para generar automáticamente"
+              minLength={8}
+              maxLength={15}
               disabled={loading}
             />
-            <small>Si deja vacío, se generará una contraseña segura automáticamente.</small>
+            <small>Si la escribes manualmente debe tener entre 8 y 15 caracteres. Si dejas vacío, se generará una contraseña segura automáticamente.</small>
           </div>
 
           {/* Lugares - Solo para usuarios empresa */}

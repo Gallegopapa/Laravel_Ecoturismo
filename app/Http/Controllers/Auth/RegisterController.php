@@ -41,7 +41,7 @@ class RegisterController extends Controller
                 new AllowedEmailDomain(),
                 Rule::unique('usuarios', 'email'),
             ],
-            'password' => 'required|string|min:8|max:72|confirmed',
+            'password' => 'required|string|min:8|max:15|confirmed',
         ], [
             'name.required' => 'El nombre de usuario es obligatorio.',
             'name.string' => 'El nombre de usuario debe ser texto.',
@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
             'password.string' => 'La contraseña debe ser texto.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.max' => 'La contraseña no puede tener más de 72 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 15 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden. Por favor verifica.',
         ]);
 

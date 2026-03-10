@@ -72,7 +72,7 @@ class AdminUserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name', 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
             'email' => ['nullable', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email'],
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8|max:15',
             'is_admin' => 'nullable|boolean',
             'tipo_usuario' => 'required|in:normal,empresa,admin',
             'lugares' => 'nullable|array',
@@ -84,7 +84,8 @@ class AdminUserController extends Controller
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.email' => 'El email debe ser válido.',
             'email.unique' => 'Este email ya está registrado.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 15 caracteres.',
             'tipo_usuario.required' => 'El tipo de usuario es requerido.',
             'tipo_usuario.in' => 'El tipo de usuario debe ser: normal, empresa o admin.',
             'lugares.*.place_id.exists' => 'Uno de los lugares seleccionados no existe.',
@@ -156,7 +157,7 @@ class AdminUserController extends Controller
         $data = $request->validate([
             'name' => ['sometimes', 'required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
             'email' => ['nullable', 'email', 'max:255', new AllowedEmailDomain(), 'unique:usuarios,email,' . $user->id],
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8|max:15',
             'is_admin' => 'nullable|boolean',
             'tipo_usuario' => 'sometimes|required|in:normal,empresa,admin',
             'lugares' => 'nullable|array',
@@ -168,7 +169,8 @@ class AdminUserController extends Controller
             'name.regex' => 'El nombre de usuario solo puede contener letras, números y guiones bajos.',
             'email.email' => 'El email debe ser válido.',
             'email.unique' => 'Este email ya está registrado.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La contraseña no puede tener más de 15 caracteres.',
             'tipo_usuario.in' => 'El tipo de usuario debe ser: normal, empresa o admin.',
             'lugares.*.place_id.exists' => 'Uno de los lugares seleccionados no existe.',
         ]);

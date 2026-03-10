@@ -169,7 +169,8 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={isRegister ? 8 : 1}
+              maxLength={isRegister ? 15 : undefined}
               placeholder="Tu contraseña"
             />
             <button
@@ -191,7 +192,8 @@ export default function Login() {
                   value={passwordConfirmation}
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
+                  maxLength={15}
                   placeholder="Confirma contraseña"
                 />
                 <button
