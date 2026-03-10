@@ -72,8 +72,8 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
             $cleanPath = 'storage/profiles/' . ltrim($value, '/');
         }
 
-        // Usar asset() para generar URL completa con el dominio correcto
-        return asset($cleanPath);
+        // Devolver ruta relativa para evitar dependencias de APP_URL en frontend.
+        return '/' . ltrim($cleanPath, '/');
     }
 
     /**

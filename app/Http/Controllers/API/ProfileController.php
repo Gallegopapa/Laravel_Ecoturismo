@@ -69,6 +69,23 @@ class ProfileController extends Controller
         }
 
         $emailRules = ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id];
+        $nameRules = ['nullable', 'string', 'max:255'];
+
+        $incomingName = $request->input('name');
+        if ($incomingName !== null) {
+            $normalizedIncomingName = trim((string) $incomingName);
+            $currentName = trim((string) $user->name);
+
+            // Mantener compatibilidad con usuarios legacy: solo aplicar reglas estrictas
+            // cuando el usuario realmente intenta cambiar su nombre.
+            if (strcasecmp($normalizedIncomingName, $currentName) !== 0) {
+                $nameRules[] = 'required';
+                $nameRules[] = 'min:3';
+                $nameRules[] = 'unique:usuarios,name,' . $user->id;
+                $nameRules[] = 'regex:/^[a-zA-Z0-9_]+$/';
+                $nameRules[] = new NoProfanity();
+            }
+        }
 
         // Solo exigir dominio @gmail.com si el usuario intenta cambiar su correo.
         $incomingEmail = $request->input('email');
@@ -77,7 +94,7 @@ class ProfileController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()],
+            'name' => $nameRules,
             'email' => $emailRules,
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB maximo
@@ -92,6 +109,17 @@ class ProfileController extends Controller
             'foto_perfil.image' => 'El archivo debe ser una imagen.',
             'foto_perfil.max' => 'La imagen no puede exceder 5MB.',
         ]);
+
+        if (array_key_exists('name', $validated)) {
+            $validated['name'] = trim((string) $validated['name']);
+            if ($validated['name'] === '') {
+                unset($validated['name']);
+            }
+        }
+
+        if (array_key_exists('email', $validated) && $validated['email'] !== null) {
+            $validated['email'] = strtolower(trim((string) $validated['email']));
+        }
 
         // Manejar subida de foto de perfil
         if ($request->hasFile('foto_perfil')) {
