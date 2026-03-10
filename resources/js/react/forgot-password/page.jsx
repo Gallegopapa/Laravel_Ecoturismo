@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
       </div>
       <div className="login-image-section">
         <div className="login-image-content">
-          <img src="/imagenes/login-image.png" alt="EcoTurismo" />
+          {/* <img src="/imagenes/login-image.png" alt="EcoTurismo" /> */}
           <h2>Recupera tu acceso</h2>
           <p>Ingresa tu correo para recibir el enlace de recuperación.</p>
         </div>
