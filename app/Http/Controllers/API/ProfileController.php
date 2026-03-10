@@ -120,6 +120,22 @@ class ProfileController extends Controller
                 ]);
                 
                 $path = $image->storeAs('profiles', $filename, 'public');
+
+                // Fallback de despliegue: si el symlink public/storage no existe o falla,
+                // copiar el archivo tambien a public/storage para que sea servible por URL.
+                $publicFilePath = public_path('storage/' . $path);
+                if (!file_exists($publicFilePath)) {
+                    $sourcePath = storage_path('app/public/' . $path);
+                    $targetDir = dirname($publicFilePath);
+
+                    if (!is_dir($targetDir)) {
+                        @mkdir($targetDir, 0755, true);
+                    }
+
+                    if (file_exists($sourcePath)) {
+                        @copy($sourcePath, $publicFilePath);
+                    }
+                }
                 
                 Log::info('Foto guardada exitosamente', [
                     'path' => $path,
@@ -142,6 +158,7 @@ class ProfileController extends Controller
         }
 
         $user->update($validated);
+        $user->refresh();
 
         return response()->json([
             'message' => 'Perfil actualizado correctamente.',
