@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/react/context/AuthContext";
 import { reviewsService, placesService } from "@/react/services/api";
@@ -42,7 +42,7 @@ const Comments2Page = () => {
     loadData();
   }, [isAuthenticated, authLoading]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [reviewsResult, placesResult] = await Promise.allSettled([
@@ -105,18 +105,18 @@ const Comments2Page = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAuthenticated]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormError("");
     setFormData(prev => ({
       ...prev,
       [name]: name === 'rating' ? parseInt(value) : value
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
     if (!formData.place_id) {
@@ -155,9 +155,9 @@ const Comments2Page = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [formData, loadData]);
 
-  const startEdit = (review) => {
+  const startEdit = useCallback((review) => {
     setEditingReviewId(review.id);
     setEditForm({
       place_id: review.place_id || review.place?.id || "",
@@ -170,20 +170,20 @@ const Comments2Page = () => {
       if (textareaRef.current) {
         textareaRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         textareaRef.current.focus();
-      }
-    }, 0);
-  };
+        }
+      }, 0);
+    }, []);
 
-  const handleEditChange = (e) => {
+    const handleEditChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormError("");
     setEditForm(prev => ({
       ...prev,
       [name]: name === 'rating' ? parseInt(value) : value,
     }));
-  };
+  }, []);
 
-  const handleEditSubmit = async (e) => {
+  const handleEditSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!editingReviewId) return;
 
@@ -223,9 +223,9 @@ const Comments2Page = () => {
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [editForm, editingReviewId, loadData]);
 
-  const handleDelete = async (reviewId) => {
+  const handleDelete = useCallback(async (reviewId) => {
     if (!window.confirm("¿Estás seguro de eliminar esta reseña?")) {
       return;
     }
@@ -241,15 +241,13 @@ const Comments2Page = () => {
       setMessage(`❌ ${errorMessage}`);
       setTimeout(() => setMessage(""), 3000);
     }
-  };
+  }, [loadData]);
 
-  const renderStars = (rating) => {
+  const renderStars = useMemo(() => (rating) => {
     return [1, 2, 3, 4, 5].map((n) => (
-      <i key={n} style={{ color: n <= rating ? '#ffc107' : '#ddd' }}>
-        ★
-      </i>
+      <i key={n} className={n <= rating ? 'star-filled' : 'star-empty'}>★</i>
     ));
-  };
+  }, []);
 
   if (authLoading || (isAuthenticated && loading)) {
     return (
@@ -284,16 +282,7 @@ const Comments2Page = () => {
         </section>
 
         {message && (
-          <div style={{
-            padding: "12px 20px",
-            margin: "20px 0",
-            backgroundColor: message.includes("✅") ? "#d4edda" : "#f8d7da",
-            color: message.includes("✅") ? "#155724" : "#721c24",
-            borderRadius: "8px",
-            textAlign: "center",
-            fontWeight: "500",
-            animation: "slideDown 0.3s ease"
-          }}>
+          <div className={`msg-banner ${message.includes("✅") ? "msg-banner--ok" : "msg-banner--err"}`}>
             {message}
           </div>
         )}
@@ -301,41 +290,26 @@ const Comments2Page = () => {
         {/* Sección de reseñas */}
         <section className="review-content">
           {reviews.length === 0 ? (
-            <div style={{ 
-              gridColumn: "1 / -1", 
-              textAlign: "center", 
-              padding: "40px",
-              color: "#666"
-            }}>
-              <p style={{ fontSize: "1.2em" }}>Aún no hay reseñas. ¡Sé el primero en comentar!</p>
+            <div className="review-empty">
+              <p>Aún no hay reseñas. ¡Sé el primero en comentar!</p>
             </div>
           ) : (
             reviews.map((review) => (
               <div className="box" key={review.id}>
                 {/* Título: nombre del lugar/ecohotel, clickeable */}
                 {review.place && (
-                  <h3 style={{
-                    margin: "0 0 8px 0",
-                    color: "#1976d2",
-                    fontSize: "1.15rem",
-                    fontWeight: "700",
-                  }}>
-                    <Link to={`/lugares/${review.place.id}`} style={{color:'#1976d2',textDecoration:'none',cursor:'pointer'}}>{review.place.name}</Link>
+                  <h3 className="review-place-title">
+                    <Link to={`/lugares/${review.place.id}`} className="review-place-link">{review.place.name}</Link>
                     {review.place.location && (
-                      <span style={{color:'#2ecc71',fontWeight:500,fontSize:'0.95rem'}}> - {review.place.location}</span>
+                      <span className="review-place-location"> - {review.place.location}</span>
                     )}
                   </h3>
                 )}
                 {review.ecohotel && (
-                  <h3 style={{
-                    margin: "0 0 8px 0",
-                    color: "#1976d2",
-                    fontSize: "1.15rem",
-                    fontWeight: "700",
-                  }}>
-                    <Link to={`/ecohoteles/${review.ecohotel.id}`} style={{color:'#1976d2',textDecoration:'underline',cursor:'pointer'}}>{review.ecohotel.name}</Link>
+                  <h3 className="review-place-title">
+                    <Link to={`/ecohoteles/${review.ecohotel.id}`} className="review-place-link review-place-link--ul">{review.ecohotel.name}</Link>
                     {review.ecohotel.location && (
-                      <span style={{color:'#2ecc71',fontWeight:500,fontSize:'0.95rem'}}> - {review.ecohotel.location}</span>
+                      <span className="review-place-location"> - {review.ecohotel.location}</span>
                     )}
                   </h3>
                 )}
@@ -346,25 +320,21 @@ const Comments2Page = () => {
                     <img 
                       src={review.usuario?.foto_perfil || usuarioImg} 
                       alt={review.usuario?.name || "Usuario"}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.target.src = usuarioImg;
                       }}
                     />
                   </div>
                   <div className="bxx-text">
-                    <h4 style={{ fontWeight: 700 }}>{review.usuario?.name || "Usuario"}</h4>
-                    <div style={{ color: "#333", fontWeight: 400, fontSize: "1.05rem", margin: "2px 0 6px 0" }}>
-                      {review.comment || "Sin comentario"}
-                    </div>
+                    <h4 className="review-user-name">{review.usuario?.name || "Usuario"}</h4>
+                    <div className="review-comment">{review.comment || "Sin comentario"}</div>
                     <div className="ratings">
                       {renderStars(review.rating)}
                     </div>
                     {review.fecha_comentario && (
-                      <p style={{ 
-                        fontSize: "0.75rem", 
-                        color: "#999", 
-                        marginTop: "5px" 
-                      }}>
+                      <p className="review-date">
                         {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {
                           year: 'numeric',
                           month: 'long',
@@ -376,44 +346,16 @@ const Comments2Page = () => {
                 </div>
                 
                 {/* Botones de acción */}
-                <div style={{ marginTop: "12px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  {/* Botón de editar solo para el autor */}
+                <div className="review-actions">
                   {user && review.usuario && user.id === review.usuario.id && (
-                    <button
-                      type="button"
-                      onClick={() => startEdit(review)}
-                      style={{
-                        padding: "8px 16px",
-                        background: "#3498db",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        fontSize: "0.85rem",
-                        fontWeight: "500"
-                      }}
-                    >
+                    <button type="button" onClick={() => startEdit(review)} className="btn-action btn-action--edit">
                       Editar
                     </button>
                   )}
-                  {/* Botón de eliminar para autor o admin */}
                   {user && (
                     (review.usuario && user.id === review.usuario.id) || user.is_admin
                   ) && (
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(review.id)}
-                      style={{
-                        padding: "8px 16px",
-                        background: "#e74c3c",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        fontSize: "0.85rem",
-                        fontWeight: "500"
-                      }}
-                    >
+                    <button type="button" onClick={() => handleDelete(review.id)} className="btn-action btn-action--del">
                       Eliminar
                     </button>
                   )}
@@ -430,27 +372,14 @@ const Comments2Page = () => {
           </h3>
           
           {editingReviewId && (
-            <div style={{
-              padding: "12px",
-              backgroundColor: "#e8f4f8",
-              border: "2px solid #3498db",
-              borderRadius: "8px",
-              marginBottom: "15px",
-              color: "#3498db",
-              fontSize: "0.9rem"
-            }}>
+            <div className="edit-banner">
               ℹ️ Estás editando tu reseña. Guarda los cambios cuando termines.
             </div>
           )}
           
           <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="place_id" style={{ 
-              display: "block", 
-              marginBottom: "8px", 
-              fontWeight: "600",
-              color: "#2c3e50"
-            }}>
-              Selecciona un lugar <span style={{ color: "#e74c3c" }}>*</span>
+            <label htmlFor="place_id" className="form-label">
+              Selecciona un lugar <span className="required-star">*</span>
             </label>
             <select
               id="place_id"
@@ -459,14 +388,7 @@ const Comments2Page = () => {
               onChange={editingReviewId ? handleEditChange : handleInputChange}
               required
               disabled={submitting}
-              style={{
-                width: "100%",
-                padding: "12px",
-                border: "2px solid #e0e0e0",
-                borderRadius: "10px",
-                fontSize: "1rem",
-                background: "#fff"
-              }}
+              className="form-select"
             >
               <option value="">-- Selecciona un lugar --</option>
               {places.length === 0 && (
@@ -483,17 +405,12 @@ const Comments2Page = () => {
           </div>
 
           <div style={{ marginBottom: "15px" }}>
-            <label style={{ 
-              display: "block", 
-              marginBottom: "8px", 
-              fontWeight: "600",
-              color: "#2c3e50"
-            }}>
-              Calificación <span style={{ color: "#e74c3c" }}>*</span>
+            <label className="form-label">
+              Calificación <span className="required-star">*</span>
             </label>
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <div className="form-stars">
               {[1, 2, 3, 4, 5].map((n) => (
-                <label key={n} style={{ cursor: "pointer" }}>
+                <label key={n} className="star-label">
                   <input
                     type="radio"
                     name="rating"
@@ -501,18 +418,12 @@ const Comments2Page = () => {
                     checked={activeRating === n}
                     onChange={editingReviewId ? handleEditChange : handleInputChange}
                     disabled={submitting}
-                    style={{ display: "none" }}
+                    className="star-radio"
                   />
-                  <i style={{ 
-                    fontSize: "2rem", 
-                    color: activeRating >= n ? "#ffc107" : "#ddd",
-                    transition: "color 0.2s"
-                  }}>
-                    ★
-                  </i>
+                  <i className={activeRating >= n ? 'form-star form-star--active' : 'form-star'}>★</i>
                 </label>
               ))}
-              <span style={{ marginLeft: "10px", color: "#666" }}>
+              <span className="star-count">
                 {activeRating} estrella{activeRating !== 1 ? 's' : ''}
               </span>
             </div>
@@ -530,22 +441,11 @@ const Comments2Page = () => {
               disabled={submitting}
               maxLength={500}
             ></textarea>
-            <div style={{ 
-              textAlign: "right", 
-              fontSize: "0.85rem", 
-              color: activeForm.comment.length > 500 ? '#d7263c' : '#999',
-              marginTop: "5px"
-            }}>
+            <div className={activeForm.comment.length > 500 ? 'char-counter char-counter--over' : 'char-counter'}>
               {activeForm.comment.length}/500 caracteres
             </div>
             {formError && (
-              <div style={{
-                marginTop: "8px",
-                color: "#d7263c",
-                fontWeight: "600"
-              }}>
-                {formError}
-              </div>
+              <div className="form-error">{formError}</div>
             )}
           </div>
           
@@ -564,16 +464,7 @@ const Comments2Page = () => {
                     setEditForm({ place_id: "", rating: 5, comment: "" });
                     setFormError("");
                   }}
-                  style={{
-                    padding: "10px 20px",
-                    background: "#95a5a6",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                    fontWeight: "500"
-                  }}
+                  className="btn-cancel"
                   disabled={submitting}
                 >
                   Cancelar
