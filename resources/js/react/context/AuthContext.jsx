@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
         }
       } else if (error.request) {
         // Error de red
-        errorMessage = 'Correo o usuario ya existente. Por favor, intenta con otro.';
+        errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
       } else {
         // Error al configurar la petición
         errorMessage = error.message || errorMessage;
@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.token || !response.user || !response.user.id) {
         return {
           success: false,
-          error: 'Respuesta inválida del servidor al registrar. Intenta de nuevo.',
+          error: 'Correo o usuario ya existente. Por favor, intenta con otro.',
         };
       }
       
