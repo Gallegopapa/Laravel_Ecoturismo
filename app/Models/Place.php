@@ -33,9 +33,9 @@ class Place extends Model
             return null;
         }
 
-        // Si ya es una URL completa (legacy), extraer solo la ruta
-        if (preg_match('/^https?:\/\/[^\/]+(.*)$/', $value, $matches)) {
-            $value = $matches[1];
+        // Si ya es una URL completa (por ejemplo, Picsum o CDN), devolverla tal cual
+        if (preg_match('/^https?:\/\//', $value)) {
+            return $value;
         }
 
         // Si comienza con /imagenes/ o /storage/, devolver tal cual
