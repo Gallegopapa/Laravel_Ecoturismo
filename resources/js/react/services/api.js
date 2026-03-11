@@ -21,12 +21,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // Si es FormData, eliminar Content-Type para que el navegador lo establezca con boundary
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
-    
+
     return config;
   },
   (error) => {
@@ -50,7 +50,7 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-    
+
     // Los errores se manejan en la respuesta sin loguear datos sensibles
     // En producción, registrar solo códigos de error sin datos sensibles
     if (process.env.NODE_ENV === 'development') {
@@ -59,7 +59,7 @@ api.interceptors.response.use(
         console.debug('API Error:', error.response.status, error.config?.url);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -216,7 +216,7 @@ export const reservationsService = {
 
 // Servicios de reseÃ±as
 export const reviewsService = {
-    // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
+  // getByEntity eliminado: ahora se usan getByPlace y getByEcohotel
   getAll: async () => {
     const response = await api.get('/reviews/all');
     const payload = response.data;
@@ -335,7 +335,7 @@ export const profileService = {
     // Si hay una imagen, usar FormData
     if (hasFileLike) {
       const formData = new FormData();
-      
+
       // Enviar todos los campos
       formData.append('name', profileData.name || '');
       formData.append('email', profileData.email || '');
@@ -343,7 +343,7 @@ export const profileService = {
         formData.append('telefono', profileData.telefono);
       }
       formData.append('foto_perfil', fotoPerfil);
-      
+
       console.log('📤 FormData + FILE:', {
         name: profileData.name,
         email: profileData.email,
@@ -351,8 +351,14 @@ export const profileService = {
         fileSize: fotoPerfil.size,
         fileName: fotoPerfil.name,
       });
-      
-      const response = await api.post('/profile', formData);
+
+      formData.append('_method', 'PUT'); // Laravel requiere esto para PUT con FormData
+
+      const response = await api.post('/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     } else {
       // Si no hay imagen, enviar JSON normal
@@ -366,7 +372,7 @@ export const profileService = {
     const response = await api.put('/profile/password', passwordData);
     return response.data;
   },
-    
+
   deleteAccount: async () => {
     const response = await api.delete('/profile');
     return response.data;
@@ -387,12 +393,12 @@ export const contactsService = {
     const response = await api.post('/contacts', contactData);
     return response.data;
   },
-  
+
   getAll: async () => {
     const response = await api.get('/contacts');
     return response.data;
   },
-  
+
   getById: async (id) => {
     const response = await api.get(`/contacts/${id}`);
     return response.data;
@@ -419,7 +425,7 @@ export const adminService = {
       if (placeData.latitude) formData.append('latitude', placeData.latitude);
       if (placeData.longitude) formData.append('longitude', placeData.longitude);
       if (placeData.image) formData.append('image', placeData.image);
-      
+
       // Agregar categorías como array
       if (placeData.categories && Array.isArray(placeData.categories) && placeData.categories.length > 0) {
         placeData.categories.forEach((categoryId) => {
@@ -447,12 +453,12 @@ export const adminService = {
       if (placeData.description) formData.append('description', placeData.description);
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
-      
+
       // Solo agregar imagen si es un File object (nueva imagen)
       if (placeData.image instanceof File) {
         formData.append('image', placeData.image);
       }
-      
+
       // Agregar categorías como array (incluso si está vacío para sincronizar)
       if (placeData.categories !== undefined) {
         if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
@@ -506,7 +512,7 @@ export const adminService = {
       },
     },
   },
-  
+
   // Ecohoteles
   ecohotels: {
     getAll: async () => {
@@ -528,7 +534,7 @@ export const adminService = {
       if (ecohotelData.email) formData.append('email', ecohotelData.email);
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
-      
+
       // Agregar categorías como array
       if (ecohotelData.categories && Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
         ecohotelData.categories.forEach((categoryId) => {
@@ -560,7 +566,7 @@ export const adminService = {
       if (ecohotelData.email) formData.append('email', ecohotelData.email);
       if (ecohotelData.sitio_web) formData.append('sitio_web', ecohotelData.sitio_web);
       if (ecohotelData.image) formData.append('image', ecohotelData.image);
-      
+
       // Agregar categorías como array
       if (ecohotelData.categories !== undefined) {
         if (Array.isArray(ecohotelData.categories) && ecohotelData.categories.length > 0) {
@@ -593,7 +599,7 @@ export const adminService = {
       return response.data;
     },
   },
-  
+
   // Usuarios
   users: {
     getAll: async () => {
