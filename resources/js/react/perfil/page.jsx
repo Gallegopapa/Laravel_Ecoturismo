@@ -283,27 +283,36 @@ const PerfilPage = () => {
                 }}
               />
             </div>
-            <input
-              ref={fileInputRef}
-              id="foto_perfil"
-              type="file"
-              name="foto_perfil"
-              accept="image/*"
-              onChange={handleChange}
-              style={{ display: 'none' }}
-              disabled={isSubmitting}
-            />
-            <button
-              type="button"
-              className="photo-upload-btn"
-              onClick={() => {
-                console.log('🖱️ Click en botón de foto, activando file input');
-                fileInputRef.current?.click();
-              }}
-              disabled={isSubmitting}
+            <div
+              className="photo-upload-wrapper"
+              style={{ position: 'relative', display: 'inline-block' }}
             >
-              {formData.foto_perfil ? 'Cambiar Foto' : 'Subir Foto'}
-            </button>
+              <input
+                ref={fileInputRef}
+                id="foto_perfil"
+                type="file"
+                name="foto_perfil"
+                accept="image/*"
+                onChange={handleChange}
+                disabled={isSubmitting}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  opacity: 0,
+                  width: '100%',
+                  height: '100%',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  zIndex: 2,
+                }}
+              />
+              <label
+                htmlFor="foto_perfil"
+                className="photo-upload-btn"
+                style={{ display: 'inline-block', position: 'relative', zIndex: 1 }}
+              >
+                {formData.foto_perfil ? 'Cambiar Foto' : 'Subir Foto'}
+              </label>
+            </div>
             {formData.foto_perfil && (
               <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '5px' }}>
                 Nueva foto seleccionada: {formData.foto_perfil.name}
