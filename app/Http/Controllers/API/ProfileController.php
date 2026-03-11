@@ -174,25 +174,17 @@ class ProfileController extends Controller
                 
                 Log::info('Intentando guardar foto', [
                     'filename' => $filename,
-                    'destination' => 'imagenes/perfiles/' . $filename,
+                    'destination' => 'storage/app/public/profiles/' . $filename,
                 ]);
 
-                $publicDirectory = public_path('imagenes/perfiles');
-                if (!File::isDirectory($publicDirectory)) {
-                    File::makeDirectory($publicDirectory, 0755, true);
-                }
-
-                $image->move($publicDirectory, $filename);
-
-                // Mantener una copia en storage/public para compatibilidad con rutas antiguas.
-                $publicImagePath = $publicDirectory . DIRECTORY_SEPARATOR . $filename;
-                if (File::exists($publicImagePath)) {
-                    Storage::disk('public')->put('profiles/' . $filename, File::get($publicImagePath));
+                $storedPath = $image->storeAs('profiles', $filename, 'public');
+                if (!$storedPath) {
+                    throw new \RuntimeException('No se pudo almacenar la imagen en el disco public.');
                 }
                 
                 Log::info('Foto guardada exitosamente', [
-                    'path' => 'imagenes/perfiles/' . $filename,
-                    'full_url' => '/imagenes/perfiles/' . $filename,
+                    'path' => $storedPath,
+                    'full_url' => '/api/profile/photo/' . $filename,
                 ]);
                 
                 $validated['foto_perfil'] = $filename;
