@@ -175,9 +175,15 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
-      // Si solo estás cambiando foto, envía SOLO la foto
-      if (formData.foto_perfil instanceof File && !formData.name && !formData.email && !formData.telefono) {
-        console.log('🚀 Enviando solo foto');
+      // Verificar qué campos fueron realmente modificados
+      const nameChanged = formData.name && formData.name.trim() !== user.name;
+      const emailChanged = formData.email && formData.email.trim() !== user.email;
+      const telefonoChanged = formData.telefono && formData.telefono.trim() !== user.telefono;
+      const fotoChanged = formData.foto_perfil instanceof File;
+
+      // Si SOLO cambió la foto (sin cambiar otros campos), envía SOLO la foto
+      if (fotoChanged && !nameChanged && !emailChanged && !telefonoChanged) {
+        console.log('🚀 Enviando SOLO foto');
         const response = await profileService.update({
           foto_perfil: formData.foto_perfil,
         });
@@ -200,7 +206,7 @@ const PerfilPage = () => {
           foto_perfil: null,
         }));
       } else {
-        // Si cambias otros campos, envía todos
+        // Si cambió algo más o hay foto + otros cambios, envía todo
         const dataToSend = {
           name: formData.name && formData.name.trim() ? formData.name.trim() : user.name,
           email: formData.email && formData.email.trim() ? formData.email.trim() : user.email,
@@ -214,6 +220,9 @@ const PerfilPage = () => {
           telefono: dataToSend.telefono,
           hasFoto: dataToSend.foto_perfil instanceof File,
           fotoName: dataToSend.foto_perfil instanceof File ? dataToSend.foto_perfil.name : null,
+          nameChanged,
+          emailChanged,
+          telefonoChanged,
         });
 
         const response = await profileService.update(dataToSend);
