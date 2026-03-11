@@ -202,17 +202,23 @@ const PerfilPage = () => {
         ? formData.foto_perfil
         : selectedProfileFileRef.current;
 
+      const hasSelectedProfileFile = Boolean(
+        selectedProfileFile
+        && typeof selectedProfileFile === 'object'
+        && typeof selectedProfileFile.name === 'string'
+      );
+
       console.log('formData actual:', {
         name: formData.name,
         email: formData.email,
         telefono: formData.telefono,
-        hasFile: selectedProfileFile instanceof File,
+        hasFile: hasSelectedProfileFile,
         fileName: selectedProfileFile?.name,
       });
 
       const payload = {
         ...formData,
-        foto_perfil: selectedProfileFile,
+        foto_perfil: hasSelectedProfileFile ? selectedProfileFile : null,
       };
 
       const response = await profileService.update(payload);

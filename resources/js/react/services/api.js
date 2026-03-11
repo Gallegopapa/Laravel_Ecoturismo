@@ -323,8 +323,17 @@ export const profileService = {
   },
 
   update: async (profileData) => {
+    const fotoPerfil = profileData?.foto_perfil;
+    const hasFileLike = Boolean(
+      fotoPerfil
+      && typeof fotoPerfil === 'object'
+      && ((typeof File !== 'undefined' && fotoPerfil instanceof File)
+        || (typeof Blob !== 'undefined' && fotoPerfil instanceof Blob)
+        || typeof fotoPerfil.name === 'string')
+    );
+
     // Si hay una imagen, usar FormData
-    if (profileData.foto_perfil instanceof File) {
+    if (hasFileLike) {
       const formData = new FormData();
       
       // Enviar todos los campos
@@ -333,14 +342,14 @@ export const profileService = {
       if (profileData.telefono) {
         formData.append('telefono', profileData.telefono);
       }
-      formData.append('foto_perfil', profileData.foto_perfil);
+      formData.append('foto_perfil', fotoPerfil);
       
       console.log('📤 FormData + FILE:', {
         name: profileData.name,
         email: profileData.email,
         telefono: profileData.telefono,
-        fileSize: profileData.foto_perfil.size,
-        fileName: profileData.foto_perfil.name,
+        fileSize: fotoPerfil.size,
+        fileName: fotoPerfil.name,
       });
       
       const response = await api.post('/profile', formData);
