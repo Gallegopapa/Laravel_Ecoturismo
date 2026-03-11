@@ -277,8 +277,8 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.star-filled { color: #ffc107; }
-.star-empty  { color: #ddd; }
+.ratings .star-filled { color: #ffc107; }
+.ratings .star-empty  { color: #ddd; }
 
 .msg-banner {
   padding: 12px 20px;
