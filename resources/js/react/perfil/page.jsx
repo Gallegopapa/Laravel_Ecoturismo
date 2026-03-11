@@ -16,6 +16,7 @@ const PerfilPage = () => {
 
   const fileInputRef = useRef(null);
   const hasHydratedProfileRef = useRef(false);
+  const selectedProfileFileRef = useRef(null);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -151,6 +152,8 @@ const PerfilPage = () => {
     
     if (name === 'foto_perfil' && files && files[0]) {
       const file = files[0];
+      selectedProfileFileRef.current = file;
+
       console.log('✅ Archivo detectado:', {
         name: file.name,
         size: file.size,
@@ -195,16 +198,24 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
+      const selectedProfileFile = formData.foto_perfil instanceof File
+        ? formData.foto_perfil
+        : selectedProfileFileRef.current;
+
       console.log('formData actual:', {
         name: formData.name,
         email: formData.email,
         telefono: formData.telefono,
-        hasFile: formData.foto_perfil instanceof File,
-        fileName: formData.foto_perfil?.name,
+        hasFile: selectedProfileFile instanceof File,
+        fileName: selectedProfileFile?.name,
       });
 
-      // Enviar exactamente lo que el usuario tiene en formData
-      const response = await profileService.update(formData);
+      const payload = {
+        ...formData,
+        foto_perfil: selectedProfileFile,
+      };
+
+      const response = await profileService.update(payload);
       console.log('✅ Respuesta del servidor:', response);
       
       setMessage(response.message || "Perfil actualizado exitosamente");
@@ -222,6 +233,11 @@ const PerfilPage = () => {
         ...prev,
         foto_perfil: null,
       }));
+      selectedProfileFileRef.current = null;
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       
       setTimeout(() => setMessage(""), 5000);
     } catch (error) {
