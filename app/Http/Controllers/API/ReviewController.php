@@ -7,9 +7,40 @@ use App\Models\Review;
 use App\Rules\NoProfanity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ReviewController extends Controller
 {
+    private function logRatingPayload(Request $request, string $action): void
+    {
+        Log::info('reviews.rating_payload', [
+            'action' => $action,
+            'path' => $request->path(),
+            'user_id' => optional($request->user())->id,
+            'place_id' => $request->input('place_id'),
+            'ecohotel_id' => $request->input('ecohotel_id'),
+            'rating' => $request->input('rating'),
+            'calificacion' => $request->input('calificacion'),
+            'puntuacion' => $request->input('puntuacion'),
+        ]);
+    }
+
+    /**
+     * Normaliza aliases comunes de la calificación para evitar pérdida de datos.
+     */
+    private function normalizeRating(Request $request): void
+    {
+        $rawRating = $request->input('rating', $request->input('calificacion', $request->input('puntuacion')));
+
+        if ($rawRating === null || $rawRating === '') {
+            return;
+        }
+
+        $request->merge([
+            'rating' => (int) $rawRating,
+        ]);
+    }
+
     /**
      * Obtener todas las reseñas (público)
      */
@@ -52,6 +83,8 @@ class ReviewController extends Controller
     // Crear reseña para lugar o ecohotel
     public function store(Request $request): JsonResponse
     {
+        $this->normalizeRating($request);
+        $this->logRatingPayload($request, 'store');
         $user = $request->user();
         $messages = [
             'comment.max' => 'El comentario no puede exceder los 500 caracteres.',
@@ -107,6 +140,8 @@ class ReviewController extends Controller
      */
     public function update(Request $request, Review $review): JsonResponse
     {
+        $this->normalizeRating($request);
+        $this->logRatingPayload($request, 'update');
         $user = $request->user();
 
         // Solo el autor puede editar
