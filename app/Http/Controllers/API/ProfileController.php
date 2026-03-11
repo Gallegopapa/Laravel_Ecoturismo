@@ -27,6 +27,7 @@ class ProfileController extends Controller
         }
 
         $candidates = [
+            public_path('imagenes/' . $safeFilename),
             public_path('imagenes/perfiles/' . $safeFilename),
             storage_path('app/public/profiles/' . $safeFilename),
             storage_path('app/public/' . $safeFilename),
@@ -169,6 +170,11 @@ class ProfileController extends Controller
                             File::delete($oldPublicImagePath);
                         }
 
+                        $oldPublicFlatImagePath = public_path('imagenes/' . $oldFileName);
+                        if (File::exists($oldPublicFlatImagePath)) {
+                            File::delete($oldPublicFlatImagePath);
+                        }
+
                         Log::info('Foto antigua eliminada', ['filename' => $oldFileName]);
                     }
                 }
@@ -182,23 +188,42 @@ class ProfileController extends Controller
                     'destination' => 'storage/app/public/profiles/' . $filename,
                 ]);
 
-                // Intento principal: subcarpeta profiles.
                 $storedPath = null;
+                $storageErrors = [];
+
+                // 1) Intento principal en storage/app/public/profiles.
                 try {
                     $storedPath = $image->storeAs('profiles', $filename, 'public');
                 } catch (\Throwable $primaryStoreError) {
-                    Log::warning('Fallo guardado en profiles, intentando fallback en raiz del disco public', [
-                        'error' => $primaryStoreError->getMessage(),
-                    ]);
+                    $storageErrors[] = 'profiles: ' . $primaryStoreError->getMessage();
                 }
 
-                // Fallback: guardar en la raiz del disco public para evitar mkdir en entornos restringidos.
+                // 2) Fallback en storage/app/public (raiz).
                 if (!$storedPath) {
-                    $storedPath = $image->storeAs('', $filename, 'public');
+                    try {
+                        $storedPath = $image->storeAs('', $filename, 'public');
+                    } catch (\Throwable $rootStoreError) {
+                        $storageErrors[] = 'public-root: ' . $rootStoreError->getMessage();
+                    }
+                }
+
+                // 3) Fallback en public/imagenes (normalmente ya existe en este proyecto).
+                if (!$storedPath) {
+                    $publicImagesDir = public_path('imagenes');
+                    if (File::isDirectory($publicImagesDir) && is_writable($publicImagesDir)) {
+                        try {
+                            $image->move($publicImagesDir, $filename);
+                            $storedPath = 'public/imagenes/' . $filename;
+                        } catch (\Throwable $publicMoveError) {
+                            $storageErrors[] = 'public-imagenes: ' . $publicMoveError->getMessage();
+                        }
+                    } else {
+                        $storageErrors[] = 'public-imagenes: directorio no existe o no tiene permisos de escritura';
+                    }
                 }
 
                 if (!$storedPath) {
-                    throw new \RuntimeException('No se pudo almacenar la imagen en el disco public.');
+                    throw new \RuntimeException('No se pudo almacenar la imagen. Detalles: ' . implode(' | ', $storageErrors));
                 }
                 
                 Log::info('Foto guardada exitosamente', [
