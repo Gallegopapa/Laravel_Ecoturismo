@@ -93,12 +93,14 @@ class ProfileController extends Controller
             $emailRules[] = new AllowedEmailDomain();
         }
 
-        $validated = $request->validate([
+        $rules = [
             'name' => $nameRules,
             'email' => $emailRules,
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB maximo
-        ], [
+        ];
+
+        $validated = $request->validate($rules, [
             'name.required' => 'El nombre de usuario es requerido.',
             'name.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
             'name.unique' => 'Este nombre de usuario ya está en uso.',

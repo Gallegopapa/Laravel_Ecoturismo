@@ -175,16 +175,24 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
+      // Preparar datos para envío: solo enviar campos de texto si tienen valor
+      const dataToSend = {
+        name: formData.name && formData.name.trim() ? formData.name.trim() : user.name,
+        email: formData.email && formData.email.trim() ? formData.email.trim() : user.email,
+        telefono: formData.telefono && formData.telefono.trim() ? formData.telefono.trim() : user.telefono,
+        foto_perfil: formData.foto_perfil,
+      };
+
       // Log para debugging
       console.log('🚀 Enviando datos:', {
-        name: formData.name,
-        email: formData.email,
-        telefono: formData.telefono,
-        hasFoto: formData.foto_perfil instanceof File,
-        fotoName: formData.foto_perfil instanceof File ? formData.foto_perfil.name : null,
+        name: dataToSend.name,
+        email: dataToSend.email,
+        telefono: dataToSend.telefono,
+        hasFoto: dataToSend.foto_perfil instanceof File,
+        fotoName: dataToSend.foto_perfil instanceof File ? dataToSend.foto_perfil.name : null,
       });
 
-      const response = await profileService.update(formData);
+      const response = await profileService.update(dataToSend);
       console.log('✅ Respuesta del servidor:', response);
       
       setMessage(response.message || "Perfil actualizado exitosamente");

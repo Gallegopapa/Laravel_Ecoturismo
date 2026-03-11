@@ -326,14 +326,25 @@ export const profileService = {
     // Si hay una imagen, usar FormData
     if (profileData.foto_perfil instanceof File) {
       const formData = new FormData();
-      formData.append('name', profileData.name);
-      if (profileData.email) formData.append('email', profileData.email);
-      if (profileData.telefono) formData.append('telefono', profileData.telefono);
+      
+      // Solo enviar name si tiene valor
+      if (profileData.name && profileData.name.trim()) {
+        formData.append('name', profileData.name.trim());
+      }
+      
+      // Solo enviar email si tiene valor
+      if (profileData.email && profileData.email.trim()) {
+        formData.append('email', profileData.email.trim());
+      }
+      
+      // Solo enviar telefono si tiene valor
+      if (profileData.telefono && profileData.telefono.trim()) {
+        formData.append('telefono', profileData.telefono.trim());
+      }
+      
+      // Siempre enviar foto
       formData.append('foto_perfil', profileData.foto_perfil);
       
-      // Para FormData, NO establecer Content-Type manualmente
-      // El navegador lo establecerÃ¡ automÃ¡ticamente con el boundary correcto
-      // El interceptor ya maneja esto, asÃ­ que no necesitamos especificar headers aquÃ­
       const response = await api.post('/profile', formData);
       return response.data;
     } else {
