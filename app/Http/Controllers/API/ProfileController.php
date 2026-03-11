@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
@@ -124,15 +125,20 @@ class ProfileController extends Controller
             try {
                 // Eliminar foto anterior si existe
                 if ($user->foto_perfil) {
-                    // Extraer el nombre del archivo de la URL
-                    $oldImageUrl = $user->foto_perfil;
-                    // Si es una URL completa, extraer solo el nombre del archivo
-                    if (strpos($oldImageUrl, 'storage/profiles/') !== false || strpos($oldImageUrl, '/storage/profiles/') !== false) {
-                        $oldFileName = basename(parse_url($oldImageUrl, PHP_URL_PATH));
-                        if ($oldFileName && Storage::disk('public')->exists('profiles/' . $oldFileName)) {
+                    $oldImagePath = parse_url((string) $user->foto_perfil, PHP_URL_PATH) ?: (string) $user->foto_perfil;
+                    $oldFileName = basename((string) $oldImagePath);
+
+                    if ($oldFileName) {
+                        if (Storage::disk('public')->exists('profiles/' . $oldFileName)) {
                             Storage::disk('public')->delete('profiles/' . $oldFileName);
-                            Log::info('Foto antigua eliminada', ['filename' => $oldFileName]);
                         }
+
+                        $oldPublicImagePath = public_path('imagenes/perfiles/' . $oldFileName);
+                        if (File::exists($oldPublicImagePath)) {
+                            File::delete($oldPublicImagePath);
+                        }
+
+                        Log::info('Foto antigua eliminada', ['filename' => $oldFileName]);
                     }
                 }
 
@@ -142,33 +148,28 @@ class ProfileController extends Controller
                 
                 Log::info('Intentando guardar foto', [
                     'filename' => $filename,
-                    'destination' => 'profiles/' . $filename,
+                    'destination' => 'imagenes/perfiles/' . $filename,
                 ]);
-                
-                $path = $image->storeAs('profiles', $filename, 'public');
 
-                // Fallback de despliegue: si el symlink public/storage no existe o falla,
-                // copiar el archivo tambien a public/storage para que sea servible por URL.
-                $publicFilePath = public_path('storage/' . $path);
-                if (!file_exists($publicFilePath)) {
-                    $sourcePath = storage_path('app/public/' . $path);
-                    $targetDir = dirname($publicFilePath);
+                $publicDirectory = public_path('imagenes/perfiles');
+                if (!File::isDirectory($publicDirectory)) {
+                    File::makeDirectory($publicDirectory, 0755, true);
+                }
 
-                    if (!is_dir($targetDir)) {
-                        @mkdir($targetDir, 0755, true);
-                    }
+                $image->move($publicDirectory, $filename);
 
-                    if (file_exists($sourcePath)) {
-                        @copy($sourcePath, $publicFilePath);
-                    }
+                // Mantener una copia en storage/public para compatibilidad con rutas antiguas.
+                $publicImagePath = $publicDirectory . DIRECTORY_SEPARATOR . $filename;
+                if (File::exists($publicImagePath)) {
+                    Storage::disk('public')->put('profiles/' . $filename, File::get($publicImagePath));
                 }
                 
                 Log::info('Foto guardada exitosamente', [
-                    'path' => $path,
-                    'full_url' => '/storage/' . $path,
+                    'path' => 'imagenes/perfiles/' . $filename,
+                    'full_url' => '/imagenes/perfiles/' . $filename,
                 ]);
                 
-                $validated['foto_perfil'] = '/storage/' . $path;
+                $validated['foto_perfil'] = '/imagenes/perfiles/' . $filename;
             } catch (\Exception $e) {
                 Log::error('Error al guardar foto', [
                     'error' => $e->getMessage(),

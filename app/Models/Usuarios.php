@@ -61,12 +61,17 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
             return $value;
         }
 
+        // Si ya viene como ruta absoluta relativa al dominio, respetarla tal cual.
+        if (strpos($value, '/') === 0) {
+            return $value;
+        }
+
         // Normalizar rutas relativas a formato limpio
         $cleanPath = $value;
-        if (strpos($value, '/storage/') === 0) {
-            $cleanPath = substr($value, 1); // Quitar la barra inicial
-        } elseif (strpos($value, 'storage/') === 0) {
+        if (strpos($value, 'storage/') === 0) {
             // Ya está en formato 'storage/...'
+        } elseif (strpos($value, 'imagenes/') === 0) {
+            // Ya está en formato 'imagenes/...'
         } else {
             // Si es solo el nombre del archivo, agregarle la ruta
             $cleanPath = 'storage/profiles/' . ltrim($value, '/');
