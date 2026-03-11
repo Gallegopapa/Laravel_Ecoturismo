@@ -73,7 +73,7 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
             return null;
         }
 
-        return '/api/profile/photo/' . rawurlencode($filename);
+        return '/imagenes/perfiles/' . rawurlencode($filename);
     }
 
     /**

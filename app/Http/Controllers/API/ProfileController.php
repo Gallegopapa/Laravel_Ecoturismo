@@ -231,9 +231,7 @@ class ProfileController extends Controller
 
                 // Candidatos en orden de preferencia, asegurando permisos laxos para que funcione en Docker
                 $storageCandidates = [
-                    storage_path('app/public/profiles') => storage_path('app/public/profiles/' . $filename),
                     public_path('imagenes/perfiles')    => public_path('imagenes/perfiles/' . $filename),
-                    storage_path('app/public')          => storage_path('app/public/' . $filename),
                     public_path('imagenes')             => public_path('imagenes/' . $filename),
                 ];
 
