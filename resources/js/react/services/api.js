@@ -327,28 +327,27 @@ export const profileService = {
     if (profileData.foto_perfil instanceof File) {
       const formData = new FormData();
       
-      // Siempre enviar foto
+      // Enviar todos los campos
+      formData.append('name', profileData.name || '');
+      formData.append('email', profileData.email || '');
+      if (profileData.telefono) {
+        formData.append('telefono', profileData.telefono);
+      }
       formData.append('foto_perfil', profileData.foto_perfil);
       
-      // Solo enviar name si cambió (no es igual al usuario actual)
-      if (profileData.name && profileData.name.trim()) {
-        formData.append('name', profileData.name.trim());
-      }
-      
-      // Solo enviar email si cambió (no es igual al usuario actual)
-      if (profileData.email && profileData.email.trim()) {
-        formData.append('email', profileData.email.trim());
-      }
-      
-      // Solo enviar telefono si cambió (no es igual al usuario actual)
-      if (profileData.telefono && profileData.telefono.trim()) {
-        formData.append('telefono', profileData.telefono.trim());
-      }
+      console.log('📤 FormData + FILE:', {
+        name: profileData.name,
+        email: profileData.email,
+        telefono: profileData.telefono,
+        fileSize: profileData.foto_perfil.size,
+        fileName: profileData.foto_perfil.name,
+      });
       
       const response = await api.post('/profile', formData);
       return response.data;
     } else {
       // Si no hay imagen, enviar JSON normal
+      console.log('📤 JSON sin file:', profileData);
       const response = await api.put('/profile', profileData);
       return response.data;
     }

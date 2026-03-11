@@ -10,6 +10,13 @@ import "./page.css";
 const PerfilPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading, logout, updateUser } = useAuth();
+  
+  // Log inicial de montaje
+  console.log('🟢 Componente PerfilPage montado');
+  
+  // Referencia al input file
+  const fileInputRef = React.useRef(null);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -146,22 +153,47 @@ const PerfilPage = () => {
   }
 
   const handleChange = (e) => {
+    console.log('🔄 handleChange ejecutado', {
+      inputName: e.target.name,
+      inputType: e.target.type,
+      hasFiles: !!e.target.files,
+      filesLength: e.target.files?.length || 0,
+    });
+    
     const { name, value, files } = e.target;
     
     if (name === 'foto_perfil' && files && files[0]) {
       const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        foto_perfil: file,
-      }));
+      console.log('✅ Archivo detectado:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      });
       
-      // Crear preview de la imagen
+      // Actualizar formData
+      setFormData((prev) => {
+        const updated = { ...prev, foto_perfil: file };
+        console.log('📝 formData actualizado:', {
+          name: updated.name,
+          email: updated.email,
+          telefono: updated.telefono,
+          hasFile: updated.foto_perfil instanceof File,
+        });
+        return updated;
+      });
+      
+      // Crear preview local
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log('✅ FileReader terminó, generando preview');
         setPreviewImage(reader.result);
+      };
+      reader.onerror = () => {
+        console.error('❌ Error en FileReader');
       };
       reader.readAsDataURL(file);
     } else {
+      console.log('📝 Cambio de campo texto:', name, '=', value);
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -171,91 +203,47 @@ const PerfilPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('=== INICIO handleSubmit ===');
     setIsSubmitting(true);
     setMessage("");
 
     try {
-      // Verificar qué campos fueron realmente modificados
-      const nameChanged = formData.name && formData.name.trim() !== user.name;
-      const emailChanged = formData.email && formData.email.trim() !== user.email;
-      const telefonoChanged = formData.telefono && formData.telefono.trim() !== user.telefono;
-      const fotoChanged = formData.foto_perfil instanceof File;
+      console.log('formData actual:', {
+        name: formData.name,
+        email: formData.email,
+        telefono: formData.telefono,
+        hasFile: formData.foto_perfil instanceof File,
+        fileName: formData.foto_perfil?.name,
+      });
 
-      // Si SOLO cambió la foto (sin cambiar otros campos), envía SOLO la foto
-      if (fotoChanged && !nameChanged && !emailChanged && !telefonoChanged) {
-        console.log('🚀 Enviando SOLO foto');
-        const response = await profileService.update({
-          foto_perfil: formData.foto_perfil,
-        });
-        console.log('✅ Respuesta del servidor:', response);
-        
-        setMessage(response.message || "Foto actualizada exitosamente");
-        
-        if (response.user) {
-          console.log('👤 Usuario actualizado:', response.user);
-          updateUser(response.user);
-          
-          if (response.user.foto_perfil) {
-            console.log('🖼️ URL del servidor:', response.user.foto_perfil);
-            setPreviewImage(response.user.foto_perfil);
-          }
+      // Enviar exactamente lo que el usuario tiene en formData
+      const response = await profileService.update(formData);
+      console.log('✅ Respuesta del servidor:', response);
+      
+      setMessage(response.message || "Perfil actualizado exitosamente");
+      
+      // Actualizar usuario en contexto
+      if (response.user) {
+        updateUser(response.user);
+        if (response.user.foto_perfil) {
+          setPreviewImage(response.user.foto_perfil);
         }
-        
-        setFormData(prev => ({
-          ...prev,
-          foto_perfil: null,
-        }));
-      } else {
-        // Si cambió algo más o hay foto + otros cambios, envía todo
-        const dataToSend = {
-          name: formData.name && formData.name.trim() ? formData.name.trim() : user.name,
-          email: formData.email && formData.email.trim() ? formData.email.trim() : user.email,
-          telefono: formData.telefono && formData.telefono.trim() ? formData.telefono.trim() : user.telefono,
-          foto_perfil: formData.foto_perfil,
-        };
-
-        console.log('🚀 Enviando datos:', {
-          name: dataToSend.name,
-          email: dataToSend.email,
-          telefono: dataToSend.telefono,
-          hasFoto: dataToSend.foto_perfil instanceof File,
-          fotoName: dataToSend.foto_perfil instanceof File ? dataToSend.foto_perfil.name : null,
-          nameChanged,
-          emailChanged,
-          telefonoChanged,
-        });
-
-        const response = await profileService.update(dataToSend);
-        console.log('✅ Respuesta del servidor:', response);
-        
-        setMessage(response.message || "Perfil actualizado exitosamente");
-        
-        if (response.user) {
-          console.log('👤 Usuario actualizado:', response.user);
-          updateUser(response.user);
-          
-          if (response.user.foto_perfil) {
-            console.log('🖼️ URL del servidor:', response.user.foto_perfil);
-            setPreviewImage(response.user.foto_perfil);
-          }
-        }
-        
-        setFormData(prev => ({
-          ...prev,
-          foto_perfil: null,
-        }));
       }
       
-      setTimeout(() => setMessage(""), 3000);
+      // Limpiar foto
+      setFormData(prev => ({
+        ...prev,
+        foto_perfil: null,
+      }));
+      
+      setTimeout(() => setMessage(""), 5000);
     } catch (error) {
-      console.error('❌ Error al actualizar perfil:', error);
-      console.error('❌ Error response data:', error.response?.data);
-      console.error('❌ Error status:', error.response?.status);
-      setMessage(
-        error.response?.data?.message || error.message || "Error al actualizar el perfil"
-      );
+      console.error('❌ Error:', error);
+      const msg = error.response?.data?.message || error.message || 'Error';
+      setMessage(`Error: ${msg}`);
     } finally {
       setIsSubmitting(false);
+      console.log('=== FIN handleSubmit ===');
     }
   };
 
@@ -295,18 +283,27 @@ const PerfilPage = () => {
                 }}
               />
             </div>
-            <label htmlFor="foto_perfil" className="photo-upload-btn">
-              <input
-                id="foto_perfil"
-                type="file"
-                name="foto_perfil"
-                accept="image/*"
-                onChange={handleChange}
-                style={{ display: 'none' }}
-                disabled={isSubmitting}
-              />
+            <input
+              ref={fileInputRef}
+              id="foto_perfil"
+              type="file"
+              name="foto_perfil"
+              accept="image/*"
+              onChange={handleChange}
+              style={{ display: 'none' }}
+              disabled={isSubmitting}
+            />
+            <button
+              type="button"
+              className="photo-upload-btn"
+              onClick={() => {
+                console.log('🖱️ Click en botón de foto, activando file input');
+                fileInputRef.current?.click();
+              }}
+              disabled={isSubmitting}
+            >
               {formData.foto_perfil ? 'Cambiar Foto' : 'Subir Foto'}
-            </label>
+            </button>
             {formData.foto_perfil && (
               <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '5px' }}>
                 Nueva foto seleccionada: {formData.foto_perfil.name}
