@@ -53,6 +53,19 @@ const PlacesAdmin = () => {
         "Jardin Botanico UTP": "/imagenes/jardin.jpeg",
         "Jardín Botánico De Marsella": "/imagenes/jardinmarsella2.jpg",
         "Jardin Botanico De Marsella": "/imagenes/jardinmarsella2.jpg",
+        "Piedras marcadas": "/imagenes/piedras5.jpg",
+        "Piedras Marcadas": "/imagenes/piedras5.jpg",
+        "Barbas Bremen": "/imagenes/paisaje5.jpg",
+        "Santuario Otún Quimbaya": "/imagenes/paisaje2.jpg",
+        "Santuario Otun Quimbaya": "/imagenes/paisaje2.jpg",
+        "Bioparque Mariposario Bonita Farm": "/imagenes/ukumari.jpg",
+        "Parque Bioflora En Finca Turística Los Rosales":
+            "/imagenes/parquecafe.jpg",
+        "Parque Bioflora En Finca Turistica Los Rosales":
+            "/imagenes/parquecafe.jpg",
+        "Eco Hotel Paraiso Real": "/imagenes/paisaje4.jpg",
+        "Termales de San Vicente": "/imagenes/termales.jpg",
+        "Voladero El Zarzo": "/imagenes/mirador5.jpg",
     };
 
     const normalizarNombre = (str) => {
@@ -95,6 +108,18 @@ const PlacesAdmin = () => {
         "jardin botanico utp": "/imagenes/jardin.jpeg",
         "jardín botánico de marsella": "/imagenes/jardinmarsella2.jpg",
         "jardin botanico de marsella": "/imagenes/jardinmarsella2.jpg",
+        "piedras marcadas": "/imagenes/piedras5.jpg",
+        "barbas bremen": "/imagenes/paisaje5.jpg",
+        "santuario otún quimbaya": "/imagenes/paisaje2.jpg",
+        "santuario otun quimbaya": "/imagenes/paisaje2.jpg",
+        "bioparque mariposario bonita farm": "/imagenes/ukumari.jpg",
+        "parque bioflora en finca turística los rosales":
+            "/imagenes/parquecafe.jpg",
+        "parque bioflora en finca turistica los rosales":
+            "/imagenes/parquecafe.jpg",
+        "eco hotel paraiso real": "/imagenes/paisaje4.jpg",
+        "termales de san vicente": "/imagenes/termales.jpg",
+        "voladero el zarzo": "/imagenes/mirador5.jpg",
     };
 
     const isStorageImage = (rawImage) => {
@@ -127,7 +152,7 @@ const PlacesAdmin = () => {
             }
         }
 
-        return imagenSubida || imagenLocal || place?.imagen || "/imagenes/placeholder.jpg";
+        return imagenSubida || imagenLocal || place?.imagen || "/imagenes/placeholder.svg";
     };
 
     useEffect(() => {
@@ -501,7 +526,7 @@ const PlacesAdmin = () => {
                                     }}
                                     onError={(e) => {
                                         e.target.src =
-                                            "/imagenes/placeholder.jpg";
+                                            "/imagenes/placeholder.svg";
                                     }}
                                 />
                                 <p
@@ -722,7 +747,7 @@ const PlacesAdmin = () => {
                                             className="thumb"
                                             onError={(e) => {
                                                 e.target.src =
-                                                    "/imagenes/placeholder.jpg";
+                                                    "/imagenes/placeholder.svg";
                                             }}
                                         />
                                     </td>
