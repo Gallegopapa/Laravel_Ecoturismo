@@ -97,6 +97,39 @@ const PlacesAdmin = () => {
         "jardin botanico de marsella": "/imagenes/jardinmarsella2.jpg",
     };
 
+    const isStorageImage = (rawImage) => {
+        if (!rawImage) {
+            return false;
+        }
+
+        const value = String(rawImage);
+        return (
+            value.includes("/storage/places/") ||
+            value.startsWith("/storage/") ||
+            value.includes("storage/places") ||
+            (value.startsWith("http") &&
+                value.includes("/storage/places/"))
+        );
+    };
+
+    const resolvePlaceImage = (place) => {
+        const nombreOriginal = place?.name || "";
+        const nombreLugar = normalizarNombre(nombreOriginal);
+
+        const rawImage = place?.image ? String(place.image).trim() : "";
+        const imagenSubida = isStorageImage(rawImage) ? rawImage : null;
+
+        let imagenLocal = null;
+        if (!imagenSubida) {
+            imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
+            if (!imagenLocal) {
+                imagenLocal = mapeoImagenesLocales[nombreLugar];
+            }
+        }
+
+        return imagenSubida || imagenLocal || place?.imagen || "/imagenes/placeholder.jpg";
+    };
+
     useEffect(() => {
         loadPlaces();
         loadCategories();
@@ -128,45 +161,11 @@ const PlacesAdmin = () => {
             let placesData = Array.isArray(data) ? data : [];
 
             // PRIORIDAD: Imágenes subidas -> Imágenes locales del mapeo -> Placeholder
-            placesData = placesData.map((place) => {
-                const nombreOriginal = place.name || "";
-                const nombreLugar = normalizarNombre(nombreOriginal);
-
-                // PRIMERO: Verificar si hay imagen subida (desde storage o URL externa)
-                const rawImage = place.image ? String(place.image).trim() : "";
-                const isExternalUrl = /^https?:\/\//i.test(rawImage);
-                const isStoragePath =
-                    rawImage &&
-                    (rawImage.startsWith("/storage/") ||
-                        rawImage.startsWith("storage/") ||
-                        rawImage.includes("/storage/places/") ||
-                        rawImage.includes("storage/places/"));
-                const imagenSubida =
-                    isExternalUrl || isStoragePath ? rawImage : null;
-
-                // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
-                let imagenLocal = null;
-                if (!imagenSubida) {
-                    // Buscar en mapeo determinístico por nombre original
-                    imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-
-                    // Si no se encontró, buscar en mapeo normalizado
-                    if (!imagenLocal) {
-                        imagenLocal = mapeoImagenesLocales[nombreLugar];
-                    }
-                }
-
-                return {
-                    ...place,
-                    // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
-                    imagen:
-                        imagenSubida ||
-                        imagenLocal ||
-                        "/imagenes/placeholder.jpg",
-                    // Mantener image solo si es una imagen subida válida
-                    image: imagenSubida || null,
-                };
-            });
+            placesData = placesData.map((place) => ({
+                ...place,
+                imagen: resolvePlaceImage(place),
+                image: isStorageImage(place?.image) ? place.image : null,
+            }));
 
             setPlaces(placesData);
         } catch (error) {
@@ -479,7 +478,7 @@ const PlacesAdmin = () => {
                                     }}
                                 />
                             </div>
-                        ) : editingPlace && editingPlace.image ? (
+                        ) : editingPlace ? (
                             <div style={{ marginTop: "10px" }}>
                                 <p
                                     style={{
@@ -491,7 +490,7 @@ const PlacesAdmin = () => {
                                     Imagen actual:
                                 </p>
                                 <img
-                                    src={editingPlace.image}
+                                    src={resolvePlaceImage(editingPlace)}
                                     alt={editingPlace.name}
                                     style={{
                                         maxWidth: "200px",
@@ -502,7 +501,7 @@ const PlacesAdmin = () => {
                                     }}
                                     onError={(e) => {
                                         e.target.src =
-                                            "/imagenes/placeholder.svg";
+                                            "/imagenes/placeholder.jpg";
                                     }}
                                 />
                                 <p
@@ -717,29 +716,15 @@ const PlacesAdmin = () => {
                             {places.map((place) => (
                                 <tr key={place.id}>
                                     <td data-label="Imagen">
-                                        {place.imagen &&
-                                        place.imagen !==
-                                            "/imagenes/placeholder.jpg" ? (
-                                            <img
-                                                src={place.imagen}
-                                                alt={place.name}
-                                                className="thumb"
-                                                onError={(e) => {
-                                                    console.error(
-                                                        "Error al cargar imagen:",
-                                                        place.imagen,
-                                                        "para lugar:",
-                                                        place.name,
-                                                    );
-                                                    e.target.src =
-                                                        "/imagenes/placeholder.jpg";
-                                                }}
-                                            />
-                                        ) : (
-                                            <span className="no-image">
-                                                Sin imagen
-                                            </span>
-                                        )}
+                                        <img
+                                            src={resolvePlaceImage(place)}
+                                            alt={place.name}
+                                            className="thumb"
+                                            onError={(e) => {
+                                                e.target.src =
+                                                    "/imagenes/placeholder.jpg";
+                                            }}
+                                        />
                                     </td>
                                     <td data-label="Nombre">{place.name}</td>
                                     <td data-label="Ubicación">
