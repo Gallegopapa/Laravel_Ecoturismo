@@ -17,6 +17,32 @@ use Illuminate\Validation\Rules\Password;
 class ProfileController extends Controller
 {
     /**
+     * Servir foto de perfil desde rutas conocidas (public y storage).
+     */
+    public function photo(string $filename)
+    {
+        $safeFilename = basename($filename);
+        if ($safeFilename === '') {
+            abort(404);
+        }
+
+        $candidates = [
+            public_path('imagenes/perfiles/' . $safeFilename),
+            storage_path('app/public/profiles/' . $safeFilename),
+        ];
+
+        foreach ($candidates as $path) {
+            if (File::exists($path)) {
+                return response()->file($path, [
+                    'Cache-Control' => 'public, max-age=300',
+                ]);
+            }
+        }
+
+        abort(404);
+    }
+
+    /**
      * Eliminar la cuenta del usuario autenticado
      */
     public function destroy(Request $request): JsonResponse
@@ -169,7 +195,7 @@ class ProfileController extends Controller
                     'full_url' => '/imagenes/perfiles/' . $filename,
                 ]);
                 
-                $validated['foto_perfil'] = '/imagenes/perfiles/' . $filename;
+                $validated['foto_perfil'] = $filename;
             } catch (\Exception $e) {
                 Log::error('Error al guardar foto', [
                     'error' => $e->getMessage(),

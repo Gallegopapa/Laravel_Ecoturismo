@@ -62,23 +62,18 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
         }
 
         // Si ya viene como ruta absoluta relativa al dominio, respetarla tal cual.
-        if (strpos($value, '/') === 0) {
+        if (strpos($value, '/api/profile/photo/') === 0) {
             return $value;
         }
 
-        // Normalizar rutas relativas a formato limpio
-        $cleanPath = $value;
-        if (strpos($value, 'storage/') === 0) {
-            // Ya está en formato 'storage/...'
-        } elseif (strpos($value, 'imagenes/') === 0) {
-            // Ya está en formato 'imagenes/...'
-        } else {
-            // Si es solo el nombre del archivo, agregarle la ruta
-            $cleanPath = 'storage/profiles/' . ltrim($value, '/');
+        $path = parse_url((string) $value, PHP_URL_PATH) ?: (string) $value;
+        $filename = basename((string) $path);
+
+        if (!$filename) {
+            return null;
         }
 
-        // Devolver ruta relativa para evitar dependencias de APP_URL en frontend.
-        return '/' . ltrim($cleanPath, '/');
+        return '/api/profile/photo/' . rawurlencode($filename);
     }
 
     /**
