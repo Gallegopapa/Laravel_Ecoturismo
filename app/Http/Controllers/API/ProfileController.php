@@ -31,10 +31,12 @@ class ProfileController extends Controller
             public_path('imagenes/perfiles/' . $safeFilename),
             storage_path('app/public/profiles/' . $safeFilename),
             storage_path('app/public/' . $safeFilename),
+            storage_path('app/profiles/' . $safeFilename),
+            storage_path('app/' . $safeFilename),
         ];
 
         foreach ($candidates as $path) {
-            if (File::exists($path)) {
+            if (file_exists($path)) {
                 return response()->file($path, [
                     'Cache-Control' => 'public, max-age=300',
                 ]);
@@ -191,34 +193,30 @@ class ProfileController extends Controller
                 $storedPath = null;
                 $storageErrors = [];
 
-                // 1) Intento principal en storage/app/public/profiles.
-                try {
-                    $storedPath = $image->storeAs('profiles', $filename, 'public');
-                } catch (\Throwable $primaryStoreError) {
-                    $storageErrors[] = 'profiles: ' . $primaryStoreError->getMessage();
-                }
+                // Candidatos en orden de preferencia, sin requerir crear subdirectorios nuevos.
+                $storageCandidates = [
+                    storage_path('app/public/profiles') => storage_path('app/public/profiles/' . $filename),
+                    storage_path('app/public')          => storage_path('app/public/' . $filename),
+                    storage_path('app/profiles')        => storage_path('app/profiles/' . $filename),
+                    storage_path('app')                 => storage_path('app/' . $filename),
+                    public_path('imagenes')             => public_path('imagenes/' . $filename),
+                ];
 
-                // 2) Fallback en storage/app/public (raiz).
-                if (!$storedPath) {
-                    try {
-                        $storedPath = $image->storeAs('', $filename, 'public');
-                    } catch (\Throwable $rootStoreError) {
-                        $storageErrors[] = 'public-root: ' . $rootStoreError->getMessage();
+                foreach ($storageCandidates as $dir => $targetPath) {
+                    // Intentar crear el directorio si no existe (puede fallar en produccion).
+                    if (!is_dir($dir)) {
+                        @mkdir($dir, 0755, true);
                     }
-                }
-
-                // 3) Fallback en public/imagenes (normalmente ya existe en este proyecto).
-                if (!$storedPath) {
-                    $publicImagesDir = public_path('imagenes');
-                    if (File::isDirectory($publicImagesDir) && is_writable($publicImagesDir)) {
-                        try {
-                            $image->move($publicImagesDir, $filename);
-                            $storedPath = 'public/imagenes/' . $filename;
-                        } catch (\Throwable $publicMoveError) {
-                            $storageErrors[] = 'public-imagenes: ' . $publicMoveError->getMessage();
-                        }
-                    } else {
-                        $storageErrors[] = 'public-imagenes: directorio no existe o no tiene permisos de escritura';
+                    if (!is_dir($dir) || !is_writable($dir)) {
+                        $storageErrors[] = $dir . ': no existe o sin permisos';
+                        continue;
+                    }
+                    try {
+                        $image->move($dir, $filename);
+                        $storedPath = $targetPath;
+                        break;
+                    } catch (\Throwable $moveErr) {
+                        $storageErrors[] = $dir . ': ' . $moveErr->getMessage();
                     }
                 }
 
