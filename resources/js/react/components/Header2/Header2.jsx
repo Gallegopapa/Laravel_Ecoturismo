@@ -17,6 +17,29 @@ const Header2 = () => {
   // Verificar si es usuario empresa
   const isCompanyUser = user?.tipo_usuario === 'empresa';
 
+  const resolveAvatarSrc = (rawValue) => {
+    if (!rawValue || rawValue === 'null' || rawValue === 'undefined') {
+      return usuarioImg;
+    }
+
+    if (typeof rawValue !== 'string') {
+      return usuarioImg;
+    }
+
+    if (/^https?:\/\//i.test(rawValue) || rawValue.startsWith('/')) {
+      return rawValue;
+    }
+
+    const normalized = rawValue.replace(/\\/g, '/');
+    const fileName = normalized.split('/').filter(Boolean).pop();
+
+    if (!fileName) {
+      return usuarioImg;
+    }
+
+    return `/api/profile/photo/${encodeURIComponent(fileName)}`;
+  };
+
   const togglePlacesMenu = () => {
     setOpenPlacesMenu((prev) => !prev);
     setOpenUserMenu(false); // Cerrar el otro menú
@@ -176,7 +199,7 @@ const Header2 = () => {
               aria-haspopup="true"
             >
               <img 
-                src={user?.foto_perfil || usuarioImg} 
+                src={resolveAvatarSrc(user?.foto_perfil)} 
                 alt={user?.name || "Usuario"}
                 className="user-avatar"
                 onError={(e) => {

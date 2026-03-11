@@ -31,23 +31,49 @@ const PerfilPage = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
 
+  const appendCacheBuster = (url) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}t=${Date.now()}`;
+  };
+
+  const extractFilename = (value) => {
+    if (!value) return null;
+    const normalized = String(value).replace(/\\/g, '/');
+    const pathOnly = normalized.split('?')[0];
+    const parts = pathOnly.split('/').filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : null;
+  };
+
   const resolveProfileImageUrl = (rawUrl) => {
     if (!rawUrl || rawUrl === "null" || rawUrl === "undefined") {
       return usuarioImg;
     }
 
+    if (typeof rawUrl === 'string' && rawUrl.startsWith('data:')) {
+      return rawUrl;
+    }
+
     // Si es URL absoluta (completa con https://), devolverla tal cual
     if (/^https?:\/\//i.test(rawUrl)) {
-      return `${rawUrl}?t=${Date.now()}`;
+      return appendCacheBuster(rawUrl);
+    }
+
+    if (rawUrl.startsWith('/api/profile/photo/')) {
+      return appendCacheBuster(rawUrl);
     }
 
     // Si es ruta relativa (/storage/...), devolverla con cache buster
     if (rawUrl.startsWith('/')) {
-      return `${rawUrl}?t=${Date.now()}`;
+      return appendCacheBuster(rawUrl);
     }
 
-    // Fallback: agregar /storage/ si falta
-    return `/storage/${rawUrl}?t=${Date.now()}`;
+    // Si solo llega nombre de archivo, usar endpoint API para evitar dependencia de symlink /storage
+    const filename = extractFilename(rawUrl);
+    if (!filename) {
+      return usuarioImg;
+    }
+
+    return appendCacheBuster(`/api/profile/photo/${encodeURIComponent(filename)}`);
   };
 
   useEffect(() => {
