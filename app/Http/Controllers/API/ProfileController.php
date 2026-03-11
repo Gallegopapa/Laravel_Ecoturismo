@@ -29,6 +29,7 @@ class ProfileController extends Controller
         $candidates = [
             public_path('imagenes/perfiles/' . $safeFilename),
             storage_path('app/public/profiles/' . $safeFilename),
+            storage_path('app/public/' . $safeFilename),
         ];
 
         foreach ($candidates as $path) {
@@ -159,6 +160,10 @@ class ProfileController extends Controller
                             Storage::disk('public')->delete('profiles/' . $oldFileName);
                         }
 
+                        if (Storage::disk('public')->exists($oldFileName)) {
+                            Storage::disk('public')->delete($oldFileName);
+                        }
+
                         $oldPublicImagePath = public_path('imagenes/perfiles/' . $oldFileName);
                         if (File::exists($oldPublicImagePath)) {
                             File::delete($oldPublicImagePath);
@@ -177,7 +182,21 @@ class ProfileController extends Controller
                     'destination' => 'storage/app/public/profiles/' . $filename,
                 ]);
 
-                $storedPath = $image->storeAs('profiles', $filename, 'public');
+                // Intento principal: subcarpeta profiles.
+                $storedPath = null;
+                try {
+                    $storedPath = $image->storeAs('profiles', $filename, 'public');
+                } catch (\Throwable $primaryStoreError) {
+                    Log::warning('Fallo guardado en profiles, intentando fallback en raiz del disco public', [
+                        'error' => $primaryStoreError->getMessage(),
+                    ]);
+                }
+
+                // Fallback: guardar en la raiz del disco public para evitar mkdir en entornos restringidos.
+                if (!$storedPath) {
+                    $storedPath = $image->storeAs('', $filename, 'public');
+                }
+
                 if (!$storedPath) {
                     throw new \RuntimeException('No se pudo almacenar la imagen en el disco public.');
                 }
