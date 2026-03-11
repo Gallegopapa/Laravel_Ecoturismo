@@ -10,14 +10,14 @@ import "./page.css";
 const PerfilPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, loading, logout, updateUser } = useAuth();
-  
+
   // Log inicial de montaje
   console.log('🟢 Componente PerfilPage montado');
 
   const fileInputRef = useRef(null);
   const hasHydratedProfileRef = useRef(false);
   const selectedProfileFileRef = useRef(null);
-  
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -150,11 +150,11 @@ const PerfilPage = () => {
   // Mostrar loading
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
       }}>
         <p>Cargando...</p>
       </div>
@@ -173,9 +173,9 @@ const PerfilPage = () => {
       hasFiles: !!e.target.files,
       filesLength: e.target.files?.length || 0,
     });
-    
+
     const { name, value, files } = e.target;
-    
+
     if (name === 'foto_perfil' && files && files[0]) {
       const file = files[0];
       selectedProfileFileRef.current = file;
@@ -185,7 +185,7 @@ const PerfilPage = () => {
         size: file.size,
         type: file.type,
       });
-      
+
       // Actualizar formData
       setFormData((prev) => {
         const updated = { ...prev, foto_perfil: file };
@@ -197,7 +197,7 @@ const PerfilPage = () => {
         });
         return updated;
       });
-      
+
       // Crear preview local
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -244,14 +244,19 @@ const PerfilPage = () => {
 
       const payload = {
         ...formData,
-        foto_perfil: hasSelectedProfileFile ? selectedProfileFile : null,
+        foto_perfil: null, // Avoid sending File to force JSON instead of FormData
       };
+
+      // Send Base64 if a new image was selected
+      if (hasSelectedProfileFile && previewImage && previewImage.startsWith('data:')) {
+        payload.foto_perfil_base64 = previewImage;
+      }
 
       const response = await profileService.update(payload);
       console.log('✅ Respuesta del servidor:', response);
-      
+
       setMessage(response.message || "Perfil actualizado exitosamente");
-      
+
       // Actualizar usuario en contexto
       if (response.user) {
         updateUser(response.user);
@@ -259,7 +264,7 @@ const PerfilPage = () => {
           setPreviewImage(response.user.foto_perfil);
         }
       }
-      
+
       // Limpiar foto
       setFormData(prev => ({
         ...prev,
@@ -270,7 +275,7 @@ const PerfilPage = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      
+
       setTimeout(() => setMessage(""), 5000);
     } catch (error) {
       console.error('❌ Error:', error);
@@ -308,9 +313,9 @@ const PerfilPage = () => {
           {/* Sección de foto de perfil */}
           <div className="profile-photo-section">
             <div className="photo-preview">
-              <img 
-                src={displayImage} 
-                alt="Foto de perfil" 
+              <img
+                src={displayImage}
+                alt="Foto de perfil"
                 className="profile-photo"
                 onError={(e) => {
                   e.currentTarget.src = usuarioImg;

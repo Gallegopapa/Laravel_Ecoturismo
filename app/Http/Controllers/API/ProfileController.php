@@ -138,6 +138,7 @@ class ProfileController extends Controller
             'email' => $emailRules,
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'foto_perfil' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'], // 5MB maximo
+            'foto_perfil_base64' => ['nullable', 'string'],
         ];
 
         $validated = $request->validate($rules, [
@@ -164,7 +165,9 @@ class ProfileController extends Controller
         }
 
         // Manejar subida de foto de perfil
-        if ($request->hasFile('foto_perfil')) {
+        $hasBase64 = $request->has('foto_perfil_base64') && strpos($request->input('foto_perfil_base64'), 'data:image') === 0;
+
+        if ($request->hasFile('foto_perfil') || $hasBase64) {
             try {
                 // Eliminar foto anterior si existe
                 if ($user->foto_perfil) {
@@ -172,69 +175,83 @@ class ProfileController extends Controller
                     $oldFileName = basename((string) $oldImagePath);
 
                     if ($oldFileName) {
-                        if (Storage::disk('public')->exists('profiles/' . $oldFileName)) {
-                            Storage::disk('public')->delete('profiles/' . $oldFileName);
+                        try {
+                            if (Storage::disk('public')->exists('profiles/' . $oldFileName)) {
+                                Storage::disk('public')->delete('profiles/' . $oldFileName);
+                            }
+                            if (Storage::disk('public')->exists($oldFileName)) {
+                                Storage::disk('public')->delete($oldFileName);
+                            }
+                            $oldPublicImagePath = public_path('imagenes/perfiles/' . $oldFileName);
+                            if (File::exists($oldPublicImagePath)) {
+                                File::delete($oldPublicImagePath);
+                            }
+                            $oldPublicFlatImagePath = public_path('imagenes/' . $oldFileName);
+                            if (File::exists($oldPublicFlatImagePath)) {
+                                File::delete($oldPublicFlatImagePath);
+                            }
+                            Log::info('Foto antigua eliminada', ['filename' => $oldFileName]);
+                        } catch (\Exception $delEx) {
+                            Log::warning('No se pudo borrar foto antigua', ['err' => $delEx->getMessage()]);
                         }
-
-                        if (Storage::disk('public')->exists($oldFileName)) {
-                            Storage::disk('public')->delete($oldFileName);
-                        }
-
-                        $oldPublicImagePath = public_path('imagenes/perfiles/' . $oldFileName);
-                        if (File::exists($oldPublicImagePath)) {
-                            File::delete($oldPublicImagePath);
-                        }
-
-                        $oldPublicFlatImagePath = public_path('imagenes/' . $oldFileName);
-                        if (File::exists($oldPublicFlatImagePath)) {
-                            File::delete($oldPublicFlatImagePath);
-                        }
-
-                        Log::info('Foto antigua eliminada', ['filename' => $oldFileName]);
                     }
                 }
 
                 // Subir nueva foto
-                $image = $request->file('foto_perfil');
-                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                
+                $storedPath = null;
+                $storageErrors = [];
+
+                if ($hasBase64) {
+                    $base64data = $request->input('foto_perfil_base64');
+                    list($type, $base64data) = explode(';', $base64data);
+                    list(, $base64data)      = explode(',', $base64data);
+                    $fileData = base64_decode($base64data);
+                    
+                    $extension = 'jpg';
+                    if (preg_match('/^data:image\/(\w+)/', $request->input('foto_perfil_base64'), $matches)) {
+                        $extension = $matches[1] === 'jpeg' ? 'jpg' : $matches[1];
+                    }
+                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                } else {
+                    $image = $request->file('foto_perfil');
+                    $fileData = file_get_contents($image->getRealPath());
+                    $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                }
+
                 Log::info('Intentando guardar foto', [
                     'filename' => $filename,
                     'destination' => 'storage/app/public/profiles/' . $filename,
                 ]);
 
-                $storedPath = null;
-                $storageErrors = [];
-
-                // Candidatos en orden de preferencia, sin requerir crear subdirectorios nuevos.
+                // Candidatos en orden de preferencia, asegurando permisos laxos para que funcione en Docker
                 $storageCandidates = [
                     storage_path('app/public/profiles') => storage_path('app/public/profiles/' . $filename),
+                    public_path('imagenes/perfiles')    => public_path('imagenes/perfiles/' . $filename),
                     storage_path('app/public')          => storage_path('app/public/' . $filename),
-                    storage_path('app/profiles')        => storage_path('app/profiles/' . $filename),
-                    storage_path('app')                 => storage_path('app/' . $filename),
                     public_path('imagenes')             => public_path('imagenes/' . $filename),
                 ];
 
                 foreach ($storageCandidates as $dir => $targetPath) {
-                    // Intentar crear el directorio si no existe (puede fallar en produccion).
                     if (!is_dir($dir)) {
-                        @mkdir($dir, 0755, true);
+                        @mkdir($dir, 0777, true);
                     }
                     if (!is_dir($dir) || !is_writable($dir)) {
-                        $storageErrors[] = $dir . ': no existe o sin permisos';
+                        $storageErrors[] = $dir . ': no existe o sin permisos de escritura';
                         continue;
                     }
                     try {
-                        $image->move($dir, $filename);
-                        $storedPath = $targetPath;
-                        break;
+                        if (file_put_contents($targetPath, $fileData) !== false) {
+                            @chmod($targetPath, 0666);
+                            $storedPath = $targetPath;
+                            break;
+                        }
                     } catch (\Throwable $moveErr) {
                         $storageErrors[] = $dir . ': ' . $moveErr->getMessage();
                     }
                 }
 
                 if (!$storedPath) {
-                    throw new \RuntimeException('No se pudo almacenar la imagen. Detalles: ' . implode(' | ', $storageErrors));
+                    throw new \RuntimeException('No se pudo almacenar la imagen. Falló file_put_contents. Detalles: ' . implode(' | ', $storageErrors));
                 }
                 
                 Log::info('Foto guardada exitosamente', [
@@ -243,6 +260,7 @@ class ProfileController extends Controller
                 ]);
                 
                 $validated['foto_perfil'] = $filename;
+                unset($validated['foto_perfil_base64']);
             } catch (\Exception $e) {
                 Log::error('Error al guardar foto', [
                     'error' => $e->getMessage(),
