@@ -71,19 +71,15 @@ class ProfileController extends Controller
         $emailRules = ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id];
         $nameRules = ['nullable', 'string', 'max:255'];
 
+        // Solo aplicar validaciones estrictas de name si se envía y es diferente
         $incomingName = $request->input('name');
-        if ($incomingName !== null) {
+        if ($incomingName !== null && !empty(trim((string) $incomingName))) {
             $normalizedIncomingName = trim((string) $incomingName);
             $currentName = trim((string) $user->name);
 
-            // Mantener compatibilidad con usuarios legacy: solo aplicar reglas estrictas
-            // cuando el usuario realmente intenta cambiar su nombre.
+            // Si intenta cambiar el nombre, aplicar todas las reglas
             if (strcasecmp($normalizedIncomingName, $currentName) !== 0) {
-                $nameRules[] = 'required';
-                $nameRules[] = 'min:3';
-                $nameRules[] = 'unique:usuarios,name,' . $user->id;
-                $nameRules[] = 'regex:/^[a-zA-Z0-9_]+$/';
-                $nameRules[] = new NoProfanity();
+                $nameRules = ['required', 'string', 'max:255', 'min:3', 'unique:usuarios,name,' . $user->id, 'regex:/^[a-zA-Z0-9_]+$/', new NoProfanity()];
             }
         }
 

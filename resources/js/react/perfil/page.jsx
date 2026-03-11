@@ -175,50 +175,67 @@ const PerfilPage = () => {
     setMessage("");
 
     try {
-      // Preparar datos para envío: solo enviar campos de texto si tienen valor
-      const dataToSend = {
-        name: formData.name && formData.name.trim() ? formData.name.trim() : user.name,
-        email: formData.email && formData.email.trim() ? formData.email.trim() : user.email,
-        telefono: formData.telefono && formData.telefono.trim() ? formData.telefono.trim() : user.telefono,
-        foto_perfil: formData.foto_perfil,
-      };
-
-      // Log para debugging
-      console.log('🚀 Enviando datos:', {
-        name: dataToSend.name,
-        email: dataToSend.email,
-        telefono: dataToSend.telefono,
-        hasFoto: dataToSend.foto_perfil instanceof File,
-        fotoName: dataToSend.foto_perfil instanceof File ? dataToSend.foto_perfil.name : null,
-      });
-
-      const response = await profileService.update(dataToSend);
-      console.log('✅ Respuesta del servidor:', response);
-      
-      setMessage(response.message || "Perfil actualizado exitosamente");
-      
-      // Actualizar el usuario en el contexto
-      if (response.user) {
-        console.log('👤 Usuario actualizado:', response.user);
-        updateUser(response.user);
+      // Si solo estás cambiando foto, envía SOLO la foto
+      if (formData.foto_perfil instanceof File && !formData.name && !formData.email && !formData.telefono) {
+        console.log('🚀 Enviando solo foto');
+        const response = await profileService.update({
+          foto_perfil: formData.foto_perfil,
+        });
+        console.log('✅ Respuesta del servidor:', response);
         
-        // Actualizar preview - pasar la URL del servidor tal cual al useEffect
-        if (response.user.foto_perfil) {
-          console.log('🖼️ URL del servidor:', response.user.foto_perfil);
-          setPreviewImage(response.user.foto_perfil);
-        } else {
-          console.warn('⚠️ No hay foto_perfil en la respuesta del servidor');
-          setPreviewImage(null);
+        setMessage(response.message || "Foto actualizada exitosamente");
+        
+        if (response.user) {
+          console.log('👤 Usuario actualizado:', response.user);
+          updateUser(response.user);
+          
+          if (response.user.foto_perfil) {
+            console.log('🖼️ URL del servidor:', response.user.foto_perfil);
+            setPreviewImage(response.user.foto_perfil);
+          }
         }
+        
+        setFormData(prev => ({
+          ...prev,
+          foto_perfil: null,
+        }));
       } else {
-        console.warn('⚠️ No hay usuario en la respuesta del servidor');
+        // Si cambias otros campos, envía todos
+        const dataToSend = {
+          name: formData.name && formData.name.trim() ? formData.name.trim() : user.name,
+          email: formData.email && formData.email.trim() ? formData.email.trim() : user.email,
+          telefono: formData.telefono && formData.telefono.trim() ? formData.telefono.trim() : user.telefono,
+          foto_perfil: formData.foto_perfil,
+        };
+
+        console.log('🚀 Enviando datos:', {
+          name: dataToSend.name,
+          email: dataToSend.email,
+          telefono: dataToSend.telefono,
+          hasFoto: dataToSend.foto_perfil instanceof File,
+          fotoName: dataToSend.foto_perfil instanceof File ? dataToSend.foto_perfil.name : null,
+        });
+
+        const response = await profileService.update(dataToSend);
+        console.log('✅ Respuesta del servidor:', response);
+        
+        setMessage(response.message || "Perfil actualizado exitosamente");
+        
+        if (response.user) {
+          console.log('👤 Usuario actualizado:', response.user);
+          updateUser(response.user);
+          
+          if (response.user.foto_perfil) {
+            console.log('🖼️ URL del servidor:', response.user.foto_perfil);
+            setPreviewImage(response.user.foto_perfil);
+          }
+        }
+        
+        setFormData(prev => ({
+          ...prev,
+          foto_perfil: null,
+        }));
       }
-      
-      // Limpiar el input de archivo si se guardó correctamente
-      setFormData(prev => ({
-        ...prev,
-        foto_perfil: null,
-      }));
       
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
