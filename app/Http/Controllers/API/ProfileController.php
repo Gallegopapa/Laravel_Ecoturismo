@@ -92,11 +92,24 @@ class ProfileController extends Controller
 
         if ($request->hasFile('foto_perfil')) {
             $file = $request->file('foto_perfil');
-            Log::info('Foto recibida', [
+            Log::info('Foto recibida y válida', [
                 'name' => $file->getClientOriginalName(),
                 'mime' => $file->getMimeType(),
                 'size' => $file->getSize(),
             ]);
+        } else {
+            // Check if there is a file object that failed validation (e.g., upload_max_filesize limit)
+            $fileObj = $request->file('foto_perfil');
+            if ($fileObj !== null && !$fileObj->isValid()) {
+                $errorMsg = $fileObj->getErrorMessage();
+                Log::error('Archivo de foto de perfil invalido', [
+                    'error' => $errorMsg,
+                    'error_code' => $fileObj->getError(),
+                ]);
+                return response()->json([
+                    'message' => "La imagen no se pudo subir. Probablemente exceda el límite de tamaño del servidor (upload_max_filesize en Docker). Detalle: {$errorMsg}"
+                ], 422);
+            }
         }
 
         $emailRules = ['nullable', 'email', 'max:255', 'unique:usuarios,email,' . $user->id];
