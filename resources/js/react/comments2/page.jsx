@@ -29,6 +29,33 @@ const Comments2Page = () => {
   });
   const textareaRef = useRef(null);
 
+  const getReviewRating = useCallback((review) => {
+    const raw = review?.rating ?? review?.calificacion ?? review?.puntuacion ?? 0;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) {
+      return 0;
+    }
+    return Math.max(0, Math.min(5, Math.round(parsed)));
+  }, []);
+
+  const normalizeRatingValue = useCallback((value, fallback = 5) => {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+    return Math.max(1, Math.min(5, Math.round(parsed)));
+  }, []);
+
+  const buildReviewPayload = useCallback((data) => {
+    const normalizedRating = normalizeRatingValue(data?.rating);
+    return {
+      ...data,
+      rating: normalizedRating,
+      calificacion: normalizedRating,
+      puntuacion: normalizedRating,
+    };
+  }, [normalizeRatingValue]);
+
   useEffect(() => {
     if (authLoading) {
       return;
@@ -134,7 +161,7 @@ const Comments2Page = () => {
     setFormError("");
 
     try {
-      await reviewsService.create(formData);
+      await reviewsService.create(buildReviewPayload(formData));
       setMessage("✅ Reseña creada correctamente");
       setFormError("");
       setFormData({
@@ -155,13 +182,13 @@ const Comments2Page = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [formData, loadData]);
+  }, [buildReviewPayload, formData, loadData]);
 
   const startEdit = useCallback((review) => {
     setEditingReviewId(review.id);
     setEditForm({
       place_id: review.place_id || review.place?.id || "",
-      rating: review.rating || 5,
+      rating: getReviewRating(review) || 5,
       comment: review.comment || "",
     });
     setFormError("");
@@ -172,7 +199,7 @@ const Comments2Page = () => {
         textareaRef.current.focus();
         }
       }, 0);
-    }, []);
+      }, [getReviewRating]);
 
     const handleEditChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -202,11 +229,11 @@ const Comments2Page = () => {
     setFormError("");
 
     try {
-      await reviewsService.update(editingReviewId, {
+      await reviewsService.update(editingReviewId, buildReviewPayload({
         place_id: editForm.place_id,
         rating: editForm.rating,
         comment: editForm.comment,
-      });
+      }));
       setMessage("✅ Reseña actualizada correctamente");
       setFormError("");
       setEditingReviewId(null);
@@ -223,7 +250,7 @@ const Comments2Page = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [editForm, editingReviewId, loadData]);
+  }, [buildReviewPayload, editForm, editingReviewId, loadData]);
 
   const handleDelete = useCallback(async (reviewId) => {
     if (!window.confirm("¿Estás seguro de eliminar esta reseña?")) {
@@ -331,7 +358,7 @@ const Comments2Page = () => {
                     <h4 className="review-user-name">{review.usuario?.name || "Usuario"}</h4>
                     <div className="review-comment">{review.comment || "Sin comentario"}</div>
                     <div className="ratings">
-                      {renderStars(review.rating)}
+                      {renderStars(getReviewRating(review))}
                     </div>
                     {review.fecha_comentario && (
                       <p className="review-date">

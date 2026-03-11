@@ -85,6 +85,33 @@ const CommentsPage = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  const getReviewRating = (review) => {
+    const raw = review?.rating ?? review?.calificacion ?? review?.puntuacion ?? 0;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) {
+      return 0;
+    }
+    return Math.max(0, Math.min(5, Math.round(parsed)));
+  };
+
+  const normalizeRatingValue = (value, fallback = 5) => {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+    return Math.max(1, Math.min(5, Math.round(parsed)));
+  };
+
+  const buildReviewPayload = (data) => {
+    const normalizedRating = normalizeRatingValue(data?.rating);
+    return {
+      ...data,
+      rating: normalizedRating,
+      calificacion: normalizedRating,
+      puntuacion: normalizedRating,
+    };
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -139,7 +166,7 @@ const CommentsPage = () => {
     setMessage("");
 
     try {
-      await reviewsService.create(formData);
+      await reviewsService.create(buildReviewPayload(formData));
       setMessage("✅ Reseña creada correctamente");
       setFormData({
         place_id: "",
@@ -288,7 +315,7 @@ const CommentsPage = () => {
                       </div>
                     </div>
                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.5rem'}}>
-                      <div>{renderStars(review.rating)}</div>
+                      <div>{renderStars(getReviewRating(review))}</div>
                       {review.fecha_comentario && (
                         <span style={{fontSize:'0.92rem',color:'#888',marginLeft:'0.5rem'}}>
                           {new Date(review.fecha_comentario).toLocaleDateString('es-ES', {year: 'numeric',month: 'long',day: 'numeric'})}

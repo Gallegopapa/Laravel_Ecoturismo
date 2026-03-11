@@ -13,6 +13,14 @@ const ReviewForm = ({ placeId, ecohotelId, user, isAuthenticated, onReviewAdded 
   const [checkingReview, setCheckingReview] = useState(true);
   const charLimit = 500;
 
+  const normalizeRatingValue = (value, fallback = 5) => {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+    return Math.max(1, Math.min(5, Math.round(parsed)));
+  };
+
   // Verificar si el usuario ya tiene una reseña para este lugar
   useEffect(() => {
     const checkExistingReview = async () => {
@@ -70,8 +78,11 @@ const ReviewForm = ({ placeId, ecohotelId, user, isAuthenticated, onReviewAdded 
     setSuccess('');
 
     try {
+      const normalizedRating = normalizeRatingValue(rating);
       let reviewData = {
-        rating: parseInt(rating),
+        rating: normalizedRating,
+        calificacion: normalizedRating,
+        puntuacion: normalizedRating,
         comment: comment.trim(),
       };
       if (placeId) {

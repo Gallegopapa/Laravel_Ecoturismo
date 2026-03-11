@@ -250,12 +250,32 @@ export const reviewsService = {
   // createForEcohotel eliminado: usar create con ecohotel_id
 
   create: async (reviewData) => {
-    const response = await api.post('/reviews', reviewData);
+    const hasRating = typeof reviewData?.rating !== 'undefined' && reviewData?.rating !== null;
+    const payload = hasRating
+      ? {
+          ...reviewData,
+          rating: Number(reviewData.rating),
+          calificacion: Number(reviewData.rating),
+          puntuacion: Number(reviewData.rating),
+        }
+      : reviewData;
+
+    const response = await api.post('/reviews', payload);
     return response.data;
   },
 
   update: async (id, reviewData) => {
-    const response = await api.put(`/reviews/${id}`, reviewData);
+    const hasRating = typeof reviewData?.rating !== 'undefined' && reviewData?.rating !== null;
+    const payload = hasRating
+      ? {
+          ...reviewData,
+          rating: Number(reviewData.rating),
+          calificacion: Number(reviewData.rating),
+          puntuacion: Number(reviewData.rating),
+        }
+      : reviewData;
+
+    const response = await api.put(`/reviews/${id}`, payload);
     return response.data;
   },
 
