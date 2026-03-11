@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/react/context/AuthContext";
 import Header2 from "@/react/components/Header2/Header2";
@@ -13,9 +13,9 @@ const PerfilPage = () => {
   
   // Log inicial de montaje
   console.log('🟢 Componente PerfilPage montado');
-  
-  // Referencia al input file
-  const fileInputRef = React.useRef(null);
+
+  const fileInputRef = useRef(null);
+  const hasHydratedProfileRef = useRef(false);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -84,54 +84,41 @@ const PerfilPage = () => {
       return;
     }
 
-    // Cargar datos del usuario desde el contexto o desde la API
-    const loadProfileData = async () => {
-      if (user) {
-        setFormData({
-          name: user.name || "",
-          email: user.email || "",
-          telefono: user.telefono || "",
-          foto_perfil: null,
-        });
-        setPreviewImage(user.foto_perfil || null);
+    if (loading || !isAuthenticated || hasHydratedProfileRef.current) {
+      return;
+    }
 
-        // Refresca desde API para evitar URLs antiguas en localStorage/contexto.
-        try {
-          const response = await profileService.get();
-          if (response.user) {
-            updateUser(response.user);
-            setFormData({
-              name: response.user.name || "",
-              email: response.user.email || "",
-              telefono: response.user.telefono || "",
-              foto_perfil: null,
-            });
-            setPreviewImage(response.user.foto_perfil || null);
-          }
-        } catch (error) {
-          console.error("Error al refrescar perfil:", error);
+    const hydrateFromUser = (profileUser) => {
+      setFormData({
+        name: profileUser.name || "",
+        email: profileUser.email || "",
+        telefono: profileUser.telefono || "",
+        foto_perfil: null,
+      });
+      setPreviewImage(profileUser.foto_perfil || null);
+      hasHydratedProfileRef.current = true;
+    };
+
+    // Cargar una sola vez para no pisar la imagen seleccionada por el usuario.
+    const loadProfileData = async () => {
+      if (user?.id) {
+        hydrateFromUser(user);
+        return;
+      }
+
+      try {
+        const response = await profileService.get();
+        if (response.user) {
+          updateUser(response.user);
+          hydrateFromUser(response.user);
         }
-      } else if (isAuthenticated) {
-        // Si hay token pero no hay usuario en el contexto, cargar desde la API
-        try {
-          const response = await profileService.get();
-          if (response.user) {
-            setFormData({
-              name: response.user.name || "",
-              email: response.user.email || "",
-              telefono: response.user.telefono || "",
-              foto_perfil: null,
-            });
-            setPreviewImage(response.user.foto_perfil || null);
-          }
-        } catch (error) {
-          console.error("Error al cargar perfil:", error);
-        }
+      } catch (error) {
+        console.error("Error al cargar perfil:", error);
       }
     };
 
     loadProfileData();
-  }, [user, isAuthenticated, loading, navigate]);
+  }, [user?.id, isAuthenticated, loading, navigate, updateUser]);
 
   // Mostrar loading
   if (loading) {
