@@ -128,6 +128,11 @@ export default function LugaresMontanososPage() {
             
             return {
               ...item,
+              // NORMALIZAR: description siempre en inglés, nunca usar descripción fallback
+              description: item.description || item.descripcion || '',
+              // Campos normalizados
+              name: item.name || item.titulo || item.nombre || '',
+              location: item.location || item.ubicacion || '',
               // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
               imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.jpg',
               // Mantener image solo si es una imagen subida válida

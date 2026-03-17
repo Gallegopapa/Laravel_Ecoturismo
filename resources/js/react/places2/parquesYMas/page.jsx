@@ -90,7 +90,7 @@ export default function ParquesYMasPage() {
       if (parquesCategory) {
         const data = await placesService.getAll({ category_id: parquesCategory.id });
         if (data && data.length > 0) {
-          // Priorizar imágenes locales del fallback sobre las de la API
+          // Normalizar datos de la API con imágenes locales si es necesario
           const withImages = data.map((item) => {
             // Buscar el fallback por nombre o ID (más robusto que por índice)
             const fallback = lugaresFallback.find(
@@ -113,6 +113,11 @@ export default function ParquesYMasPage() {
             
             return {
               ...item,
+              // NORMALIZAR: description siempre en inglés, nunca usar descripción fallback
+              description: item.description || item.descripcion || '',
+              // Campos normalizados
+              name: item.name || item.titulo || item.nombre || '',
+              location: item.location || item.ubicacion || '',
               // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
               imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.jpg',
               // Mantener image solo si es una imagen subida válida
