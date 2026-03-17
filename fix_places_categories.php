@@ -68,6 +68,7 @@ $lugaresCategorias = [
 $reparadas = 0;
 $sinCategorias = 0;
 foreach ($lugaresCategorias as $placeId => $catIds) {
+    echo "Procesando lugar ID: $placeId\n";
     $place = Place::find($placeId);
     if (!$place) {
         echo "Lugar con ID $placeId no encontrado.\n";
