@@ -94,6 +94,9 @@ class ProfileController extends Controller
         Log::info('Profile update request', [
             'method' => $request->method(),
             'has_file' => $request->hasFile('foto_perfil'),
+            'inputs' => array_keys($request->all()),
+            'has_base64' => $request->has('foto_perfil_base64'),
+            'base64_length' => $request->has('foto_perfil_base64') ? strlen($request->input('foto_perfil_base64')) : 0,
         ]);
 
         if ($request->hasFile('foto_perfil')) {
