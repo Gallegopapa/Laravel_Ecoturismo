@@ -129,8 +129,8 @@ export default function ParaisosAcuaticosPage() {
             
             return {
               ...item,
-              // NORMALIZAR: description siempre en inglés, nunca usar descripción fallback
-              description: item.description || item.descripcion || '',
+              // SÓLO usar description de la API, nunca fallback
+              description: item.description || '',
               // Campos normalizados
               name: item.name || item.nombre || item.titulo || '',
               location: item.location || item.ubicacion || '',
@@ -142,15 +142,16 @@ export default function ParaisosAcuaticosPage() {
           });
           setLugares(withImages);
         } else {
-          setLugares(lugaresFallback);
+          // Si no hay datos, mostrar lista vacía en lugar de fallback Lorem ipsum
+          setLugares([]);
         }
       } else {
-        // Si no encuentra la categoría, usar fallback
-        setLugares(lugaresFallback);
+        // Si no encuentra la categoría, mostrar lista vacía
+        setLugares([]);
       }
     } catch (error) {
       console.error("Error al cargar lugares:", error);
-      setLugares(lugaresFallback);
+      setLugares([]);
     } finally {
       setLoading(false);
     }

@@ -44,7 +44,9 @@ class PlaceController extends Controller
                   ->orWhere('description', 'like', '%' . $request->search . '%');
         }
         
-        $places = $query->with(['categories', 'reviews.usuario:id,name,foto_perfil'])
+        // IMPORTANTE: Seleccionar explícitamente TODOS los campos incluyendo description
+        $places = $query->select(['id', 'name', 'description', 'location', 'image', 'latitude', 'longitude', 'telefono', 'email', 'sitio_web', 'created_at', 'updated_at'])
+            ->with(['categories', 'reviews.usuario:id,name,foto_perfil'])
             ->orderBy('name', 'asc')
             ->get();
         
