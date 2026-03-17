@@ -5,14 +5,16 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     server: {
-        host: '127.0.0.1',
+        host: '0.0.0.0',
         port: 5173,
         hmr: {
-            host: '127.0.0.1',
+            host: 'sgallego.dev',
         },
+        cors: true,
         proxy: {
-            '/api': 'http://localhost:8000',
-            '/storage': 'http://localhost:8000',
+            '/api': 'http://sgallego.dev',
+            '/storage': 'http://sgallego.dev',
+            '/imagenes': 'http://sgallego.dev',
         },
     },
     plugins: [
@@ -37,18 +39,18 @@ export default defineConfig({
             },
         },
     },
-        build: {
-            rollupOptions: {
-                output: {
-                    manualChunks(id) {
-                        if (id.includes('node_modules')) {
-                            return 'vendor';
-                        }
-                    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return 'vendor';
+                    }
                 },
             },
-            chunkSizeWarningLimit: 500,
         },
+        chunkSizeWarningLimit: 500,
+    },
     resolve: {
         alias: {
             '@': '/resources/js',
