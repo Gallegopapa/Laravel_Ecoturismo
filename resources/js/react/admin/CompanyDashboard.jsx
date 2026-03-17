@@ -149,8 +149,10 @@ const CompanyDashboard = () => {
             (apiImage.includes("/storage/places/") ||
                 apiImage.startsWith("/storage/") ||
                 apiImage.includes("storage/places") ||
+                apiImage.startsWith("/imagenes/") ||
                 (apiImage.startsWith("http") &&
-                    apiImage.includes("/storage/places/")))
+                    (apiImage.includes("/storage/places/") ||
+                        apiImage.includes("/imagenes/"))))
                 ? apiImage
                 : null;
 

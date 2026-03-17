@@ -122,12 +122,13 @@ export default function LugaresMontanososPage() {
         if (data && data.length > 0) {
           // PRIORIDAD: Imágenes subidas -> Imágenes locales del fallback -> Placeholder
           const withImages = data.map((item) => {
-            // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+            // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
             const imagenSubida = item.image && (
               item.image.includes('/storage/places/') || 
               item.image.startsWith('/storage/') ||
               item.image.includes('storage/places') ||
-              (item.image.startsWith('http') && item.image.includes('/storage/places/'))
+              item.image.startsWith('/imagenes/') ||
+              (item.image.startsWith('http') && (item.image.includes('/storage/places/') || item.image.includes('/imagenes/')))
             ) ? item.image : null;
             
             // SEGUNDO: Si no hay imagen subida, buscar en fallback local por ID o nombre
@@ -152,8 +153,7 @@ export default function LugaresMontanososPage() {
               location: item.location || item.ubicacion || '',
               // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
               imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.svg',
-              // Mantener image solo si es una imagen subida válida
-              image: imagenSubida || null,
+              image: imagenSubida || item.image || null,
             };
           });
           setLugares(withImages);

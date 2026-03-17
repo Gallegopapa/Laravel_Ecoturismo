@@ -110,25 +110,29 @@ export default function ParquesYMasPage() {
         const data = await placesService.getAll({ category_id: parquesCategory.id });
         if (data && data.length > 0) {
           // Normalizar datos de la API con imágenes locales si es necesario
+          // PRIORIDAD: /imagenes/ (garantizado) -> /storage/places/ -> fallback -> placeholder
           const withImages = data.map((item) => {
-            // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
-            const imagenSubida = item.image && (
-              item.image.includes('/storage/places/') || 
-              item.image.startsWith('/storage/') ||
-              item.image.includes('storage/places') ||
-              (item.image.startsWith('http') && item.image.includes('/storage/places/'))
-            ) ? item.image : null;
+            let imagenFinal = null;
             
-            // SEGUNDO: Si no hay imagen subida, buscar en fallback local
-            let imagenLocal = null;
-            if (!imagenSubida) {
-              // Busca por nombre normalizado (sin acentos, sin espacios extra)
-              if (item.name) {
-                const normalizedName = normalize(item.name);
+            // PASO 1: Si viene una imagen de /imagenes/, usar directamente
+            if (item.image && item.image.startsWith('/imagenes/')) {
+              imagenFinal = item.image;
+            }
+            // PASO 2: Si viene de /storage/, es válida (pero menos prioritaria)
+            else if (item.image && (item.image.includes('/storage/places/') || item.image.startsWith('/storage/'))) {
+              imagenFinal = item.image;
+            }
+            // PASO 3: Buscar en fallback determinístico por nombre
+            else if (item.name) {
+              const normalizedName = normalize(item.name);
+              imagenFinal = imagenesDeterministicas[normalizedName] || null;
+              
+              // PASO 4: Si no está en determinístico, buscar en fallback array
+              if (!imagenFinal) {
                 const fallback = lugaresFallback.find(
                   fb => normalize(fb.titulo) === normalizedName
                 );
-                imagenLocal = fallback?.imagen || imagenesDeterministicas[normalizedName] || null;
+                imagenFinal = fallback?.imagen || null;
               }
             }
             
@@ -139,10 +143,9 @@ export default function ParquesYMasPage() {
               // Campos normalizados
               name: item.name || item.titulo || item.nombre || '',
               location: item.location || item.ubicacion || '',
-              // PRIORIDAD IMAGEN: storage > imagen local > placeholder
-              imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.svg',
-              // Mantener image solo si es una imagen subida válida
-              image: imagenSubida || null,
+              // Imagen final con fallback a placeholder
+              imagen: imagenFinal || '/imagenes/placeholder.svg',
+              image: imagenFinal,
             };
           });
           setLugares(withImages);

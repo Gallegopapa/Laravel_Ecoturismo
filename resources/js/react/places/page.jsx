@@ -231,12 +231,13 @@ const PlacesPage = () => {
           const nombreOriginal = lugar.name || '';
           const nombreLugar = normalizarNombre(nombreOriginal);
           
-          // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+          // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
           const imagenSubida = lugar.image && (
             lugar.image.includes('/storage/places/') || 
             lugar.image.startsWith('/storage/') ||
             lugar.image.includes('storage/places') ||
-            (lugar.image.startsWith('http') && lugar.image.includes('/storage/places/'))
+            lugar.image.startsWith('/imagenes/') ||
+            (lugar.image.startsWith('http') && (lugar.image.includes('/storage/places/') || lugar.image.includes('/imagenes/')))
           ) ? lugar.image : null;
           
           // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
@@ -330,9 +331,8 @@ const PlacesPage = () => {
           // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
           return {
             ...lugar,
-            imagen: imagenSubida || imagenLocal || lugar.imagen || "/imagenes/placeholder.jpg",
-            // Mantener image solo si es una imagen subida válida
-            image: imagenSubida || null,
+            imagen: imagenSubida || imagenLocal || lugar.imagen || "/imagenes/placeholder.svg",
+            image: imagenSubida || lugar.image || null,
           };
         });
         setLugares(lugaresConImagenesPriorizadas);
@@ -572,10 +572,10 @@ const PlacesPage = () => {
                     {data.lugares.map((lugar) => (
                         <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
                         <img 
-                          src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
+                          src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} 
                           alt={lugar.name}
                           onError={(e) => {
-                            e.target.src = "/imagenes/placeholder.jpg";
+                            e.target.src = "/imagenes/placeholder.svg";
                           }}
                         />
                         <h4>{lugar.name}</h4>
@@ -648,10 +648,10 @@ const PlacesPage = () => {
                   {lugares.map((lugar) => (
                       <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
                       <img 
-                        src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} 
+                        src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} 
                         alt={lugar.name}
                         onError={(e) => {
-                          e.target.src = "/imagenes/placeholder.jpg";
+                          e.target.src = "/imagenes/placeholder.svg";
                         }}
                       />
                       <h4>{lugar.name}</h4>

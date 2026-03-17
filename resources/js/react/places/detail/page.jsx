@@ -132,12 +132,13 @@ const PlaceDetailPage = () => {
       const nombreOriginal = placeData.name || '';
       const nombreLugar = normalizarNombre(nombreOriginal);
 
-      // PRIMERO: Verificar si hay imagen subida (desde storage)
+      // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
       const imagenSubida = placeData.image && (
         placeData.image.includes('/storage/places/') || 
         placeData.image.startsWith('/storage/') ||
         placeData.image.includes('storage/places') ||
-        (placeData.image.startsWith('http') && placeData.image.includes('/storage/places/'))
+        placeData.image.startsWith('/imagenes/') ||
+        (placeData.image.startsWith('http') && (placeData.image.includes('/storage/places/') || placeData.image.includes('/imagenes/')))
       ) ? placeData.image : null;
 
       // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
@@ -156,7 +157,7 @@ const PlaceDetailPage = () => {
       placeData = {
         ...placeData,
         imagen: imagenSubida || imagenLocal || '/imagenes/iconoecoturismo.jpg',
-        image: imagenSubida || null,
+        image: imagenSubida || placeData.image || null,
       };
 
       setPlace(placeData);
@@ -519,10 +520,10 @@ const PlaceDetailPage = () => {
                       >
                         <div className="related-card-image-wrapper">
                           <img
-                            src={ecohotel.image || '/imagenes/placeholder.jpg'}
+                            src={ecohotel.image || '/imagenes/placeholder.svg'}
                             alt={ecohotel.name}
                             className="related-card-image"
-                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                            onError={e => { e.target.src = '/imagenes/placeholder.svg'; }}
                           />
                         </div>
                         <div className="related-card-title">{ecohotel.name}</div>

@@ -132,8 +132,10 @@ const PlacesAdmin = () => {
             value.includes("/storage/places/") ||
             value.startsWith("/storage/") ||
             value.includes("storage/places") ||
+            value.startsWith("/imagenes/") ||
             (value.startsWith("http") &&
-                value.includes("/storage/places/"))
+                (value.includes("/storage/places/") ||
+                    value.includes("/imagenes/")))
         );
     };
 

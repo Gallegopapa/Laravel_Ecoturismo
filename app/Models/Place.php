@@ -24,8 +24,8 @@ class Place extends Model
     ];
 
     /**
-     * Accessor para image - devuelve ruta relativa (independiente de APP_URL)
-     * El frontend puede construir la URL completa si la necesita
+     * Accessor para image - devuelve ruta normalizada y validada
+     * Prioridad: /imagenes/ > /storage/places/ > null
      */
     public function getImageAttribute($value)
     {
@@ -33,27 +33,47 @@ class Place extends Model
             return null;
         }
 
-        // Si ya es una URL completa (por ejemplo, Picsum o CDN), devolverla tal cual
+        $value = trim((string) $value);
+        if (empty($value)) {
+            return null;
+        }
+
+        // Si ya es una URL completa
         if (preg_match('/^https?:\/\//', $value)) {
+            $path = parse_url($value, PHP_URL_PATH) ?: '';
+
+            if (strpos($path, '/imagenes/') === 0 || strpos($path, '/storage/') === 0) {
+                return $path;
+            }
+
             return $value;
         }
 
-        // Si comienza con /imagenes/ o /storage/, devolver tal cual
-        if (strpos($value, '/imagenes/') === 0 || strpos($value, '/storage/') === 0) {
+        // PRIORIDAD 1: Si comienza con /imagenes/, devolver tal cual
+        if (strpos($value, '/imagenes/') === 0) {
             return $value;
         }
 
-        // Si comienza con imagenes/ sin la barra inicial
+        // Si es almacenamiento de storage public
+        if (strpos($value, '/storage/') === 0 || strpos($value, 'storage/') === 0) {
+            $cleanPath = str_replace(['storage/', '/storage/'], '', $value);
+            return '/storage/' . ltrim($cleanPath, '/');
+        }
+
+        // Normalizar rutas sin barra inicial
         if (strpos($value, 'imagenes/') === 0) {
             return '/' . $value;
         }
 
-        // Si comienza con storage/ sin la barra inicial
-        if (strpos($value, 'storage/') === 0) {
-            return '/' . $value;
+        if (strpos($value, 'storage/places/') === 0) {
+            return '/storage/' . substr($value, strlen('storage/'));
         }
 
-        // Por defecto, asumir que es una ruta en /imagenes/
+        if (strpos($value, 'places/') === 0) {
+            return '/storage/' . $value;
+        }
+
+        // Por defecto, intentar en /imagenes/
         return '/imagenes/' . ltrim($value, '/');
     }
 

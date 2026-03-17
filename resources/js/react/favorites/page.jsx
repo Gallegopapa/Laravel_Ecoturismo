@@ -113,12 +113,13 @@ const FavoritesPage = () => {
         const nombreOriginal = place.name || '';
         const nombreLugar = normalizarNombre(nombreOriginal);
         
-        // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
+        // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
         const imagenSubida = place.image && (
           place.image.includes('/storage/places/') || 
           place.image.startsWith('/storage/') ||
           place.image.includes('storage/places') ||
-          (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+          place.image.startsWith('/imagenes/') ||
+          (place.image.startsWith('http') && (place.image.includes('/storage/places/') || place.image.includes('/imagenes/')))
         ) ? place.image : null;
         
         // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
@@ -138,9 +139,8 @@ const FavoritesPage = () => {
           place: {
             ...place,
             // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
-            imagen: imagenSubida || imagenLocal || place.imagen || '/imagenes/placeholder.jpg',
-            // Mantener image solo si es una imagen subida válida
-            image: imagenSubida || null,
+            imagen: imagenSubida || imagenLocal || place.imagen || '/imagenes/placeholder.svg',
+            image: imagenSubida || place.image || null,
           }
         };
       });
@@ -238,10 +238,10 @@ const FavoritesPage = () => {
                 return (
                   <div className="card" key={favorite.id}>
                     <img 
-                      src={place.imagen || place.image || "/imagenes/placeholder.jpg"} 
+                      src={place.imagen || place.image || "/imagenes/placeholder.svg"} 
                       alt={place.name || "Lugar"}
                       onError={(e) => {
-                        e.target.src = "/imagenes/placeholder.jpg";
+                        e.target.src = "/imagenes/placeholder.svg";
                       }}
                     />
                     <h4>{place.name || "Lugar sin nombre"}</h4>

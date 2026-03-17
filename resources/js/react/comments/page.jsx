@@ -261,13 +261,14 @@ const CommentsPage = () => {
                       place.image.includes('/storage/places/') ||
                       place.image.startsWith('/storage/') ||
                       place.image.includes('storage/places') ||
-                      (place.image.startsWith('http') && place.image.includes('/storage/places/'))
+                      place.image.startsWith('/imagenes/') ||
+                      (place.image.startsWith('http') && (place.image.includes('/storage/places/') || place.image.includes('/imagenes/')))
                     )) {
                       imagenLugar = place.image;
                     } else {
                       imagenLugar = mapeoImagenesDeterministico[nombreOriginal]
                         || mapeoImagenesLocales[nombreLugarNorm]
-                        || '/imagenes/placeholder.jpg';
+                        || '/imagenes/placeholder.svg';
                     }
                   }
                 } else if (review.ecohotel || (review.reviewable && review.reviewable_type === 'App\\Models\\Ecohotel')) {
@@ -275,13 +276,13 @@ const CommentsPage = () => {
                   if (ecohotel) {
                     nombreLugar = ecohotel.name || '';
                     ubicacionLugar = ecohotel.location || '';
-                    imagenLugar = ecohotel.image || '/imagenes/placeholder.jpg';
+                    imagenLugar = ecohotel.image || '/imagenes/placeholder.svg';
                   }
                 }
                 return (
                   <div key={review.id} style={{background:'#fff',borderRadius:'18px',boxShadow:'0 2px 12px #0001',padding:'2rem 1.5rem 1.5rem 1.5rem',width:340,maxWidth:'95vw',marginBottom:'1.5rem',display:'flex',flexDirection:'column',alignItems:'flex-start',position:'relative'}}>
                     <div style={{display:'flex',alignItems:'center',marginBottom:'1rem',gap:'1rem'}}>
-                      <img src={imagenLugar || '/imagenes/placeholder.jpg'} alt={nombreLugar} style={{width:60,height:60,objectFit:'cover',borderRadius:'50%',border:'2px solid #eee',background:'#fafafa'}} onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }} />
+                      <img src={imagenLugar || '/imagenes/placeholder.svg'} alt={nombreLugar} style={{width:60,height:60,objectFit:'cover',borderRadius:'50%',border:'2px solid #eee',background:'#fafafa'}} onError={e => { e.target.src = '/imagenes/placeholder.svg'; }} />
                       <div>
                         <div style={{fontWeight:700,fontSize:'1.1rem',color:'#222',marginBottom:'2px'}}>
                           {(() => {
