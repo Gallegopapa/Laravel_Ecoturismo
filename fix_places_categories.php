@@ -19,28 +19,37 @@ $kernel->bootstrap();
 // --- INICIO DEL SCRIPT ---
 echo "\n--- Reparando relaciones lugares <-> categorías ---\n";
 
-$places = Place::all();
-$categories = Category::all()->keyBy('id');
+$allPlaces = Place::all();
+$allCategories = Category::all();
+
+echo "\n--- LISTA DE LUGARES ---\n";
+foreach ($allPlaces as $p) {
+    echo "ID: {$p->id} | Nombre: {$p->name}\n";
+}
+
+echo "\n--- LISTA DE CATEGORÍAS ---\n";
+foreach ($allCategories as $c) {
+    echo "ID: {$c->id} | Nombre: {$c->name}\n";
+}
+// Mapea manualmente los IDs de lugares a los IDs de categorías correspondientes
+$lugaresCategorias = [
+    // place_id => [category_id, ...]
+    // Ejemplo:
+    // 1 => [2, 3],
+    // 2 => [1],
+    // 3 => [2, 4],
+    // ...
+    // Agrega aquí todos los lugares y sus categorías
+];
 
 $reparadas = 0;
 $sinCategorias = 0;
-foreach ($places as $place) {
-    // Si el lugar ya tiene categorías asociadas, saltar
-    if ($place->categories()->count() > 0) {
+foreach ($lugaresCategorias as $placeId => $catIds) {
+    $place = Place::find($placeId);
+    if (!$place) {
+        echo "Lugar con ID $placeId no encontrado.\n";
         continue;
     }
-    // Si el lugar tiene un campo categories (array o string de ids)
-    $catIds = [];
-    if (isset($place->categories) && is_array($place->categories) && count($place->categories) > 0) {
-        $catIds = $place->categories;
-    } elseif (isset($place->categories) && is_string($place->categories)) {
-        // Si está como string separado por coma
-        $catIds = array_filter(array_map('trim', explode(',', $place->categories)));
-    }
-    // Filtrar solo ids válidos
-    $catIds = array_filter($catIds, function($id) use ($categories) {
-        return $categories->has($id);
-    });
     if (count($catIds) > 0) {
         $place->categories()->sync($catIds);
         $reparadas++;
