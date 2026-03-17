@@ -33,13 +33,36 @@ foreach ($allCategories as $c) {
 }
 // Mapea manualmente los IDs de lugares a los IDs de categorías correspondientes
 $lugaresCategorias = [
-    // place_id => [category_id, ...]
-    // Ejemplo:
-    // 1 => [2, 3],
-    // 2 => [1],
-    // 3 => [2, 4],
-    // ...
-    // Agrega aquí todos los lugares y sus categorías
+    1 => [1],   // Parque Nacional Natural Tatamá - Parques y Más
+    2 => [1],
+    3 => [1,3],
+    4 => [1,3],
+    5 => [1],
+    6 => [1],
+    7 => [2],
+    8 => [2],
+    9 => [2],
+    10 => [2],
+    11 => [2],
+    12 => [2],
+    13 => [2],
+    14 => [2],
+    15 => [3],
+    16 => [3],
+    17 => [3],
+    18 => [3],
+    19 => [3],
+    20 => [3],
+    21 => [1,3],
+    22 => [1,3],
+    23 => [3],
+    24 => [2],
+    26 => [1,2],
+    27 => [1],
+    28 => [1,2],
+    29 => [1,3],
+    30 => [1,3],
+    31 => [1,3],
 ];
 
 $reparadas = 0;
