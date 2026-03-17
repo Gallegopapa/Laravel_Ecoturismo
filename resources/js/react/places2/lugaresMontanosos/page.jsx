@@ -151,7 +151,7 @@ export default function LugaresMontanososPage() {
               name: item.name || item.titulo || item.nombre || '',
               location: item.location || item.ubicacion || '',
               // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
-              imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.jpg',
+              imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.svg',
               // Mantener image solo si es una imagen subida válida
               image: imagenSubida || null,
             };
@@ -278,7 +278,7 @@ export default function LugaresMontanososPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
-                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.jpg"} alt={lugar.name || lugar.titulo} onError={(e) => { e.target.src = "/imagenes/placeholder.jpg"; }} />
+                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} alt={lugar.name || lugar.titulo} onError={(e) => { e.target.src = "/imagenes/placeholder.svg"; }} />
                 <h4>{lugar.name || lugar.titulo}</h4>
                 {/* Rating debajo del título, pequeño y centrado */}
                 <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
