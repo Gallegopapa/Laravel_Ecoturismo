@@ -90,6 +90,7 @@ const PerfilPage = () => {
       setDisplayImage(usuarioImg);
     }
   }, [previewImage]);
+
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
     try {
@@ -217,6 +218,8 @@ const PerfilPage = () => {
     }
   };
 
+  // ✅ handleSubmit corregido: genera el base64 en el momento del submit
+  // en lugar de depender del estado previewImage (que puede tener closure viejo)
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('=== INICIO handleSubmit ===');
@@ -228,29 +231,36 @@ const PerfilPage = () => {
         ? formData.foto_perfil
         : selectedProfileFileRef.current;
 
-      const hasSelectedProfileFile = Boolean(
-        selectedProfileFile
-        && typeof selectedProfileFile === 'object'
-        && typeof selectedProfileFile.name === 'string'
-      );
-
-      console.log('formData actual:', {
+      const payload = {
         name: formData.name,
         email: formData.email,
         telefono: formData.telefono,
-        hasFile: hasSelectedProfileFile,
-        fileName: selectedProfileFile?.name,
-      });
-
-      const payload = {
-        ...formData,
-        foto_perfil: null, // Avoid sending File to force JSON instead of FormData
       };
 
-      // Send Base64 if a new image was selected
-      if (hasSelectedProfileFile && previewImage && previewImage.startsWith('data:')) {
-        payload.foto_perfil_base64 = previewImage;
+      // Convertir el archivo a base64 en el momento del submit (sin depender del estado)
+      if (selectedProfileFile instanceof File) {
+        console.log('📸 Convirtiendo archivo a base64...', {
+          name: selectedProfileFile.name,
+          size: selectedProfileFile.size,
+          type: selectedProfileFile.type,
+        });
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("Error leyendo archivo"));
+          reader.readAsDataURL(selectedProfileFile);
+        });
+        payload.foto_perfil_base64 = base64;
+        console.log('✅ Base64 generado en submit, longitud:', base64.length);
       }
+
+      console.log('📤 Enviando payload:', {
+        name: payload.name,
+        email: payload.email,
+        telefono: payload.telefono,
+        hasBase64: !!payload.foto_perfil_base64,
+        base64Length: payload.foto_perfil_base64?.length || 0,
+      });
 
       const response = await profileService.update(payload);
       console.log('✅ Respuesta del servidor:', response);
