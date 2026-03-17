@@ -120,9 +120,17 @@ form{
     border-radius: 25px;
     transition: 0.3s;
 }
+  .contact-form .input-container:not(.textarea) .input{
+    display: block;
+    height: 42px;
+    min-height: 42px;
+    max-height: 42px;
+    padding: 0 1rem;
+    line-height: 42px;
+  }
 textarea.input{
     padding: 0.8rem 1.2rem;
-    min-height: 150px;
+    min-height: 130px;
     border-radius: 22px;
     resize: none;
     overflow-y: auto;

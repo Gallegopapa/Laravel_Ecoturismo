@@ -131,7 +131,7 @@ form {
 .input,
 textarea.input {
   background-color: transparent !important;
-  border: 2px solid 
+  border: 2px solid #ffffff;
 }
 
 /* Focus */
@@ -166,9 +166,13 @@ textarea.input:hover {
 /* INPUTS TAMAÑO EXACTO IMAGEN */
 /* ============================= */
 
-.contact-form input.input {
-  height: 26px;
-  padding: 0 1.2rem;
+.contact-form .input-container:not(.textarea) .input {
+  display: block;
+  height: 42px;
+  min-height: 42px;
+  max-height: 42px;
+  padding: 0 1rem;
+  line-height: 42px;
   border: 2px solid #ffffff;
   background-color: transparent !important;
   color: #ffffff;
@@ -178,7 +182,7 @@ textarea.input:hover {
 
 /* Textarea proporcional */
 .contact-form textarea.input {
-  min-height: 105px;            /* ← más bajo */
+  min-height: 130px;
   padding: 0.8rem 1.2rem;
   border-radius: 22px;
   background-color: transparent !important;
