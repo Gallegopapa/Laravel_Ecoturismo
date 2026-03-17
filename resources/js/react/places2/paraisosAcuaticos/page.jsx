@@ -99,6 +99,21 @@ export default function ParaisosAcuaticosPage() {
   const loadPlaces = async () => {
     try {
       setLoading(true);
+      // Helper para normalizar strings
+      const normalize = (str) => {
+        if (!str) return '';
+        return str
+          .toLowerCase()
+          .trim()
+          .replace(/á/g, 'a')
+          .replace(/é/g, 'e')
+          .replace(/í/g, 'i')
+          .replace(/ó/g, 'o')
+          .replace(/ú/g, 'u')
+          .replace(/ñ/g, 'n')
+          .replace(/\s+/g, ' ');
+      };
+      
       // Obtener categoría "paraisos-acuaticos" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
@@ -120,15 +135,14 @@ export default function ParaisosAcuaticosPage() {
             // SEGUNDO: Si no hay imagen subida, buscar en fallback local por ID o nombre
             let imagenLocal = null;
             if (!imagenSubida) {
-              // Primero intenta por ID exacto (más confiable)
-              let fallback = lugaresFallback.find(fb => fb.id === item.id);
-              // Si no encuentra, busca por nombre normalizado
-              if (!fallback && item.name) {
-                fallback = lugaresFallback.find(
-                  fb => fb.nombre?.toLowerCase().trim() === item.name?.toLowerCase().trim()
+              // Busca por nombre normalizado (sin acentos, sin espacios extra)
+              if (item.name) {
+                const normalizedName = normalize(item.name);
+                const fallback = lugaresFallback.find(
+                  fb => normalize(fb.nombre) === normalizedName
                 );
+                imagenLocal = fallback?.imagen || null;
               }
-              imagenLocal = fallback?.imagen || null;
             }
             
             return {

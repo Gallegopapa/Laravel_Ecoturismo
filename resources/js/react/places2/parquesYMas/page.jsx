@@ -82,6 +82,21 @@ export default function ParquesYMasPage() {
   const loadPlaces = async () => {
     try {
       setLoading(true);
+      // Helper para normalizar strings
+      const normalize = (str) => {
+        if (!str) return '';
+        return str
+          .toLowerCase()
+          .trim()
+          .replace(/á/g, 'a')
+          .replace(/é/g, 'e')
+          .replace(/í/g, 'i')
+          .replace(/ó/g, 'o')
+          .replace(/ú/g, 'u')
+          .replace(/ñ/g, 'n')
+          .replace(/\s+/g, ' ');
+      };
+      
       // Obtener categoría "parques-y-mas" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
@@ -103,15 +118,14 @@ export default function ParquesYMasPage() {
             // SEGUNDO: Si no hay imagen subida, buscar en fallback local
             let imagenLocal = null;
             if (!imagenSubida) {
-              // Intenta primero por ID exacto (más confiable)
-              let fallback = lugaresFallback.find(fb => fb.id === item.id);
-              // Si no encuentra, busca por nombre normalizado
-              if (!fallback && item.name) {
-                fallback = lugaresFallback.find(
-                  fb => fb.titulo?.toLowerCase().trim() === item.name?.toLowerCase().trim()
+              // Busca por nombre normalizado (sin acentos, sin espacios extra)
+              if (item.name) {
+                const normalizedName = normalize(item.name);
+                const fallback = lugaresFallback.find(
+                  fb => normalize(fb.titulo) === normalizedName
                 );
+                imagenLocal = fallback?.imagen || null;
               }
-              imagenLocal = fallback?.imagen || null;
             }
             
             return {
