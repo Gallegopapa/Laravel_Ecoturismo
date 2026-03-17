@@ -11,6 +11,25 @@ export const useAuth = () => {
   return context;
 };
 
+/**
+ * Normaliza foto_perfil a solo el nombre de archivo.
+ * El backend a veces devuelve una URL absoluta (https://sgallego.dev/imagenes/perfiles/archivo.jpg)
+ * y otras veces solo el filename. Siempre guardamos solo el filename para que
+ * resolveProfileImageUrl en PerfilPage lo procese correctamente via /api/profile/photo/.
+ */
+const normalizeUser = (userData) => {
+  if (!userData) return userData;
+  const fotoPerfil = userData.foto_perfil;
+  if (!fotoPerfil || typeof fotoPerfil !== 'string') return userData;
+
+  // Extraer solo el filename de cualquier URL o ruta
+  const normalized = fotoPerfil.replace(/\\/g, '/').split('?')[0];
+  const parts = normalized.split('/').filter(Boolean);
+  const filename = parts.length ? parts[parts.length - 1] : fotoPerfil;
+
+  return { ...userData, foto_perfil: filename };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,9 +46,10 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         const response = await authService.verifyToken();
         if (response.valid) {
-          setUser(response.user);
+          const normalizedUser = normalizeUser(response.user);
+          setUser(normalizedUser);
           setIsAuthenticated(true);
-          localStorage.setItem('user', JSON.stringify(response.user));
+          localStorage.setItem('user', JSON.stringify(normalizedUser));
         } else {
           // Token inválido, limpiar
           localStorage.removeItem('token');
@@ -72,15 +92,16 @@ export const AuthProvider = ({ children }) => {
         };
       }
       
-      // Guardar token y usuario
+      // Guardar token y usuario (normalizado)
+      const normalizedUser = normalizeUser(response.user);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
       
       // Actualizar estado de forma síncrona para evitar race conditions
-      setUser(response.user);
+      setUser(normalizedUser);
       setIsAuthenticated(true);
       
-      return { success: true, user: response.user };
+      return { success: true, user: normalizedUser };
     } catch (error) {
       console.error('Error en login:', error);
       
@@ -137,15 +158,16 @@ export const AuthProvider = ({ children }) => {
         };
       }
       
-      // Guardar token y usuario
+      // Guardar token y usuario (normalizado)
+      const normalizedUser = normalizeUser(response.user);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
       
       // Actualizar estado de forma síncrona para evitar race conditions
-      setUser(response.user);
+      setUser(normalizedUser);
       setIsAuthenticated(true);
       
-      return { success: true, user: response.user };
+      return { success: true, user: normalizedUser };
     } catch (error) {
       const errors = error.response?.data?.errors || {};
       const errorMessage = error.response?.data?.message || 
@@ -169,8 +191,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateUser = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    const normalizedUser = normalizeUser(userData);
+    setUser(normalizedUser);
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
   };
 
   const value = {
@@ -187,4 +210,3 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
