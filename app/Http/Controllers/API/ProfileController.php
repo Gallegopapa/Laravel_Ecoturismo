@@ -233,6 +233,8 @@ class ProfileController extends Controller
                 $storageCandidates = [
                     public_path('imagenes/perfiles')    => public_path('imagenes/perfiles/' . $filename),
                     public_path('imagenes')             => public_path('imagenes/' . $filename),
+                    storage_path('app/public/profiles') => storage_path('app/public/profiles/' . $filename),
+                    storage_path('app/profiles')        => storage_path('app/profiles/' . $filename),
                 ];
 
                 foreach ($storageCandidates as $dir => $targetPath) {
