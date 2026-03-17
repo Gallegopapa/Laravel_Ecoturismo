@@ -113,6 +113,10 @@ export default function ParaisosAcuaticosPage() {
           .replace(/ñ/g, 'n')
           .replace(/\s+/g, ' ');
       };
+
+      const imagenesDeterministicas = {
+        'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
+      };
       
       // Obtener categoría "paraisos-acuaticos" primero
       const categoriesResponse = await fetch('/api/categories');
@@ -141,7 +145,7 @@ export default function ParaisosAcuaticosPage() {
                 const fallback = lugaresFallback.find(
                   fb => normalize(fb.nombre) === normalizedName
                 );
-                imagenLocal = fallback?.imagen || null;
+                imagenLocal = fallback?.imagen || imagenesDeterministicas[normalizedName] || null;
               }
             }
             

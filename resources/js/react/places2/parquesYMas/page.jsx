@@ -96,6 +96,10 @@ export default function ParquesYMasPage() {
           .replace(/ñ/g, 'n')
           .replace(/\s+/g, ' ');
       };
+
+      const imagenesDeterministicas = {
+        'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
+      };
       
       // Obtener categoría "parques-y-mas" primero
       const categoriesResponse = await fetch('/api/categories');
@@ -124,7 +128,7 @@ export default function ParquesYMasPage() {
                 const fallback = lugaresFallback.find(
                   fb => normalize(fb.titulo) === normalizedName
                 );
-                imagenLocal = fallback?.imagen || null;
+                imagenLocal = fallback?.imagen || imagenesDeterministicas[normalizedName] || null;
               }
             }
             
