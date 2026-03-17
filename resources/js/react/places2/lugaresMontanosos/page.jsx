@@ -116,13 +116,17 @@ export default function LugaresMontanososPage() {
               (item.image.startsWith('http') && item.image.includes('/storage/places/'))
             ) ? item.image : null;
             
-            // SEGUNDO: Si no hay imagen subida, buscar en fallback local
+            // SEGUNDO: Si no hay imagen subida, buscar en fallback local por ID o nombre
             let imagenLocal = null;
             if (!imagenSubida) {
-              const fallback = lugaresFallback.find(
-                fb => fb.titulo?.toLowerCase() === item.name?.toLowerCase() || 
-                      fb.id === item.id
-              );
+              // Primero intenta por ID exacto (más confiable)
+              let fallback = lugaresFallback.find(fb => fb.id === item.id);
+              // Si no encuentra, busca por nombre normalizado
+              if (!fallback && item.name) {
+                fallback = lugaresFallback.find(
+                  fb => fb.titulo?.toLowerCase().trim() === item.name?.toLowerCase().trim()
+                );
+              }
               imagenLocal = fallback?.imagen || null;
             }
             

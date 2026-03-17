@@ -92,11 +92,6 @@ export default function ParquesYMasPage() {
         if (data && data.length > 0) {
           // Normalizar datos de la API con imágenes locales si es necesario
           const withImages = data.map((item) => {
-            // Buscar el fallback por nombre o ID (más robusto que por índice)
-            const fallback = lugaresFallback.find(
-              fb => fb.titulo?.toLowerCase() === item.name?.toLowerCase() || 
-                    fb.id === item.id
-            );
             // PRIMERO: Verificar si hay imagen subida (desde storage) - PRIORIDAD MÁXIMA
             const imagenSubida = item.image && (
               item.image.includes('/storage/places/') || 
@@ -108,17 +103,25 @@ export default function ParquesYMasPage() {
             // SEGUNDO: Si no hay imagen subida, buscar en fallback local
             let imagenLocal = null;
             if (!imagenSubida) {
+              // Intenta primero por ID exacto (más confiable)
+              let fallback = lugaresFallback.find(fb => fb.id === item.id);
+              // Si no encuentra, busca por nombre normalizado
+              if (!fallback && item.name) {
+                fallback = lugaresFallback.find(
+                  fb => fb.titulo?.toLowerCase().trim() === item.name?.toLowerCase().trim()
+                );
+              }
               imagenLocal = fallback?.imagen || null;
             }
             
             return {
               ...item,
-              // SOLO usar description de la API, nunca fallback Lorem ipsum
+              // PRIORITARIO: Solo usar description de la API, NUNCA del fallback
               description: item.description || '',
               // Campos normalizados
               name: item.name || item.titulo || item.nombre || '',
               location: item.location || item.ubicacion || '',
-              // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
+              // PRIORIDAD IMAGEN: storage > imagen local > placeholder
               imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.jpg',
               // Mantener image solo si es una imagen subida válida
               image: imagenSubida || null,
