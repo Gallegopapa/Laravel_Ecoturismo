@@ -166,9 +166,9 @@ textarea.input:hover {
 /* INPUTS TAMAÑO EXACTO IMAGEN */
 /* ============================= */
 
-.contact-form .input {
-  height: 22px;                 /* ← más pequeño */
-  padding: 0 1.2rem;            /* ← menos alto */
+.contact-form input.input {
+  height: 46px;
+  padding: 0 1.2rem;
   border: 2px solid #ffffff;
   background-color: transparent !important;
   color: #ffffff;
