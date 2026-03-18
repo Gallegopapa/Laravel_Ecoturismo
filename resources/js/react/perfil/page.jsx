@@ -98,6 +98,17 @@ const PerfilPage = () => {
     }
   }, [previewImage]);
 
+  // Sincroniza la foto del perfil con el contexto de auth cuando cambia en header.
+  useEffect(() => {
+    // No pisar preview local mientras el usuario esta eligiendo una imagen.
+    if (selectedProfileFileRef.current) {
+      return;
+    }
+
+    const next = user?.foto_perfil || null;
+    setPreviewImage((prev) => (prev === next ? prev : next));
+  }, [user?.foto_perfil]);
+
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
     try {
@@ -335,8 +346,11 @@ const PerfilPage = () => {
                 alt="Foto de perfil"
                 className="profile-photo"
                 onError={(e) => {
-                  e.currentTarget.src = usuarioImg;
-                  setDisplayImage(usuarioImg);
+                  const fallback = user?.foto_perfil
+                    ? resolveProfileImageUrl(user.foto_perfil)
+                    : usuarioImg;
+                  e.currentTarget.src = fallback;
+                  setDisplayImage(fallback);
                 }}
               />
             </div>
