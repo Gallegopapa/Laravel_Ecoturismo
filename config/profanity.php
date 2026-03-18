@@ -32,7 +32,7 @@ return [
 
         // Otros insultos comunes
         'perra', 'culero', 'culera', 'golfa', 'putón', 'puton', 'maricon', 'maricón', 'maricona', 'maricones', 'mariconas',
-        'chinga', 'chingada', 'chingar', 'chingao', 'chingado', 'chingados',
+        'chinga', 'chimba', 'chimbaa', 'chimbaaa', 'chimbita', 'chingada', 'chingar', 'chingao', 'chingado', 'chingados',
         'sidoso', 'sidosa'
     ],
 

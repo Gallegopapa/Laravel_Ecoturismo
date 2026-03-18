@@ -35,22 +35,25 @@ class NoProfanity implements Rule
         if (empty($value)) {
             return true;
         }
-        // Normalizar texto y palabras: pasar a minusculas, quitar acentos y
-        // convertir cualquier caracter no alfanumerico a espacios para evitar
-        // evasiones tipo "p.u.t.a" o "pútá".
+        // Normalizar texto y palabras para cubrir acentos, leetspeak,
+        // separadores y repeticiones exageradas de letras.
         $normalize = function ($s) {
             $s = mb_strtolower($s);
             $map = [
                 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u',
                 'à' => 'a', 'è' => 'e', 'ì' => 'i', 'ò' => 'o', 'ù' => 'u',
                 'ä' => 'a', 'ë' => 'e', 'ï' => 'i', 'ö' => 'o', 'ü' => 'u',
-                'ñ' => 'n', 'ç' => 'c'
+                'ñ' => 'n', 'ç' => 'c',
+                '0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a', '5' => 's', '7' => 't',
+                '@' => 'a', '$' => 's'
             ];
             $s = strtr($s, $map);
             // Reemplazar cualquier caracter que no sea letra o número por espacio
             $s = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $s);
             // Colapsar espacios
             $s = preg_replace('/\s+/u', ' ', $s);
+            // Colapsar repeticiones exageradas (ej: chiiimba -> chimba)
+            $s = preg_replace('/([\p{L}])\1{1,}/u', '$1', $s);
             return trim($s);
         };
 
@@ -79,8 +82,8 @@ class NoProfanity implements Rule
                 }
 
                 $escapedChars = array_map(static fn ($char) => preg_quote($char, '/'), $chars);
-                // Permite separadores entre letras para capturar ofuscaciones.
-                $tokenPatterns[] = implode('\s*', $escapedChars);
+                // Permite separadores y letras repetidas para capturar ofuscaciones.
+                $tokenPatterns[] = implode('\s*', array_map(static fn ($char) => $char . '+', $escapedChars));
             }
 
             if (empty($tokenPatterns)) {
