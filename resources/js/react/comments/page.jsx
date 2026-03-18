@@ -309,7 +309,7 @@ const CommentsPage = () => {
                       </div>
                     </div>
                     <div style={{display:'flex',alignItems:'center',gap:'1rem',marginBottom:'0.5rem'}}>
-                      <img src={review.usuario?.foto_perfil || usuarioImg} alt={review.usuario?.name || "Usuario"} style={{width:48,height:48,borderRadius:'50%',border:'2px solid #e0e0e0',background:'#f5f5f5'}} onError={e => { e.target.src = usuarioImg; }} />
+                      <img src={review.usuario?.foto_perfil || usuarioImg} alt={review.usuario?.name || "Usuario"} style={{width:48,height:48,minWidth:48,minHeight:48,aspectRatio:'1 / 1',borderRadius:'50%',objectFit:'cover',display:'block',flexShrink:0,border:'2px solid #e0e0e0',background:'#f5f5f5'}} onError={e => { e.target.src = usuarioImg; }} />
                       <div>
                         <div style={{fontWeight:600,fontSize:'1rem',color:'#222'}}>{review.usuario?.name || "Usuario"}</div>
                         <div style={{fontSize:'0.98rem',color:'#888'}}>{review.comment || "Sin comentario"}</div>
