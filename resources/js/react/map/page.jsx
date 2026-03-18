@@ -12,10 +12,20 @@ const MapPage = () => {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showNotification, setShowNotification] = useState(true);
 
   useEffect(() => {
     loadPlaces();
   }, []);
+
+  useEffect(() => {
+    if (showNotification) {
+      const timer = setTimeout(() => {
+        setShowNotification(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showNotification]);
 
   // Mapeo de imágenes locales (mismo que en places/page.jsx)
   const mapeoImagenesDeterministico = {
@@ -189,16 +199,18 @@ const MapPage = () => {
     <div className="page-layout">
       {isAuthenticated && user ? <Header2 /> : <Header />}
       <div className="page-content map-page-container">
-        <div className="map-page-header">
+        <div className={`map-page-notification ${showNotification ? 'show' : ''}`}>
           <h1>Mapa Interactivo de Lugares</h1>
           <p>Explora los lugares ecoturísticos de Risaralda en el mapa</p>
-          {locations.length === 0 && (
+        </div>
+        {locations.length === 0 && (
+          <div className="map-warning-container">
             <div className="map-warning">
               <p>⚠️ No hay lugares con coordenadas disponibles en este momento.</p>
               <p>Los administradores pueden agregar coordenadas desde el panel de administración.</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
         <MapView locations={locations} />
       </div>
       <Footer />
