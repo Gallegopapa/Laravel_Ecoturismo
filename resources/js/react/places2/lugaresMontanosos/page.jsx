@@ -5,6 +5,7 @@ import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
 import { favoritesService, placesService } from "@/react/services/api";
 import ReservationModal from "@/react/components/ReservationModal";
+import { resolvePlaceImage } from "@/react/utils/imageUtils";
 import "./lugares.css";
 
 export default function LugaresMontanososPage() {
@@ -98,20 +99,6 @@ export default function LugaresMontanososPage() {
   const loadPlaces = async () => {
     try {
       setLoading(true);
-      // Helper para normalizar strings
-      const normalize = (str) => {
-        if (!str) return '';
-        return str
-          .toLowerCase()
-          .trim()
-          .replace(/á/g, 'a')
-          .replace(/é/g, 'e')
-          .replace(/í/g, 'i')
-          .replace(/ó/g, 'o')
-          .replace(/ú/g, 'u')
-          .replace(/ñ/g, 'n')
-          .replace(/\s+/g, ' ');
-      };
       // Obtener categoría "lugares-montanosos" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
@@ -120,40 +107,15 @@ export default function LugaresMontanososPage() {
       if (montanososCategory) {
         const data = await placesService.getAll({ category_id: montanososCategory.id });
         if (data && data.length > 0) {
-          // PRIORIDAD: Imágenes subidas -> Imágenes locales del fallback -> Placeholder
-          const withImages = data.map((item) => {
-            // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
-            const imagenSubida = item.image && (
-              item.image.includes('/storage/places/') ||
-              item.image.startsWith('/storage/') ||
-              item.image.includes('storage/places') ||
-              item.image.startsWith('/imagenes/') ||
-              (item.image.startsWith('http') && (item.image.includes('/storage/places/') || item.image.includes('/imagenes/')))
-            ) ? item.image : null;
-
-            // SEGUNDO: Si no hay imagen subida, buscar en fallback local por ID o nombre
-            let imagenLocal = null;
-            if (!imagenSubida) {
-              // Busca por nombre normalizado (sin acentos, sin espacios extra)
-              if (item.name) {
-                const normalizedName = normalize(item.name);
-                const fallback = lugaresFallback.find(
-                  fb => normalize(fb.titulo) === normalizedName
-                );
-                imagenLocal = fallback?.imagen || null;
-              }
-            }
-
+          const withImages = data.map((item, index) => {
+            const imagenFinal = resolvePlaceImage(item, 'lugares-montanosos', index);
             return {
               ...item,
-              // SÓLO usar description de la API, nunca fallback
               description: item.description || '',
-              // Campos normalizados
               name: item.name || item.titulo || item.nombre || '',
               location: item.location || item.ubicacion || '',
-              // PRIORIDAD: imagen subida -> imagen local del fallback -> placeholder
-              imagen: imagenSubida || imagenLocal || item.imagen || '/imagenes/placeholder.svg',
-              image: imagenSubida || item.image || null,
+              imagen: imagenFinal,
+              image: imagenFinal,
             };
           });
           setLugares(withImages);

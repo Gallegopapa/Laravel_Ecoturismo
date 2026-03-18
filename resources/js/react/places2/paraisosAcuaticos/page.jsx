@@ -5,6 +5,7 @@ import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
 import { favoritesService, placesService } from "@/react/services/api";
 import ReservationModal from "@/react/components/ReservationModal";
+import { resolvePlaceImage } from "@/react/utils/imageUtils";
 import "./lugares.css";
 
 export default function ParaisosAcuaticosPage() {
@@ -99,24 +100,6 @@ export default function ParaisosAcuaticosPage() {
   const loadPlaces = async () => {
     try {
       setLoading(true);
-      // Helper para normalizar strings
-      const normalize = (str) => {
-        if (!str) return '';
-        return str
-          .toLowerCase()
-          .trim()
-          .replace(/á/g, 'a')
-          .replace(/é/g, 'e')
-          .replace(/í/g, 'i')
-          .replace(/ó/g, 'o')
-          .replace(/ú/g, 'u')
-          .replace(/ñ/g, 'n')
-          .replace(/\s+/g, ' ');
-      };
-
-      const imagenesDeterministicas = {
-        'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
-      };
 
       // Obtener categoría "paraisos-acuaticos" primero
       const categoriesResponse = await fetch('/api/categories');
@@ -126,32 +109,8 @@ export default function ParaisosAcuaticosPage() {
       if (acuaticosCategory) {
         const data = await placesService.getAll({ category_id: acuaticosCategory.id });
         if (data && data.length > 0) {
-          // PRIORIDAD: /imagenes/ (garantizado) -> /storage/places/ -> fallback -> placeholder
-          const withImages = data.map((item) => {
-            let imagenFinal = null;
-
-            // PASO 1: Si viene una imagen de /imagenes/, usar directamente
-            if (item.image && item.image.startsWith('/imagenes/')) {
-              imagenFinal = item.image;
-            }
-            // PASO 2: Si viene de /storage/, es válida (pero menos prioritaria)
-            else if (item.image && (item.image.includes('/storage/places/') || item.image.startsWith('/storage/'))) {
-              imagenFinal = item.image;
-            }
-            // PASO 3: Buscar en fallback determinístico por nombre
-            else if (item.name) {
-              const normalizedName = normalize(item.name);
-              imagenFinal = imagenesDeterministicas[normalizedName] || null;
-
-              // PASO 4: Si no está en determinístico, buscar en fallback array
-              if (!imagenFinal) {
-                const fallback = lugaresFallback.find(
-                  fb => normalize(fb.nombre) === normalizedName
-                );
-                imagenFinal = fallback?.imagen || null;
-              }
-            }
-
+          const withImages = data.map((item, index) => {
+            const imagenFinal = resolvePlaceImage(item, 'paraisos-acuaticos', index);
             return {
               ...item,
               // SÓLO usar description de la API, nunca fallback
@@ -160,7 +119,7 @@ export default function ParaisosAcuaticosPage() {
               name: item.name || item.nombre || item.titulo || '',
               location: item.location || item.ubicacion || '',
               // Imagen final con fallback a placeholder
-              imagen: imagenFinal || '/imagenes/placeholder.svg',
+              imagen: imagenFinal,
               image: imagenFinal,
             };
           });
