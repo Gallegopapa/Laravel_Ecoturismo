@@ -62,6 +62,13 @@ const PerfilPage = () => {
       return appendCacheBuster(rawUrl);
     }
 
+    if (rawUrl.startsWith('/imagenes/perfiles/')) {
+      const filename = extractFilename(rawUrl);
+      return filename
+        ? appendCacheBuster(`/api/profile/photo/${encodeURIComponent(filename)}`)
+        : usuarioImg;
+    }
+
     // Si es ruta relativa (/storage/...), devolverla con cache buster
     if (rawUrl.startsWith('/')) {
       return appendCacheBuster(rawUrl);
