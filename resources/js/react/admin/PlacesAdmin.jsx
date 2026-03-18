@@ -235,11 +235,16 @@ const PlacesAdmin = () => {
             await loadPlaces();
         } catch (error) {
             console.error("Error al guardar lugar:", error, error?.response);
-            const errorMessage =
-                error.response?.data?.message ||
-                error.response?.data?.errors?.name?.[0] ||
-                error.message ||
-                "Error al guardar lugar";
+            let errorMessage = "Error al guardar lugar";
+            if (error.response?.status === 413) {
+                errorMessage = "La imagen o archivo es demasiado grande. Máximo permitido: 5MB.";
+            } else {
+                errorMessage =
+                    error.response?.data?.message ||
+                    error.response?.data?.errors?.name?.[0] ||
+                    error.message ||
+                    errorMessage;
+            }
             showMessage(errorMessage, "error");
         }
     };
