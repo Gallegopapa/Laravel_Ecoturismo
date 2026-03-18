@@ -209,6 +209,7 @@ const PlacesAdmin = () => {
     };
 
     const handleSubmit = async (e) => {
+        console.log("Enviando datos:", formData);
         e.preventDefault();
 
         if (!formData.name.trim()) {
@@ -233,7 +234,7 @@ const PlacesAdmin = () => {
             resetForm();
             await loadPlaces();
         } catch (error) {
-            console.error("Error al guardar lugar:", error);
+            console.error("Error al guardar lugar:", error, error?.response);
             const errorMessage =
                 error.response?.data?.message ||
                 error.response?.data?.errors?.name?.[0] ||
