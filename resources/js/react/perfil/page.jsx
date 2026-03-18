@@ -324,6 +324,9 @@ const PerfilPage = () => {
     }
   };
 
+  const resolvedUserPhoto = resolveProfileImageUrl(user?.foto_perfil);
+  const avatarSrc = formData.foto_perfil ? displayImage : resolvedUserPhoto;
+
   return (
     <>
       <Header2 />
@@ -342,13 +345,11 @@ const PerfilPage = () => {
           <div className="profile-photo-section">
             <div className="photo-preview">
               <img
-                src={displayImage}
+                src={avatarSrc}
                 alt="Foto de perfil"
                 className="profile-photo"
                 onError={(e) => {
-                  const fallback = user?.foto_perfil
-                    ? resolveProfileImageUrl(user.foto_perfil)
-                    : usuarioImg;
+                  const fallback = usuarioImg;
                   e.currentTarget.src = fallback;
                   setDisplayImage(fallback);
                 }}
