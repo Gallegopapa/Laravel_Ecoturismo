@@ -194,7 +194,7 @@ const PlacesPage = () => {
     try {
       setLoading(true);
       let data;
-      
+
       if (categoriaFiltro === "todas") {
         // Cargar todos los lugares
         data = await placesService.getAll();
@@ -207,7 +207,7 @@ const PlacesPage = () => {
           data = await placesService.getAll();
         }
       }
-      
+
       if (data && data.length > 0) {
         // Función para normalizar nombres (quitar acentos, espacios extra, etc.)
         const normalizarNombre = (str) => {
@@ -230,27 +230,27 @@ const PlacesPage = () => {
         const lugaresConImagenesPriorizadas = lugaresOrdenados.map((lugar, index) => {
           const nombreOriginal = lugar.name || '';
           const nombreLugar = normalizarNombre(nombreOriginal);
-          
+
           // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
           const imagenSubida = lugar.image && (
-            lugar.image.includes('/storage/places/') || 
+            lugar.image.includes('/storage/places/') ||
             lugar.image.startsWith('/storage/') ||
             lugar.image.includes('storage/places') ||
             lugar.image.startsWith('/imagenes/') ||
             (lugar.image.startsWith('http') && (lugar.image.includes('/storage/places/') || lugar.image.includes('/imagenes/')))
           ) ? lugar.image : null;
-          
+
           // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
           let imagenLocal = null;
           if (!imagenSubida) {
             // Buscar en mapeo determinístico por nombre original
             imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-            
+
             // Si no se encontró, buscar en mapeo normalizado
             if (!imagenLocal) {
               imagenLocal = mapeoImagenesLocales[nombreLugar];
             }
-            
+
             // TERCERO: Si hay categoría filtrada, buscar en los fallbacks de esa categoría
             if (!imagenLocal && categoriaFiltro !== "todas") {
               const fallbacks = fallbacksPorCategoria[categoriaFiltro];
@@ -259,14 +259,14 @@ const PlacesPage = () => {
                 let fallback = fallbacks.find(
                   fb => (fb.nombre || fb.titulo) === nombreOriginal
                 );
-                
+
                 // Si no encuentra exacta, buscar por nombre normalizado
                 if (!fallback) {
                   fallback = fallbacks.find(
                     fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
                   );
                 }
-                
+
                 // Si aún no encuentra, buscar parcial (solo palabras clave importantes)
                 if (!fallback) {
                   const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
@@ -277,37 +277,37 @@ const PlacesPage = () => {
                     }
                   );
                 }
-                
+
                 // Si aún no encuentra, usar imagen del fallback por índice (último recurso)
                 if (!fallback && index < fallbacks.length) {
                   fallback = fallbacks[index];
                 }
-                
+
                 imagenLocal = fallback?.imagen || null;
               }
             }
-            
+
             // CUARTO: Si no se encontró, buscar en las categorías del lugar
             if (!imagenLocal) {
               const lugarCategorias = lugar.categories || [];
-              
+
               for (const cat of lugarCategorias) {
                 const slug = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-');
                 const fallbacks = fallbacksPorCategoria[slug];
-                
+
                 if (fallbacks && fallbacks.length > 0) {
                   // Buscar por coincidencia exacta primero
                   let fallback = fallbacks.find(
                     fb => (fb.nombre || fb.titulo) === nombreOriginal
                   );
-                  
+
                   // Si no encuentra exacta, buscar por nombre normalizado
                   if (!fallback) {
                     fallback = fallbacks.find(
                       fb => normalizarNombre(fb.nombre || fb.titulo) === nombreLugar
                     );
                   }
-                  
+
                   // Si aún no encuentra, buscar parcial
                   if (!fallback) {
                     const palabrasClave = nombreLugar.split(' ').filter(p => p.length > 3);
@@ -318,7 +318,7 @@ const PlacesPage = () => {
                       }
                     );
                   }
-                  
+
                   if (fallback?.imagen) {
                     imagenLocal = fallback.imagen;
                     break;
@@ -327,7 +327,7 @@ const PlacesPage = () => {
               }
             }
           }
-          
+
           // PRIORIDAD: imagen subida -> imagen local del mapeo -> placeholder (NUNCA imagen aleatoria de API)
           return {
             ...lugar,
@@ -367,20 +367,20 @@ const PlacesPage = () => {
 
     const placeId = lugar.id;
     const isFavorite = favoritos.some(f => f.place_id === placeId || f.place?.id === placeId);
-    
+
     // Actualización optimista
     setUpdatingFavorites({ ...updatingFavorites, [placeId]: true });
     const previousFavorites = [...favoritos];
-    
+
     try {
       if (isFavorite) {
         // Eliminar de favoritos
         const favorite = favoritos.find(f => f.place_id === placeId || f.place?.id === placeId);
         const favoritePlaceId = favorite?.place_id || favorite?.place?.id || placeId;
-        
+
         setFavoritos(prev => prev.filter(f => (f.place_id !== favoritePlaceId && f.place?.id !== favoritePlaceId)));
         setMessage("✅ Eliminado de favoritos");
-        
+
         await favoritesService.remove(favoritePlaceId);
       } else {
         // Agregar a favoritos
@@ -392,12 +392,12 @@ const PlacesPage = () => {
             name: lugar.name,
           }
         };
-        
+
         setFavoritos(prev => [...prev, newFavorite]);
         setMessage("Agregado a favoritos");
-        
+
         await favoritesService.add(placeId);
-        
+
         // Recargar favoritos para obtener el objeto completo
         const updatedFavorites = await favoritesService.getAll();
         setFavoritos(updatedFavorites);
@@ -508,8 +508,8 @@ const PlacesPage = () => {
                 ))}
               </select>
             </div>
-            
-            <Link 
+
+            <Link
               to="/mapa"
               style={{
                 padding: "10px 20px",
@@ -542,8 +542,8 @@ const PlacesPage = () => {
         </div>
 
         {isAuthenticated && (
-          <button 
-            className="mostrar-favoritos" 
+          <button
+            className="mostrar-favoritos"
             onClick={() => setPopupVisible(true)}
             style={{ marginBottom: "20px" }}
           >
@@ -554,8 +554,8 @@ const PlacesPage = () => {
         {lugares.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px" }}>
             <p style={{ fontSize: "1.2em", color: "#666" }}>
-              {categoriaFiltro === "todas" 
-                ? "Aún no hay lugares disponibles." 
+              {categoriaFiltro === "todas"
+                ? "Aún no hay lugares disponibles."
                 : "No hay lugares en esta categoría."}
             </p>
           </div>
@@ -570,9 +570,9 @@ const PlacesPage = () => {
                   </h2>
                   <div className="cards">
                     {data.lugares.map((lugar) => (
-                        <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
-                        <img 
-                          src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} 
+                      <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
+                        <img
+                          src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"}
                           alt={lugar.name}
                           onError={(e) => {
                             e.target.src = "/imagenes/placeholder.svg";
@@ -598,31 +598,36 @@ const PlacesPage = () => {
                         </div>
                         <p className="ubicacion-text">{lugar.location}</p>
                         <p className="descripcion">
-                          {lugar.description 
-                            ? (lugar.description.length > 150 
-                                ? lugar.description.substring(0, 150) + "..." 
-                                : lugar.description)
+                          {lugar.description
+                            ? (lugar.description.length > 150
+                              ? lugar.description.substring(0, 150) + "..."
+                              : lugar.description)
                             : "Sin descripción disponible"}
                         </p>
 
                         <div className="card-actions">
                           <div className="action-buttons">
-                            <a 
-                              href="/mapa" 
+                            <a
+                              href="/mapa"
                               className="map-button"
                               title="Ver en mapa"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
                               </svg>
                               <span>Mapa</span>
                             </a>
                             {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                           </div>
                           {isAuthenticated && (
-                            <button 
-                              className="favorito" 
-                              onClick={() => toggleFavorito(lugar)}
+                            <button
+                              className="favorito"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                toggleFavorito(lugar);
+                              }}
                               disabled={updatingFavorites[lugar.id]}
                               title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                               style={{
@@ -646,9 +651,9 @@ const PlacesPage = () => {
               <div className="contenedor">
                 <div className="cards">
                   {lugares.map((lugar) => (
-                      <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
-                      <img 
-                        src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} 
+                    <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
+                      <img
+                        src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"}
                         alt={lugar.name}
                         onError={(e) => {
                           e.target.src = "/imagenes/placeholder.svg";
@@ -674,31 +679,36 @@ const PlacesPage = () => {
                         )}
                       </div>
                       <p className="descripcion">
-                        {lugar.description 
-                          ? (lugar.description.length > 150 
-                              ? lugar.description.substring(0, 150) + "..." 
-                              : lugar.description)
+                        {lugar.description
+                          ? (lugar.description.length > 150
+                            ? lugar.description.substring(0, 150) + "..."
+                            : lugar.description)
                           : "Sin descripción disponible"}
                       </p>
 
                       <div className="card-actions">
                         <div className="action-buttons">
-                          <a 
-                            href="/mapa" 
+                          <a
+                            href="/mapa"
                             className="map-button"
                             title="Ver en mapa"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
                             </svg>
                             <span>Mapa</span>
                           </a>
-                            {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
+                          {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                         </div>
                         {isAuthenticated && (
-                          <button 
-                            className="favorito" 
-                            onClick={() => toggleFavorito(lugar)}
+                          <button
+                            className="favorito"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              toggleFavorito(lugar);
+                            }}
                             disabled={updatingFavorites[lugar.id]}
                             title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                             style={{
@@ -757,8 +767,8 @@ const PlacesPage = () => {
         {popupVisible && (
           <div className="popup-overlay" onClick={() => setPopupVisible(false)}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <button 
-                className="cerrar-popup" 
+              <button
+                className="cerrar-popup"
                 onClick={() => setPopupVisible(false)}
               >
                 ✕
@@ -774,8 +784,8 @@ const PlacesPage = () => {
                     return (
                       <li key={f.id}>
                         {placeName}
-                        <button 
-                          className="eliminar-favorito" 
+                        <button
+                          className="eliminar-favorito"
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
                           ✕

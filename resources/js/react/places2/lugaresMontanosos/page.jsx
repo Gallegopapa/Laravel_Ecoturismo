@@ -98,25 +98,25 @@ export default function LugaresMontanososPage() {
   const loadPlaces = async () => {
     try {
       setLoading(true);
-            // Helper para normalizar strings
-            const normalize = (str) => {
-              if (!str) return '';
-              return str
-                .toLowerCase()
-                .trim()
-                .replace(/á/g, 'a')
-                .replace(/é/g, 'e')
-                .replace(/í/g, 'i')
-                .replace(/ó/g, 'o')
-                .replace(/ú/g, 'u')
-                .replace(/ñ/g, 'n')
-                .replace(/\s+/g, ' ');
-            };
+      // Helper para normalizar strings
+      const normalize = (str) => {
+        if (!str) return '';
+        return str
+          .toLowerCase()
+          .trim()
+          .replace(/á/g, 'a')
+          .replace(/é/g, 'e')
+          .replace(/í/g, 'i')
+          .replace(/ó/g, 'o')
+          .replace(/ú/g, 'u')
+          .replace(/ñ/g, 'n')
+          .replace(/\s+/g, ' ');
+      };
       // Obtener categoría "lugares-montanosos" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
       const montanososCategory = categories.find(cat => cat.slug === 'lugares-montanosos');
-      
+
       if (montanososCategory) {
         const data = await placesService.getAll({ category_id: montanososCategory.id });
         if (data && data.length > 0) {
@@ -124,13 +124,13 @@ export default function LugaresMontanososPage() {
           const withImages = data.map((item) => {
             // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
             const imagenSubida = item.image && (
-              item.image.includes('/storage/places/') || 
+              item.image.includes('/storage/places/') ||
               item.image.startsWith('/storage/') ||
               item.image.includes('storage/places') ||
               item.image.startsWith('/imagenes/') ||
               (item.image.startsWith('http') && (item.image.includes('/storage/places/') || item.image.includes('/imagenes/')))
             ) ? item.image : null;
-            
+
             // SEGUNDO: Si no hay imagen subida, buscar en fallback local por ID o nombre
             let imagenLocal = null;
             if (!imagenSubida) {
@@ -143,7 +143,7 @@ export default function LugaresMontanososPage() {
                 imagenLocal = fallback?.imagen || null;
               }
             }
-            
+
             return {
               ...item,
               // SÓLO usar description de la API, nunca fallback
@@ -196,7 +196,7 @@ export default function LugaresMontanososPage() {
     }
 
     const isFavorite = favoritos.some(f => f.place_id === lugar.id || f.place?.id === lugar.id);
-    
+
     try {
       if (isFavorite) {
         const favorite = favoritos.find(f => f.place_id === lugar.id || f.place?.id === lugar.id);
@@ -266,8 +266,8 @@ export default function LugaresMontanososPage() {
         )}
 
         {isAuthenticated && (
-          <button 
-            className="mostrar-favoritos" 
+          <button
+            className="mostrar-favoritos"
             onClick={() => setPopupVisible(true)}
           >
             Favoritos (<span>{favoritos.length}</span>)
@@ -302,21 +302,26 @@ export default function LugaresMontanososPage() {
 
                 <div className="card-actions">
                   <div className="action-buttons">
-                    <a 
-                      href="/mapa" 
+                    <a
+                      href="/mapa"
                       className="map-button"
                       title="Ver en mapa"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
                       </svg>
                       <span>Mapa</span>
                     </a>
                     {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                   </div>
-                  <button 
-                    className="favorito" 
-                    onClick={() => toggleFavorito(lugar)}
+                  <button
+                    className="favorito"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleFavorito(lugar);
+                    }}
                     title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                   >
                     {isFavorite(lugar.id) ? "❤️" : "🤍"}
@@ -344,8 +349,8 @@ export default function LugaresMontanososPage() {
         {popupVisible && (
           <div className="popup-overlay" onClick={() => setPopupVisible(false)}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <button 
-                className="cerrar-popup" 
+              <button
+                className="cerrar-popup"
                 onClick={() => setPopupVisible(false)}
               >
                 ✕
@@ -361,8 +366,8 @@ export default function LugaresMontanososPage() {
                     return (
                       <li key={f.id}>
                         {placeName}
-                        <button 
-                          className="eliminar-favorito" 
+                        <button
+                          className="eliminar-favorito"
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
                           ✕

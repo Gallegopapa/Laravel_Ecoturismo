@@ -17,7 +17,7 @@ export default function ParaisosAcuaticosPage() {
   const [message, setMessage] = useState("");
   const [updatingFavorites, setUpdatingFavorites] = useState({});
   const [reservationModal, setReservationModal] = useState({ isOpen: false, place: null });
-  
+
   // Lugares hardcodeados como fallback (si no hay en BD)
   const lugaresFallback = [
     {
@@ -117,19 +117,19 @@ export default function ParaisosAcuaticosPage() {
       const imagenesDeterministicas = {
         'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
       };
-      
+
       // Obtener categoría "paraisos-acuaticos" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
       const acuaticosCategory = categories.find(cat => cat.slug === 'paraisos-acuaticos');
-      
+
       if (acuaticosCategory) {
         const data = await placesService.getAll({ category_id: acuaticosCategory.id });
         if (data && data.length > 0) {
           // PRIORIDAD: /imagenes/ (garantizado) -> /storage/places/ -> fallback -> placeholder
           const withImages = data.map((item) => {
             let imagenFinal = null;
-            
+
             // PASO 1: Si viene una imagen de /imagenes/, usar directamente
             if (item.image && item.image.startsWith('/imagenes/')) {
               imagenFinal = item.image;
@@ -142,7 +142,7 @@ export default function ParaisosAcuaticosPage() {
             else if (item.name) {
               const normalizedName = normalize(item.name);
               imagenFinal = imagenesDeterministicas[normalizedName] || null;
-              
+
               // PASO 4: Si no está en determinístico, buscar en fallback array
               if (!imagenFinal) {
                 const fallback = lugaresFallback.find(
@@ -151,7 +151,7 @@ export default function ParaisosAcuaticosPage() {
                 imagenFinal = fallback?.imagen || null;
               }
             }
-            
+
             return {
               ...item,
               // SÓLO usar description de la API, nunca fallback
@@ -205,23 +205,23 @@ export default function ParaisosAcuaticosPage() {
 
     const placeId = lugar.id;
     const isFavorite = favoritos.some(f => f.place_id === placeId || f.place?.id === placeId);
-    
+
     // Actualización optimista (cambiar UI inmediatamente)
     setUpdatingFavorites({ ...updatingFavorites, [placeId]: true });
-    
+
     // Crear una copia del estado actual para revertir si falla
     const previousFavorites = [...favoritos];
-    
+
     try {
       if (isFavorite) {
         // Eliminar de favoritos - Actualizar estado INMEDIATAMENTE
         const favorite = favoritos.find(f => f.place_id === placeId || f.place?.id === placeId);
         const favoritePlaceId = favorite?.place_id || favorite?.place?.id || placeId;
-        
+
         // Actualizar estado inmediatamente (optimistic update)
         setFavoritos(prev => prev.filter(f => (f.place_id !== favoritePlaceId && f.place?.id !== favoritePlaceId)));
         setMessage("Eliminado de favoritos");
-        
+
         // Luego hacer la petición al servidor
         await favoritesService.remove(favoritePlaceId);
       } else {
@@ -234,14 +234,14 @@ export default function ParaisosAcuaticosPage() {
             name: lugar.name || lugar.nombre,
           }
         };
-        
+
         // Actualizar estado inmediatamente (optimistic update)
         setFavoritos(prev => [...prev, newFavorite]);
         setMessage("Agregado a favoritos");
-        
+
         // Luego hacer la petición al servidor
         await favoritesService.add(placeId);
-        
+
         // Recargar favoritos para obtener el objeto completo del servidor
         const updatedFavorites = await favoritesService.getAll();
         setFavoritos(updatedFavorites);
@@ -249,10 +249,10 @@ export default function ParaisosAcuaticosPage() {
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
       console.error("Error al actualizar favorito:", error);
-      
+
       // Revertir cambio si falla
       setFavoritos(previousFavorites);
-      
+
       setMessage(error.response?.data?.message || "Error al actualizar favorito");
       setTimeout(() => setMessage(""), 3000);
     } finally {
@@ -312,8 +312,8 @@ export default function ParaisosAcuaticosPage() {
         )}
 
         {isAuthenticated && (
-          <button 
-            className="mostrar-favoritos" 
+          <button
+            className="mostrar-favoritos"
             onClick={() => setPopupVisible(true)}
           >
             Favoritos (<span>{favoritos.length}</span>)
@@ -348,21 +348,26 @@ export default function ParaisosAcuaticosPage() {
 
                 <div className="card-actions">
                   <div className="action-buttons">
-                    <a 
-                      href="/mapa" 
+                    <a
+                      href="/mapa"
                       className="map-button"
                       title="Ver en mapa"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
                       </svg>
                       <span>Mapa</span>
                     </a>
                     {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                   </div>
-                  <button 
-                    className="favorito" 
-                    onClick={() => toggleFavorito(lugar)}
+                  <button
+                    className="favorito"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleFavorito(lugar);
+                    }}
                     disabled={updatingFavorites[lugar.id]}
                     title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                     style={{
@@ -397,8 +402,8 @@ export default function ParaisosAcuaticosPage() {
         {popupVisible && (
           <div className="popup-overlay" onClick={() => setPopupVisible(false)}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <button 
-                className="cerrar-popup" 
+              <button
+                className="cerrar-popup"
                 onClick={() => setPopupVisible(false)}
               >
                 ✕
@@ -414,8 +419,8 @@ export default function ParaisosAcuaticosPage() {
                     return (
                       <li key={f.id}>
                         {placeName}
-                        <button 
-                          className="eliminar-favorito" 
+                        <button
+                          className="eliminar-favorito"
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
                           ✕

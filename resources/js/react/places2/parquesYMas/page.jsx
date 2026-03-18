@@ -100,12 +100,12 @@ export default function ParquesYMasPage() {
       const imagenesDeterministicas = {
         'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
       };
-      
+
       // Obtener categoría "parques-y-mas" primero
       const categoriesResponse = await fetch('/api/categories');
       const categories = await categoriesResponse.json();
       const parquesCategory = categories.find(cat => cat.slug === 'parques-y-mas');
-      
+
       if (parquesCategory) {
         const data = await placesService.getAll({ category_id: parquesCategory.id });
         if (data && data.length > 0) {
@@ -113,7 +113,7 @@ export default function ParquesYMasPage() {
           // PRIORIDAD: /imagenes/ (garantizado) -> /storage/places/ -> fallback -> placeholder
           const withImages = data.map((item) => {
             let imagenFinal = null;
-            
+
             // PASO 1: Si viene una imagen de /imagenes/, usar directamente
             if (item.image && item.image.startsWith('/imagenes/')) {
               imagenFinal = item.image;
@@ -126,7 +126,7 @@ export default function ParquesYMasPage() {
             else if (item.name) {
               const normalizedName = normalize(item.name);
               imagenFinal = imagenesDeterministicas[normalizedName] || null;
-              
+
               // PASO 4: Si no está en determinístico, buscar en fallback array
               if (!imagenFinal) {
                 const fallback = lugaresFallback.find(
@@ -135,7 +135,7 @@ export default function ParquesYMasPage() {
                 imagenFinal = fallback?.imagen || null;
               }
             }
-            
+
             return {
               ...item,
               // PRIORITARIO: Solo usar description de la API, NUNCA del fallback
@@ -188,7 +188,7 @@ export default function ParquesYMasPage() {
     }
 
     const isFavorite = favoritos.some(f => f.place_id === lugar.id || f.place?.id === lugar.id);
-    
+
     try {
       if (isFavorite) {
         // Eliminar de favoritos
@@ -260,8 +260,8 @@ export default function ParquesYMasPage() {
         )}
 
         {isAuthenticated && (
-          <button 
-            className="mostrar-favoritos" 
+          <button
+            className="mostrar-favoritos"
             onClick={() => setPopupVisible(true)}
           >
             Favoritos (<span>{favoritos.length}</span>)
@@ -296,21 +296,26 @@ export default function ParquesYMasPage() {
 
                 <div className="card-actions">
                   <div className="action-buttons">
-                    <a 
-                      href="/mapa" 
+                    <a
+                      href="/mapa"
                       className="map-button"
                       title="Ver en mapa"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor" />
                       </svg>
                       <span>Mapa</span>
                     </a>
                     {/* Botón Ver Detalles eliminado, toda la tarjeta es clickeable */}
                   </div>
-                  <button 
-                    className="favorito" 
-                    onClick={() => toggleFavorito(lugar)}
+                  <button
+                    className="favorito"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleFavorito(lugar);
+                    }}
                     title={isFavorite(lugar.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                   >
                     {isFavorite(lugar.id) ? "❤️" : "🤍"}
@@ -338,8 +343,8 @@ export default function ParquesYMasPage() {
         {popupVisible && (
           <div className="popup-overlay" onClick={() => setPopupVisible(false)}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <button 
-                className="cerrar-popup" 
+              <button
+                className="cerrar-popup"
                 onClick={() => setPopupVisible(false)}
               >
                 ✕
@@ -355,8 +360,8 @@ export default function ParquesYMasPage() {
                     return (
                       <li key={f.id}>
                         {placeName}
-                        <button 
-                          className="eliminar-favorito" 
+                        <button
+                          className="eliminar-favorito"
                           onClick={() => eliminarFavorito(f.id, placeId)}
                         >
                           ✕
