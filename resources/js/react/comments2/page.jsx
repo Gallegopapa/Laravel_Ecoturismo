@@ -343,12 +343,34 @@ const Comments2Page = () => {
                 
                 {/* Información del usuario */}
                 <div className="in-box">
-                  <div className="bx-img">
+                  <div
+                    className="bx-img"
+                    style={{
+                      width: 60,
+                      height: 60,
+                      minWidth: 60,
+                      minHeight: 60,
+                      flex: '0 0 60px',
+                      overflow: 'hidden',
+                      borderRadius: '50%',
+                    }}
+                  >
                     <img 
                       src={review.usuario?.foto_perfil || usuarioImg} 
                       alt={review.usuario?.name || "Usuario"}
                       loading="lazy"
                       decoding="async"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        minWidth: '100%',
+                        minHeight: '100%',
+                        aspectRatio: '1 / 1',
+                        objectFit: 'cover',
+                        borderRadius: '50%',
+                        display: 'block',
+                        border: '3px solid #2ecc71',
+                      }}
                       onError={(e) => {
                         e.target.src = usuarioImg;
                       }}
