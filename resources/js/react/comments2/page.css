@@ -387,11 +387,11 @@ body {
 .form-error { margin-top: 8px; color: #d7263c; font-weight: 600; }
 
 .btn-cancel {
-  padding: 10px 20px;
-  background: #95a5a6;
+  padding: 10px 10px;
+  background: #721520;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
