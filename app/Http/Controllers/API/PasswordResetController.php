@@ -33,17 +33,27 @@ class PasswordResetController extends Controller
 
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
-                'message' => 'Se envio el enlace de recuperacion al correo.',
+                'message' => '¡Correo enviado! Revisa tu bandeja de entrada.',
             ], 200);
         }
 
+        // Mensajes de error en español por tipo de fallo
+        $mensajesError = [
+            Password::RESET_THROTTLED => 'Espera unos segundos antes de solicitar otro enlace.',
+            Password::INVALID_USER    => 'No encontramos ninguna cuenta con ese correo.',
+        ];
+
+        $mensaje = $mensajesError[$status]
+            ?? 'No se pudo enviar el enlace. Intenta de nuevo más tarde.';
+
         return response()->json([
-            'message' => 'No se pudo enviar el enlace de recuperacion.',
-            'errors' => [
-                'email' => [trans($status)],
+            'message' => $mensaje,
+            'errors'  => [
+                'email' => [$mensaje],
             ],
         ], 422);
     }
+
 
     public function resetPassword(Request $request): JsonResponse
     {
