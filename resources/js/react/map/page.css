@@ -20,7 +20,7 @@
   /* Green gradient with transparency */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: rgba(255, 255, 255, 0.822);
+  color: rgba(255, 255, 255, 0.827);
   padding: 12px 24px;
   border-radius: 50px;
   /* Pill shape */
