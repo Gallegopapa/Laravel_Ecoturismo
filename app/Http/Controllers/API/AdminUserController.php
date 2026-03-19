@@ -101,7 +101,7 @@ class AdminUserController extends Controller
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'password' => Hash::make($plainPassword),
-            'is_admin' => $data['tipo_usuario'] === 'admin' ? true : ($data['is_admin'] ?? false),
+            'is_admin' => $data['tipo_usuario'] === 'admin',
             'tipo_usuario' => $data['tipo_usuario'],
             'fecha_registro' => now(),
         ];
@@ -189,16 +189,16 @@ class AdminUserController extends Controller
             $updateData['password'] = Hash::make($data['password']);
         }
         
-        if (isset($data['is_admin'])) {
-            $updateData['is_admin'] = $data['is_admin'];
-        }
-
         if (isset($data['tipo_usuario'])) {
             $updateData['tipo_usuario'] = $data['tipo_usuario'];
             // Si se cambia a admin, marcar como admin también
             if ($data['tipo_usuario'] === 'admin') {
                 $updateData['is_admin'] = true;
+            } else {
+                $updateData['is_admin'] = false;
             }
+        } elseif (isset($data['is_admin'])) {
+            $updateData['is_admin'] = $data['is_admin'];
         }
 
         $user->update($updateData);

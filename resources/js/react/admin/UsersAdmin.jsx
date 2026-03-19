@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/api';
 import CreateUserModal from './CreateUserModal';
 import EditUserModal from './EditUserModal';
@@ -93,19 +93,23 @@ const UsersAdmin = () => {
     return '-';
   };
 
+  const isUserAdmin = (user) => {
+    return user?.tipo_usuario === 'admin' || user?.is_admin === true || user?.is_admin === 1 || user?.is_admin === '1';
+  };
+
   const filteredUsers = users.filter(user => {
     if (userFilter === 'all') return true;
     if (userFilter === 'admin') {
-      return user.tipo_usuario === 'admin' || user.is_admin;
+      return isUserAdmin(user);
     }
     if (userFilter === 'normal') {
-      return user.tipo_usuario === 'normal' && !user.is_admin;
+      return user.tipo_usuario === 'normal' && !isUserAdmin(user);
     }
-    return user.tipo_usuario === userFilter;
+    return user.tipo_usuario === userFilter && !isUserAdmin(user);
   });
 
   const getUserTypeColor = (user) => {
-    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
+    if (isUserAdmin(user)) {
       return '#dc3545';
     }
     switch (user?.tipo_usuario) {
@@ -119,7 +123,7 @@ const UsersAdmin = () => {
   };
 
   const getUserTypeLabel = (user) => {
-    if (user?.tipo_usuario === 'admin' || user?.is_admin) {
+    if (isUserAdmin(user)) {
       return 'Administrador';
     }
     switch (user?.tipo_usuario) {
@@ -132,9 +136,9 @@ const UsersAdmin = () => {
     }
   };
 
-  const adminCount = users.filter(u => u.tipo_usuario === 'admin' || u.is_admin).length;
-  const clientCount = users.filter(u => u.tipo_usuario === 'normal' && !u.is_admin).length;
-  const companyCount = users.filter(u => u.tipo_usuario === 'empresa' && !u.is_admin).length;
+  const adminCount = users.filter(u => isUserAdmin(u)).length;
+  const clientCount = users.filter(u => u.tipo_usuario === 'normal' && !isUserAdmin(u)).length;
+  const companyCount = users.filter(u => u.tipo_usuario === 'empresa' && !isUserAdmin(u)).length;
 
   return (
     <div className="admin-panel">
