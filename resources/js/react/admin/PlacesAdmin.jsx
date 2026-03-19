@@ -74,8 +74,48 @@ const PlacesAdmin = () => {
             .toLowerCase()
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^\w\s]/g, " ")
             .replace(/\s+/g, " ")
             .trim();
+    };
+
+    const findMappedImageByName = (placeName = "") => {
+        if (!placeName) return null;
+
+        const normalized = normalizarNombre(placeName);
+
+        // 1) Coincidencia exacta en ambos mapas
+        const directMatch =
+            mapeoImagenesDeterministico[placeName] ||
+            mapeoImagenesLocales[normalized];
+
+        if (directMatch) {
+            return directMatch;
+        }
+
+        // 2) Coincidencia exacta por normalización sobre mapa determinístico
+        const deterministicMatch = Object.entries(
+            mapeoImagenesDeterministico,
+        ).find(([name]) => normalizarNombre(name) === normalized);
+
+        if (deterministicMatch) {
+            return deterministicMatch[1];
+        }
+
+        // 3) Coincidencia aproximada por tokens significativos
+        const tokens = normalized.split(" ").filter((token) => token.length > 3);
+        if (!tokens.length) {
+            return null;
+        }
+
+        const fuzzyMatch = Object.entries(mapeoImagenesDeterministico).find(
+            ([name]) => {
+                const mapped = normalizarNombre(name);
+                return tokens.some((token) => mapped.includes(token));
+            },
+        );
+
+        return fuzzyMatch ? fuzzyMatch[1] : null;
     };
 
     const mapeoImagenesLocales = {
@@ -139,7 +179,6 @@ const PlacesAdmin = () => {
 
     const resolvePlaceImage = (place) => {
         const nombreOriginal = place?.name || "";
-        const nombreLugar = normalizarNombre(nombreOriginal);
 
         // Si ya tiene imagen pre-resuelta (campo imagen), usarla directamente
         if (place?.imagen && place.imagen !== "/imagenes/placeholder.svg") {
@@ -160,20 +199,13 @@ const PlacesAdmin = () => {
         }
 
         // Buscar por nombre en el mapeo
-        const imagenLocal =
-            mapeoImagenesDeterministico[nombreOriginal] ||
-            mapeoImagenesLocales[nombreLugar];
+        const imagenLocal = findMappedImageByName(nombreOriginal);
 
         return imagenLocal || "/imagenes/placeholder.svg";
     };
 
     const getLocalImageByName = (placeName = "") => {
-        const normalized = normalizarNombre(placeName);
-        return (
-            mapeoImagenesDeterministico[placeName] ||
-            mapeoImagenesLocales[normalized] ||
-            "/imagenes/placeholder.svg"
-        );
+        return findMappedImageByName(placeName) || "/imagenes/placeholder.svg";
     };
 
     const handlePlaceImageError = (event, placeName = "") => {

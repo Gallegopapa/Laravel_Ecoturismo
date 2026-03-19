@@ -22,10 +22,11 @@ class ResetPasswordNotification extends Notification
         $resetUrl = rtrim($frontendUrl, '/') . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->email);
 
         return (new MailMessage())
-            ->subject('Recuperar contrasena')
-            ->greeting('Hola')
-            ->line('Recibimos una solicitud para restablecer tu contrasena.')
-            ->action('Restablecer contrasena', $resetUrl)
-            ->line('Si no solicitaste este cambio, puedes ignorar este correo.');
+            ->subject('Recuperación de contraseña - Risaralda EcoTurismo')
+            ->greeting('¡Hola!')
+            ->line('Recibimos una solicitud para restablecer la contraseña de tu cuenta.')
+            ->action('Restablecer contraseña', $resetUrl)
+            ->line('Este enlace expirará en 60 minutos.')
+            ->line('Si no solicitaste este cambio, puedes ignorar este correo y tu contraseña permanecerá sin cambios.');
     }
 }

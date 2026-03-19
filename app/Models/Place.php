@@ -4,10 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Place extends Model
 {
     use HasFactory;
+
+    /**
+     * Fallback local image by normalized place name.
+     */
+    private const FALLBACK_IMAGES_BY_NAME = [
+        'bioparque mariposario bonita farm' => '/imagenes/ukumari.jpg',
+        'parque bioflora en finca turistica los rosales' => '/imagenes/parquecafe.jpg',
+        'santuario otun quimbaya' => '/imagenes/paisaje2.jpg',
+        'barbas bremen' => '/imagenes/paisaje5.jpg',
+        'eco hotel paraiso real' => '/imagenes/paisaje4.jpg',
+        'termales de san vicente' => '/imagenes/termales.jpg',
+        'voladero el zarzo' => '/imagenes/mirador5.jpg',
+        'piedras marcadas' => '/imagenes/piedras5.jpg',
+    ];
 
     protected $table = 'places';
 
@@ -30,12 +45,12 @@ class Place extends Model
     public function getImageAttribute($value)
     {
         if (!$value) {
-            return null;
+            return $this->getFallbackImageByName();
         }
 
         $value = trim((string) $value);
         if (empty($value)) {
-            return null;
+            return $this->getFallbackImageByName();
         }
 
         // Si ya es una URL completa
@@ -73,8 +88,33 @@ class Place extends Model
             return '/storage/' . $value;
         }
 
+        // Si el valor es texto no reconocible como ruta de archivo, usar fallback por nombre.
+        if (!str_contains($value, '/') && !preg_match('/\.(jpg|jpeg|png|webp|gif|svg)$/i', $value)) {
+            $fallback = $this->getFallbackImageByName();
+            if ($fallback) {
+                return $fallback;
+            }
+        }
+
         // Por defecto, intentar en /imagenes/
         return '/imagenes/' . ltrim($value, '/');
+    }
+
+    /**
+     * Resolve deterministic local image from place name.
+     */
+    private function getFallbackImageByName(): ?string
+    {
+        $name = (string) ($this->attributes['name'] ?? '');
+        if ($name === '') {
+            return null;
+        }
+
+        $normalized = Str::lower(Str::ascii($name));
+        $normalized = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $normalized);
+        $normalized = preg_replace('/\s+/u', ' ', trim($normalized));
+
+        return self::FALLBACK_IMAGES_BY_NAME[$normalized] ?? null;
     }
 
     /**
