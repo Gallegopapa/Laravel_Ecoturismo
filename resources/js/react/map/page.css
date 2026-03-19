@@ -1,6 +1,7 @@
 .map-page-container {
   width: 100%;
   height: calc(100vh - 80px);
+  margin-top: 80px; /* Evita que el navbar fijo lo cubra */
   overflow: hidden;
   position: relative;
   display: flex;
@@ -102,6 +103,7 @@
 
   .map-page-container {
     height: calc(100vh - 70px);
+    margin-top: 70px;
   }
 }
 
