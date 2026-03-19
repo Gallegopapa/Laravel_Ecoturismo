@@ -60,7 +60,12 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
         if (preg_match('/^https?:\/\//', $value) || strpos($value, 'data:') === 0) {
             return $value;
         }
-        
+
+        // Si ya viene como ruta absoluta relativa al dominio, respetarla tal cual.
+        if (strpos($value, '/api/profile/photo/') === 0) {
+            return $value;
+        }
+
         $path = parse_url((string) $value, PHP_URL_PATH) ?: (string) $value;
         $filename = basename((string) $path);
 
@@ -68,16 +73,7 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
             return null;
         }
 
-        // Comprobación de fallback heredado desde la base de datos a raíz de migraciones / legacy code
-        if (file_exists(public_path('imagenes/perfiles/' . $filename))) {
-            return '/imagenes/perfiles/' . rawurlencode($filename);
-        }
-
-        if (file_exists(public_path('imagenes/' . $filename))) {
-            return '/imagenes/' . rawurlencode($filename);
-        }
-
-        return '/storage/profiles/' . rawurlencode($filename);
+        return '/api/profile/photo/' . rawurlencode($filename);
     }
 
     /**

@@ -36,16 +36,17 @@ class ProfileController extends Controller
         ];
 
         foreach ($candidates as $path) {
-            if (file_exists($path)) {
+            if (file_exists($path) && filesize($path) > 0) {
                 $mimeType = 'image/jpeg';
                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 if ($ext === 'png') $mimeType = 'image/png';
                 elseif ($ext === 'gif') $mimeType = 'image/gif';
                 elseif ($ext === 'webp') $mimeType = 'image/webp';
                 
-                return response(file_get_contents($path), 200)
-                    ->header('Content-Type', $mimeType)
-                    ->header('Cache-Control', 'public, max-age=86400');
+                return response()->file($path, [
+                    'Content-Type' => $mimeType,
+                    'Cache-Control' => 'public, max-age=86400'
+                ]);
             }
         }
 
