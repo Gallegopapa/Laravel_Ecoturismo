@@ -58,7 +58,7 @@ class Place extends Model
         // Si es almacenamiento de storage public
         if (strpos($value, '/storage/') === 0 || strpos($value, 'storage/') === 0) {
             $cleanPath = str_replace(['storage/', '/storage/'], '', $value);
-            return Storage::disk('public')->url(ltrim($cleanPath, '/'));
+            return '/storage/' . ltrim($cleanPath, '/');
         }
 
         // Normalizar rutas sin barra inicial
@@ -67,11 +67,11 @@ class Place extends Model
         }
 
         if (strpos($value, 'storage/places/') === 0) {
-            return Storage::disk('public')->url(substr($value, strlen('storage/')));
+            return '/storage/' . substr($value, strlen('storage/'));
         }
 
         if (strpos($value, 'places/') === 0) {
-            return Storage::disk('public')->url($value);
+            return '/storage/' . ltrim($value, '/');
         }
 
         if (!str_contains($value, '/')) {
