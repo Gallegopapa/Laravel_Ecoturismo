@@ -130,7 +130,8 @@ class AdminPlaceController extends Controller
         $updateData = collect($validated)->except('categories', 'ecohoteles')->toArray();
 
         // Manejar subida de imagen
-        if ($request->hasFile('image')) {
+        $uploadedImage = $request->file('image');
+        if ($uploadedImage && $uploadedImage->isValid()) {
             // Eliminar imagen anterior si existe
             if ($place->image && strpos($place->image, '/storage/places/') !== false) {
                 $oldImagePath = str_replace('/storage/', '', $place->image);
@@ -140,9 +141,8 @@ class AdminPlaceController extends Controller
             }
 
             // Guardar nueva imagen
-            $image = $request->file('image');
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('places', $filename, 'public');
+            $filename = time() . '_' . uniqid() . '.' . $uploadedImage->getClientOriginalExtension();
+            $path = $uploadedImage->storeAs('places', $filename, 'public');
             $updateData['image'] = '/storage/' . $path;
         }
 

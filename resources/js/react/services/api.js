@@ -467,24 +467,14 @@ export const adminService = {
     },
     update: async (id, placeData) => {
       const formData = new FormData();
-      formData.append('_method', 'PUT'); // Laravel necesita esto para PUT con FormData
       if (placeData.name) formData.append('name', placeData.name);
       if (placeData.location) formData.append('location', placeData.location);
       if (placeData.description) formData.append('description', placeData.description);
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
 
-      // Solo agregar imagen si viene un archivo nuevo (File o Blob)
-      const hasNewImage = Boolean(
-        placeData.image
-        && typeof placeData.image === 'object'
-        && (
-          (typeof File !== 'undefined' && placeData.image instanceof File)
-          || (typeof Blob !== 'undefined' && placeData.image instanceof Blob)
-          || typeof placeData.image.name === 'string'
-        )
-      );
-
+      // Adjuntar imagen nueva siempre que no sea una URL/string previa.
+      const hasNewImage = placeData.image && typeof placeData.image !== 'string';
       if (hasNewImage) {
         formData.append('image', placeData.image);
       }
@@ -508,12 +498,8 @@ export const adminService = {
           });
         }
       }
-      // Usar POST con _method=PUT para FormData (más compatible)
-      const response = await api.post(`/admin/places/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // Ruta POST dedicada para update en backend admin (acepta multipart sin spoofing).
+      const response = await api.post(`/admin/places/${id}`, formData);
       return response.data;
     },
     delete: async (id) => {
