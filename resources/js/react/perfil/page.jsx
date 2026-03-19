@@ -55,23 +55,23 @@ const PerfilPage = () => {
 
     // Si es URL absoluta (completa con https://), devolverla tal cual
     if (/^https?:\/\//i.test(rawUrl)) {
-      return appendCacheBuster(rawUrl);
+      return rawUrl;
     }
 
     if (rawUrl.startsWith('/api/profile/photo/')) {
-      return appendCacheBuster(rawUrl);
+      return rawUrl;
     }
 
     if (rawUrl.startsWith('/imagenes/perfiles/')) {
       const filename = extractFilename(rawUrl);
       return filename
-        ? appendCacheBuster(`/api/profile/photo/${encodeURIComponent(filename)}`)
+        ? `/api/profile/photo/${encodeURIComponent(filename)}`
         : usuarioImg;
     }
 
-    // Si es ruta relativa (/storage/...), devolverla con cache buster
+    // Si es ruta relativa (/storage/...), devolverla
     if (rawUrl.startsWith('/')) {
-      return appendCacheBuster(rawUrl);
+      return rawUrl;
     }
 
     // Si solo llega nombre de archivo, usar endpoint API para evitar dependencia de symlink /storage
@@ -80,7 +80,7 @@ const PerfilPage = () => {
       return usuarioImg;
     }
 
-    return appendCacheBuster(`/api/profile/photo/${encodeURIComponent(filename)}`);
+    return `/api/profile/photo/${encodeURIComponent(filename)}`;
   };
 
   useEffect(() => {
