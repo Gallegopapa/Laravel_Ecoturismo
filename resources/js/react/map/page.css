@@ -1,7 +1,8 @@
 .map-page-container {
   width: 100%;
   height: calc(100vh - 80px);
-  margin-top: 80px; /* Evita que el navbar fijo lo cubra */
+  margin-top: 80px;
+  /* Evita que el navbar fijo lo cubra */
   overflow: hidden;
   position: relative;
   display: flex;
@@ -13,15 +14,18 @@
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: -1; /* Oculto al fondo cuando no está activo */
-  background: rgba(46, 204, 113, 0.85); /* Green gradient with transparency */
+  z-index: -1;
+  /* Oculto al fondo cuando no está activo */
+  background: rgba(46, 204, 113, 0.85);
+  /* Green gradient with transparency */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: white;
+  color: rgba(255, 255, 255, 0.767);
   padding: 12px 24px;
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
+  /* Pill shape */
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, z-index 0s 0.5s;
   opacity: 0;
   display: flex;
@@ -34,7 +38,8 @@
 .map-page-notification.show {
   top: 20px;
   opacity: 1;
-  z-index: 9999; /* Por encima de la barra de navegación y todo */
+  z-index: 9999;
+  /* Por encima de la barra de navegación y todo */
   transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, z-index 0s 0s;
 }
 
@@ -67,7 +72,7 @@
   border-radius: 12px;
   backdrop-filter: blur(10px);
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .map-warning p {
@@ -85,8 +90,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -123,4 +133,3 @@
     font-size: 0.75rem;
   }
 }
-
