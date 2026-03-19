@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { adminService, categoriesService } from "../services/api";
 import PlaceSchedulesManager from "./PlaceSchedulesManager";
 import "./admin.css";
@@ -22,17 +22,17 @@ const PlacesAdmin = () => {
         ecohoteles: [],
     });
 
-    // Mapeo determinÃ­stico: nombre exacto -> imagen local
+    // Mapeo determinístico: nombre exacto -> imagen local
     const mapeoImagenesDeterministico = {
         "Lago De La Pradera": "/imagenes/Lago.jpeg",
-        "La Laguna Del OtÃºn": "/imagenes/laguna.jpg",
-        "Laguna Del OtÃºn": "/imagenes/laguna.jpg",
+        "La Laguna Del Otún": "/imagenes/laguna.jpg",
+        "Laguna Del Otún": "/imagenes/laguna.jpg",
         "Chorros De Don Lolo": "/imagenes/lolo-2.jpg",
         "Termales de Santa Rosa": "/imagenes/termaales.jpg",
-        "Parque AcuÃ¡tico Consota": "/imagenes/consota.jpg",
+        "Parque Acuático Consota": "/imagenes/consota.jpg",
         "Balneario Los Farallones": "/imagenes/farallones.jpeg",
         "Cascada Los Frailes": "/imagenes/frailes3.jpg",
-        "RÃ­o San JosÃ©": "/imagenes/sanjose3.jpg",
+        "Río San José": "/imagenes/sanjose3.jpg",
         "Rio San Jose": "/imagenes/sanjose3.jpg",
         "Alto Del Nudo": "/imagenes/nudo.jpg",
         "Alto Del Toro": "/imagenes/toro.jpg",
@@ -40,26 +40,26 @@ const PlacesAdmin = () => {
         "Cerro Batero": "/imagenes/batero.jpg",
         "Reserva Forestal La Nona": "/imagenes/lanona5.jpg",
         "Reserva Natural Cerro Gobia": "/imagenes/gobia.jpg",
-        "KaukitÃ¡ Bosque Reserva": "/imagenes/kaukita3.jpg",
+        "Kaukitá Bosque Reserva": "/imagenes/kaukita3.jpg",
         "Kaukita Bosque Reserva": "/imagenes/kaukita3.jpg",
         "Reserva Natural DMI Agualinda": "/imagenes/distritomanejo8.jpg",
-        "Parque Nacional Natural TatamÃ¡": "/imagenes/tatama.jpg",
+        "Parque Nacional Natural Tatamá": "/imagenes/tatama.jpg",
         "Parque Nacional Natural Tatama": "/imagenes/tatama.jpg",
         "Parque Las Araucarias": "/imagenes/araucarias.jpg",
         "Parque Regional Natural Cuchilla de San Juan":
             "/imagenes/cuchilla.jpg",
         "Parque Natural Regional Santa Emilia": "/imagenes/santaemilia2.jpg",
-        "JardÃ­n BotÃ¡nico UTP": "/imagenes/jardin.jpeg",
+        "Jardín Botánico UTP": "/imagenes/jardin.jpeg",
         "Jardin Botanico UTP": "/imagenes/jardin.jpeg",
-        "JardÃ­n BotÃ¡nico De Marsella": "/imagenes/jardinmarsella2.jpg",
+        "Jardín Botánico De Marsella": "/imagenes/jardinmarsella2.jpg",
         "Jardin Botanico De Marsella": "/imagenes/jardinmarsella2.jpg",
         "Piedras marcadas": "/imagenes/piedras5.jpg",
         "Piedras Marcadas": "/imagenes/piedras5.jpg",
         "Barbas Bremen": "/imagenes/paisaje5.jpg",
-        "Santuario OtÃºn Quimbaya": "/imagenes/paisaje2.jpg",
+        "Santuario Otún Quimbaya": "/imagenes/paisaje2.jpg",
         "Santuario Otun Quimbaya": "/imagenes/paisaje2.jpg",
         "Bioparque Mariposario Bonita Farm": "/imagenes/ukumari.jpg",
-        "Parque Bioflora En Finca TurÃ­stica Los Rosales":
+        "Parque Bioflora En Finca Turística Los Rosales":
             "/imagenes/parquecafe.jpg",
         "Parque Bioflora En Finca Turistica Los Rosales":
             "/imagenes/parquecafe.jpg",
@@ -93,7 +93,7 @@ const PlacesAdmin = () => {
             return directMatch;
         }
 
-        // 2) Coincidencia exacta por normalizaciÃ³n sobre mapa determinÃ­stico
+        // 2) Coincidencia exacta por normalización sobre mapa determinístico
         const deterministicMatch = Object.entries(
             mapeoImagenesDeterministico,
         ).find(([name]) => normalizarNombre(name) === normalized);
@@ -120,14 +120,14 @@ const PlacesAdmin = () => {
 
     const mapeoImagenesLocales = {
         "lago de la pradera": "/imagenes/Lago.jpeg",
-        "la laguna del otÃºn": "/imagenes/laguna.jpg",
-        "laguna del otÃºn": "/imagenes/laguna.jpg",
+        "la laguna del otún": "/imagenes/laguna.jpg",
+        "laguna del otún": "/imagenes/laguna.jpg",
         "chorros de don lolo": "/imagenes/lolo-2.jpg",
         "termales de santa rosa": "/imagenes/termaales.jpg",
-        "parque acuÃ¡tico consota": "/imagenes/consota.jpg",
+        "parque acuático consota": "/imagenes/consota.jpg",
         "balneario los farallones": "/imagenes/farallones.jpeg",
         "cascada los frailes": "/imagenes/frailes3.jpg",
-        "rÃ­o san josÃ©": "/imagenes/sanjose3.jpg",
+        "río san josé": "/imagenes/sanjose3.jpg",
         "rio san jose": "/imagenes/sanjose3.jpg",
         "alto del nudo": "/imagenes/nudo.jpg",
         "alto del toro": "/imagenes/toro.jpg",
@@ -136,24 +136,24 @@ const PlacesAdmin = () => {
         "reserva forestal la nona": "/imagenes/lanona5.jpg",
         "reserva natural cerro gobia": "/imagenes/gobia.jpg",
         "kaukita bosque reserva": "/imagenes/kaukita3.jpg",
-        "kaukitÃ¡ bosque reserva": "/imagenes/kaukita3.jpg",
+        "kaukitá bosque reserva": "/imagenes/kaukita3.jpg",
         "reserva natural dmi agualinda": "/imagenes/distritomanejo8.jpg",
-        "parque nacional natural tatamÃ¡": "/imagenes/tatama.jpg",
+        "parque nacional natural tatamá": "/imagenes/tatama.jpg",
         "parque nacional natural tatama": "/imagenes/tatama.jpg",
         "parque las araucarias": "/imagenes/araucarias.jpg",
         "parque regional natural cuchilla de san juan":
             "/imagenes/cuchilla.jpg",
         "parque natural regional santa emilia": "/imagenes/santaemilia2.jpg",
-        "jardÃ­n botÃ¡nico utp": "/imagenes/jardin.jpeg",
+        "jardín botánico utp": "/imagenes/jardin.jpeg",
         "jardin botanico utp": "/imagenes/jardin.jpeg",
-        "jardÃ­n botÃ¡nico de marsella": "/imagenes/jardinmarsella2.jpg",
+        "jardín botánico de marsella": "/imagenes/jardinmarsella2.jpg",
         "jardin botanico de marsella": "/imagenes/jardinmarsella2.jpg",
         "piedras marcadas": "/imagenes/piedras5.jpg",
         "barbas bremen": "/imagenes/paisaje5.jpg",
-        "santuario otÃºn quimbaya": "/imagenes/paisaje2.jpg",
+        "santuario otún quimbaya": "/imagenes/paisaje2.jpg",
         "santuario otun quimbaya": "/imagenes/paisaje2.jpg",
         "bioparque mariposario bonita farm": "/imagenes/ukumari.jpg",
-        "parque bioflora en finca turÃ­stica los rosales":
+        "parque bioflora en finca turística los rosales":
             "/imagenes/parquecafe.jpg",
         "parque bioflora en finca turistica los rosales":
             "/imagenes/parquecafe.jpg",
@@ -167,8 +167,8 @@ const PlacesAdmin = () => {
             return false;
         }
         const value = String(rawImage);
-        // Solo considera imÃ¡genes de /storage/ como imÃ¡genes subidas
-        // Las rutas /imagenes/ son imÃ¡genes locales del proyecto, no storage
+        // Solo considera imágenes de /storage/ como imágenes subidas
+        // Las rutas /imagenes/ son imágenes locales del proyecto, no storage
         return (
             value.includes("/storage/places/") ||
             value.startsWith("/storage/") ||
@@ -192,7 +192,7 @@ const PlacesAdmin = () => {
             if (isStorageImage(rawImage)) {
                 return rawImage;
             }
-            // Imagen local vÃ¡lida (/imagenes/)
+            // Imagen local válida (/imagenes/)
             if (rawImage.startsWith("/imagenes/")) {
                 return rawImage;
             }
@@ -218,7 +218,7 @@ const PlacesAdmin = () => {
             return;
         }
 
-        // Si tambiÃ©n falla la local, usar placeholder final
+        // Si también falla la local, usar placeholder final
         event.target.src = "/imagenes/placeholder.svg";
     };
 
@@ -242,7 +242,7 @@ const PlacesAdmin = () => {
             const data = await categoriesService.getAll();
             setCategories(Array.isArray(data) ? data : []);
         } catch (error) {
-            console.error("Error al cargar categorÃ­as:", error);
+            console.error("Error al cargar categorías:", error);
         }
     };
 
@@ -307,7 +307,7 @@ const PlacesAdmin = () => {
             console.error("Error al guardar lugar:", error, error?.response);
             let errorMessage = "Error al guardar lugar";
             if (error.response?.status === 413) {
-                errorMessage = "La imagen o archivo es demasiado grande. MÃ¡ximo permitido: 5MB.";
+                errorMessage = "La imagen o archivo es demasiado grande. Máximo permitido: 5MB.";
             } else {
                 errorMessage =
                     error.response?.data?.message ||
@@ -322,7 +322,7 @@ const PlacesAdmin = () => {
     const handleEdit = async (place) => {
         try {
             const response = await adminService.places.getById(place.id);
-            // El controlador devuelve el lugar directamente, pero verificar si estÃ¡ anidado
+            // El controlador devuelve el lugar directamente, pero verificar si está anidado
             const placeData = response.place || response;
             setEditingPlace(placeData);
             setFormData({
@@ -354,7 +354,7 @@ const PlacesAdmin = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Â¿EstÃ¡s seguro de borrar este lugar?")) {
+        if (!window.confirm("¿Estás seguro de borrar este lugar?")) {
             return;
         }
 
@@ -395,7 +395,7 @@ const PlacesAdmin = () => {
         const { name, value, files, type, checked, multiple, options } =
             e.target;
         if (type === "checkbox" && name === "categories") {
-            // Manejar checkboxes de categorÃ­as
+            // Manejar checkboxes de categorías
             const categoryId = parseInt(value);
             setFormData((prev) => {
                 const currentCategories = prev.categories || [];
@@ -414,7 +414,7 @@ const PlacesAdmin = () => {
                 }
             });
         } else if (name === "ecohoteles") {
-            // Manejar select mÃºltiple de ecohoteles
+            // Manejar select múltiple de ecohoteles
             const selected = Array.from(options)
                 .filter((o) => o.selected)
                 .map((o) => parseInt(o.value));
@@ -458,7 +458,7 @@ const PlacesAdmin = () => {
 
                     <div className="form-group">
                         <label>
-                            UbicaciÃ³n (direcciÃ³n o descripciÃ³n)
+                            Ubicación (dirección o descripción)
                             <input
                                 type="text"
                                 name="location"
@@ -515,15 +515,15 @@ const PlacesAdmin = () => {
                                 >
                                     Google Maps
                                 </a>{" "}
-                                haciendo clic derecho en el lugar â†’ "Â¿QuÃ© hay
-                                aquÃ­?"
+                                haciendo clic derecho en el lugar → "¿Qué hay
+                                aquí?"
                             </small>
                         </label>
                     </div>
 
                     <div className="form-group">
                         <label>
-                            DescripciÃ³n
+                            Descripción
                             <textarea
                                 name="description"
                                 value={formData.description}
@@ -551,7 +551,7 @@ const PlacesAdmin = () => {
                                     display: "block",
                                 }}
                             >
-                                Formatos soportados: JPG, PNG, WebP, GIF (mÃ¡ximo
+                                Formatos soportados: JPG, PNG, WebP, GIF (máximo
                                 5MB)
                             </small>
                         </label>
@@ -624,12 +624,12 @@ const PlacesAdmin = () => {
 
                     <div className="form-group">
                         <label>
-                            CategorÃ­as
+                            Categorías
                             <div className="categories-checkboxes">
                                 {categories.length === 0 ? (
                                     <p className="categories-empty-message">
-                                        No hay categorÃ­as disponibles. Crea
-                                        categorÃ­as primero.
+                                        No hay categorías disponibles. Crea
+                                        categorías primero.
                                     </p>
                                 ) : (
                                     categories.map((category) => (
@@ -741,7 +741,7 @@ const PlacesAdmin = () => {
                                                     }}
                                                     onError={(e) => {
                                                         e.target.src =
-                                                            "/imagenes/placeholder.svg";
+                                                            "/imagenes/placeholder.jpg";
                                                     }}
                                                 />
                                             ) : (
@@ -812,7 +812,7 @@ const PlacesAdmin = () => {
                             <tr>
                                 <th>Imagen</th>
                                 <th>Nombre</th>
-                                <th>UbicaciÃ³n</th>
+                                <th>Ubicación</th>
                                 <th>Coordenadas</th>
                                 <th>Acciones</th>
                             </tr>
@@ -834,7 +834,7 @@ const PlacesAdmin = () => {
                                         />
                                     </td>
                                     <td data-label="Nombre">{place.name}</td>
-                                    <td data-label="UbicaciÃ³n">
+                                    <td data-label="Ubicación">
                                         {place.location || "-"}
                                     </td>
                                     <td data-label="Coordenadas">
@@ -892,7 +892,7 @@ const PlacesAdmin = () => {
                                                 className="btn-schedule"
                                                 title="Gestionar horarios"
                                             >
-                                                ðŸ“… Horarios
+                                                📅 Horarios
                                             </button>
                                             <button
                                                 onClick={() =>
@@ -912,7 +912,7 @@ const PlacesAdmin = () => {
                 )}
             </div>
 
-            {/* Modal de gestiÃ³n de horarios */}
+            {/* Modal de gestión de horarios */}
             {managingSchedulesPlace && (
                 <PlaceSchedulesManager
                     placeId={managingSchedulesPlace.id}
