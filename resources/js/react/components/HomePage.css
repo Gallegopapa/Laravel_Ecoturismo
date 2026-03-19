@@ -582,6 +582,195 @@
   transform: translateY(-3px);
 }
 
+/* ==========================================
+   MAPA INTERACTIVO SECTION
+   ========================================== */
+
+.mapa-interactivo-section {
+  width: 100%;
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 40%, #065f46 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 80px 40px !important;
+}
+
+.mapa-interactivo-section::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mapa-interactivo-section::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: -60px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mapa-interactivo-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.mapa-interactivo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  backdrop-filter: blur(4px);
+}
+
+.mapa-interactivo-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mapa-interactivo-desc {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+  max-width: 620px;
+  margin: 0 auto 36px auto;
+}
+
+.mapa-interactivo-features {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.mapa-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 10px 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mapa-feature-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.mapa-feature-icon {
+  font-size: 1.2rem;
+}
+
+.mapa-interactivo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 36px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 30px rgba(34, 197, 94, 0.45), 0 0 0 1px rgba(34, 197, 94, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mapa-interactivo-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.4s ease;
+}
+
+.mapa-interactivo-btn:hover::before {
+  left: 100%;
+}
+
+.mapa-interactivo-btn:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(34, 197, 94, 0.55), 0 0 0 1px rgba(34, 197, 94, 0.3);
+}
+
+.mapa-interactivo-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.mapa-interactivo-btn:hover svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 700px) {
+  .mapa-interactivo-section {
+    padding: 60px 24px !important;
+  }
+
+  .mapa-interactivo-title {
+    font-size: 2rem;
+  }
+
+  .mapa-interactivo-desc {
+    font-size: 1rem;
+  }
+
+  .mapa-interactivo-features {
+    gap: 12px;
+  }
+
+  .mapa-feature-item {
+    padding: 8px 14px;
+    font-size: 0.88rem;
+  }
+
+  .mapa-interactivo-btn {
+    padding: 14px 28px;
+    font-size: 0.97rem;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 900px) {
   .hero-title {
     font-size: 2.2rem;
