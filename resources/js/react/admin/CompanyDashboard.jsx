@@ -146,13 +146,13 @@ const CompanyDashboard = () => {
         const nombreLugar = normalizarNombre(nombreOriginal);
         const imagenSubida =
             apiImage &&
-            (apiImage.includes("/storage/places/") ||
-                apiImage.startsWith("/storage/") ||
-                apiImage.includes("storage/places") ||
-                apiImage.startsWith("/imagenes/") ||
-                (apiImage.startsWith("http") &&
-                    (apiImage.includes("/storage/places/") ||
-                        apiImage.includes("/imagenes/"))))
+                (apiImage.includes("/storage/places/") ||
+                    apiImage.startsWith("/storage/") ||
+                    apiImage.includes("storage/places") ||
+                    apiImage.startsWith("/imagenes/") ||
+                    (apiImage.startsWith("http") &&
+                        (apiImage.includes("/storage/places/") ||
+                            apiImage.includes("/imagenes/"))))
                 ? apiImage
                 : null;
 
@@ -278,10 +278,10 @@ const CompanyDashboard = () => {
             const data = await companyService.places.schedules.getAll(placeId);
             const normalized = Array.isArray(data)
                 ? data.map((item) => ({
-                      ...item,
-                      hora_inicio: normalizeTime(item.hora_inicio),
-                      hora_fin: normalizeTime(item.hora_fin),
-                  }))
+                    ...item,
+                    hora_inicio: normalizeTime(item.hora_inicio),
+                    hora_fin: normalizeTime(item.hora_fin),
+                }))
                 : [];
             setSchedules(normalized);
         } catch (error) {
@@ -831,7 +831,7 @@ const CompanyDashboard = () => {
             <div className="reservations-list">
                 {reservations.length === 0 ? (
                     <div className="empty-state">
-                        <p>No hay reservas en esta categorÃ­a</p>
+                        <p>No hay reservas en esta categoría</p>
                     </div>
                 ) : (
                     reservations.map((companyRes) => {
@@ -968,12 +968,12 @@ const CompanyDashboard = () => {
 
                                 {selectedReservation &&
                                     selectedReservation.id ===
-                                        companyRes.id && (
+                                    companyRes.id && (
                                         <div className="card-footer">
                                             <h4>Detalles de la Reserva</h4>
                                             <p>
                                                 <strong>
-                                                    NÃºmero de personas:
+                                                    Número de personas:
                                                 </strong>{" "}
                                                 {peopleCount ?? "N/A"}
                                             </p>
@@ -984,28 +984,28 @@ const CompanyDashboard = () => {
                                             </p>
                                             {companyRes.estado ===
                                                 "rechazada" && (
-                                                <>
-                                                    <p>
-                                                        <strong>
-                                                            Motivo de rechazo:
-                                                        </strong>{" "}
-                                                        {companyRes
-                                                            .rejectionReason
-                                                            ?.descripcion ||
-                                                            "N/A"}
-                                                    </p>
-                                                    {companyRes.comentario_rechazo && (
+                                                    <>
                                                         <p>
                                                             <strong>
-                                                                Comentario:
+                                                                Motivo de rechazo:
                                                             </strong>{" "}
-                                                            {
-                                                                companyRes.comentario_rechazo
-                                                            }
+                                                            {companyRes
+                                                                .rejectionReason
+                                                                ?.descripcion ||
+                                                                "N/A"}
                                                         </p>
-                                                    )}
-                                                </>
-                                            )}
+                                                        {companyRes.comentario_rechazo && (
+                                                            <p>
+                                                                <strong>
+                                                                    Comentario:
+                                                                </strong>{" "}
+                                                                {
+                                                                    companyRes.comentario_rechazo
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </>
+                                                )}
                                         </div>
                                     )}
                             </div>
