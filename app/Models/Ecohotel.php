@@ -35,6 +35,53 @@ class Ecohotel extends Model
     ];
 
     /**
+     * Accessor para image - devuelve ruta normalizada y validada
+     * Prioridad: /imagenes/ > /storage/ecohotels/ > null
+     */
+    public function getImageAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+        if (empty($value)) {
+            return null;
+        }
+
+        if (preg_match('/^https?:\/\//', $value)) {
+            $path = parse_url($value, PHP_URL_PATH) ?: '';
+            if (strpos($path, '/imagenes/') === 0 || strpos($path, '/storage/') === 0) {
+                return $path;
+            }
+            return $value;
+        }
+
+        if (strpos($value, '/imagenes/') === 0) {
+            return $value;
+        }
+
+        if (strpos($value, '/storage/') === 0 || strpos($value, 'storage/') === 0) {
+            $cleanPath = str_replace(['storage/', '/storage/'], '', $value);
+            return '/storage/' . ltrim($cleanPath, '/');
+        }
+
+        if (strpos($value, 'imagenes/') === 0) {
+            return '/' . $value;
+        }
+
+        if (strpos($value, 'storage/ecohotels/') === 0) {
+            return '/storage/' . substr($value, strlen('storage/'));
+        }
+
+        if (strpos($value, 'ecohotels/') === 0) {
+            return '/storage/' . $value;
+        }
+
+        return '/imagenes/' . ltrim($value, '/');
+    }
+
+    /**
      * Relación muchos a muchos con categorías
      */
     public function categories()
