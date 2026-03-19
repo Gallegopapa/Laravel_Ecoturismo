@@ -172,8 +172,20 @@ class AdminUserController extends Controller
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.max' => 'La contraseña no puede tener más de 15 caracteres.',
             'tipo_usuario.in' => 'El tipo de usuario debe ser: normal, empresa o admin.',
-            'lugares.*.place_id.exists' => 'Uno de los lugares seleccionados no existe.',
         ]);
+
+        $currentUser = $request->user();
+        if ($currentUser && $user->id === $currentUser->id) {
+            if ((isset($data['tipo_usuario']) && $data['tipo_usuario'] !== 'admin') ||
+                (isset($data['is_admin']) && $data['is_admin'] === false)
+            ) {
+                return response()->json([
+                    'errors' => [
+                        'tipo_usuario' => ['No puedes remover tus propios permisos de administrador o cambiar tu tipo de usuario.']
+                    ]
+                ], 422);
+            }
+        }
 
         $updateData = [];
         
