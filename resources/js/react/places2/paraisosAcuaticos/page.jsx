@@ -5,7 +5,7 @@ import Footer from "@/react/components/Footer/Footer";
 import { useAuth } from "@/react/context/AuthContext";
 import { favoritesService, placesService } from "@/react/services/api";
 import ReservationModal from "@/react/components/ReservationModal";
-import { resolvePlaceImage } from "@/react/utils/imageUtils";
+import { resolvePlaceImage, getLocalFallbackImage } from "@/react/utils/imageUtils";
 import "./lugares.css";
 
 export default function ParaisosAcuaticosPage() {
@@ -283,7 +283,7 @@ export default function ParaisosAcuaticosPage() {
           <div className="cards">
             {lugares.map((lugar) => (
               <div className="card" key={lugar.id} onClick={() => navigate(`/lugares/${lugar.id}`)} style={{ cursor: 'pointer' }}>
-                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} alt={lugar.name || lugar.nombre} onError={(e) => { e.target.src = "/imagenes/placeholder.svg"; }} />
+                <img src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"} alt={lugar.name || lugar.nombre} onError={(e) => { e.target.onerror = null; e.target.src = getLocalFallbackImage(lugar.name || lugar.nombre); }} />
                 <h4>{lugar.name || lugar.nombre}</h4>
                 {/* Rating debajo del título, pequeño y centrado */}
                 <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>

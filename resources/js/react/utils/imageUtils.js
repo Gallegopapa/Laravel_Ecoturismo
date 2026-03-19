@@ -53,6 +53,19 @@ export const mapeoImagenesDeterministico = {
     'Voladero El Zarzo': '/imagenes/mirador5.jpg',
 };
 
+// Función de fallback para onError: devuelve imagen local dado el nombre del lugar
+export const getLocalFallbackImage = (name) => {
+    if (!name) return '/imagenes/placeholder.svg';
+    const direct = mapeoImagenesDeterministico[name];
+    if (direct) return direct;
+    const normalized = normalizeName(name);
+    const found = Object.entries(mapeoImagenesDeterministico).find(
+        ([k]) => normalizeName(k) === normalized
+    );
+    return found ? found[1] : '/imagenes/placeholder.svg';
+};
+
+
 export const fallbacksPorCategoria = {
     'paraisos-acuaticos': [
         { nombre: "Lago De La Pradera", imagen: "/imagenes/Lago.jpeg" },
@@ -89,11 +102,10 @@ export const resolvePlaceImage = (lugar, categoriaFiltro = "todas", index = 0) =
     const nombreLugar = normalizeName(nombreOriginal);
 
     // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
+    // Solo aceptar URLs absolutas válidas (que empiecen con / o http)
     const imageField = lugar.image || lugar.imagen;
     const imagenSubida = imageField && (
-        imageField.includes('/storage/places/') ||
         imageField.startsWith('/storage/') ||
-        imageField.includes('storage/places') ||
         imageField.startsWith('/imagenes/') ||
         (imageField.startsWith('http') && (imageField.includes('/storage/places/') || imageField.includes('/imagenes/')))
     ) ? imageField : null;

@@ -28,6 +28,12 @@ const PlacesPage = () => {
     return Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : "0.0";
   };
 
+  // Cuando la imagen del servidor falla, buscar imagen local del mapeo
+  const getImagenFallback = (lugar) => {
+    const nombre = lugar.name || '';
+    return mapeoImagenesDeterministico[nombre] || mapeoImagenesLocales[nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim()] || '/imagenes/placeholder.svg';
+  };
+
   const getPlaceRatingText = (lugar) => {
     const reviews = Array.isArray(lugar?.reviews) ? lugar.reviews : [];
     const countFromApi = Number(lugar?.reviews_count ?? lugar?.reviewsCount ?? 0);
@@ -477,7 +483,8 @@ const PlacesPage = () => {
                           src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"}
                           alt={lugar.name}
                           onError={(e) => {
-                            e.target.src = "/imagenes/placeholder.svg";
+                            e.target.onerror = null;
+                            e.target.src = getImagenFallback(lugar);
                           }}
                         />
                         <h4>{lugar.name}</h4>
@@ -558,7 +565,8 @@ const PlacesPage = () => {
                         src={lugar.imagen || lugar.image || "/imagenes/placeholder.svg"}
                         alt={lugar.name}
                         onError={(e) => {
-                          e.target.src = "/imagenes/placeholder.svg";
+                          e.target.onerror = null;
+                          e.target.src = getImagenFallback(lugar);
                         }}
                       />
                       <h4>{lugar.name}</h4>
