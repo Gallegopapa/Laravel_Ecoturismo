@@ -1,6 +1,80 @@
 const API_PLACES = '/api/admin/places'
 const API_USERS = '/api/admin/users'
 
+// Mapeo nombre de lugar -> imagen local
+const PLACE_IMAGE_MAP = {
+    'lago de la pradera': '/imagenes/Lago.jpeg',
+    'la laguna del otún': '/imagenes/laguna.jpg',
+    'laguna del otún': '/imagenes/laguna.jpg',
+    'chorros de don lolo': '/imagenes/lolo-2.jpg',
+    'termales de santa rosa': '/imagenes/termaales.jpg',
+    'parque acuático consota': '/imagenes/consota.jpg',
+    'balneario los farallones': '/imagenes/farallones.jpeg',
+    'cascada los frailes': '/imagenes/frailes3.jpg',
+    'río san josé': '/imagenes/sanjose3.jpg',
+    'rio san jose': '/imagenes/sanjose3.jpg',
+    'alto del nudo': '/imagenes/nudo.jpg',
+    'alto del toro': '/imagenes/toro.jpg',
+    'la divisa de don juan': '/imagenes/divisa3.jpeg',
+    'cerro batero': '/imagenes/batero.jpg',
+    'reserva forestal la nona': '/imagenes/lanona5.jpg',
+    'reserva natural cerro gobia': '/imagenes/gobia.jpg',
+    'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
+    'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
+    'reserva natural dmi agualinda': '/imagenes/distritomanejo8.jpg',
+    'parque nacional natural tatamá': '/imagenes/tatama.jpg',
+    'parque nacional natural tatama': '/imagenes/tatama.jpg',
+    'parque las araucarias': '/imagenes/araucarias.jpg',
+    'parque regional natural cuchilla de san juan': '/imagenes/cuchilla.jpg',
+    'parque natural regional santa emilia': '/imagenes/santaemilia2.jpg',
+    'jardín botánico utp': '/imagenes/jardin.jpeg',
+    'jardin botanico utp': '/imagenes/jardin.jpeg',
+    'jardín botánico de marsella': '/imagenes/jardinmarsella2.jpg',
+    'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
+    'piedras marcadas': '/imagenes/piedras5.jpg',
+    'barbas bremen': '/imagenes/paisaje5.jpg',
+    'santuario otún quimbaya': '/imagenes/paisaje2.jpg',
+    'santuario otun quimbaya': '/imagenes/paisaje2.jpg',
+    'bioparque mariposario bonita farm': '/imagenes/ukumari.jpg',
+    'parque bioflora en finca turística los rosales': '/imagenes/parquecafe.jpg',
+    'parque bioflora en finca turistica los rosales': '/imagenes/parquecafe.jpg',
+    'eco hotel paraiso real': '/imagenes/paisaje4.jpg',
+    'termales de san vicente': '/imagenes/termales.jpg',
+    'voladero el zarzo': '/imagenes/mirador5.jpg',
+}
+
+function normalizeName(str) {
+    if (!str) return ''
+    return str.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+}
+
+function resolvePlaceImage(place) {
+    const img = place.image ? String(place.image).trim() : ''
+    // Si tiene imagen de storage, usarla primero
+    if (img && (img.startsWith('/storage/') || img.includes('/storage/places/'))) {
+        return img
+    }
+    // Si tiene imagen en /imagenes/, usarla
+    if (img && img.startsWith('/imagenes/')) {
+        return img
+    }
+    // Buscar por nombre en el mapeo
+    const normalized = normalizeName(place.name)
+    if (PLACE_IMAGE_MAP[normalized]) {
+        return PLACE_IMAGE_MAP[normalized]
+    }
+    // También intentar normalización con tildes
+    const normalizedWithTildes = place.name ? place.name.toLowerCase().trim() : ''
+    if (PLACE_IMAGE_MAP[normalizedWithTildes]) {
+        return PLACE_IMAGE_MAP[normalizedWithTildes]
+    }
+    return null
+}
+
 const $ = id => document.getElementById(id)
 
 // Obtener token CSRF
@@ -81,9 +155,10 @@ function renderPlaces(list) {
     }
     
     list.forEach(p => {
+        const imgSrc = resolvePlaceImage(p)
         const tr = document.createElement('tr')
         tr.innerHTML = `
-            <td>${p.image ? `<img src="${p.image}" class="thumb" alt="${escapeHtml(p.name)}"/>` : '<span style="color:#999;">Sin imagen</span>'}</td>
+            <td>${imgSrc ? `<img src="${imgSrc}" class="thumb" alt="${escapeHtml(p.name)}" onerror="this.src='/imagenes/placeholder.svg'"/>` : '<span style="color:#999;">Sin imagen</span>'}</td>
             <td>${escapeHtml(p.name)}</td>
             <td>${escapeHtml(p.location || '')}</td>
             <td>
