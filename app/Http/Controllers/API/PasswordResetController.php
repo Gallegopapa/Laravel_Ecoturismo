@@ -27,9 +27,23 @@ class PasswordResetController extends Controller
             ], 422);
         }
 
-        $status = Password::broker('users')->sendResetLink(
-            $request->only('email')
-        );
+        try {
+            $status = Password::broker('users')->sendResetLink(
+                $request->only('email')
+            );
+        } catch (\Symfony\Component\Mailer\Exception\TransportException $e) {
+            \Log::error('SMTP error al enviar reset: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'No se pudo conectar al servidor de correo. Por favor intenta más tarde.',
+                'errors'  => ['email' => ['Error de conexión SMTP: ' . $e->getMessage()]],
+            ], 503);
+        } catch (\Exception $e) {
+            \Log::error('Error al enviar reset: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al enviar el correo. Por favor intenta más tarde.',
+                'errors'  => ['email' => [$e->getMessage()]],
+            ], 500);
+        }
 
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([

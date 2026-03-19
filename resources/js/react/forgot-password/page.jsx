@@ -24,7 +24,13 @@ export default function ForgotPasswordPage() {
       }, 400);
     } catch (error) {
       const data = error.response?.data;
-      const errorMessage = data?.message || "No se pudo enviar el correo.";
+      const status = error.response?.status;
+      // Mostrar el mensaje específico del servidor
+      const errorMessage =
+        data?.message ||
+        (status === 503
+          ? "No se pudo conectar al servidor de correo. Intenta más tarde."
+          : "No se pudo enviar el correo.");
       setMsg(errorMessage);
       if (data?.errors) {
         setErrors(data.errors);
