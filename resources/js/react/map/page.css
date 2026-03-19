@@ -104,6 +104,7 @@
     padding: 10px 20px;
     width: max-content;
     max-width: 90%;
+    border-radius: 30px;
   }
 
   .map-page-notification h1 {
@@ -122,16 +123,23 @@
 
 @media (max-width: 480px) {
   .map-page-notification {
-    padding: 8px 16px;
+    padding: 8px 20px;
     width: max-content;
     max-width: 95%;
+    border-radius: 40px;
+    top: 5px; /* Para que quede un poco más pegadito arriba y no cubra el search input */
+  }
+
+  .map-page-notification.show {
+    top: 5px; 
   }
 
   .map-page-notification h1 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
   }
 
   .map-page-notification p {
-    font-size: 0.75rem;
+    display: none; /* Se oculta para que quede en una sola línea tipo iPhone */
   }
 }
