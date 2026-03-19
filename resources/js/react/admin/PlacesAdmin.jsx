@@ -167,6 +167,29 @@ const PlacesAdmin = () => {
         return imagenLocal || "/imagenes/placeholder.svg";
     };
 
+    const getLocalImageByName = (placeName = "") => {
+        const normalized = normalizarNombre(placeName);
+        return (
+            mapeoImagenesDeterministico[placeName] ||
+            mapeoImagenesLocales[normalized] ||
+            "/imagenes/placeholder.svg"
+        );
+    };
+
+    const handlePlaceImageError = (event, placeName = "") => {
+        const fallbackLocal = getLocalImageByName(placeName);
+
+        // Primer error: intentar imagen local por nombre
+        if (!event.target.dataset.fallbackTried) {
+            event.target.dataset.fallbackTried = "1";
+            event.target.src = fallbackLocal;
+            return;
+        }
+
+        // Si también falla la local, usar placeholder final
+        event.target.src = "/imagenes/placeholder.svg";
+    };
+
     useEffect(() => {
         loadPlaces();
         loadCategories();
@@ -547,10 +570,12 @@ const PlacesAdmin = () => {
                                         borderRadius: "6px",
                                         border: "2px solid #ddd",
                                     }}
-                                    onError={(e) => {
-                                        e.target.src =
-                                            "/imagenes/placeholder.svg";
-                                    }}
+                                    onError={(e) =>
+                                        handlePlaceImageError(
+                                            e,
+                                            editingPlace?.name,
+                                        )
+                                    }
                                 />
                                 <p
                                     style={{
@@ -768,10 +793,12 @@ const PlacesAdmin = () => {
                                             src={place.imagen || resolvePlaceImage(place)}
                                             alt={place.name}
                                             className="thumb"
-                                            onError={(e) => {
-                                                e.target.src =
-                                                    "/imagenes/placeholder.svg";
-                                            }}
+                                            onError={(e) =>
+                                                handlePlaceImageError(
+                                                    e,
+                                                    place?.name,
+                                                )
+                                            }
                                         />
                                     </td>
                                     <td data-label="Nombre">{place.name}</td>
