@@ -12,6 +12,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('reviews', function (Blueprint $table) {
+                // simple version for sqlite
+                $table->dropUnique('unique_user_reviewable');
+                $table->dropIndex(['reviewable_id', 'reviewable_type']);
+                $table->dropColumn(['reviewable_id', 'reviewable_type']);
+                
+                $table->unsignedBigInteger('place_id')->nullable()->after('user_id');
+                $table->unsignedBigInteger('ecohotel_id')->nullable()->after('place_id');
+                
+                $table->unique(['user_id', 'place_id'], 'reviews_user_id_place_id_unique');
+                $table->unique(['user_id', 'ecohotel_id'], 'reviews_user_id_ecohotel_id_unique');
+            });
+            return;
+        }
+
         $database = DB::getDatabaseName();
 
         $indexExists = function (string $indexName) use ($database): bool {
@@ -103,10 +119,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropUnique(['user_id', 'place_id']);
-            $table->dropUnique(['user_id', 'ecohotel_id']);
-            $table->dropForeign(['place_id']);
-            $table->dropForeign(['ecohotel_id']);
+            $table->dropUnique('reviews_user_id_place_id_unique');
+            $table->dropUnique('reviews_user_id_ecohotel_id_unique');
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->dropForeign(['place_id']);
+                $table->dropForeign(['ecohotel_id']);
+            }
             $table->dropColumn(['place_id', 'ecohotel_id']);
             $table->unsignedBigInteger('reviewable_id')->nullable();
             $table->string('reviewable_type')->nullable();
