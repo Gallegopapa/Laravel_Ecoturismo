@@ -116,8 +116,8 @@
   }
 
   .map-page-container {
-    height: calc(100vh - 70px);
-    margin-top: 70px;
+    height: calc(100vh - 90px);
+    margin-top: 0;
   }
 }
 
@@ -141,5 +141,10 @@
 
   .map-page-notification p {
     display: none; /* Se oculta para que quede en una sola línea tipo iPhone */
+  }
+
+  .map-page-container {
+    height: calc(100vh - 80px);
+    margin-top: 0;
   }
 }
