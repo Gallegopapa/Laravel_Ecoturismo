@@ -8,6 +8,7 @@ import Footer from '@/react/components/Footer/Footer';
 import ReservationModal from '@/react/components/ReservationModal';
 import ReviewForm from '@/react/components/ReviewForm/ReviewForm';
 import usuarioImg from '@/react/components/imagenes/usuario.jpg';
+import { resolvePlaceImage, getLocalFallbackImage } from '@/react/utils/imageUtils';
 import './page.css';
 
 const PlaceDetailPage = () => {
@@ -27,79 +28,6 @@ const PlaceDetailPage = () => {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editForm, setEditForm] = useState({ rating: 5, comment: '' });
   const [submittingEdit, setSubmittingEdit] = useState(false);
-
-  // Mapeo de imágenes locales (mismo que en places/page.jsx)
-  const mapeoImagenesDeterministico = {
-    'Lago De La Pradera': '/imagenes/Lago.jpeg',
-    'La Laguna Del Otún': '/imagenes/laguna.jpg',
-    'Laguna Del Otún': '/imagenes/laguna.jpg',
-    'Chorros De Don Lolo': '/imagenes/lolo-2.jpg',
-    'Termales de Santa Rosa': '/imagenes/termaales.jpg',
-    'Parque Acuático Consota': '/imagenes/consota.jpg',
-    'Balneario Los Farallones': '/imagenes/farallones.jpeg',
-    'Cascada Los Frailes': '/imagenes/frailes3.jpg',
-    'Río San José': '/imagenes/sanjose3.jpg',
-    'Rio San Jose': '/imagenes/sanjose3.jpg',
-    'Alto Del Nudo': '/imagenes/nudo.jpg',
-    'Alto Del Toro': '/imagenes/toro.jpg',
-    'La Divisa De Don Juan': '/imagenes/divisa3.jpeg',
-    'Cerro Batero': '/imagenes/batero.jpg',
-    'Reserva Forestal La Nona': '/imagenes/lanona5.jpg',
-    'Reserva Natural Cerro Gobia': '/imagenes/gobia.jpg',
-    'Kaukitá Bosque Reserva': '/imagenes/kaukita3.jpg',
-    'Kaukita Bosque Reserva': '/imagenes/kaukita3.jpg',
-    'Reserva Natural DMI Agualinda': '/imagenes/distritomanejo8.jpg',
-    'Parque Nacional Natural Tatamá': '/imagenes/tatama.jpg',
-    'Parque Nacional Natural Tatama': '/imagenes/tatama.jpg',
-    'Parque Las Araucarias': '/imagenes/araucarias.jpg',
-    'Parque Regional Natural Cuchilla de San Juan': '/imagenes/cuchilla.jpg',
-    'Parque Natural Regional Santa Emilia': '/imagenes/santaemilia2.jpg',
-    'Jardín Botánico UTP': '/imagenes/jardin.jpeg',
-    'Jardin Botanico UTP': '/imagenes/jardin.jpeg',
-    'Jardín Botánico De Marsella': '/imagenes/jardinmarsella2.jpg',
-    'Jardin Botanico De Marsella': '/imagenes/jardinmarsella2.jpg',
-  };
-
-  const normalizarNombre = (str) => {
-    if (!str) return '';
-    return str
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
-
-  const mapeoImagenesLocales = {
-    'lago de la pradera': '/imagenes/Lago.jpeg',
-    'la laguna del otún': '/imagenes/laguna.jpg',
-    'laguna del otún': '/imagenes/laguna.jpg',
-    'chorros de don lolo': '/imagenes/lolo-2.jpg',
-    'termales de santa rosa': '/imagenes/termaales.jpg',
-    'parque acuático consota': '/imagenes/consota.jpg',
-    'balneario los farallones': '/imagenes/farallones.jpeg',
-    'cascada los frailes': '/imagenes/frailes3.jpg',
-    'río san josé': '/imagenes/sanjose3.jpg',
-    'rio san jose': '/imagenes/sanjose3.jpg',
-    'alto del nudo': '/imagenes/nudo.jpg',
-    'alto del toro': '/imagenes/toro.jpg',
-    'la divisa de don juan': '/imagenes/divisa3.jpeg',
-    'cerro batero': '/imagenes/batero.jpg',
-    'reserva forestal la nona': '/imagenes/lanona5.jpg',
-    'reserva natural cerro gobia': '/imagenes/gobia.jpg',
-    'kaukita bosque reserva': '/imagenes/kaukita3.jpg',
-    'kaukitá bosque reserva': '/imagenes/kaukita3.jpg',
-    'reserva natural dmi agualinda': '/imagenes/distritomanejo8.jpg',
-    'parque nacional natural tatamá': '/imagenes/tatama.jpg',
-    'parque nacional natural tatama': '/imagenes/tatama.jpg',
-    'parque las araucarias': '/imagenes/araucarias.jpg',
-    'parque regional natural cuchilla de san juan': '/imagenes/cuchilla.jpg',
-    'parque natural regional santa emilia': '/imagenes/santaemilia2.jpg',
-    'jardín botánico utp': '/imagenes/jardin.jpeg',
-    'jardin botanico utp': '/imagenes/jardin.jpeg',
-    'jardín botánico de marsella': '/imagenes/jardinmarsella2.jpg',
-    'jardin botanico de marsella': '/imagenes/jardinmarsella2.jpg',
-  };
 
   useEffect(() => {
     if (id) {
@@ -128,36 +56,13 @@ const PlaceDetailPage = () => {
         setReservations(response.future_reservations);
       }
 
-      // Priorizar imágenes locales sobre imágenes de API (MISMO LOGICA QUE ADMIN)
-      const nombreOriginal = placeData.name || '';
-      const nombreLugar = normalizarNombre(nombreOriginal);
+      // Resolver imagen usando la misma lógica centralizada que la página de lista
+      const imagenResuelta = resolvePlaceImage(placeData);
 
-      // PRIMERO: Verificar si hay imagen válida desde API (storage o /imagenes)
-      const imagenSubida = placeData.image && (
-        placeData.image.includes('/storage/places/') || 
-        placeData.image.startsWith('/storage/') ||
-        placeData.image.includes('storage/places') ||
-        placeData.image.startsWith('/imagenes/') ||
-        (placeData.image.startsWith('http') && (placeData.image.includes('/storage/places/') || placeData.image.includes('/imagenes/')))
-      ) ? placeData.image : null;
-
-      // SEGUNDO: Si no hay imagen subida, buscar en mapeo local
-      let imagenLocal = null;
-      if (!imagenSubida) {
-        // Buscar en mapeo determinístico por nombre original
-        imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-
-        // Si no se encontró, buscar en mapeo normalizado
-        if (!imagenLocal) {
-          imagenLocal = mapeoImagenesLocales[nombreLugar];
-        }
-      }
-
-      // PRIORIDAD: imagen subida -> imagen local del mapeo -> fallback (NUNCA imagen genérica del API)
       placeData = {
         ...placeData,
-        imagen: imagenSubida || imagenLocal || '/imagenes/iconoecoturismo.jpg',
-        image: imagenSubida || placeData.image || null,
+        imagen: imagenResuelta,
+        image: placeData.image || null,
       };
 
       setPlace(placeData);
@@ -447,11 +352,12 @@ const PlaceDetailPage = () => {
           <div className="place-detail-main">
             <div className="place-image-section">
               <img 
-                src={place.imagen || place.image || '/imagenes/iconoecoturismo.jpg'} 
+                src={place.imagen || place.image || '/imagenes/placeholder.svg'} 
                 alt={place.name}
                 className="place-main-image"
                 onError={(e) => {
-                  e.target.src = '/imagenes/iconoecoturismo.jpg';
+                  e.target.onerror = null;
+                  e.target.src = getLocalFallbackImage(place.name) || '/imagenes/placeholder.svg';
                 }}
               />
             </div>
