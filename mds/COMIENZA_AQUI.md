@@ -7,7 +7,7 @@ Se creó un **sistema completo donde cada lugar/empresa** puede:
 - ✅ Ver todas las reservas hechas en su lugar
 - ✅ Aceptar reservas con 1 clic
 - ✅ Rechazar reservas eligiendo motivo
-- ✅ Ver estadísticas de reservas
+- ✅ Ver estadísticas de reservassss
 
 ---
 
