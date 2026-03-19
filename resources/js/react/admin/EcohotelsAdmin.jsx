@@ -504,7 +504,7 @@ const EcohotelsAdmin = () => {
                             src={place.image || place.imagen}
                             alt={place.name}
                             style={{ width: 32, height: 32, objectFit: 'cover', borderRadius: '4px', marginRight: '10px', background: '#eee' }}
-                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                            onError={e => { e.target.src = '/imagenes/placeholder.svg'; }}
                           />
                         ) : (
                           <span style={{ width: 32, height: 32, display: 'inline-block', background: '#eee', borderRadius: '4px', marginRight: '10px' }} />
@@ -685,7 +685,7 @@ const EcohotelsAdmin = () => {
                     <img
                       src={editingEcohotel.image}
                       alt={editingEcohotel.name}
-                      onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                      onError={e => { e.target.src = '/imagenes/placeholder.svg'; }}
                     />
                   </div>
                 ) : null}
@@ -761,7 +761,7 @@ const EcohotelsAdmin = () => {
                             src={place.image || place.imagen}
                             alt={place.name}
                             style={{ width: 32, height: 32, objectFit: 'cover', borderRadius: '4px', marginRight: '10px', background: '#eee' }}
-                            onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                            onError={e => { e.target.src = '/imagenes/placeholder.svg'; }}
                           />
                         ) : (
                           <span style={{ width: 32, height: 32, display: 'inline-block', background: '#eee', borderRadius: '4px', marginRight: '10px' }} />

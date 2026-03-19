@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import ReviewForm from "../../components/ReviewForm/ReviewForm";
 import { reviewsService } from "../../services/api";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -10,28 +10,28 @@ import "../../places/page.css";
 import "./detail.css";
 
 const EcohotelDetailPage = () => {
-    // --- Handlers para editar y eliminar reseñas ---
+    // --- Handlers para editar y eliminar reseÃ±as ---
     const [submittingEdit, setSubmittingEdit] = useState(false);
 
-    // Iniciar edición
+    // Iniciar ediciÃ³n
     const startEditReview = (review) => {
       setEditingReviewId(review.id);
       setEditForm({ rating: review.rating, comment: review.comment });
     };
 
-    // Cambios en el formulario de edición
+    // Cambios en el formulario de ediciÃ³n
     const handleEditReviewChange = (e) => {
       const { name, value } = e.target;
       setEditForm((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Cancelar edición
+    // Cancelar ediciÃ³n
     const cancelEditReview = () => {
       setEditingReviewId(null);
       setEditForm({ rating: 0, comment: "" });
     };
 
-    // Guardar cambios de edición
+    // Guardar cambios de ediciÃ³n
     const submitEditReview = async (reviewId) => {
       setSubmittingEdit(true);
       try {
@@ -43,19 +43,19 @@ const EcohotelDetailPage = () => {
         setEditingReviewId(null);
         setEditForm({ rating: 0, comment: "" });
       } catch (e) {
-        alert("Error al actualizar la reseña");
+        alert("Error al actualizar la reseÃ±a");
       }
       setSubmittingEdit(false);
     };
 
-    // Eliminar reseña
+    // Eliminar reseÃ±a
     const handleDeleteReview = async (reviewId) => {
-      if (!window.confirm("¿Seguro que quieres eliminar esta reseña?")) return;
+      if (!window.confirm("Â¿Seguro que quieres eliminar esta reseÃ±a?")) return;
       try {
         await reviewsService.delete(reviewId);
         await loadReviews();
       } catch (e) {
-        alert("Error al eliminar la reseña");
+        alert("Error al eliminar la reseÃ±a");
       }
     };
   const { id } = useParams();
@@ -66,11 +66,11 @@ const EcohotelDetailPage = () => {
   const [error, setError] = useState("");
   const [reviews, setReviews] = useState([]);
   const [reviewStats, setReviewStats] = useState({ average: null, count: 0 });
-  // Estado para edición de reseñas
+  // Estado para ediciÃ³n de reseÃ±as
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editForm, setEditForm] = useState({ rating: 0, comment: "" });
 
-  console.log('🏨 Cargando ecohotel con ID:', id);
+  console.log('ðŸ¨ Cargando ecohotel con ID:', id);
 
 
   useEffect(() => {
@@ -92,15 +92,15 @@ const EcohotelDetailPage = () => {
   const loadEcohotelDetail = async () => {
     try {
       setLoading(true);
-      console.log('🌐 Haciendo fetch a:', `/api/ecohotels/${id}`);
+      console.log('ðŸŒ Haciendo fetch a:', `/api/ecohotels/${id}`);
       const response = await fetch(`/api/ecohotels/${id}`);
       
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response ok:', response.ok);
+      console.log('ðŸ“¡ Response status:', response.status);
+      console.log('ðŸ“¡ Response ok:', response.ok);
       
       if (!response.ok) {
         const errorData = await response.text();
-        console.error('❌ Error response:', errorData);
+        console.error('âŒ Error response:', errorData);
         throw new Error("Ecohotel no encontrado");
       }
       
@@ -151,7 +151,7 @@ const EcohotelDetailPage = () => {
         <div className="detail-container">
           <div className="detail-header">
             <Link to="/ecohoteles" className="btn-back">
-              ← Volver a Ecohoteles
+              â† Volver a Ecohoteles
             </Link>
             <h1>{ecohotel.name}</h1>
           </div>
@@ -159,32 +159,32 @@ const EcohotelDetailPage = () => {
             <div className="ecohotel-detail-left">
               <div className="detail-image">
                 <img
-                  src={ecohotel.image || "/imagenes/placeholder.jpg"}
+                  src={ecohotel.image || "/imagenes/placeholder.svg"}
                   alt={ecohotel.name}
                   onError={(e) => {
-                    e.target.src = "/imagenes/placeholder.jpg";
+                    e.target.src = "/imagenes/placeholder.svg";
                   }}
                 />
               </div>
             </div>
             <div className="ecohotel-detail-right">
               <div className="detail-info">
-                {/* Reseñas y promedio */}
+                {/* ReseÃ±as y promedio */}
                 <div className="info-section" style={{ marginBottom: 32 }}>
-                  <h2 style={{ marginBottom: 12 }}>Reseñas de visitantes</h2>
+                  <h2 style={{ marginBottom: 12 }}>ReseÃ±as de visitantes</h2>
                   {reviewStats.count > 0 ? (
                     <div style={{ marginBottom: 10 }}>
                       <span style={{ fontSize: 22, color: '#ffc107', fontWeight: 700 }}>
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i}>{i < Math.round(reviewStats.average) ? '★' : '☆'}</span>
+                          <span key={i}>{i < Math.round(reviewStats.average) ? 'â˜…' : 'â˜†'}</span>
                         ))}
                       </span>
                       <span style={{ marginLeft: 12, color: '#333', fontWeight: 500 }}>
-                        {reviewStats.average?.toFixed(1)} / 5 &nbsp;·&nbsp; {reviewStats.count} reseña{reviewStats.count !== 1 ? 's' : ''}
+                        {reviewStats.average?.toFixed(1)} / 5 &nbsp;Â·&nbsp; {reviewStats.count} reseÃ±a{reviewStats.count !== 1 ? 's' : ''}
                       </span>
                     </div>
                   ) : (
-                    <div style={{ color: '#888', fontStyle: 'italic' }}>Aún no hay reseñas para este ecohotel.</div>
+                    <div style={{ color: '#888', fontStyle: 'italic' }}>AÃºn no hay reseÃ±as para este ecohotel.</div>
                   )}
                   <ReviewForm
                     ecohotelId={id}
@@ -192,7 +192,7 @@ const EcohotelDetailPage = () => {
                     isAuthenticated={isAuthenticated}
                     onReviewAdded={loadReviews}
                   />
-                  {/* Lista de reseñas */}
+                  {/* Lista de reseÃ±as */}
                   {reviews.length > 0 && (
                     <div style={{ marginTop: 24 }}>
                       {reviews.map((review) => (
@@ -206,7 +206,7 @@ const EcohotelDetailPage = () => {
                           </div>
                           <div style={{ marginTop: 6, marginBottom: 4, color: '#ffc107', fontSize: 18 }}>
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <span key={i}>{i < review.rating ? '★' : '☆'}</span>
+                              <span key={i}>{i < review.rating ? 'â˜…' : 'â˜†'}</span>
                             ))}
                           </div>
                           <div style={{ fontSize: 15, color: '#222', marginBottom: 4 }}>{review.comment}</div>
@@ -216,10 +216,10 @@ const EcohotelDetailPage = () => {
                               {user.id === review.usuario?.id && (
                                 editingReviewId === review.id ? (
                                   <div style={{ marginTop: '15px', padding: '15px', background: '#f9f9f9', borderRadius: '8px', borderLeft: '4px solid #3498db' }}>
-                                    <h4 style={{ marginTop: 0, color: '#2c3e50' }}>Editar tu reseña</h4>
+                                    <h4 style={{ marginTop: 0, color: '#2c3e50' }}>Editar tu reseÃ±a</h4>
                                     {/* Estrellas */}
                                     <label style={{ display: 'block', fontWeight: 600, marginBottom: '8px', color: '#2c3e50' }}>
-                                      Calificación *
+                                      CalificaciÃ³n *
                                     </label>
                                     <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
                                       {[1, 2, 3, 4, 5].map(n => (
@@ -238,7 +238,7 @@ const EcohotelDetailPage = () => {
                                             transition: 'color 0.2s'
                                           }}
                                         >
-                                          ★
+                                          â˜…
                                         </button>
                                       ))}
                                     </div>
@@ -346,48 +346,48 @@ const EcohotelDetailPage = () => {
                   )}
                 </div>
                 <div className="info-section">
-                  <h2>Información General</h2>
+                  <h2>InformaciÃ³n General</h2>
                   {ecohotel.description && (
                     <div className="info-item">
-                      <strong>Descripción:</strong>
+                      <strong>DescripciÃ³n:</strong>
                       <p>{ecohotel.description}</p>
                     </div>
                   )}
                   {ecohotel.location && (
                     <div className="info-item">
-                      <strong>📍 Ubicación:</strong>
+                      <strong>ðŸ“ UbicaciÃ³n:</strong>
                       <p>{ecohotel.location}</p>
                     </div>
                   )}
                   {ecohotel.telefono ? (
                     <div className="info-item">
-                      <strong>📞 Teléfono:</strong>
+                      <strong>ðŸ“ž TelÃ©fono:</strong>
                       <p>
                         <a href={`tel:${ecohotel.telefono}`}>{ecohotel.telefono}</a>
                       </p>
                     </div>
                   ) : (
                     <div className="info-item">
-                      <strong>📞 Teléfono:</strong>
-                      <p className="no-info">No hay información disponible</p>
+                      <strong>ðŸ“ž TelÃ©fono:</strong>
+                      <p className="no-info">No hay informaciÃ³n disponible</p>
                     </div>
                   )}
                   {ecohotel.email ? (
                     <div className="info-item">
-                      <strong>📧 Email:</strong>
+                      <strong>ðŸ“§ Email:</strong>
                       <p>
                         <a href={`mailto:${ecohotel.email}`}>{ecohotel.email}</a>
                       </p>
                     </div>
                   ) : (
                     <div className="info-item">
-                      <strong>📧 Email:</strong>
-                      <p className="no-info">No hay información disponible</p>
+                      <strong>ðŸ“§ Email:</strong>
+                      <p className="no-info">No hay informaciÃ³n disponible</p>
                     </div>
                   )}
                   {ecohotel.sitio_web ? (
                     <div className="info-item">
-                      <strong>🌐 Sitio Web:</strong>
+                      <strong>ðŸŒ Sitio Web:</strong>
                       <p>
                         <a href={ecohotel.sitio_web} target="_blank" rel="noopener noreferrer">
                           Visitar sitio web
@@ -396,13 +396,13 @@ const EcohotelDetailPage = () => {
                     </div>
                   ) : (
                     <div className="info-item">
-                      <strong>🌐 Sitio Web:</strong>
-                      <p className="no-info">No hay información disponible</p>
+                      <strong>ðŸŒ Sitio Web:</strong>
+                      <p className="no-info">No hay informaciÃ³n disponible</p>
                     </div>
                   )}
                   {ecohotel.categories && ecohotel.categories.length > 0 && (
                     <div className="info-item">
-                      <strong>Categorías:</strong>
+                      <strong>CategorÃ­as:</strong>
                       <div className="categories-tags">
                         {ecohotel.categories.map((cat) => (
                           <span key={cat.id} className="category-tag">
@@ -415,7 +415,7 @@ const EcohotelDetailPage = () => {
                 </div>
                 {ecohotel.latitude && ecohotel.longitude && (
                   <div className="info-section">
-                    <h2>Ubicación en el Mapa</h2>
+                    <h2>UbicaciÃ³n en el Mapa</h2>
                     <div className="map-container" style={{ borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(44,95,45,0.08)', marginBottom: 10 }}>
                       <iframe
                         src={`https://www.google.com/maps?q=${ecohotel.latitude},${ecohotel.longitude}&z=15&output=embed`}
@@ -435,14 +435,14 @@ const EcohotelDetailPage = () => {
                       className="map-link-button"
                       style={{ display: 'inline-block', background: '#24a148', color: '#fff', padding: '10px 22px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', marginTop: 2 }}
                     >
-                      🚗 Cómo llegar
+                      ðŸš— CÃ³mo llegar
                     </a>
                   </div>
                 )}
                 {/* Lugares relacionados */}
                 <div className="related-section">
                   <h2 style={{ marginTop: 40, marginBottom: 20, color: '#1c1c1a', borderBottom: '2px solid #24a148', paddingBottom: 10 }}>
-                    🌄 Lugares cercanos
+                    ðŸŒ„ Lugares cercanos
                   </h2>
                   {ecohotel.places && ecohotel.places.length > 0 ? (
                     <div className="related-cards-grid">
@@ -455,27 +455,27 @@ const EcohotelDetailPage = () => {
                         >
                           <div className="related-card-image-wrapper">
                             <img
-                              src={place.image || '/imagenes/placeholder.jpg'}
+                              src={place.image || '/imagenes/placeholder.svg'}
                               alt={place.name}
                               className="related-card-image"
-                              onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
+                              onError={e => { e.target.src = '/imagenes/placeholder.svg'; }}
                             />
                           </div>
                           <div className="related-card-title">{place.name}</div>
                           <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
                             {typeof place.average_rating !== 'undefined' && typeof place.reviews_count !== 'undefined' ? (
                               place.reviews_count === 0 || place.average_rating === 0 || place.average_rating === null ? (
-                                <span>Sin reseñas</span>
+                                <span>Sin reseÃ±as</span>
                               ) : (
                                 <span>
-                                  <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+                                  <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>â˜…</span>
                                   <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(place.average_rating).toFixed(1)}</span>
                                   {" "}
-                                  <span style={{ fontSize: '0.95em', color: '#888' }}>({place.reviews_count} reseña{place.reviews_count === 1 ? '' : 's'})</span>
+                                  <span style={{ fontSize: '0.95em', color: '#888' }}>({place.reviews_count} reseÃ±a{place.reviews_count === 1 ? '' : 's'})</span>
                                 </span>
                               )
                             ) : (
-                              <span>Sin reseñas</span>
+                              <span>Sin reseÃ±as</span>
                             )}
                           </div>
                         </Link>

@@ -1,33 +1,33 @@
-// Utilidad para mostrar el promedio y cantidad de reseñas igual que en lugares
+﻿// Utilidad para mostrar el promedio y cantidad de reseÃ±as igual que en lugares
 const renderEcohotelRating = (ecohotel) => {
-  // Si hay array de reseñas, calcular promedio y cantidad
+  // Si hay array de reseÃ±as, calcular promedio y cantidad
   if (Array.isArray(ecohotel.reviews) && ecohotel.reviews.length > 0) {
     const total = ecohotel.reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0);
     const avg = total / ecohotel.reviews.length;
     return (
       <span>
-        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>â˜…</span>
         <span style={{ color: '#222', fontWeight: 'bold' }}>{avg.toFixed(1)}</span>
         {" "}
-        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews.length} reseña{ecohotel.reviews.length === 1 ? '' : 's'})</span>
+        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews.length} reseÃ±a{ecohotel.reviews.length === 1 ? '' : 's'})</span>
       </span>
     );
   }
   // Si existen los campos del backend, usarlos
   if (typeof ecohotel.average_rating !== 'undefined' && typeof ecohotel.reviews_count !== 'undefined') {
     if (ecohotel.reviews_count === 0 || ecohotel.average_rating === 0 || ecohotel.average_rating === null) {
-      return <span>Sin reseñas</span>;
+      return <span>Sin reseÃ±as</span>;
     }
     return (
       <span>
-        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>★</span>
+        <span style={{ color: '#ffc107', fontWeight: 'bold', marginRight: 2 }}>â˜…</span>
         <span style={{ color: '#222', fontWeight: 'bold' }}>{parseFloat(ecohotel.average_rating).toFixed(1)}</span>
         {" "}
-        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews_count} reseña{ecohotel.reviews_count === 1 ? '' : 's'})</span>
+        <span style={{ fontSize: '0.95em', color: '#888' }}>({ecohotel.reviews_count} reseÃ±a{ecohotel.reviews_count === 1 ? '' : 's'})</span>
       </span>
     );
   }
-  return <span>Sin reseñas</span>;
+  return <span>Sin reseÃ±as</span>;
 };
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -43,7 +43,7 @@ const EcohotelsPage = () => {
   const [ecohotels, setEcohotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  // Eliminado filtro de categorías
+  // Eliminado filtro de categorÃ­as
 
   useEffect(() => {
     loadEcohotels();
@@ -63,7 +63,7 @@ const EcohotelsPage = () => {
     }
   };
 
-  // Eliminado filtro de categorías, mostrar todos los ecohoteles
+  // Eliminado filtro de categorÃ­as, mostrar todos los ecohoteles
   const ecohotelesFiltrados = ecohotels;
 
   if (loading) {
@@ -86,7 +86,7 @@ const EcohotelsPage = () => {
         <div className="lugares-container">
           <div className="lugares-header">
             <h1>Ecohoteles</h1>
-            <p>Descubre alojamientos ecológicos en Risaralda</p>
+            <p>Descubre alojamientos ecolÃ³gicos en Risaralda</p>
           </div>
 
           {message && (
@@ -95,7 +95,7 @@ const EcohotelsPage = () => {
             </div>
           )}
 
-          {/* Filtros por categoría eliminados */}
+          {/* Filtros por categorÃ­a eliminados */}
 
           {/* Grid de ecohoteles */}
           <div className="lugares-grid">
@@ -109,24 +109,24 @@ const EcohotelsPage = () => {
                   <Link to={`/ecohoteles/${ecohotel.id}`}>
                     <div className="lugar-image">
                       <img
-                        src={ecohotel.image || "/imagenes/placeholder.jpg"}
+                        src={ecohotel.image || "/imagenes/placeholder.svg"}
                         alt={ecohotel.name}
                         onError={(e) => {
-                          e.target.src = "/imagenes/placeholder.jpg";
+                          e.target.src = "/imagenes/placeholder.svg";
                         }}
                       />
                     </div>
                     <div className="lugar-info">
                       <h3>{ecohotel.name}</h3>
-                      {/* Promedio de reseñas igual que en lugares */}
+                      {/* Promedio de reseÃ±as igual que en lugares */}
                       <div style={{ fontSize: '0.95em', color: '#888', margin: '4px 0 8px 16px', textAlign: 'left', width: 'auto' }}>
                         {renderEcohotelRating(ecohotel)}
                       </div>
                       {ecohotel.location && (
-                        <p className="lugar-location">📍 {ecohotel.location}</p>
+                        <p className="lugar-location">ðŸ“ {ecohotel.location}</p>
                       )}
                       {ecohotel.telefono && (
-                        <p className="lugar-phone">📞 {ecohotel.telefono}</p>
+                        <p className="lugar-phone">ðŸ“ž {ecohotel.telefono}</p>
                       )}
                       {ecohotel.categories && ecohotel.categories.length > 0 && (
                         <div className="lugar-categories">
