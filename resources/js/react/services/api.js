@@ -474,31 +474,38 @@ export const adminService = {
       if (placeData.latitude !== undefined && placeData.latitude !== '') formData.append('latitude', placeData.latitude);
       if (placeData.longitude !== undefined && placeData.longitude !== '') formData.append('longitude', placeData.longitude);
 
-      // Solo agregar imagen si es un File object (nueva imagen)
-      if (placeData.image instanceof File) {
+      // Solo agregar imagen si viene un archivo nuevo (File o Blob)
+      const hasNewImage = Boolean(
+        placeData.image
+        && typeof placeData.image === 'object'
+        && (
+          (typeof File !== 'undefined' && placeData.image instanceof File)
+          || (typeof Blob !== 'undefined' && placeData.image instanceof Blob)
+          || typeof placeData.image.name === 'string'
+        )
+      );
+
+      if (hasNewImage) {
         formData.append('image', placeData.image);
       }
 
-      // Agregar categorías como array (incluso si está vacío para sincronizar)
+      // Agregar categorías como array solo cuando haya datos válidos.
+      // Si no vienen, backend usa [] por defecto y hace sync([]).
       if (placeData.categories !== undefined) {
         if (Array.isArray(placeData.categories) && placeData.categories.length > 0) {
           placeData.categories.forEach((categoryId) => {
             formData.append('categories[]', categoryId);
           });
-        } else {
-          // Si está vacío, enviar array vacío para desasociar todas las categorías
-          formData.append('categories[]', '');
         }
       }
-      // Agregar ecohoteles como array (incluso si está vacío para sincronizar)
+
+      // Agregar ecohoteles como array solo cuando haya selección.
+      // Evita enviar ecohoteles[]='' que falla validación exists.
       if (placeData.ecohoteles !== undefined) {
         if (Array.isArray(placeData.ecohoteles) && placeData.ecohoteles.length > 0) {
           placeData.ecohoteles.forEach((ecohotelId) => {
             formData.append('ecohoteles[]', ecohotelId);
           });
-        } else {
-          // Si está vacío, enviar array vacío para desasociar todos los ecohoteles
-          formData.append('ecohoteles[]', '');
         }
       }
       // Usar POST con _method=PUT para FormData (más compatible)
