@@ -35,7 +35,7 @@
                         <div class="card-content">
                             <h4>{{ $favorite->place->name }}</h4>
                             <p>{{ \Illuminate\Support\Str::limit($favorite->place->description ?? 'Sin descripción', 100) }}</p>
-                            <a href="{{ route('place.show', $favorite->place) }}">Ver más →</a>
+                            <a href="{{ url('/lugares/' . $favorite->place->id) }}">Ver más →</a>
                         </div>
                     </div>
                 @endforeach
@@ -43,7 +43,7 @@
         @else
             <div style="text-align:center; padding:60px; background:#fff; border-radius:12px;">
                 <p style="font-size:1.2em; color:#6c6c68; margin-bottom:20px;">No tienes favoritos aún.</p>
-                <a href="{{ route('lugares') }}">Explorar lugares →</a>
+                <a href="{{ url('/lugares') }}">Explorar lugares →</a>
             </div>
         @endif
     </div>

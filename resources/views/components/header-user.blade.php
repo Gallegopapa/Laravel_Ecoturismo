@@ -2,7 +2,7 @@
 <nav class="navbar-user" style="background:#24a148; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
     <div style="display:flex; align-items:center; gap:20px;">
         <a href="{{ route('pagcentral') }}" style="color:#fff; font-weight:bold; font-size:1.2em; text-decoration:none;">🌿 EcoTurismo</a>
-        <a href="{{ route('lugares') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Lugares</a>
+        <a href="{{ url('/lugares') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Lugares</a>
         <a href="{{ route('web.reservations.index') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Mis Reservas</a>
         <a href="{{ route('favorites.index') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Favoritos</a>
     </div>
@@ -18,7 +18,7 @@
 <nav class="navbar-guest" style="background:#24a148; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
     <div style="display:flex; align-items:center; gap:20px;">
         <a href="{{ route('pagcentral') }}" style="color:#fff; font-weight:bold; font-size:1.2em; text-decoration:none;">🌿 EcoTurismo</a>
-        <a href="{{ route('lugares') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Lugares</a>
+        <a href="{{ url('/lugares') }}" style="color:#fff; text-decoration:none; padding:8px 15px; border-radius:5px; transition:background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Lugares</a>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
         <a href="{{ route('login') }}" style="background:#fff; color:#24a148; border:none; padding:8px 15px; border-radius:5px; text-decoration:none; font-weight:600;">Iniciar Sesión</a>

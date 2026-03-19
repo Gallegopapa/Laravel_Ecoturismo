@@ -57,7 +57,7 @@
                                     {{ ucfirst($reservation->estado) }}
                                 </span>
                             </div>
-                            <a href="{{ route('place.show', $reservation->place) }}">Ver lugar →</a>
+                            <a href="{{ url('/lugares/' . $reservation->place->id) }}">Ver lugar →</a>
                         </div>
                         <div class="info-row">
                             <div class="info-item">
@@ -93,7 +93,7 @@
                     </div>
                 @endforeach
             @else
-                <p style="text-align:center; padding:40px; color:#6c6c68;">No tienes reservas aún. <a href="{{ route('lugares') }}">Explora lugares</a></p>
+                <p style="text-align:center; padding:40px; color:#6c6c68;">No tienes reservas aún. <a href="{{ url('/lugares') }}">Explora lugares</a></p>
             @endif
         </div>
     </div>

@@ -31,11 +31,11 @@ class ReviewProfanityTest extends TestCase
             'location' => 'ubicacion',
         ]);
 
-        $this->actingAs($user)->post(route('reviews.store'), [
+        $this->actingAs($user, 'sanctum')->postJson('/api/reviews', [
             'place_id' => $place->id,
             'rating' => 4,
             'comment' => 'una mierda de atencion, hijo de puta',
-        ])->assertSessionHasErrors();
+        ])->assertStatus(422)->assertJsonValidationErrors(['comment']);
 
         $this->assertDatabaseCount('reviews', 0);
     }
@@ -56,11 +56,11 @@ class ReviewProfanityTest extends TestCase
             'location' => 'ubicacion',
         ]);
 
-        $this->actingAs($user)->post(route('reviews.store'), [
+        $this->actingAs($user, 'sanctum')->postJson('/api/reviews', [
             'place_id' => $place->id,
             'rating' => 5,
             'comment' => 'Me gustó mucho, excelente servicio',
-        ])->assertSessionHas('status');
+        ])->assertStatus(201);
 
         $this->assertDatabaseHas('reviews', [
             'user_id' => $user->id,

@@ -181,7 +181,7 @@ class ReservationController extends Controller
         $horaFinReserva = $horaReserva->copy()->addHours(2);
 
         $conflictingReservations = Reservation::where('place_id', $data['place_id'])
-            ->where('fecha_visita', $data['fecha_visita'])
+            ->whereDate('fecha_visita', $data['fecha_visita'])
             ->where('estado', '!=', 'cancelada')
             ->get()
             ->filter(function($reservation) use ($horaInicioReserva, $horaFinReserva) {
