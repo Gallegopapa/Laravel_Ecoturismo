@@ -9,11 +9,11 @@
 }
 
 .map-page-notification {
-  position: absolute;
+  position: fixed;
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: -1; /* Oculto al fondo cuando no está activo */
   background: rgba(46, 204, 113, 0.85); /* Green gradient with transparency */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -22,7 +22,7 @@
   border-radius: 50px; /* Pill shape */
   text-align: center;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease;
+  transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, z-index 0s 0.5s;
   opacity: 0;
   display: flex;
   flex-direction: column;
@@ -34,6 +34,8 @@
 .map-page-notification.show {
   top: 20px;
   opacity: 1;
+  z-index: 9999; /* Por encima de la barra de navegación y todo */
+  transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, z-index 0s 0s;
 }
 
 .map-page-notification h1 {
