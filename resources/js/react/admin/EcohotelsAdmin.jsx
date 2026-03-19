@@ -11,6 +11,7 @@ const EcohotelsAdmin = () => {
   const [editingEcohotel, setEditingEcohotel] = useState(null);
   const [viewingEcohotel, setViewingEcohotel] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
