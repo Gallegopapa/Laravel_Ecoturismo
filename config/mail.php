@@ -39,10 +39,18 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME', env('MAIL_ENCRYPTION')), // compatibilidad con MAIL_ENCRYPTION
+            'scheme' => (function () {
+                // Laravel 12 usa Symfony Mailer: "smtp" (STARTTLS/587) o "smtps" (SSL/465)
+                // Mapear valores legacy de MAIL_ENCRYPTION al esquema correcto
+                $raw = env('MAIL_SCHEME') ?: env('MAIL_ENCRYPTION');
+                if ($raw === 'tls')  return 'smtp';   // puerto 587 STARTTLS
+                if ($raw === 'ssl')  return 'smtps';  // puerto 465 SSL
+                if ($raw === 'smtps') return 'smtps';
+                return $raw ?: 'smtp'; // default: smtp
+            })(),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
+            'port' => env('MAIL_PORT', 587),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => env('MAIL_TIMEOUT', 15),
