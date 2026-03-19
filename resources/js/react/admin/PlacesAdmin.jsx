@@ -126,16 +126,14 @@ const PlacesAdmin = () => {
         if (!rawImage) {
             return false;
         }
-
         const value = String(rawImage);
+        // Solo considera imágenes de /storage/ como imágenes subidas
+        // Las rutas /imagenes/ son imágenes locales del proyecto, no storage
         return (
             value.includes("/storage/places/") ||
             value.startsWith("/storage/") ||
             value.includes("storage/places") ||
-            value.startsWith("/imagenes/") ||
-            (value.startsWith("http") &&
-                (value.includes("/storage/places/") ||
-                    value.includes("/imagenes/")))
+            (value.startsWith("http") && value.includes("/storage/places/"))
         );
     };
 
@@ -143,18 +141,30 @@ const PlacesAdmin = () => {
         const nombreOriginal = place?.name || "";
         const nombreLugar = normalizarNombre(nombreOriginal);
 
-        const rawImage = place?.image ? String(place.image).trim() : "";
-        const imagenSubida = isStorageImage(rawImage) ? rawImage : null;
+        // Si ya tiene imagen pre-resuelta (campo imagen), usarla directamente
+        if (place?.imagen && place.imagen !== "/imagenes/placeholder.svg") {
+            return place.imagen;
+        }
 
-        let imagenLocal = null;
-        if (!imagenSubida) {
-            imagenLocal = mapeoImagenesDeterministico[nombreOriginal];
-            if (!imagenLocal) {
-                imagenLocal = mapeoImagenesLocales[nombreLugar];
+        // Intentar con el campo image original
+        const rawImage = place?.image ? String(place.image).trim() : "";
+        if (rawImage) {
+            // Imagen de storage
+            if (isStorageImage(rawImage)) {
+                return rawImage;
+            }
+            // Imagen local válida (/imagenes/)
+            if (rawImage.startsWith("/imagenes/")) {
+                return rawImage;
             }
         }
 
-        return imagenSubida || imagenLocal || place?.imagen || "/imagenes/placeholder.svg";
+        // Buscar por nombre en el mapeo
+        const imagenLocal =
+            mapeoImagenesDeterministico[nombreOriginal] ||
+            mapeoImagenesLocales[nombreLugar];
+
+        return imagenLocal || "/imagenes/placeholder.svg";
     };
 
     useEffect(() => {
@@ -187,12 +197,17 @@ const PlacesAdmin = () => {
             const data = await adminService.places.getAll();
             let placesData = Array.isArray(data) ? data : [];
 
-            // PRIORIDAD: Imágenes subidas -> Imágenes locales del mapeo -> Placeholder
-            placesData = placesData.map((place) => ({
-                ...place,
-                imagen: resolvePlaceImage(place),
-                image: isStorageImage(place?.image) ? place.image : null,
-            }));
+            // Pre-resolver imagen una sola vez y guardarla en place.imagen
+            // Se conserva place.image original para no perder la info
+            placesData = placesData.map((place) => {
+                const imagenResuelta = resolvePlaceImage(place);
+                return {
+                    ...place,
+                    imagen: imagenResuelta,
+                    // Normalizar image: solo guardar si es de storage
+                    image: isStorageImage(place?.image) ? place.image : place?.image || null,
+                };
+            });
 
             setPlaces(placesData);
         } catch (error) {
@@ -750,7 +765,7 @@ const PlacesAdmin = () => {
                                 <tr key={place.id}>
                                     <td data-label="Imagen">
                                         <img
-                                            src={resolvePlaceImage(place)}
+                                            src={place.imagen || resolvePlaceImage(place)}
                                             alt={place.name}
                                             className="thumb"
                                             onError={(e) => {
