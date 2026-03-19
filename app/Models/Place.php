@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Place extends Model
@@ -72,20 +73,20 @@ class Place extends Model
         // Si es almacenamiento de storage public
         if (strpos($value, '/storage/') === 0 || strpos($value, 'storage/') === 0) {
             $cleanPath = str_replace(['storage/', '/storage/'], '', $value);
-            return '/storage/' . ltrim($cleanPath, '/');
+            return Storage::disk('public')->url(ltrim($cleanPath, '/'));
         }
 
         // Normalizar rutas sin barra inicial
         if (strpos($value, 'imagenes/') === 0) {
-            return '/' . $value;
+            return asset($value);
         }
 
         if (strpos($value, 'storage/places/') === 0) {
-            return '/storage/' . substr($value, strlen('storage/'));
+            return Storage::disk('public')->url(substr($value, strlen('storage/')));
         }
 
         if (strpos($value, 'places/') === 0) {
-            return '/storage/' . $value;
+            return Storage::disk('public')->url($value);
         }
 
         // Si el valor es texto no reconocible como ruta de archivo, usar fallback por nombre.

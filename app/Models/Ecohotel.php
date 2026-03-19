@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Ecohotel extends Model
 {
@@ -49,36 +50,30 @@ class Ecohotel extends Model
             return null;
         }
 
+        // Si ya es una URL completa (http/https)
         if (preg_match('/^https?:\/\//', $value)) {
-            $path = parse_url($value, PHP_URL_PATH) ?: '';
-            if (strpos($path, '/imagenes/') === 0 || strpos($path, '/storage/') === 0) {
-                return $path;
-            }
             return $value;
         }
 
-        if (strpos($value, '/imagenes/') === 0) {
-            return $value;
-        }
-
+        // Si comienza con /storage/ o storage/
         if (strpos($value, '/storage/') === 0 || strpos($value, 'storage/') === 0) {
             $cleanPath = str_replace(['storage/', '/storage/'], '', $value);
-            return '/storage/' . ltrim($cleanPath, '/');
+            return Storage::disk('public')->url(ltrim($cleanPath, '/'));
         }
 
-        if (strpos($value, 'imagenes/') === 0) {
-            return '/' . $value;
+        // Si comienza con /imagenes/ o imagenes/
+        if (strpos($value, '/imagenes/') === 0 || strpos($value, 'imagenes/') === 0) {
+            $path = ltrim($value, '/');
+            return asset($path);
         }
 
-        if (strpos($value, 'storage/ecohotels/') === 0) {
-            return '/storage/' . substr($value, strlen('storage/'));
-        }
-
+        // Si es una ruta relativa de ecohoteles (ej: ecohotels/foo.jpg)
         if (strpos($value, 'ecohotels/') === 0) {
-            return '/storage/' . $value;
+            return Storage::disk('public')->url($value);
         }
 
-        return '/imagenes/' . ltrim($value, '/');
+        // Fallback: Si no tiene barra inicial, asumir /imagenes/
+        return asset('imagenes/' . ltrim($value, '/'));
     }
 
     /**

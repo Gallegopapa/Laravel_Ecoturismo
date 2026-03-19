@@ -150,16 +150,17 @@ class EcohotelController extends Controller
     public function update(Request $request, Ecohotel $ecohotel): JsonResponse
     {
         \Log::info('REQUEST COMPLETO UPDATE', ['all' => $request->all()]);
+        
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', new NoProfanity()],
             'description' => ['nullable', 'string', new NoProfanity()],
             'location' => ['required', 'string', 'max:255', new NoProfanity()],
-            'image' => 'nullable',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
             'email' => 'nullable|email|max:255',
             'sitio_web' => 'nullable|url|max:255',
+            'image' => 'nullable', // Puede venir como archivo o como string si no cambia
             'categories' => 'nullable|array',
             'categories.*' => 'nullable|exists:categories,id',
             'places' => 'nullable|array',
@@ -173,8 +174,6 @@ class EcohotelController extends Controller
             'longitude.required' => 'La longitud es requerida.',
             'longitude.numeric' => 'La longitud debe ser un número.',
             'longitude.between' => 'La longitud debe estar entre -180 y 180.',
-            'image.image' => 'El archivo debe ser una imagen.',
-            'image.max' => 'La imagen no puede exceder 5MB.',
             'email.email' => 'El email debe ser válido.',
             'sitio_web.url' => 'El sitio web debe ser una URL válida.',
             'categories.array' => 'Las categorías deben ser un array.',
@@ -185,9 +184,10 @@ class EcohotelController extends Controller
 
         // Manejar actualización de imagen
         if ($request->hasFile('image')) {
-            // Eliminar imagen anterior
-            if ($ecohotel->image) {
-                $oldFileName = basename(parse_url($ecohotel->image, PHP_URL_PATH));
+            // Eliminar imagen anterior si existe física
+            if ($ecohotel->getRawOriginal('image')) {
+                $oldPath = $ecohotel->getRawOriginal('image');
+                $oldFileName = basename(parse_url($oldPath, PHP_URL_PATH));
                 if ($oldFileName && Storage::disk('public')->exists('ecohotels/' . $oldFileName)) {
                     Storage::disk('public')->delete('ecohotels/' . $oldFileName);
                 }
@@ -197,73 +197,23 @@ class EcohotelController extends Controller
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('ecohotels', $filename, 'public');
             $data['image'] = '/storage/' . $path;
+        } else {
+            // Si no se subió una nueva, quitamos 'image' del array para no sobreescribir con null
+            // a menos que explícitamente se quiera borrar (pero en este panel suele ser persistente)
+            unset($data['image']);
         }
 
-        $categories = $data['categories'] ?? null;
-        $places = $data['places'] ?? null;
-        \Log::info('UPDATE - Campo places recibido', ['places' => $places]);
-        unset($data['categories'], $data['places']);
+        $categories = $data['categories'] ?? [];
+        $places = $data['places'] ?? [];
+        
+        // Actualizar datos principales (excepto relaciones)
+        $ecohotel->update(collect($data)->except(['categories', 'places'])->toArray());
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', new NoProfanity()],
-            'description' => ['nullable', 'string', new NoProfanity()],
-            'location' => ['required', 'string', 'max:255', new NoProfanity()],
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            'telefono' => ['nullable', 'string', 'max:20', new NoProfanity()],
-            'email' => 'nullable|email|max:255',
-            'sitio_web' => 'nullable|url|max:255',
-            'categories' => 'array',
-            'categories.*' => 'nullable|exists:categories,id',
-            'places' => 'array',
-            'places.*' => 'nullable|exists:places,id',
-        ], [
-            'name.required' => 'El nombre del ecohotel es requerido.',
-            'location.required' => 'La ubicación es requerida.',
-            'latitude.required' => 'La latitud es requerida.',
-            'latitude.numeric' => 'La latitud debe ser un número.',
-            'latitude.between' => 'La latitud debe estar entre -90 y 90.',
-            'longitude.required' => 'La longitud es requerida.',
-            'longitude.numeric' => 'La longitud debe ser un número.',
-            'longitude.between' => 'La longitud debe estar entre -180 y 180.',
-            'image.image' => 'El archivo debe ser una imagen.',
-            'image.max' => 'La imagen no puede exceder 5MB.',
-            'email.email' => 'El email debe ser válido.',
-            'sitio_web.url' => 'El sitio web debe ser una URL válida.',
-            'categories.array' => 'Las categorías deben ser un array.',
-            'categories.*.exists' => 'Una o más categorías no existen.',
-            'places.array' => 'Los lugares deben ser un array.',
-            'places.*.exists' => 'Uno o más lugares no existen.',
-        ]);
+        // Filtrar ids vacíos o nulos y sincronizar
+        $categoriesSync = array_filter($categories, fn($id) => !empty($id) && is_numeric($id));
+        $placesSync = array_filter($places, fn($id) => !empty($id) && is_numeric($id));
 
-        // Manejar actualización de imagen
-        if ($request->hasFile('image')) {
-            // Eliminar imagen anterior
-            if ($ecohotel->image) {
-                $oldFileName = basename(parse_url($ecohotel->image, PHP_URL_PATH));
-                if ($oldFileName && Storage::disk('public')->exists('ecohotels/' . $oldFileName)) {
-                    Storage::disk('public')->delete('ecohotels/' . $oldFileName);
-                }
-            }
-            $image = $request->file('image');
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('ecohotels', $filename, 'public');
-            $validated['image'] = '/storage/' . $path;
-        }
-
-
-        // Actualizar datos principales
-        $ecohotel->update(collect($validated)->except(['categories', 'places'])->toArray());
-
-        // Filtrar ids vacíos o nulos
-        $categoriesSync = array_filter($validated['categories'] ?? [], fn($id) => $id !== null && $id !== '' && is_numeric($id));
-        $placesSync = array_filter($validated['places'] ?? [], fn($id) => $id !== null && $id !== '' && is_numeric($id));
-
-        // Sincronizar categorías (array vacío = sin categorías)
         $ecohotel->categories()->sync($categoriesSync);
-
-        // Sincronizar lugares (array vacío = sin lugares)
         $ecohotel->places()->sync($placesSync);
 
         $ecohotel->load(['categories', 'places']);

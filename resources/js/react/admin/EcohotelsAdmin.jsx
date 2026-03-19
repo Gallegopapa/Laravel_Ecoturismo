@@ -10,7 +10,7 @@ const EcohotelsAdmin = () => {
   const [message, setMessage] = useState('');
   const [editingEcohotel, setEditingEcohotel] = useState(null);
   const [viewingEcohotel, setViewingEcohotel] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -75,6 +75,10 @@ const EcohotelsAdmin = () => {
         return;
       }
       setFormData({ ...formData, image: file });
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setFormData({ ...formData, image: null });
+      setImagePreview(null);
     }
   };
 
@@ -99,7 +103,14 @@ const EcohotelsAdmin = () => {
       resetForm();
       loadEcohotels();
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error al crear el ecohotel');
+      const respData = error.response?.data;
+      if (respData?.errors) {
+        // Laravel validation errors
+        const errorStrings = Object.values(respData.errors).flat().join(' | ');
+        setMessage('Error de validación: ' + errorStrings);
+      } else {
+        setMessage(respData?.message || 'Error al crear el ecohotel');
+      }
     }
   };
 
@@ -112,7 +123,14 @@ const EcohotelsAdmin = () => {
       resetForm();
       loadEcohotels();
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error al actualizar el ecohotel');
+      const respData = error.response?.data;
+      if (respData?.errors) {
+        // Laravel validation errors
+        const errorStrings = Object.values(respData.errors).flat().join(' | ');
+        setMessage('Error de validación: ' + errorStrings);
+      } else {
+        setMessage(respData?.message || 'Error al actualizar el ecohotel');
+      }
     }
   };
 
@@ -168,6 +186,7 @@ const EcohotelsAdmin = () => {
       categories: [],
       places: [],
     });
+    setImagePreview(null);
   };
 
   const closeModals = () => {
@@ -405,6 +424,14 @@ const EcohotelsAdmin = () => {
                   <div className="form-section-icon">4</div>
                   Imagen Representativa
                 </div>
+                {imagePreview ? (
+                  <div className="image-preview">
+                    <label style={{ display: 'block', marginBottom: '0.75rem', color: '#2c5f2d', fontWeight: '600', fontSize: '0.9rem' }}>
+                      Vista Previa de la Nueva Imagen
+                    </label>
+                    <img src={imagePreview} alt="Vista previa de nueva imagen" />
+                  </div>
+                ) : null}
                 <div className="form-group">
                   <label htmlFor="image">Selecciona una imagen (máx. 5MB)</label>
                   <input
@@ -641,20 +668,29 @@ const EcohotelsAdmin = () => {
                   <div className="form-section-icon">4</div>
                   Imagen Representativa
                 </div>
-                {editingEcohotel.image && (
+                
+                {imagePreview ? (
                   <div className="image-preview">
                     <label style={{ display: 'block', marginBottom: '0.75rem', color: '#2c5f2d', fontWeight: '600', fontSize: '0.9rem' }}>
-                      Imagen Actual
+                      Vista Previa de la Nueva Imagen
+                    </label>
+                    <img src={imagePreview} alt="Vista previa de nueva imagen" />
+                  </div>
+                ) : editingEcohotel.image ? (
+                  <div className="image-preview">
+                    <label style={{ display: 'block', marginBottom: '0.75rem', color: '#666', fontWeight: '600', fontSize: '0.9rem' }}>
+                      Imagen Actual Registrada
                     </label>
                     <img
                       src={editingEcohotel.image}
                       alt={editingEcohotel.name}
+                      onError={e => { e.target.src = '/imagenes/placeholder.jpg'; }}
                     />
                   </div>
-                )}
+                ) : null}
 
                 <div className="form-group">
-                  <label htmlFor="edit-image">Cambiar Imagen (máx. 5MB)</label>
+                  <label htmlFor="edit-image">Subir o Cambiar Imagen (Máx 5MB)</label>
                   <input
                     type="file"
                     id="edit-image"

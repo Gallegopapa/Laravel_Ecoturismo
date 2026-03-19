@@ -12,9 +12,9 @@ export default defineConfig({
         },
         cors: true,
         proxy: {
-            '/api': 'http://sgallego.dev',
-            '/storage': 'http://sgallego.dev',
-            '/imagenes': 'http://sgallego.dev',
+            '/api': 'http://localhost:8000',
+            '/storage': 'http://localhost:8000',
+            '/imagenes': 'http://localhost:8000',
         },
     },
     plugins: [
