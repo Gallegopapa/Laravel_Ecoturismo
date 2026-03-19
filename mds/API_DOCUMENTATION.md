@@ -1,400 +1,169 @@
-# Documentación de la API - Risaralda EcoTurismo
+﻿# Documentacion de API - Estado Actual (Marzo 2026)
 
-## Base URL
-```
+Base URL local:
 http://localhost:8000/api
-```
 
-## Autenticación
+La API usa tokens Bearer con Laravel Sanctum para rutas protegidas.
 
-La API utiliza Laravel Sanctum para autenticación mediante tokens Bearer.
+Headers recomendados:
+- Accept: application/json
+- Authorization: Bearer {token} (solo rutas protegidas)
 
-### Headers requeridos para rutas protegidas:
-```
-Authorization: Bearer {token}
-Accept: application/json
-Content-Type: application/json
-```
-sdfghgfdsa
----
+## 1. Endpoints publicos
 
-## Endpoints Públicos
+### Autenticacion
+- POST /login
+- POST /register
+- POST /password/forgot
+- POST /password/reset
 
-### 1. Registro de Usuario
-**POST** `/api/register`
+### Perfil publico
+- GET /profile/photo/{filename}
 
-**Body:**
-```json
-{
-  "name": "usuario123",
-  "email": "usuario@example.com",
-  "password": "password123",
-  "password_confirmation": "password123"
-}
-```
+### Lugares
+- GET /places
+- GET /places/options
+- GET /places/{place}
+- GET /places/{place}/available-schedules
+- GET /places/{place}/schedules
 
-**Respuesta exitosa (201):**
-```json
-{
-  "message": "Usuario registrado exitosamente",
-  "user": {
-    "id": 1,
-    "name": "usuario123",
-    "email": "usuario@example.com",
-    "fecha_registro": "2025-01-01T00:00:00.000000Z",
-    "is_admin": false
-  },
-  "token": "1|xxxxxxxxxxxx",
-  "token_type": "Bearer",
-  "expires_in": 2592000
-}
-```
+### Ecohoteles
+- GET /ecohotels
+- GET /ecohotels/{ecohotel}
 
-### 2. Login
-**POST** `/api/login`
+### Categorias
+- GET /categories
+- GET /categories/{category}
 
-**Body:**
-```json
-{
-  "name": "usuario123",
-  "password": "password123"
-}
-```
-O con email:
-```json
-{
-  "email": "usuario@example.com",
-  "password": "password123"
-}
-```
+### Reseñas publicas
+- GET /reviews/all
+- GET /places/{id}/reviews
+- GET /ecohotels/{id}/reviews
 
-**Respuesta exitosa (200):**
-```json
-{
-  "message": "Inicio de sesión exitoso",
-  "user": { ... },
-  "token": "1|xxxxxxxxxxxx",
-  "token_type": "Bearer",
-  "expires_in": 2592000
-}
-```
+### Razones de rechazo
+- GET /rejection-reasons
 
-### 3. Obtener Todos los Lugares
-**GET** `/api/places`
+### Mensajes y contacto
+- POST /messages
+- POST /contacts
 
-**Query Parameters:**
-- `category_id` (opcional): Filtrar por categoría
-- `search` (opcional): Buscar por nombre o descripción
+## 2. Endpoints protegidos (auth:sanctum)
 
-**Respuesta:**
-```json
-[
-  {
-    "id": 1,
-    "name": "Parque Natural",
-    "description": "...",
-    "location": "...",
-    "image": "...",
-    "average_rating": 4.5,
-    "reviews_count": 10,
-    "categories": [...]
-  }
-]
-```
+### Sesion
+- POST /logout
+- POST /logout-all
+- GET /user
+- GET /verify-token
 
-### 4. Obtener un Lugar Específico
-**GET** `/api/places/{id}`
+### Perfil
+- GET /profile
+- POST /profile (FormData, usado cuando hay imagen)
+- PUT /profile (JSON)
+- PUT /profile/password
+- DELETE /profile
 
-**Respuesta:**
-```json
-{
-  "place": { ... },
-  "average_rating": 4.5,
-  "reviews_count": 10
-}
-```
+### Reservas de usuario
+- GET /reservations/my
+- GET /reservations
+- POST /reservations
+- GET /reservations/{reservation}
+- PUT /reservations/{reservation}
+- DELETE /reservations/{reservation}
 
-### 5. Obtener Todas las Categorías
-**GET** `/api/categories`
-
-### 6. Obtener una Categoría
-**GET** `/api/categories/{id}`
-
-### 7. Obtener Reseñas de un Lugar
-**GET** `/api/places/{placeId}/reviews`
-
-### 8. Enviar Mensaje de Contacto
-**POST** `/api/messages`
-
-**Body:**
-```json
-{
-  "name": "Juan Pérez",
-  "email": "juan@example.com",
-  "subject": "Consulta",
-  "message": "Mensaje de contacto"
-}
-```
-
-### 9. Enviar Formulario de Contacto
-**POST** `/api/contacts`
-
-**Body:**
-```json
-{
-  "name": "Juan Pérez",
-  "email": "juan@example.com",
-  "phone": "3001234567",
-  "message": "Mensaje de contacto completo"
-}
-```
-
-**Respuesta exitosa (201):**
-```json
-{
-  "message": "Mensaje enviado correctamente. Nos pondremos en contacto contigo pronto.",
-  "data": {
-    "id": 1,
-    "name": "Juan Pérez",
-    "email": "juan@example.com",
-    "phone": "3001234567",
-    "created_at": "2025-12-16T04:17:11.000000Z"
-  }
-}
-```
-
-**Nota**: Si el usuario está autenticado, se guardará su `user_id` automáticamente.
-
----
-
-## Endpoints Protegidos (requieren token)
-
-### Autenticación
-
-#### Verificar Token
-**GET** `/api/verify-token`
-
-#### Obtener Usuario Actual
-**GET** `/api/user`
-
-#### Cerrar Sesión
-**POST** `/api/logout`
-
-#### Cerrar Todas las Sesiones
-**POST** `/api/logout-all`
-
-### Perfil de Usuario
-
-#### Obtener Perfil
-**GET** `/api/profile`
-
-#### Actualizar Perfil
-**PUT** `/api/profile`
-
-**Body:**
-```json
-{
-  "name": "nuevo_nombre",
-  "email": "nuevo@email.com"
-}
-```
-
-#### Cambiar Contraseña
-**PUT** `/api/profile/password`
-
-**Body:**
-```json
-{
-  "current_password": "password_actual",
-  "new_password": "nueva_password",
-  "new_password_confirmation": "nueva_password"
-}
-```
-
-### Reservas
-
-#### Obtener Mis Reservas
-**GET** `/api/reservations/my`
-
-#### Obtener Todas las Reservas (Admin)
-**GET** `/api/reservations`
-
-#### Crear Reserva
-**POST** `/api/reservations`
-
-**Body:**
-```json
-{
-  "place_id": 1,
-  "fecha_visita": "2025-12-25",
-  "hora_visita": "14:00",
-  "personas": 2,
-  "telefono_contacto": "3001234567",
-  "comentarios": "Comentarios adicionales",
-  "precio_total": 50000
-}
-```
-
-#### Obtener una Reserva
-**GET** `/api/reservations/{id}`
-
-#### Actualizar Reserva
-**PUT** `/api/reservations/{id}`
-
-#### Eliminar Reserva
-**DELETE** `/api/reservations/{id}`
-
-### Reseñas
-
-#### Crear Reseña
-**POST** `/api/reviews`
-
-**Body:**
-```json
-{
-  "place_id": 1,
-  "rating": 5,
-  "comment": "Excelente lugar"
-}
-```
-
-#### Eliminar Reseña
-**DELETE** `/api/reviews/{id}`
+### Reseñas autenticadas
+- POST /reviews
+- PUT /reviews/{review}
+- DELETE /reviews/{review}
 
 ### Favoritos
+- GET /favorites
+- GET /favorites/check/{placeId}
+- POST /favorites
+- DELETE /favorites/{placeId}
 
-#### Obtener Mis Favoritos
-**GET** `/api/favorites`
+### Pagos (boceto)
+- GET /payments
+- POST /payments
 
-#### Agregar a Favoritos
-**POST** `/api/favorites`
+### Contactos (solo admin)
+- GET /contacts
+- GET /contacts/{contact}
 
-**Body:**
-```json
-{
-  "place_id": 1
-}
-```
+## 3. Modulo empresa (auth:sanctum)
 
-#### Eliminar de Favoritos
-**DELETE** `/api/favorites/{placeId}`
+Prefijo: /company
 
-### Contactos (Admin)
+### Lugares de empresa
+- GET /company/places
+- GET /company/places/{place}
+- POST /company/places/{place}
+- PUT /company/places/{place}
+- DELETE /company/places/{place}
 
-#### Obtener Todos los Contactos
-**GET** `/api/contacts` (Requiere admin)
+### Horarios por lugar
+- GET /company/places/{place}/schedules
+- POST /company/places/{place}/schedules
+- PUT /company/places/{place}/schedules/{schedule}
+- DELETE /company/places/{place}/schedules/{schedule}
 
-**Respuesta:**
-```json
-[
-  {
-    "id": 1,
-    "name": "Juan Pérez",
-    "email": "juan@example.com",
-    "phone": "3001234567",
-    "message": "Mensaje completo...",
-    "user_id": null,
-    "created_at": "2025-12-16T04:17:11.000000Z",
-    "usuario": null
-  }
-]
-```
+### Reservas de empresa
+- GET /company/reservations
+- GET /company/reservations/stats
+- GET /company/reservations/{companyReservation}
+- POST /company/reservations/{companyReservation}/accept
+- POST /company/reservations/{companyReservation}/reject
+- POST /company/reservations/{companyReservation}/reopen
+- GET /company/reservations/place/{placeId}/stats
 
-#### Obtener un Contacto Específico
-**GET** `/api/contacts/{id}` (Requiere admin)
+## 4. Modulo admin (auth:sanctum + admin)
 
-### Lugares (Admin)
+Prefijo: /admin
 
-#### Crear Lugar
-**POST** `/api/places` (Requiere admin)
+### Lugares
+- GET /admin/places
+- GET /admin/places/{place}
+- POST /admin/places
+- POST /admin/places/{place}
+- PUT /admin/places/{place}
+- DELETE /admin/places/{place}
 
-**Body:**
-```json
-{
-  "name": "Nuevo Lugar",
-  "description": "...",
-  "location": "...",
-  "image": "...",
-  "categories": [1, 2]
-}
-```
+### Ecohoteles
+- GET /admin/ecohotels
+- POST /admin/ecohotels
+- GET /admin/ecohotels/{ecohotel}
+- PUT /admin/ecohotels/{ecohotel}
+- DELETE /admin/ecohotels/{ecohotel}
 
-#### Actualizar Lugar
-**PUT** `/api/places/{id}` (Requiere admin)
+### Usuarios
+- GET /admin/users
+- GET /admin/users/{user}
+- POST /admin/users
+- PUT /admin/users/{user}
+- DELETE /admin/users/{user}
 
-#### Eliminar Lugar
-**DELETE** `/api/places/{id}` (Requiere admin)
+### Reservas globales
+- GET /admin/reservations
 
-### Categorías (Admin)
+### Razones de rechazo
+- GET /admin/rejection-reasons
+- POST /admin/rejection-reasons
+- GET /admin/rejection-reasons/{reason}
+- PUT /admin/rejection-reasons/{reason}
+- DELETE /admin/rejection-reasons/{reason}
 
-#### Crear Categoría
-**POST** `/api/categories` (Requiere admin)
+### Horarios de lugares
+- GET /admin/places/{place}/schedules
+- POST /admin/places/{place}/schedules
+- PUT /admin/places/{place}/schedules/{schedule}
+- DELETE /admin/places/{place}/schedules/{schedule}
 
-**Body:**
-```json
-{
-  "name": "Aventura",
-  "description": "...",
-  "icon": "🏔️"
-}
-```
+## 5. Notas de integracion frontend
 
-#### Actualizar Categoría
-**PUT** `/api/categories/{id}` (Requiere admin)
+- El frontend usa baseURL relativa /api.
+- Si el token expira (401), frontend limpia sesion local y redirige a /login.
+- Perfil con foto usa FormData y _method=PUT para compatibilidad con Laravel.
 
-#### Eliminar Categoría
-**DELETE** `/api/categories/{id}` (Requiere admin)
+## 6. Referencias de codigo
 
-### Pagos (Boceto)
-
-#### Obtener Mis Pagos
-**GET** `/api/payments`
-
-#### Crear Pago
-**POST** `/api/payments`
-
-**Body:**
-```json
-{
-  "reservation_id": 1,
-  "amount": 50000,
-  "payment_method": "transferencia"
-}
-```
-
----
-
-## Códigos de Estado HTTP
-
-- `200` - Éxito
-- `201` - Creado exitosamente
-- `401` - No autenticado
-- `403` - No autorizado (requiere permisos)
-- `404` - No encontrado
-- `422` - Error de validación
-- `500` - Error del servidor
-
----
-
-## Errores de Validación
-
-Cuando hay errores de validación, la respuesta será:
-
-```json
-{
-  "message": "Los datos proporcionados no son válidos.",
-  "errors": {
-    "campo": ["Mensaje de error"]
-  }
-}
-```
-
----
-
-## Notas Importantes
-
-1. Todos los tokens expiran después de 30 días
-2. Las rutas de admin requieren que el usuario tenga `is_admin: true`
-3. Las fechas deben estar en formato ISO 8601 (YYYY-MM-DD)
-4. Las horas deben estar en formato 24 horas (HH:mm)
-5. El sistema de pagos es un BOCETO y no está completamente funcional
+- Rutas API: routes/api.php
+- Cliente frontend: resources/js/react/services/api.js

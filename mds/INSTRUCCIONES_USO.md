@@ -1,126 +1,85 @@
-# 🚀 Instrucciones para Usar React + Laravel
+﻿# Instrucciones de Uso - Estado Real de la Aplicacion
 
-## ✅ Todo está configurado y listo
+Guia de uso alineada con las pantallas y flujos disponibles actualmente.
 
-He configurado completamente la conexión entre React y Laravel. Aquí está lo que se hizo:
+## 1. Navegacion principal
 
-## 📁 Archivos Creados/Modificados
+### Publico
+- Inicio: /
+- Lugares: /lugares
+- Ecohoteles: /ecohoteles
+- Mapa: /mapa
+- Contacto: /contacto
+- Comentarios: /comentarios y /comentarios2
+- Legales: /cookies, /terminos-de-uso, /politica-de-privacidad
 
-### Nuevos archivos:
-1. **`resources/js/react/services/api.js`** - Servicio de API con axios configurado
-2. **`resources/js/react/context/AuthContext.jsx`** - Contexto de autenticación
-3. **`resources/js/react/components/ProtectedRoute.jsx`** - Componente para rutas protegidas
-4. **`resources/js/react/examples/PlacesExample.jsx`** - Ejemplo de uso
+### Autenticacion
+- Login: /login
+- Al iniciar sesion, el usuario se redirige a /pagLogueados.
 
-### Archivos modificados:
-1. **`resources/js/app.js`** - Agregado AuthProvider
-2. **`resources/js/react/login/page.jsx`** - Actualizado para usar la API
-3. **`resources/js/react/App.jsx`** - Actualizado para usar AuthContext
-4. **`resources/js/react/components/Header2/Header2.jsx`** - Agregado logout
-5. **`config/sanctum.php`** - Configurado CORS para React
+## 2. Flujo de usuario
 
-## 🎯 Cómo Funciona Ahora
+### Explorar lugares
+1. Entrar a /lugares.
+2. Abrir un detalle en /lugares/:id.
+3. Ver descripcion, reseñas y opciones de reserva.
 
-### 1. Login/Registro
-- El usuario ingresa sus credenciales
-- Se hace petición a `/api/login` o `/api/register`
-- Se guarda el token en `localStorage`
-- El token se agrega automáticamente a todas las peticiones
+### Crear reserva
+1. Iniciar sesion.
+2. Abrir detalle de lugar.
+3. Completar formulario de reserva.
+4. Confirmar envio.
 
-### 2. Autenticación Automática
-- Al cargar la página, se verifica si hay un token
-- Si el token es válido, el usuario queda autenticado
-- Si el token expira, se limpia y redirige al login
+### Gestionar favoritos
+1. Iniciar sesion.
+2. Marcar o desmarcar desde cards o detalle.
+3. Consultar favoritos desde su seccion de usuario (si aplica en la vista activa).
 
-### 3. Rutas Protegidas
-- Las rutas protegidas verifican si el usuario está autenticado
-- Si no está autenticado, redirige al login
-- Puedes requerir permisos de admin con `requireAdmin={true}`
+### Gestionar perfil
+1. Ir a la pantalla de perfil/configuracion.
+2. Actualizar datos.
+3. Si sube foto, la app envia FormData al endpoint de perfil.
 
-## 🔧 Cómo Usar en Tus Componentes
+## 3. Flujo de empresa
 
-### Ejemplo básico:
+Ruta principal: /company/dashboard
 
-```jsx
-import { useAuth } from '../context/AuthContext';
-import { placesService } from '../services/api';
+Funciones disponibles:
+- Ver lugares asociados a la empresa.
+- Editar informacion de lugares.
+- Gestionar horarios por lugar.
+- Revisar reservas.
+- Aceptar, rechazar o reabrir reservas.
 
-function MyComponent() {
-  const { user, isAuthenticated, logout } = useAuth();
-  const [places, setPlaces] = useState([]);
+## 4. Flujo de administrador
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      placesService.getAll()
-        .then(data => setPlaces(data))
-        .catch(error => console.error(error));
-    }
-  }, [isAuthenticated]);
+Ruta principal: /admin
 
-  return (
-    <div>
-      {isAuthenticated ? (
-        <p>Hola, {user.name}!</p>
-      ) : (
-        <p>No estás autenticado</p>
-      )}
-    </div>
-  );
-}
-```
+Funciones disponibles:
+- Lugares: crear, editar, eliminar.
+- Ecohoteles: crear, editar, eliminar.
+- Usuarios: crear, editar, eliminar.
+- Reservas: consulta global.
+- Razones de rechazo: CRUD.
 
-## 📝 Servicios Disponibles
+## 5. Accesibilidad e idioma
 
-Todos están en `resources/js/react/services/api.js`:
+La aplicacion incluye:
+- Panel de accesibilidad global.
+- Helper de traduccion.
 
-- **authService**: login, register, logout, verifyToken, getCurrentUser
-- **placesService**: getAll, getById, create, update, delete
-- **reservationsService**: getMyReservations, create, update, delete
-- **reviewsService**: getByPlace, create, delete
-- **favoritesService**: getAll, add, remove
-- **categoriesService**: getAll, getById
-- **profileService**: get, update, changePassword
-- **messagesService**: send
+Ambos componentes se montan globalmente en el arbol principal de React.
 
-## 🚀 Para Probar
+## 6. Endpoints usados por la pagina
 
-1. **Inicia Laravel:**
-   ```bash
-   php artisan serve
-   ```
+La mayoria de acciones del frontend consumen rutas bajo /api.
+Ver detalle completo en API_DOCUMENTATION.md.
 
-2. **Inicia Vite (en otra terminal):**
-   ```bash
-   npm run dev
-   ```
+## 7. Solucion de problemas rapida
 
-3. **Abre el navegador:**
-   - Ve a `http://localhost:8000`
-   - Haz clic en "Login"
-   - Prueba registrarte o iniciar sesión
+- Error 401: validar token en localStorage y sesion vigente.
+- Si expira token, la app limpia sesion y redirige a /login.
+- Si falla carga de imagen de perfil, confirmar uso de /api/profile/photo/{filename}.
 
-## ✅ Lo que ya funciona:
-
-- ✅ Login con API
-- ✅ Registro con API
-- ✅ Logout
-- ✅ Verificación automática de token
-- ✅ Rutas protegidas
-- ✅ Headers con token automático
-- ✅ Manejo de errores 401
-- ✅ CORS configurado
-
-## 🐛 Si algo no funciona:
-
-1. **Verifica la consola del navegador** (F12) para ver errores
-2. **Verifica que el token esté en localStorage:**
-   ```javascript
-   console.log(localStorage.getItem('token'));
-   ```
-3. **Verifica la URL de la API** en `resources/js/react/services/api.js`
-4. **Asegúrate de que Laravel esté corriendo** en el puerto 8000
-
-## 📚 Más Información
-
-Revisa `REACT_LARAVEL_SETUP.md` para más detalles técnicos.
-
+## Ultima actualizacion
+Marzo 2026

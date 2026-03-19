@@ -1,546 +1,120 @@
-# Flujos de la Aplicación - Risaralda EcoTurismo
+﻿# Flujos de la Aplicacion - Estado Actual
 
-Este documento describe los flujos principales de la aplicación desde la perspectiva del usuario y del sistema.
+Documento alineado con las rutas React y API activas en Marzo 2026.
 
-## 🔐 Flujo de Autenticación
-
-### Registro de Usuario
-
-```
-1. Usuario accede a /registro
-   ↓
-2. Llena formulario (name, email, password, password_confirmation)
-   ↓
-3. Validación frontend (campos requeridos, formato email, contraseñas coinciden)
-   ↓
-4. POST /api/register
-   ↓
-5. AuthController::register()
-   - Valida datos
-   - Verifica que email/name no existan
-   - Hash de contraseña
-   - Crea usuario en BD
-   - Genera token Sanctum
-   ↓
-6. Response: { user, token }
-   ↓
-7. Guardar token en localStorage
-   ↓
-8. Actualizar AuthContext
-   ↓
-9. Redirigir a /pagLogueados
-```
+## 1. Flujo de autenticacion
 
 ### Login
+1. Usuario abre /login.
+2. Frontend envia POST /api/login.
+3. Backend retorna usuario y token.
+4. Frontend guarda token en localStorage.
+5. Usuario se redirige a /pagLogueados.
 
-```
-1. Usuario accede a /login
-   ↓
-2. Ingresa name/email y password
-   ↓
-3. POST /api/login
-   ↓
-4. AuthController::login()
-   - Busca usuario por name o email
-   - Verifica contraseña
-   - Genera token Sanctum
-   ↓
-5. Response: { user, token }
-   ↓
-6. Guardar token en localStorage
-   ↓
-7. Actualizar AuthContext
-   ↓
-8. Redirigir a /pagLogueados
-```
+### Registro
+1. Usuario completa formulario de registro.
+2. Frontend envia POST /api/register.
+3. Backend crea usuario y retorna token.
+4. Frontend persiste sesion y redirige a /pagLogueados.
 
 ### Logout
+1. Usuario ejecuta cierre de sesion.
+2. Frontend envia POST /api/logout.
+3. Se limpia token local.
+4. Redireccion a /login o / segun flujo UI.
 
-```
-1. Usuario hace clic en "Cerrar Sesión"
-   ↓
-2. POST /api/logout
-   ↓
-3. AuthController::logout()
-   - Elimina token actual
-   ↓
-4. Eliminar token de localStorage
-   ↓
-5. Limpiar AuthContext
-   ↓
-6. Redirigir a /
-```
+### Recuperacion de contrasena
+1. Usuario solicita recuperacion.
+2. Frontend envia POST /api/password/forgot.
+3. Usuario aplica nueva contrasena con POST /api/password/reset.
 
-## 🏞 Flujo de Exploración de Lugares
+## 2. Flujo de exploracion de lugares
 
-### Ver Lista de Lugares
+1. Usuario entra a /lugares o a paginas tematicas.
+2. Frontend consulta GET /api/places y/o GET /api/categories.
+3. Usuario abre detalle en /lugares/:id.
+4. Frontend consulta GET /api/places/{id}.
+5. Se muestran datos, reseñas y acciones de reserva/favorito.
 
-```
-1. Usuario accede a /lugares o categorías específicas
-   ↓
-2. Componente carga lugares
-   ↓
-3. GET /api/places?category_id=X (opcional)
-   ↓
-4. PlaceController::index()
-   - Obtiene lugares de BD
-   - Aplica filtros si existen
-   - Carga relaciones (categorías, reseñas)
-   ↓
-5. Response: Array de lugares
-   ↓
-6. Renderizar cards con información
-   - Imagen
-   - Nombre
-   - Ubicación
-   - Descripción
-   - Botones: Mapa, Reservar, Favorito
-```
+## 3. Flujo de ecohoteles
 
-### Ver Detalle de Lugar
+1. Usuario entra a /ecohoteles.
+2. Frontend consulta GET /api/ecohotels.
+3. Usuario abre /ecohoteles/:id.
+4. Frontend consulta GET /api/ecohotels/{id}.
 
-```
-1. Usuario hace clic en un lugar
-   ↓
-2. Navegar a /lugares/{id}
-   ↓
-3. GET /api/places/{id}
-   ↓
-4. PlaceController::show()
-   - Obtiene lugar con relaciones
-   - Calcula promedio de calificaciones
-   - Cuenta reseñas
-   ↓
-5. Response: { place, average_rating, reviews_count }
-   ↓
-6. Renderizar página de detalle
-   - Información completa
-   - Galería de imágenes
-   - Reseñas
-   - Botón de reserva
-   - Mapa con ubicación
-```
+## 4. Flujo de reservas de usuario
 
-### Filtrar por Categoría
+1. Usuario autenticado inicia reserva desde detalle.
+2. Frontend envia POST /api/reservations.
+3. Usuario consulta historial en GET /api/reservations/my.
+4. Usuario puede editar/cancelar via PUT/DELETE /api/reservations/{id}.
 
-```
-1. Usuario selecciona categoría (Parques, Paraísos Acuáticos, etc.)
-   ↓
-2. Navegar a ruta específica (/parques-y-mas, /paraisos-acuaticos)
-   ↓
-3. Componente carga categoría
-   ↓
-4. GET /api/categories?slug=X
-   ↓
-5. Obtener ID de categoría
-   ↓
-6. GET /api/places?category_id=X
-   ↓
-7. Filtrar y mostrar lugares
-```
+## 5. Flujo de reseñas
 
-## 📅 Flujo de Reservas
+1. Frontend carga reseñas de lugar con GET /api/places/{id}/reviews.
+2. Frontend carga reseñas de ecohotel con GET /api/ecohotels/{id}/reviews.
+3. Usuario autenticado crea reseña con POST /api/reviews.
+4. Usuario edita/elimina reseña con PUT/DELETE /api/reviews/{id}.
 
-### Crear Reserva
+## 6. Flujo de favoritos
 
-```
-1. Usuario autenticado hace clic en "Reservar Visita"
-   ↓
-2. Abrir ReservationModal
-   ↓
-3. Usuario llena formulario:
-   - Fecha de visita
-   - Hora de visita
-   - Número de personas
-   - Teléfono de contacto
-   - Comentarios (opcional)
-   ↓
-4. Validación frontend
-   ↓
-5. POST /api/reservations
-   Body: {
-     place_id,
-     fecha_visita,
-     hora_visita,
-     personas,
-     telefono_contacto,
-     comentarios,
-     precio_total
-   }
-   ↓
-6. ReservationController::store()
-   - Valida datos
-   - Verifica que el lugar exista
-   - Crea reserva en BD
-   - Asocia con usuario autenticado
-   ↓
-7. Response: { reservation }
-   ↓
-8. Cerrar modal
-   ↓
-9. Mostrar mensaje de éxito
-   ↓
-10. (Opcional) Redirigir a /reservaciones
-```
+1. Usuario autenticado consulta favoritos con GET /api/favorites.
+2. Agrega favorito con POST /api/favorites.
+3. Verifica estado con GET /api/favorites/check/{placeId}.
+4. Elimina con DELETE /api/favorites/{placeId}.
 
-### Ver Mis Reservas
+## 7. Flujo de perfil
 
-```
-1. Usuario autenticado accede a /reservaciones
-   ↓
-2. GET /api/reservations/my
-   ↓
-3. ReservationController::myReservations()
-   - Obtiene reservas del usuario
-   - Carga relaciones (lugar, usuario)
-   - Ordena por fecha
-   ↓
-4. Response: Array de reservas
-   ↓
-5. Renderizar lista
-   - Información del lugar
-   - Fecha y hora
-   - Estado
-   - Acciones (editar, cancelar)
-```
+1. Usuario consulta perfil con GET /api/profile.
+2. Actualiza datos:
+- Sin imagen: PUT /api/profile.
+- Con imagen: POST /api/profile con FormData y _method=PUT.
+3. Cambia clave con PUT /api/profile/password.
+4. Elimina cuenta con DELETE /api/profile.
 
-### Cancelar Reserva
+## 8. Flujo de contacto y mensajes
 
-```
-1. Usuario hace clic en "Cancelar"
-   ↓
-2. Confirmar acción
-   ↓
-3. DELETE /api/reservations/{id}
-   ↓
-4. ReservationController::destroy()
-   - Verifica que la reserva pertenezca al usuario
-   - Elimina reserva
-   ↓
-5. Response: { message: "Reserva eliminada" }
-   ↓
-6. Actualizar lista
-```
+1. Formulario de contacto envia POST /api/contacts.
+2. Mensajeria general envia POST /api/messages.
+3. Admin consulta contactos con GET /api/contacts.
 
-## ⭐ Flujo de Reseñas
+## 9. Flujo de empresa
 
-### Crear Reseña
+Ruta UI principal: /company/dashboard
 
-```
-1. Usuario autenticado en página de detalle de lugar
-   ↓
-2. Llena formulario de reseña:
-   - Calificación (1-5)
-   - Comentario
-   ↓
-3. POST /api/reviews
-   Body: {
-     place_id,
-     rating,
-     comment
-   }
-   ↓
-4. ReviewController::store()
-   - Valida datos
-   - Verifica que el usuario no haya reseñado antes
-   - Crea reseña
-   ↓
-5. Response: { review }
-   ↓
-6. Actualizar lista de reseñas
-   ↓
-7. Recalcular promedio de calificaciones
-```
+API principal:
+- GET /api/company/places
+- PUT/POST /api/company/places/{id}
+- DELETE /api/company/places/{id}
+- CRUD horarios por lugar: /api/company/places/{place}/schedules
+- GET /api/company/reservations
+- GET /api/company/reservations/stats
+- POST /api/company/reservations/{id}/accept
+- POST /api/company/reservations/{id}/reject
+- POST /api/company/reservations/{id}/reopen
 
-### Eliminar Reseña
+## 10. Flujo de administrador
 
-```
-1. Usuario hace clic en "Eliminar" en su reseña
-   ↓
-2. Confirmar acción
-   ↓
-3. DELETE /api/reviews/{id}
-   ↓
-4. ReviewController::destroy()
-   - Verifica que la reseña pertenezca al usuario
-   - Elimina reseña
-   ↓
-5. Actualizar lista
-```
+Ruta UI principal: /admin
 
-## ❤️ Flujo de Favoritos
+API principal:
+- /api/admin/places (CRUD)
+- /api/admin/ecohotels (CRUD)
+- /api/admin/users (CRUD)
+- GET /api/admin/reservations
+- /api/admin/rejection-reasons (CRUD)
+- /api/admin/places/{place}/schedules (CRUD)
 
-### Agregar a Favoritos
+## 11. Accesibilidad y traduccion
 
-```
-1. Usuario autenticado hace clic en corazón (♡)
-   ↓
-2. POST /api/favorites
-   Body: { place_id }
-   ↓
-3. FavoriteController::store()
-   - Verifica que no esté ya en favoritos
-   - Crea favorito
-   ↓
-4. Response: { favorite }
-   ↓
-5. Cambiar icono a corazón lleno (♥)
-   ↓
-6. Mostrar mensaje "Agregado a favoritos"
-```
+El arbol principal monta:
+- AccessibilityProvider
+- LanguageProvider
+- AccessibilityPanel
+- TranslationHelper
 
-### Ver Favoritos
+Esto habilita utilidades globales de accesibilidad y apoyo de idioma.
 
-```
-1. Usuario accede a /favoritos
-   ↓
-2. GET /api/favorites
-   ↓
-3. FavoriteController::index()
-   - Obtiene favoritos del usuario
-   - Carga relaciones (lugar)
-   ↓
-4. Response: Array de favoritos
-   ↓
-5. Renderizar lista de lugares favoritos
-```
-
-### Eliminar de Favoritos
-
-```
-1. Usuario hace clic en corazón lleno (♥)
-   ↓
-2. DELETE /api/favorites/{placeId}
-   ↓
-3. FavoriteController::destroy()
-   - Elimina favorito
-   ↓
-4. Cambiar icono a corazón vacío (♡)
-   ↓
-5. Mostrar mensaje "Eliminado de favoritos"
-```
-
-## 📧 Flujo de Contacto
-
-### Enviar Mensaje de Contacto
-
-```
-1. Usuario accede a /contacto
-   ↓
-2. Llena formulario:
-   - Nombre
-   - Email
-   - Teléfono
-   - Mensaje
-   ↓
-3. Validación frontend
-   ↓
-4. POST /api/contacts
-   Body: {
-     name,
-     email,
-     phone,
-     message
-   }
-   ↓
-5. ContactController::store()
-   - Valida datos
-   - Si usuario está autenticado, guarda user_id
-   - Crea contacto en BD
-   ↓
-6. Response: { message, data }
-   ↓
-7. Mostrar mensaje de éxito
-   ↓
-8. Limpiar formulario
-```
-
-## 🗺 Flujo del Mapa Interactivo
-
-### Ver Mapa
-
-```
-1. Usuario accede a /mapa
-   ↓
-2. GET /api/places
-   ↓
-3. Filtrar lugares con coordenadas (latitude, longitude)
-   ↓
-4. Inicializar mapa Leaflet
-   ↓
-5. Crear marcadores para cada lugar
-   ↓
-6. Click en marcador
-   ↓
-7. Mostrar popup con información
-   ↓
-8. Opción de navegar a página de detalles
-```
-
-## 👤 Flujo de Perfil
-
-### Ver Perfil
-
-```
-1. Usuario autenticado accede a /perfil
-   ↓
-2. GET /api/profile
-   ↓
-3. ProfileController::show()
-   - Obtiene datos del usuario
-   ↓
-4. Response: { user }
-   ↓
-5. Mostrar información:
-   - Nombre
-   - Email
-   - Teléfono
-   - Foto de perfil
-```
-
-### Actualizar Perfil
-
-```
-1. Usuario edita información
-   ↓
-2. Si hay imagen: POST /api/profile (FormData)
-   Si no hay imagen: PUT /api/profile (JSON)
-   ↓
-3. ProfileController::update()
-   - Valida datos
-   - Si hay imagen, guarda en storage
-   - Actualiza usuario
-   ↓
-4. Response: { user }
-   ↓
-5. Actualizar UI
-   ↓
-6. Actualizar AuthContext
-```
-
-### Cambiar Contraseña
-
-```
-1. Usuario llena formulario:
-   - Contraseña actual
-   - Nueva contraseña
-   - Confirmar nueva contraseña
-   ↓
-2. PUT /api/profile/password
-   ↓
-3. ProfileController::changePassword()
-   - Verifica contraseña actual
-   - Valida nueva contraseña
-   - Actualiza contraseña
-   ↓
-4. Response: { message }
-   ↓
-5. Mostrar mensaje de éxito
-```
-
-## 🔧 Flujo de Administración
-
-### Ver Panel de Admin
-
-```
-1. Usuario admin accede a /admin
-   ↓
-2. Verificar is_admin = true
-   ↓
-3. Mostrar panel con opciones:
-   - Lugares
-   - Usuarios
-   - Reservas
-   - Categorías
-```
-
-### Crear/Editar Lugar (Admin)
-
-```
-1. Admin accede a gestión de lugares
-   ↓
-2. Llena formulario:
-   - Nombre
-   - Descripción
-   - Ubicación
-   - Coordenadas (lat, lng)
-   - Imagen
-   - Categorías
-   ↓
-3. POST /api/admin/places (crear)
-   PUT /api/admin/places/{id} (editar)
-   ↓
-4. AdminPlaceController::store/update()
-   - Valida datos
-   - Guarda imagen en storage
-   - Crea/actualiza lugar
-   - Sincroniza categorías
-   ↓
-5. Response: { place }
-   ↓
-6. Actualizar lista
-```
-
-### Ver Contactos (Admin)
-
-```
-1. Admin accede a gestión de contactos
-   ↓
-2. GET /api/contacts
-   ↓
-3. ContactController::index()
-   - Verifica permisos admin
-   - Obtiene todos los contactos
-   - Carga relaciones (usuario si existe)
-   ↓
-4. Response: Array de contactos
-   ↓
-5. Mostrar lista con:
-   - Nombre
-   - Email
-   - Teléfono
-   - Mensaje
-   - Fecha
-   - Usuario (si está autenticado)
-```
-
-## 🔄 Flujo de Navegación
-
-### Rutas Públicas
-
-```
-/ → Página principal
-/login → Login
-/registro → Registro
-/lugares → Lista de lugares
-/lugares/{id} → Detalle de lugar
-/parques-y-mas → Lugares por categoría
-/paraisos-acuaticos → Lugares por categoría
-/lugares-montanosos → Lugares por categoría
-/mapa → Mapa interactivo
-/contacto → Formulario de contacto
-```
-
-### Rutas Protegidas (Autenticadas)
-
-```
-/pagLogueados → Página principal para usuarios logueados
-/reservaciones → Mis reservas
-/favoritos → Mis favoritos
-/perfil → Mi perfil
-/configuracion → Configuración
-```
-
-### Rutas de Admin
-
-```
-/admin → Panel de administración
-/admin/lugares → Gestión de lugares
-/admin/usuarios → Gestión de usuarios
-/admin/reservas → Gestión de reservas
-```
-
----
-
-**Última actualización**: Diciembre 2025
-
+## Ultima actualizacion
+Marzo 2026
