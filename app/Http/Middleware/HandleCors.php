@@ -46,12 +46,13 @@ class HandleCors
 
         $response = $next($request);
 
-        // Agregar headers CORS a la respuesta
-        return $response
-            ->header('Access-Control-Allow-Origin', $allowedOrigin)
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With')
-            ->header('Access-Control-Allow-Credentials', 'true');
+        // Compatible con Response y BinaryFileResponse
+        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+        return $response;
     }
 }
 
