@@ -350,8 +350,9 @@ const PerfilPage = () => {
                 className="profile-photo"
                 onError={(e) => {
                   const fallback = usuarioImg;
-                  e.currentTarget.src = fallback;
-                  setDisplayImage(fallback);
+                  if (e.currentTarget.src !== fallback) {
+                      e.currentTarget.src = fallback;
+                  }
                 }}
               />
             </div>
