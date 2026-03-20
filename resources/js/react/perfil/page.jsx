@@ -230,8 +230,12 @@ const PerfilPage = () => {
       if (response.user) {
         updateUser(response.user);
       }
-      // Limpiar preview para forzar mostrar el URL del backend
-      setPreviewImage(null);
+
+      // Evitar parpadeo/desaparición: fijar preview con la URL confirmada por backend.
+      if (response?.user?.foto_perfil) {
+        const backendImageUrl = resolveProfileImageUrl(response.user.foto_perfil);
+        setPreviewImage(appendCacheBuster(backendImageUrl));
+      }
 
       // Limpiar foto
       setFormData(prev => ({
