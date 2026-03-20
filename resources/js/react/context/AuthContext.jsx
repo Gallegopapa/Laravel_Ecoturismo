@@ -12,22 +12,13 @@ export const useAuth = () => {
 };
 
 /**
- * Normaliza foto_perfil a solo el nombre de archivo.
- * El backend a veces devuelve una URL absoluta (https://sgallego.dev/imagenes/perfiles/archivo.jpg)
- * y otras veces solo el filename. Siempre guardamos solo el filename para que
- * resolveProfileImageUrl en PerfilPage lo procese correctamente via /api/profile/photo/.
+ * Transmite la foto_perfil originaria intacta sin truncarla, permitiendo 
+ * que resuelva orgánicamente en todos los componentes y previendo fallos de parseo.
  */
 const normalizeUser = (userData) => {
   if (!userData) return userData;
-  const fotoPerfil = userData.foto_perfil;
-  if (!fotoPerfil || typeof fotoPerfil !== 'string') return userData;
-
-  // Extraer solo el filename de cualquier URL o ruta
-  const normalized = fotoPerfil.replace(/\\/g, '/').split('?')[0];
-  const parts = normalized.split('/').filter(Boolean);
-  const filename = parts.length ? parts[parts.length - 1] : fotoPerfil;
-
-  return { ...userData, foto_perfil: filename };
+  // Devolvemos intacto para no amputar directivas HTTPS o API Paths.
+  return userData;
 };
 
 export const AuthProvider = ({ children }) => {

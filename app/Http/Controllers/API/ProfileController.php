@@ -22,6 +22,7 @@ class ProfileController extends Controller
     public function photo(string $filename)
     {
         $safeFilename = basename($filename);
+        
         if ($safeFilename === '') {
             abort(404);
         }
@@ -36,7 +37,7 @@ class ProfileController extends Controller
         ];
 
         foreach ($candidates as $path) {
-            if (file_exists($path) && filesize($path) > 0) {
+            if (file_exists($path)) {
                 $mimeType = 'image/jpeg';
                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 if ($ext === 'png') $mimeType = 'image/png';

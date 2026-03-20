@@ -25,7 +25,6 @@ const PerfilPage = () => {
     foto_perfil: null,
   });
   const [previewImage, setPreviewImage] = useState(null);
-  const [displayImage, setDisplayImage] = useState(usuarioImg);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -48,66 +47,18 @@ const PerfilPage = () => {
     if (!rawUrl || rawUrl === "null" || rawUrl === "undefined") {
       return usuarioImg;
     }
-
     if (typeof rawUrl === 'string' && rawUrl.startsWith('data:')) {
       return rawUrl;
     }
-
-    // Si es URL absoluta (completa con https://), devolverla tal cual
-    if (/^https?:\/\//i.test(rawUrl)) {
+    if (/^https?:\/\//i.test(rawUrl) || rawUrl.startsWith('/')) {
       return rawUrl;
     }
-
-    if (rawUrl.startsWith('/api/profile/photo/')) {
-      return rawUrl;
-    }
-
-    if (rawUrl.startsWith('/imagenes/perfiles/')) {
-      const filename = extractFilename(rawUrl);
-      return filename
-        ? `/api/profile/photo/${encodeURIComponent(filename)}`
-        : usuarioImg;
-    }
-
-    // Si es ruta relativa (/storage/...), devolverla
-    if (rawUrl.startsWith('/')) {
-      return rawUrl;
-    }
-
-    // Si solo llega nombre de archivo, usar endpoint API para evitar dependencia de symlink /storage
-    const filename = extractFilename(rawUrl);
-    if (!filename) {
-      return usuarioImg;
-    }
-
-    return `/api/profile/photo/${encodeURIComponent(filename)}`;
+    // Si solo llega nombre de archivo
+    const normalized = rawUrl.replace(/\\/g, '/');
+    const fileName = normalized.split('/').filter(Boolean).pop();
+    if (!fileName) return usuarioImg;
+    return `/api/profile/photo/${encodeURIComponent(fileName)}`;
   };
-
-  useEffect(() => {
-    if (previewImage) {
-      // Si hay preview local (FileReader DataURL), usar directamente
-      if (previewImage.startsWith('data:')) {
-        setDisplayImage(previewImage);
-      } else {
-        // Si es URL del servidor, resolver y mostrar
-        setDisplayImage(resolveProfileImageUrl(previewImage));
-      }
-    } else {
-      // Sin preview, usar la foto actual del usuario
-      setDisplayImage(usuarioImg);
-    }
-  }, [previewImage]);
-
-  // Sincroniza la foto del perfil con el contexto de auth cuando cambia en header.
-  useEffect(() => {
-    // No pisar preview local mientras el usuario esta eligiendo una imagen.
-    if (selectedProfileFileRef.current) {
-      return;
-    }
-
-    const next = user?.foto_perfil || null;
-    setPreviewImage((prev) => (prev === next ? prev : next));
-  }, [user?.foto_perfil]);
 
   const handleDeleteAccount = async () => {
     setDeleteMessage("");
@@ -141,7 +92,6 @@ const PerfilPage = () => {
         telefono: profileUser.telefono || "",
         foto_perfil: null,
       });
-      setPreviewImage(profileUser.foto_perfil || null);
       hasHydratedProfileRef.current = true;
     };
 
@@ -288,10 +238,10 @@ const PerfilPage = () => {
       // Actualizar usuario en contexto
       if (response.user) {
         updateUser(response.user);
-        if (response.user.foto_perfil) {
-          setPreviewImage(response.user.foto_perfil);
-        }
       }
+
+      // Al guardar, limpiamos el preview local si existía para forzar la carga natural desde la ruta universal devuelta por backend
+      setPreviewImage(null);
 
       // Limpiar foto
       setFormData(prev => ({
@@ -325,7 +275,7 @@ const PerfilPage = () => {
   };
 
   const resolvedUserPhoto = resolveProfileImageUrl(user?.foto_perfil);
-  const avatarSrc = formData.foto_perfil ? displayImage : resolvedUserPhoto;
+  const avatarSrc = previewImage || resolvedUserPhoto;
 
   return (
     <>
