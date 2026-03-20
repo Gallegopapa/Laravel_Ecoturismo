@@ -17,12 +17,23 @@ use Illuminate\Validation\Rules\Password;
 class ProfileController extends Controller
 {
     /**
+     * Servir foto vía Query Parameter (Evasión 404 estático de Proxies).
+     */
+    public function photoByQuery(Request $request)
+    {
+        $filename = $request->query('f');
+        if (!$filename) {
+            abort(404);
+        }
+        return $this->photo($filename);
+    }
+
+    /**
      * Servir foto de perfil desde rutas conocidas (public y storage).
      */
     public function photo(string $filename)
     {
         $safeFilename = basename($filename);
-        
         if ($safeFilename === '') {
             abort(404);
         }
@@ -37,7 +48,7 @@ class ProfileController extends Controller
         ];
 
         foreach ($candidates as $path) {
-            if (file_exists($path)) {
+            if (file_exists($path) && filesize($path) > 0) {
                 $mimeType = 'image/jpeg';
                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 if ($ext === 'png') $mimeType = 'image/png';

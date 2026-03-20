@@ -53,7 +53,7 @@ const PerfilPage = () => {
     if (/^https?:\/\//i.test(rawUrl) || rawUrl.startsWith('/')) {
       return rawUrl;
     }
-    // Si solo llega nombre de archivo
+    // Si viene solo el nombre
     const normalized = rawUrl.replace(/\\/g, '/');
     const fileName = normalized.split('/').filter(Boolean).pop();
     if (!fileName) return usuarioImg;
@@ -239,8 +239,7 @@ const PerfilPage = () => {
       if (response.user) {
         updateUser(response.user);
       }
-
-      // Al guardar, limpiamos el preview local si existía para forzar la carga natural desde la ruta universal devuelta por backend
+      // Limpiar preview para forzar mostrar el URL del backend
       setPreviewImage(null);
 
       // Limpiar foto

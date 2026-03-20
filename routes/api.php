@@ -29,6 +29,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/password/forgot', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+Route::get('/profile/photo/stream', [ProfileController::class, 'photoByQuery']);
 Route::get('/profile/photo/{filename}', [ProfileController::class, 'photo'])->where('filename', '.*');
 
 // Rutas pÃºblicas de lugares

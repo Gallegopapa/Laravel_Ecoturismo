@@ -17,7 +17,7 @@ export const useAuth = () => {
  */
 const normalizeUser = (userData) => {
   if (!userData) return userData;
-  // Devolvemos intacto para no amputar directivas HTTPS o API Paths.
+  // Guardamos la URL nativa que dio el sistema en toda su gloria
   return userData;
 };
 

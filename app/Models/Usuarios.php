@@ -73,7 +73,8 @@ class Usuarios extends Authenticatable implements CanResetPasswordContract
             return null;
         }
 
-        return '/api/profile/photo/' . rawurlencode($filename);
+        // Devolvemos SIEMPRE el endpoint sin extensión estática para que los Reverse Proxies (Nginx/Apache) no la intercepten.
+        return '/api/profile/photo/stream?f=' . rawurlencode($filename);
     }
 
     /**
