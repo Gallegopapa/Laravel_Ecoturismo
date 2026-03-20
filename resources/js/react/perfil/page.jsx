@@ -186,8 +186,7 @@ const PerfilPage = () => {
     }
   };
 
-  // ✅ handleSubmit corregido: genera el base64 en el momento del submit
-  // en lugar de depender del estado previewImage (que puede tener closure viejo)
+  // Enviar archivo como File para evitar inflar el payload con base64 y reducir 413.
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('=== INICIO handleSubmit ===');
@@ -205,29 +204,21 @@ const PerfilPage = () => {
         telefono: formData.telefono,
       };
 
-      // Convertir el archivo a base64 en el momento del submit (sin depender del estado)
       if (selectedProfileFile instanceof File) {
-        console.log('📸 Convirtiendo archivo a base64...', {
+        console.log('📸 Adjuntando archivo para multipart...', {
           name: selectedProfileFile.name,
           size: selectedProfileFile.size,
           type: selectedProfileFile.type,
         });
-        const base64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = () => reject(new Error("Error leyendo archivo"));
-          reader.readAsDataURL(selectedProfileFile);
-        });
-        payload.foto_perfil_base64 = base64;
-        console.log('✅ Base64 generado en submit, longitud:', base64.length);
+        payload.foto_perfil = selectedProfileFile;
       }
 
       console.log('📤 Enviando payload:', {
         name: payload.name,
         email: payload.email,
         telefono: payload.telefono,
-        hasBase64: !!payload.foto_perfil_base64,
-        base64Length: payload.foto_perfil_base64?.length || 0,
+        hasFile: payload.foto_perfil instanceof File,
+        fileSize: payload.foto_perfil?.size || 0,
       });
 
       const response = await profileService.update(payload);
