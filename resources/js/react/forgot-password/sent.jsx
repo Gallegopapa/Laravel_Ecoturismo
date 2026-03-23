@@ -23,10 +23,6 @@ export default function ForgotPasswordSentPage() {
                         {email ? ` a ${email}` : ""}. Revisa tu bandeja y spam.
                     </p>
                     <p className="register-text">
-                        ¿Ya tienes el enlace?{" "}
-                        <Link to="/reset-password">Restablecer contraseña</Link>
-                    </p>
-                    <p className="register-text">
                         ¿Quieres intentar con otro correo?{" "}
                         <Link to="/forgot-password">Volver</Link>
                     </p>
