@@ -34,7 +34,7 @@ class ReviewFeatureTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_review_same_place_twice()
+    public function test_usuario_no_puede_resena_mismo_lugar_dos_veces()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -59,7 +59,7 @@ class ReviewFeatureTest extends TestCase
         $this->assertDatabaseCount('reviews', 1);
     }
 
-    public function test_user_can_update_own_review()
+    public function test_usuario_puede_actualizar_su_propia_resena()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -85,7 +85,7 @@ class ReviewFeatureTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_update_others_review()
+    public function test_usuario_no_puede_editar_resena_ajena()
     {
         $user1 = $this->createUser();
         $user2 = $this->createUser();
@@ -106,7 +106,7 @@ class ReviewFeatureTest extends TestCase
         ])->assertStatus(403);
     }
 
-    public function test_user_can_delete_own_review()
+    public function test_usuario_puede_eliminar_su_propia_resena()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -125,7 +125,7 @@ class ReviewFeatureTest extends TestCase
         $this->assertDatabaseCount('reviews', 0);
     }
 
-    public function test_admin_can_delete_any_review()
+    public function test_admin_puede_eliminar_cualquier_resena()
     {
         $user = $this->createUser();
         $admin = $this->createUser(true);
@@ -145,7 +145,7 @@ class ReviewFeatureTest extends TestCase
         $this->assertDatabaseCount('reviews', 0);
     }
 
-    public function test_user_cannot_delete_others_review()
+    public function test_usuario_no_puede_eliminar_resena_ajena()
     {
         $user1 = $this->createUser();
         $user2 = $this->createUser();

@@ -13,7 +13,7 @@ class ReviewProfanityTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_profanity_blocks_review_creation()
+    public function test_palabrota_bloquea_creacion_de_resena()
     {
         // Crear usuario
         $user = Usuarios::create([
@@ -40,7 +40,7 @@ class ReviewProfanityTest extends TestCase
         $this->assertDatabaseCount('reviews', 0);
     }
 
-    public function test_clean_review_is_created()
+    public function test_resena_limpia_se_crea_correctamente()
     {
         $user = Usuarios::create([
             'name' => 'Test User 2',

@@ -36,7 +36,7 @@ class ProfileFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** El usuario autenticado puede ver su perfil. */
-    public function test_authenticated_user_can_view_profile()
+    public function test_usuario_autenticado_puede_ver_perfil()
     {
         $user = $this->createUser();
 
@@ -54,7 +54,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Un invitado no puede ver el perfil. */
-    public function test_guest_cannot_view_profile()
+    public function test_invitado_no_puede_ver_perfil()
     {
         $this->getJson('/api/profile')
              ->assertStatus(401);
@@ -65,7 +65,7 @@ class ProfileFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** El usuario puede actualizar su número de teléfono. */
-    public function test_user_can_update_phone_number()
+    public function test_usuario_puede_actualizar_numero_telefono()
     {
         $user = $this->createUser();
 
@@ -83,7 +83,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** El usuario puede cambiar su nombre de usuario a uno único. */
-    public function test_user_can_update_username()
+    public function test_usuario_puede_actualizar_nombre_usuario()
     {
         $user    = $this->createUser();
         $newName = 'nuevonombre' . Str::random(3);
@@ -99,7 +99,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** No se puede usar un nombre que ya existe. */
-    public function test_user_cannot_use_duplicate_username()
+    public function test_usuario_no_puede_usar_nombre_duplicado()
     {
         $other = $this->createUser(['name' => 'nombretomado']);
         $user  = $this->createUser();
@@ -111,7 +111,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** El usuario puede actualizar su correo a uno de @gmail.com no registrado. */
-    public function test_user_can_update_email()
+    public function test_usuario_puede_actualizar_correo()
     {
         $user     = $this->createUser();
         $newEmail = 'nuevo' . Str::random(4) . '@gmail.com';
@@ -125,7 +125,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** No se puede cambiar el correo a uno que no sea @gmail.com. */
-    public function test_user_cannot_update_email_to_non_gmail()
+    public function test_usuario_no_puede_usar_correo_no_gmail()
     {
         $user = $this->createUser();
 
@@ -138,7 +138,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** No se puede usar un correo que ya existe en otro usuario. */
-    public function test_user_cannot_use_duplicate_email()
+    public function test_usuario_no_puede_usar_correo_duplicado()
     {
         $other = $this->createUser();
         $user  = $this->createUser();
@@ -150,7 +150,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Un invitado no puede actualizar el perfil. */
-    public function test_guest_cannot_update_profile()
+    public function test_invitado_no_puede_actualizar_perfil()
     {
         $this->putJson('/api/profile', ['telefono' => '3001234567'])
              ->assertStatus(401);
@@ -161,7 +161,7 @@ class ProfileFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** El usuario puede cambiar su contraseña con la actual correcta. */
-    public function test_user_can_change_password()
+    public function test_usuario_puede_cambiar_contrasena()
     {
         $user = $this->createUser(['password' => Hash::make('Actual123!')]);
 
@@ -179,7 +179,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** La contraseña actual incorrecta es rechazada. */
-    public function test_change_password_fails_with_wrong_current_password()
+    public function test_cambio_contrasena_falla_con_contrasena_actual_incorrecta()
     {
         $user = $this->createUser(['password' => Hash::make('Actual123!')]);
 
@@ -193,7 +193,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** No se puede usar la misma contraseña como nueva. */
-    public function test_change_password_fails_if_same_as_current()
+    public function test_cambio_contrasena_falla_si_es_igual_a_la_actual()
     {
         $user = $this->createUser(['password' => Hash::make('Actual123!')]);
 
@@ -207,7 +207,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Nueva contraseña muy corta (< 6 chars) es rechazada. */
-    public function test_change_password_rejects_short_new_password()
+    public function test_cambio_contrasena_rechaza_contrasena_muy_corta()
     {
         $user = $this->createUser(['password' => Hash::make('Actual123!')]);
 
@@ -222,7 +222,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Nueva contraseña sin confirmación coincidente es rechazada. */
-    public function test_change_password_rejects_mismatched_confirmation()
+    public function test_cambio_contrasena_rechaza_confirmacion_diferente()
     {
         $user = $this->createUser(['password' => Hash::make('Actual123!')]);
 
@@ -237,7 +237,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Un invitado no puede cambiar contraseñas. */
-    public function test_guest_cannot_change_password()
+    public function test_invitado_no_puede_cambiar_contrasena()
     {
         $this->putJson('/api/profile/password', [
             'current_password'          => 'algo',
@@ -251,7 +251,7 @@ class ProfileFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** El usuario puede eliminar su propia cuenta. */
-    public function test_user_can_delete_own_account()
+    public function test_usuario_puede_eliminar_su_cuenta()
     {
         $user = $this->createUser();
 
@@ -264,7 +264,7 @@ class ProfileFeatureTest extends TestCase
     }
 
     /** Un invitado no puede eliminar cuentas. */
-    public function test_guest_cannot_delete_account()
+    public function test_invitado_no_puede_eliminar_cuenta()
     {
         $this->deleteJson('/api/profile')
              ->assertStatus(401);

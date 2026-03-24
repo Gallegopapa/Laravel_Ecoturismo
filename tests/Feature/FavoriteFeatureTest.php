@@ -34,7 +34,7 @@ class FavoriteFeatureTest extends TestCase
         ]);
     }
 
-    public function test_user_can_view_favorites()
+    public function test_usuario_puede_ver_favoritos()
     {
         $user = $this->createUser();
         
@@ -43,7 +43,7 @@ class FavoriteFeatureTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function test_user_can_add_place_to_favorites()
+    public function test_usuario_puede_agregar_lugar_a_favoritos()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -60,7 +60,7 @@ class FavoriteFeatureTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_add_same_place_twice()
+    public function test_usuario_no_puede_agregar_mismo_lugar_dos_veces()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -79,7 +79,7 @@ class FavoriteFeatureTest extends TestCase
         $this->assertDatabaseCount('favorites', 1);
     }
 
-    public function test_user_can_remove_place_from_favorites()
+    public function test_usuario_puede_eliminar_lugar_de_favoritos()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -99,7 +99,7 @@ class FavoriteFeatureTest extends TestCase
         ]);
     }
 
-    public function test_guest_cannot_access_favorites()
+    public function test_invitado_no_puede_acceder_a_favoritos()
     {
         $place = $this->createPlace();
 

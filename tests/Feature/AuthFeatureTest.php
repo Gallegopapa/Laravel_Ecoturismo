@@ -49,7 +49,7 @@ class AuthFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** Un nuevo usuario puede registrarse con datos válidos. */
-    public function test_user_can_register_with_valid_data()
+    public function test_usuario_puede_registrarse_con_datos_validos()
     {
         $payload = $this->validRegisterPayload();
 
@@ -70,7 +70,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** El registro devuelve un token Bearer utilizable. */
-    public function test_register_returns_usable_bearer_token()
+    public function test_registro_devuelve_token_bearer_utilizable()
     {
         $payload  = $this->validRegisterPayload();
         $response = $this->postJson('/api/register', $payload);
@@ -87,7 +87,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** No se permite registrarse con un correo que no sea @gmail.com. */
-    public function test_register_rejects_non_gmail_email()
+    public function test_registro_rechaza_correo_no_gmail()
     {
         $payload = $this->validRegisterPayload(['email' => 'usuario@hotmail.com']);
 
@@ -97,7 +97,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** No se permite registrarse con un nombre que ya existe (case-insensitive). */
-    public function test_register_rejects_duplicate_name()
+    public function test_registro_rechaza_nombre_duplicado()
     {
         $existing = $this->createUser(['name' => 'UnicoNombre']);
 
@@ -109,7 +109,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** No se permite registrarse con un correo que ya existe. */
-    public function test_register_rejects_duplicate_email()
+    public function test_registro_rechaza_correo_duplicado()
     {
         $existing = $this->createUser();
 
@@ -124,7 +124,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Contraseñas que no coinciden son rechazadas. */
-    public function test_register_rejects_mismatched_passwords()
+    public function test_registro_rechaza_contrasenas_no_coincidentes()
     {
         $payload = $this->validRegisterPayload([
             'password_confirmation' => 'OtraPassword2!',
@@ -136,7 +136,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Contraseña muy corta (< 8 chars) es rechazada. */
-    public function test_register_rejects_short_password()
+    public function test_registro_rechaza_contrasena_muy_corta()
     {
         $payload = $this->validRegisterPayload([
             'password'              => 'abc',
@@ -149,7 +149,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Contraseña muy larga (> 15 chars) es rechazada. */
-    public function test_register_rejects_too_long_password()
+    public function test_registro_rechaza_contrasena_muy_larga()
     {
         $payload = $this->validRegisterPayload([
             'password'              => 'EstaPasswordEsMuyLarga123!',
@@ -162,7 +162,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Nombre con caracteres especiales (ej. espacios) es rechazado. */
-    public function test_register_rejects_name_with_special_characters()
+    public function test_registro_rechaza_nombre_con_caracteres_especiales()
     {
         $payload = $this->validRegisterPayload(['name' => 'nombre invalido!']);
 
@@ -172,7 +172,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Nombre muy corto (< 3 chars) es rechazado. */
-    public function test_register_rejects_too_short_name()
+    public function test_registro_rechaza_nombre_muy_corto()
     {
         $payload = $this->validRegisterPayload(['name' => 'ab']);
 
@@ -182,7 +182,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Campos obligatorios vacíos retornan 422. */
-    public function test_register_requires_all_fields()
+    public function test_registro_requiere_todos_los_campos()
     {
         $this->postJson('/api/register', [])
              ->assertStatus(422)
@@ -194,7 +194,7 @@ class AuthFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** Un usuario puede iniciar sesión con su correo. */
-    public function test_user_can_login_with_email()
+    public function test_usuario_puede_iniciar_sesion_con_correo()
     {
         $user = $this->createUser(['password' => Hash::make('MiPassword1!')]);
 
@@ -213,7 +213,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Un usuario puede iniciar sesión con su nombre de usuario. */
-    public function test_user_can_login_with_username()
+    public function test_usuario_puede_iniciar_sesion_con_nombre_usuario()
     {
         $user = $this->createUser(['password' => Hash::make('MiPassword1!')]);
 
@@ -227,7 +227,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** El login acepta el campo "email" directamente además de "login". */
-    public function test_user_can_login_using_email_field()
+    public function test_usuario_puede_iniciar_sesion_usando_campo_email()
     {
         $user = $this->createUser(['password' => Hash::make('MiPassword1!')]);
 
@@ -238,7 +238,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** El login es insensible a mayúsculas en email/nombre. */
-    public function test_login_is_case_insensitive()
+    public function test_login_no_distingue_mayusculas()
     {
         $user = $this->createUser(['password' => Hash::make('MiPassword1!')]);
 
@@ -249,7 +249,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Contraseña incorrecta devuelve 401. */
-    public function test_login_fails_with_wrong_password()
+    public function test_login_falla_con_contrasena_incorrecta()
     {
         $user = $this->createUser();
 
@@ -261,7 +261,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Usuario inexistente devuelve 401. */
-    public function test_login_fails_with_nonexistent_user()
+    public function test_login_falla_con_usuario_inexistente()
     {
         $this->postJson('/api/login', [
             'login'    => 'noexiste@gmail.com',
@@ -270,7 +270,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Login sin contraseña devuelve 422. */
-    public function test_login_requires_password()
+    public function test_login_requiere_contrasena()
     {
         $this->postJson('/api/login', [
             'login' => 'alguien@gmail.com',
@@ -279,7 +279,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Login sin credencial de usuario devuelve 422. */
-    public function test_login_requires_login_field()
+    public function test_login_requiere_campo_usuario()
     {
         $this->postJson('/api/login', [
             'password' => 'Password1!',
@@ -287,7 +287,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Un nuevo login invalida los tokens anteriores del usuario. */
-    public function test_login_invalidates_previous_tokens()
+    public function test_login_invalida_tokens_anteriores()
     {
         $user = $this->createUser(['password' => Hash::make('Password1!')]);
 
@@ -314,7 +314,7 @@ class AuthFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** Un usuario autenticado puede cerrar su sesión actual. */
-    public function test_authenticated_user_can_logout()
+    public function test_usuario_autenticado_puede_cerrar_sesion()
     {
         $user = $this->createUser(['password' => Hash::make('Password1!')]);
 
@@ -331,7 +331,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Un usuario autenticado puede cerrar todas sus sesiones. */
-    public function test_authenticated_user_can_logout_all_sessions()
+    public function test_usuario_autenticado_puede_cerrar_todas_las_sesiones()
     {
         $user = $this->createUser(['password' => Hash::make('Password1!')]);
 
@@ -348,7 +348,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Un invitado (sin token) no puede cerrar sesión. */
-    public function test_guest_cannot_logout()
+    public function test_invitado_no_puede_cerrar_sesion()
     {
         $this->postJson('/api/logout')
              ->assertStatus(401);
@@ -359,7 +359,7 @@ class AuthFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** /api/user devuelve datos del usuario autenticado. */
-    public function test_me_returns_authenticated_user_data()
+    public function test_endpoint_usuario_devuelve_datos_autenticado()
     {
         $user = $this->createUser();
 
@@ -374,7 +374,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Un invitado no puede acceder a /api/user. */
-    public function test_guest_cannot_access_me_endpoint()
+    public function test_invitado_no_puede_acceder_a_endpoint_usuario()
     {
         $this->getJson('/api/user')
              ->assertStatus(401);
@@ -385,7 +385,7 @@ class AuthFeatureTest extends TestCase
     // ─────────────────────────────────────────────────────────────
 
     /** Un token válido responde con valid = true. */
-    public function test_valid_token_passes_verification()
+    public function test_token_valido_pasa_verificacion()
     {
         $user = $this->createUser();
 
@@ -396,7 +396,7 @@ class AuthFeatureTest extends TestCase
     }
 
     /** Sin token, la verificación devuelve 401. */
-    public function test_missing_token_fails_verification()
+    public function test_token_ausente_falla_verificacion()
     {
         $this->getJson('/api/verify-token')
              ->assertStatus(401);

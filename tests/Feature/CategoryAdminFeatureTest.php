@@ -24,7 +24,7 @@ class CategoryAdminFeatureTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_view_categories()
+    public function test_admin_puede_ver_categorias()
     {
         $admin = $this->createUser(true);
         
@@ -33,7 +33,7 @@ class CategoryAdminFeatureTest extends TestCase
             ->assertStatus(200); 
     }
 
-    public function test_normal_user_cannot_create_categories()
+    public function test_usuario_normal_no_puede_crear_categorias()
     {
         $user = $this->createUser(false);
         
@@ -45,7 +45,7 @@ class CategoryAdminFeatureTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function test_admin_can_create_category()
+    public function test_admin_puede_crear_categoria()
     {
         $admin = $this->createUser(true);
 
@@ -62,7 +62,7 @@ class CategoryAdminFeatureTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_update_category()
+    public function test_admin_puede_actualizar_categoria()
     {
         $admin = $this->createUser(true);
         
@@ -86,7 +86,7 @@ class CategoryAdminFeatureTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_delete_category()
+    public function test_admin_puede_eliminar_categoria()
     {
         $admin = $this->createUser(true);
         

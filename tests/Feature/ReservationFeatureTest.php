@@ -50,7 +50,7 @@ class ReservationFeatureTest extends TestCase
         return $place;
     }
 
-    public function test_user_can_view_own_reservations()
+    public function test_usuario_puede_ver_sus_reservas()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -71,7 +71,7 @@ class ReservationFeatureTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function test_user_can_create_valid_reservation()
+    public function test_usuario_puede_crear_reserva_valida()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -96,7 +96,7 @@ class ReservationFeatureTest extends TestCase
         ]);
     }
 
-    public function test_user_cannot_reserve_outside_schedule()
+    public function test_usuario_no_puede_reservar_fuera_de_horario()
     {
         $user = $this->createUser();
         $place = $this->createPlace();
@@ -116,7 +116,7 @@ class ReservationFeatureTest extends TestCase
         $this->assertDatabaseCount('reservations', 0);
     }
 
-    public function test_user_cannot_reserve_overlapping_time()
+    public function test_usuario_no_puede_reservar_en_horario_solapado()
     {
         $user1 = $this->createUser();
         $user2 = $this->createUser();
@@ -148,7 +148,7 @@ class ReservationFeatureTest extends TestCase
         $this->assertDatabaseCount('reservations', 1);
     }
 
-    public function test_user_can_delete_own_reservation()
+    public function test_usuario_puede_eliminar_su_propia_reserva()
     {
         $user = $this->createUser();
         $place = $this->createPlace();

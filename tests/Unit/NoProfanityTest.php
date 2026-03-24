@@ -7,7 +7,7 @@ use App\Rules\NoProfanity;
 
 class NoProfanityTest extends TestCase
 {
-    public function test_blocks_known_profanities()
+    public function test_bloquea_palabrotas_conocidas()
     {
         $rule = new NoProfanity();
 
@@ -24,7 +24,7 @@ class NoProfanityTest extends TestCase
         $this->assertFalse($rule->passes('comment', 'ese sitio es una chimb4'));
     }
 
-    public function test_allows_clean_text()
+    public function test_permite_texto_limpio()
     {
         $rule = new NoProfanity();
 
