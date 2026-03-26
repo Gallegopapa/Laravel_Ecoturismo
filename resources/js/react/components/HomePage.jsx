@@ -342,7 +342,6 @@ const HomePage = ({ loggedIn, user }) => {
                 {/* MAPA INTERACTIVO */}
                 <section className="mapa-interactivo-section section-alt">
                     <div className="mapa-interactivo-inner">
-                        <div className="mapa-interactivo-badge">🗺️ Nuevo</div>
                         <h2 className="mapa-interactivo-title">Explora con nuestro Mapa Interactivo</h2>
                         <p className="mapa-interactivo-desc">
                             Descubre todos los destinos ecoturísticos de Risaralda en un mapa dinámico.
@@ -350,15 +349,15 @@ const HomePage = ({ loggedIn, user }) => {
                         </p>
                         <div className="mapa-interactivo-features">
                             <div className="mapa-feature-item">
-                                <span className="mapa-feature-icon">📍</span>
+                                <span className="mapa-feature-icon"></span>
                                 <span>Ubicaciones precisas</span>
                             </div>
                             <div className="mapa-feature-item">
-                                <span className="mapa-feature-icon">🔍</span>
+                                <span className="mapa-feature-icon"></span>
                                 <span>Filtros por categoría</span>
                             </div>
                             <div className="mapa-feature-item">
-                                <span className="mapa-feature-icon">🌿</span>
+                                <span className="mapa-feature-icon"></span>
                                 <span>Rutas ecológicas</span>
                             </div>
                         </div>
@@ -368,7 +367,7 @@ const HomePage = ({ loggedIn, user }) => {
                         >
                             <span>Ver Mapa Interactivo</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                                <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </button>
                     </div>
